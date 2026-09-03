@@ -17,17 +17,16 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ??
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
   ),
-  title: "Sparky English | Learn with ease",
-  description: "Private, practical English lessons with Sparky.",
+  title: "Sparky English",
+  description: "Um espaço privado para estudar inglês de forma prática.",
   applicationName: "Sparky English",
   appleWebApp: { capable: true, title: "Sparky English", statusBarStyle: "default" },
   openGraph: {
     title: "Sparky English",
-    description: "Pequenas lições. Progresso que fica.",
+    description: "Aulas, prática e revisão para usar inglês no dia a dia.",
     type: "website",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Sparky English" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  twitter: { card: "summary" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

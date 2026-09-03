@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Sparky English",
     short_name: "Sparky",
-    description: "Private, practical English lessons with Sparky.",
+    description: "Um espaço privado para estudar inglês de forma prática.",
     start_url: "/",
     display: "standalone",
     background_color: "#f7f3ec",

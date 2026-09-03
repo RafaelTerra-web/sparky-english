@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparky-shell-v1";
+const CACHE_NAME = "sparky-shell-v2";
 const SHELL = ["/", "/manifest.webmanifest", "/visuals/sparky-panda.png"];
 
 self.addEventListener("install", (event) => {
