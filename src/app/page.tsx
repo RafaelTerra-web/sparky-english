@@ -9,21 +9,32 @@ type LessonStepKind = "teach" | "example" | "choice" | "complete_sentence" | "su
 type LessonStep = { kind: LessonStepKind; title: string; body: string; prompt?: string; options?: string[]; answer?: string };
 type Lesson = { id: string; title: string; unit: string; level: "A1" | "A2" | "B1"; minutes: number; completed: boolean; steps: LessonStep[] };
 
-const lessons: Lesson[] = [
-  {
-    id: "a1-greetings", title: "Meet someone new", unit: "A1 · Everyday English", level: "A1", minutes: 4, completed: false,
-    steps: [
-      { kind: "teach", title: "Start with a natural greeting", body: "Use Hi or Hello when you meet someone. Add How are you? to open a friendly conversation." },
-      { kind: "example", title: "In context", body: "Hi, I’m Maya. Nice to meet you. — Nice to meet you too!" },
-      { kind: "choice", title: "Choose the natural reply", body: "Nice to meet you!", prompt: "A good reply is…", options: ["Nice to meet you too!", "Meet nice you!", "You nice meet."], answer: "Nice to meet you too!" },
-      { kind: "complete_sentence", title: "Complete the sentence", body: "One small word makes this introduction natural.", prompt: "Hi, ___ Maya.", options: ["I’m", "I", "am I"], answer: "I’m" },
-      { kind: "summary", title: "You can introduce yourself", body: "Remember: Hi, I’m… · Nice to meet you · Nice to meet you too!" },
-    ],
-  },
-  { id: "a1-routines", title: "Talk about your day", unit: "A1 · Everyday English", level: "A1", minutes: 5, completed: false, steps: [] },
-  { id: "a2-plans", title: "Make plans with friends", unit: "A2 · Real conversations", level: "A2", minutes: 5, completed: false, steps: [] },
-  { id: "b1-opinions", title: "Share an opinion", unit: "B1 · Confident English", level: "B1", minutes: 4, completed: false, steps: [] },
+const firstLessonSteps: LessonStep[] = [
+  { kind: "teach", title: "Start with a natural greeting", body: "Use Hi or Hello when you meet someone. Add How are you? to open a friendly conversation." },
+  { kind: "example", title: "In context", body: "Hi, I’m Maya. Nice to meet you. — Nice to meet you too!" },
+  { kind: "choice", title: "Choose the natural reply", body: "Nice to meet you!", prompt: "A good reply is…", options: ["Nice to meet you too!", "Meet nice you!", "You nice meet."], answer: "Nice to meet you too!" },
+  { kind: "complete_sentence", title: "Complete the sentence", body: "One small word makes this introduction natural.", prompt: "Hi, ___ Maya.", options: ["I’m", "I", "am I"], answer: "I’m" },
+  { kind: "summary", title: "You can introduce yourself", body: "Remember: Hi, I’m… · Nice to meet you · Nice to meet you too!" },
 ];
+
+const curriculumUnits = [
+  { level: "A1" as const, title: "Everyday English", lessons: ["Meet someone new", "Talk about your day", "Describe your home", "Order a coffee", "Find your way around"] },
+  { level: "A1" as const, title: "Your first conversations", lessons: ["Ask simple questions", "Talk about likes", "Make a polite request", "Talk about the weather", "Make small talk"] },
+  { level: "A2" as const, title: "Real conversations", lessons: ["Make plans with friends", "Shop with confidence", "Tell a short story", "Talk about past events", "Handle a misunderstanding"] },
+  { level: "A2" as const, title: "English on the move", lessons: ["Travel with ease", "Talk about routines", "Compare two ideas", "Give clear directions", "Write a friendly message"] },
+  { level: "B1" as const, title: "Confident English", lessons: ["Share an opinion", "Explain your goals", "Agree and disagree", "Tell a memorable story", "Discuss a new idea"] },
+  { level: "B1" as const, title: "English for your world", lessons: ["Talk about work", "Understand the news", "Make a recommendation", "Solve a problem", "Keep the conversation going"] },
+];
+
+const lessons: Lesson[] = curriculumUnits.flatMap((unit, unitIndex) => unit.lessons.map((title, lessonIndex) => ({
+  id: `${unit.level.toLowerCase()}-${unitIndex + 1}-${lessonIndex + 1}`,
+  title,
+  unit: `${unit.level} · ${unit.title}`,
+  level: unit.level,
+  minutes: lessonIndex % 2 ? 5 : 4,
+  completed: false,
+  steps: unitIndex === 0 && lessonIndex === 0 ? firstLessonSteps : [],
+})));
 
 const navItems: Array<{ id: View; label: string; icon: typeof HomeIcon }> = [
   { id: "today", label: "Today", icon: HomeIcon }, { id: "course", label: "My course", icon: BookOpen }, { id: "review", label: "Review", icon: RotateCcw }, { id: "profile", label: "Profile", icon: Target },
