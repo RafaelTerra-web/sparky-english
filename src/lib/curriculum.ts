@@ -113,18 +113,18 @@ export const lessons: Lesson[] = [
     englishTitle: "Meet someone new",
     level: "A1",
     rule: "Para dizer seu nome, use I'm + nome. I'm é a forma curta de I am. Em português, dizemos 'eu sou'; em inglês, I precisa aparecer.",
-    example: "Hi, I'm Maya.",
-    translation: "Oi, eu sou a Maya.",
+    example: "Hi, I'm Ana.",
+    translation: "Oi, eu sou a Ana.",
     dialogue:
-      "Maya: Hi, I'm Maya. Nice to meet you.\nLeo: I'm Leo. Nice to meet you too!",
+      "Ana: Hi, I'm Ana. Nice to meet you.\nLeo: I'm Leo. Nice to meet you too!",
     dialogueTranslation:
-      "Maya: Oi, eu sou a Maya. Prazer em conhecer você.\nLeo: Eu sou o Leo. Prazer em conhecer você também!",
+      "Ana: Oi, eu sou a Ana. Prazer em conhecer você.\nLeo: Eu sou o Leo. Prazer em conhecer você também!",
     question: "Alguém diz 'Nice to meet you'. Como você responde?",
     choices: ["Nice to meet you too!", "I'm meet you.", "You nice meet."],
     answer: "Nice to meet you too!",
     explanation:
       "Too significa 'também' e aparece no fim: Nice to meet you too!",
-    gap: "Hi, ___ Maya.",
+    gap: "Hi, ___ Ana.",
     gapOptions: ["I", "I'm", "am I"],
     gapAnswer: "I'm",
     gapExplanation:

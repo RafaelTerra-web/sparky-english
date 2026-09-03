@@ -689,8 +689,8 @@ function LoginScreen() {
             <div className="sample-scene">
               <div className="sample-note">
                 <span>NA PRIMEIRA LIÇÃO</span>
-                <p lang="en">Hi, I’m Maya.</p>
-                <p>Oi, eu sou a Maya.</p>
+                <p lang="en">Hi, I’m Ana.</p>
+                <p>Oi, eu sou a Ana.</p>
                 <div>
                   <span lang="en">I’m</span>
                   <ArrowRight size={13} />

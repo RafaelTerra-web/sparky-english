@@ -5,7 +5,7 @@ import { seal, unseal, readSession, emailAllowed, sameValue, sameOrigin } from '
 import { lessons } from '../src/lib/curriculum.ts';
 
 process.env.SPARKY_SESSION_SECRET = randomBytes(32).toString('hex');
-process.env.SPARKY_ALLOWED_EMAILS = 'invited@example.com';
+process.env.SPARKY_ALLOWED_EMAILS = 'invited@example.com,second@example.com';
 process.env.NEXT_PUBLIC_SITE_URL = 'https://sparky.example.com';
 
 test('sessions require authenticated encryption, the correct purpose and an invited email', async () => {
@@ -22,6 +22,8 @@ test('sessions require authenticated encryption, the correct purpose and an invi
 
 test('the invitation list checks exact normalized addresses, never domains or substrings', () => {
   assert.equal(emailAllowed(' INVITED@example.com '), true);
+  assert.equal(emailAllowed(' SECOND@example.com '), true);
+  assert.equal(emailAllowed('second@example.com.attacker.test'), false);
   assert.equal(emailAllowed('uninvited@example.com'), false);
   assert.equal(emailAllowed('invited@example.com.attacker.test'), false);
   assert.equal(emailAllowed(''), false);
@@ -42,6 +44,8 @@ test('mutating requests reject absent or foreign origins', () => {
 });
 
 test('published lessons have distinct content and solvable exercises', () => {
+  assert.match(JSON.stringify(lessons[0]), /Hi, I'm Ana/);
+  assert.doesNotMatch(JSON.stringify(lessons), /Maya/i);
   assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, lessons.length);
   assert.equal(new Set(lessons.map((lesson) => lesson.steps[1].english)).size, lessons.length);
   for (const lesson of lessons) {
