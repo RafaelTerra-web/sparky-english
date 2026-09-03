@@ -1,26 +1,16 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+:root { --background: #f7f3ec; --foreground: #172b32; }
+@theme inline { --color-background: var(--background); --color-foreground: var(--foreground); --font-sans: var(--font-geist-sans); --font-mono: var(--font-geist-mono); }
+* { box-sizing: border-box; }
+html { background: var(--background); }
+body { background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.eyebrow { color: #d96f42; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.17em; text-transform: uppercase; }
+.primary-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; border-radius: 999px; background: #e78554; color: #fff; padding: 0.72rem 1.15rem; font-size: 0.875rem; font-weight: 700; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease; box-shadow: 0 12px 26px -16px rgba(215, 111, 66, 0.95); }
+.primary-button:hover { background: #d87346; transform: translateY(-1px); box-shadow: 0 15px 30px -16px rgba(215, 111, 66, 0.95); }
+.hero-card { background: radial-gradient(circle at 85% 12%, rgba(93, 157, 151, 0.65), transparent 34%), linear-gradient(135deg, #17333a 0%, #214b4e 100%); }
+.glass-panel { background: linear-gradient(145deg, rgba(16, 43, 49, 0.78), rgba(7, 25, 31, 0.62)); border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 35px 100px -30px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.14); backdrop-filter: blur(28px) saturate(135%); }
+.mascot-cutout { filter: drop-shadow(0 14px 18px rgba(13, 37, 40, 0.2)); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
