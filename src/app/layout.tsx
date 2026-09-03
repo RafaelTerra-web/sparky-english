@@ -15,15 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+      (process.env.NODE_ENV === "production" ? "https://sparky-english-iota.vercel.app" : "http://localhost:3200"),
   ),
   title: "Sparky English",
-  description: "Um espaço privado para estudar inglês de forma prática.",
+  description: "Inglês para falantes de português do Brasil. Explicações em PT-BR, exemplos e prática em inglês.",
   applicationName: "Sparky English",
   appleWebApp: { capable: true, title: "Sparky English", statusBarStyle: "default" },
   openGraph: {
     title: "Sparky English",
-    description: "Aulas, prática e revisão para usar inglês no dia a dia.",
+    description: "Inglês para falantes de português do Brasil.",
+    locale: "pt_BR",
     type: "website",
   },
   twitter: { card: "summary" },
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

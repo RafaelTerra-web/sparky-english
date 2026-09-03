@@ -28,7 +28,7 @@ export default function OpenGraphImage() {
             Sparky English
           </div>
           <div style={{ color: "#c7d5d0", display: "flex", fontSize: 30, lineHeight: 1.35, marginTop: 28 }}>
-            Aulas, prática e revisão para o inglês do dia a dia.
+            Inglês para falantes de português do Brasil.
           </div>
         </div>
         <div style={{ alignItems: "center", background: "#e78554", borderRadius: 92, display: "flex", height: 240, justifyContent: "center", position: "relative", width: 240 }}>
