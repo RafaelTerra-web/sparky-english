@@ -2,6 +2,8 @@ export type LessonStepKind =
   | "teach"
   | "example"
   | "dialogue"
+  | "vocabulary"
+  | "production"
   | "choice"
   | "complete_sentence"
   | "order_words"

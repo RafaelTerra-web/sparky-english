@@ -1,3 +1,8 @@
+import { a1Modules } from "./content/a1.ts";
+import { a2Modules } from "./content/a2.ts";
+import { b1Modules } from "./content/b1.ts";
+import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
+
 export type Level = "A1" | "A2" | "B1";
 export type Step = {
   kind:
@@ -7,6 +12,8 @@ export type Step = {
     | "choice"
     | "complete_sentence"
     | "order_words"
+    | "vocabulary"
+    | "production"
     | "summary";
   title: string;
   body: string;
@@ -23,6 +30,8 @@ export type Lesson = {
   level: Level;
   minutes: number;
   steps: Step[];
+  moduleId?: string;
+  sourceIds?: string[];
 };
 type LessonInput = {
   id: string;
@@ -106,7 +115,7 @@ function lesson(data: LessonInput): Lesson {
   };
 }
 
-export const lessons: Lesson[] = [
+const introductoryLessons: Lesson[] = [
   lesson({
     id: "a1-1-1",
     title: "Apresentar-se",
@@ -266,74 +275,62 @@ export const lessons: Lesson[] = [
   }),
 ];
 
-export const modules = [
-  {
-    title: "Primeiro contato",
-    level: "A1" as Level,
-    lessonId: "a1-1-1",
-    upcoming: [
-      "Perguntar o nome",
-      "Dizer de onde você é",
-      "Pedir um café",
-      "Pedir uma informação",
-    ],
-  },
-  {
-    title: "O seu dia",
-    level: "A1" as Level,
-    lessonId: "a1-2-1",
-    upcoming: [
-      "Falar de preferências",
-      "Descrever sua casa",
-      "Perguntar as horas",
-      "Fazer um pedido",
-    ],
-  },
-  {
-    title: "Conversas e planos",
-    level: "A2" as Level,
-    lessonId: "a2-3-1",
-    upcoming: [
-      "Convidar e responder",
-      "Comparar opções",
-      "Falar de viagens",
-      "Trocar mensagens",
-    ],
-  },
-  {
-    title: "Histórias e experiências",
-    level: "A2" as Level,
-    lessonId: "a2-4-1",
-    upcoming: [
-      "Descrever uma viagem",
-      "Contar uma experiência",
-      "Fazer perguntas no passado",
-      "Organizar uma história",
-    ],
-  },
-  {
-    title: "Ideias e opiniões",
-    level: "B1" as Level,
-    lessonId: "b1-5-1",
-    upcoming: [
-      "Concordar e discordar",
-      "Justificar uma escolha",
-      "Fazer uma recomendação",
-      "Explicar seus objetivos",
-    ],
-  },
-  {
-    title: "Conversa em contexto",
-    level: "B1" as Level,
-    lessonId: "b1-6-1",
-    upcoming: [
-      "Reformular uma ideia",
-      "Resolver um problema",
-      "Conversar no trabalho",
-      "Manter a conversa",
-    ],
-  },
-];
+const drafts = [...a1Modules, ...a2Modules, ...b1Modules];
+export const modules = drafts.map((module, index) => {
+  const items = module.lessons.map((draft, position) =>
+    buildLesson(draft, module, position),
+  );
+  const introductory = introductoryLessons.find(
+    (item) => item.id === module.legacyId,
+  );
+  if (introductory) {
+    // Keep existing progress IDs; the past-tense introduction follows the foundations.
+    items.splice(module.id === "a2-passado" ? 3 : 0, 0, {
+      ...introductory,
+      moduleId: module.id,
+      sourceIds: sourceIdsForLevel(module.level),
+    });
+  }
+  return {
+    id: module.id,
+    title: module.title,
+    level: module.level,
+    description: module.description,
+    order: index + 1,
+    prerequisiteId: index > 0 ? drafts[index - 1].id : null,
+    lessons: items,
+  };
+});
+export type CourseModule = (typeof modules)[number];
+export const lessons: Lesson[] = modules.flatMap((module) => module.lessons);
+
+export function searchModules(level: Level | "all", query: string) {
+  const normalize = (text: string) =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  const needle = normalize(query.trim());
+  return modules
+    .filter((module) => level === "all" || module.level === level)
+    .map((module) => ({
+      ...module,
+      lessons: module.lessons.filter((lesson) =>
+        normalize(
+          [
+            module.title,
+            module.description,
+            lesson.title,
+            lesson.englishTitle,
+            ...lesson.steps.map((step) =>
+              [step.body, step.english ?? ""].join(" "),
+            ),
+          ].join(" "),
+        ).includes(needle),
+      ),
+    }))
+    .filter((module) => module.lessons.length > 0);
+}
 
 export function correctAnswer(step: Step, answer: string) {
   return answer === step.answer;

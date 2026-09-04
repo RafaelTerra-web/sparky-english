@@ -16,17 +16,30 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. Convites de uso único, persistência em banco e Supabase Auth ainda não estão conectados. As tabelas e os clientes Supabase anteriores foram preservados para essa etapa; a sessão Google atual não deve ser usada como credencial de acesso direto ao Supabase.
 
-Há 6 lições completas, uma por módulo, com conteúdos próprios nos níveis A1–B1. As outras 24 são identificadas como “Em preparação” e não abrem uma lição repetida. XP, conclusão e revisão refletem o estudo desta sessão. O progresso fica em sessionStorage por usuário e é apagado ao sair ou fechar a aba; não há sincronização entre dispositivos ainda. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação.
+Há 114 lições completas (108 novas e as 6 originais), em 18 módulos: 38 lições por nível A1, A2 e B1. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada nova lição inclui explicação em PT-BR, exemplo traduzido, vocabulário, cuidado de uso, leitura contextualizada, três exercícios objetivos com feedback, produção escrita opcional e resumo. São 342 exercícios objetivos no total. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md).
+
+XP, conclusão e revisão refletem o estudo desta sessão. O progresso fica em sessionStorage por usuário e é apagado ao sair ou fechar a aba; não há sincronização entre dispositivos ainda. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação. Lições privadas e progresso offline sincronizável ainda não estão disponíveis.
+
+## Voz opcional
+
+Nos exemplos, o aluno pode ouvir a frase em inglês, reduzir a velocidade e praticar com o microfone mediante consentimento explícito. `NEXT_PUBLIC_VOICE_ENABLED=false` desativa a interface na próxima build. A implementação usa Web Speech API do navegador, sem chave de serviço pago. O suporte varia conforme navegador, sistema e vozes instaladas.
+
+Sparky e Pinky têm perfis de altura e velocidade diferentes, com preferência por vozes-base masculinas e femininas quando identificáveis. São aproximações leves de vozes jovens, não vozes infantis neurais exclusivas. O seletor permite escolher outra voz inglesa. Reconhecimento compara palavras transcritas; não mede fonemas, sotaque ou proficiência. Áudio, rascunhos e transcrições não são salvos pelo app. O serviço do navegador pode processar voz remotamente e ter sua própria retenção; a política de privacidade e o consentimento informam essa limitação.
+
+`src/lib/speech.ts` contém o adaptador ao vivo e seu contrato independente de fornecedor. O contrato futuro baseado em arquivos continua em `src/lib/sparky-types.ts`. Para conectar vozes customizadas será necessário escolher e validar um serviço, configurar credenciais no servidor e revisar custos, consentimento e retenção.
+
+O sistema de moedas e roupas está **planejado, não implementado**, em [docs/mascots-and-rewards-plan.md](docs/mascots-and-rewards-plan.md). A arte final da Pinky também está pendente.
 
 ## Validation
 
 ```bash
 npm run lint
 npm run build
-node --test tests/auth-session.test.mjs
+npm test
+npm run audit:curriculum
 node scripts/smoke-auth.mjs https://sparky-english-iota.vercel.app
 ```
 
 Após uma build local, `node scripts/preview-fixture.mjs` abre uma conta fictícia em `http://localhost:3201` exclusivamente para inspeção visual local. Esse processo não altera contas Google e não faz parte das rotas publicadas.
 
-O contrato de banco está em `supabase/migrations/20260903000100_sparky_english.sql`. A voz permanece desativada; `src/lib/sparky-types.ts` define a interface para conexão futura.
+O contrato de banco está em `supabase/migrations/20260903000100_sparky_english.sql`. Sua existência não significa que a persistência esteja conectada ao app publicado.

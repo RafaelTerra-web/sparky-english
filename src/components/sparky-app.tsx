@@ -22,12 +22,15 @@ import type { SparkyUser } from "@/lib/auth-session";
 import {
   correctAnswer,
   lessons,
-  modules,
   type Lesson,
   type Level,
   type Step,
 } from "@/lib/curriculum";
 import { GoogleLogin } from "./google-login";
+import { CourseCatalog } from "./course-catalog";
+import { SpeechPractice } from "./speech-practice";
+
+const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
 type View = "today" | "course" | "review" | "profile";
 type Progress = {
@@ -186,7 +189,9 @@ export default function SparkyApp() {
               .filter((key) => key.startsWith("sparky-"))
               .map((key) => caches.delete(key)),
           );
-      } catch { /* Cache availability must not prevent logout. */ }
+      } catch {
+        /* Cache availability must not prevent logout. */
+      }
       window.google?.accounts?.id?.disableAutoSelect();
       setUser(null);
       setProgress(emptyProgress);
@@ -436,13 +441,20 @@ export default function SparkyApp() {
             </div>
             <div className="lesson-cards">
               {lessons
-                .filter((lesson) => lesson.id !== next.id)
+                .filter(
+                  (lesson) =>
+                    lesson.id !== next.id &&
+                    lesson.level === progress.level &&
+                    !progress.completed[lesson.id],
+                )
                 .slice(0, 3)
                 .map((lesson) => (
                   <LessonCard
                     key={lesson.id}
                     lesson={lesson}
-                    number={lessons.findIndex((item) => item.id === lesson.id) + 1}
+                    number={
+                      lessons.findIndex((item) => item.id === lesson.id) + 1
+                    }
                     done={Boolean(progress.completed[lesson.id])}
                     onOpen={() => open(lesson)}
                   />
@@ -451,55 +463,11 @@ export default function SparkyApp() {
           </>
         )}
         {view === "course" && (
-          <>
-            <div className="page-heading">
-              <div>
-                <p className="eyebrow">Do básico ao intermediário</p>
-                <h1>Seu curso</h1>
-              </div>
-              <span className="language-chip">
-                {lessons.length} lições disponíveis
-              </span>
-            </div>
-            <p className="page-description">
-              Escolha um assunto para estudar. Novas lições aparecem aqui quando
-              estiverem prontas.
-            </p>
-            <div className="module-list">
-              {modules.map((module, index) => {
-                const lesson = lessons.find(
-                  (item) => item.id === module.lessonId,
-                )!;
-                return (
-                  <section className="course-module" key={module.lessonId}>
-                    <header>
-                      <span className="module-number">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <div>
-                        <p className="eyebrow">
-                          {module.level} · Módulo {index + 1}
-                        </p>
-                        <h2>{module.title}</h2>
-                      </div>
-                    </header>
-                    <LessonCard
-                      lesson={lesson}
-                      number={1}
-                      done={Boolean(progress.completed[lesson.id])}
-                      onOpen={() => open(lesson)}
-                    />
-                    {module.upcoming.map((title) => (
-                      <div className="upcoming-lesson" key={title}>
-                        <span>{title}</span>
-                        <span>Em preparação</span>
-                      </div>
-                    ))}
-                  </section>
-                );
-              })}
-            </div>
-          </>
+          <CourseCatalog
+            level={progress.level}
+            completed={progress.completed}
+            onOpen={open}
+          />
         )}
         {view === "review" && (
           <>
@@ -613,7 +581,11 @@ export default function SparkyApp() {
                   sessão. Sair da conta ou fechar a aba apaga esses dados. A
                   sincronização entre dispositivos ainda não está disponível.
                 </p>
-                <p>O microfone permanece desligado. Nenhum áudio é coletado.</p>
+                <p>
+                  {voiceEnabled
+                    ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."
+                    : "Os recursos de voz estão desativados nesta versão."}
+                </p>
                 <a href="/privacidade">
                   Como seus dados são usados <ArrowRight size={14} />
                 </a>
@@ -802,6 +774,7 @@ function LessonPlayer({
   const [tokens, setTokens] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
   const [translation, setTranslation] = useState(false);
+  const [draft, setDraft] = useState("");
   const steps = review
     ? lesson.steps.filter((step) => isExercise(step) || step.kind === "summary")
     : lesson.steps;
@@ -837,6 +810,7 @@ function LessonPlayer({
     setTokens([]);
     setChecked(false);
     setTranslation(false);
+    setDraft("");
   }
   return (
     <dialog
@@ -866,7 +840,7 @@ function LessonPlayer({
         </span>
       </header>
       <div className="lesson-body">
-        {["teach", "summary"].includes(step.kind) && (
+        {(index === 0 || step.kind === "summary") && (
           <Image
             src="/visuals/sparky-panda.png"
             alt=""
@@ -880,14 +854,61 @@ function LessonPlayer({
             ? "Entenda primeiro"
             : step.kind === "summary"
               ? "Resumo da lição"
-              : isExercise(step)
-                ? "Sua vez"
-                : "Observe o exemplo"}
+              : step.kind === "production"
+                ? "Escrita e auto-revisão"
+                : step.kind === "vocabulary"
+                  ? "Palavras em contexto"
+                  : isExercise(step)
+                    ? "Sua vez"
+                    : "Observe o exemplo"}
         </p>
         <h2 id="lesson-title" ref={heading} tabIndex={-1}>
           {step.title}
         </h2>
         <p className="step-explanation">{step.body}</p>
+        {step.kind === "production" && (
+          <div className="production-workspace">
+            <label htmlFor="lesson-draft">Seu rascunho (opcional)</label>
+            <textarea
+              id="lesson-draft"
+              lang="en"
+              rows={7}
+              maxLength={4000}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              placeholder="Escreva sua resposta em inglês…"
+            />
+            <p>
+              Não há correção automática ou nota. O rascunho fica apenas nesta
+              etapa e é apagado ao avançar ou fechar a lição.
+            </p>
+            <strong>Antes de continuar, confira:</strong>
+            <ul>
+              <li>Respondi a todas as partes da proposta?</li>
+              <li>Usei a estrutura e o vocabulário estudados?</li>
+              <li>Sujeito, verbo e referência de tempo estão coerentes?</li>
+              <li>
+                Meu texto comunica a ideia sem depender de uma tradução palavra
+                por palavra?
+              </li>
+            </ul>
+          </div>
+        )}
+        {isExercise(step) && (
+          <details className="lesson-notes">
+            <summary>Consultar explicação e vocabulário</summary>
+            {lesson.steps
+              .filter(
+                (item) => item.kind === "teach" || item.kind === "vocabulary",
+              )
+              .map((item, noteIndex) => (
+                <section key={noteIndex}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </section>
+              ))}
+          </details>
+        )}
         {step.english && (
           <div
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
@@ -908,6 +929,9 @@ function LessonPlayer({
             </button>
             {translation && <p>{step.translation}</p>}
           </div>
+        )}
+        {voiceEnabled && step.english && step.kind === "example" && (
+          <SpeechPractice key={`${lesson.id}-${index}`} text={step.english} />
         )}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
