@@ -18,7 +18,7 @@ O convite nesta versão consiste na autorização do e-mail pelo administrador. 
 
 Há 114 lições completas (108 novas e as 6 originais), em 18 módulos: 38 lições por nível A1, A2 e B1. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada nova lição inclui explicação em PT-BR, exemplo traduzido, vocabulário, cuidado de uso, leitura contextualizada, três exercícios objetivos com feedback, produção escrita opcional e resumo. São 342 exercícios objetivos no total. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md).
 
-XP, conclusão e revisão refletem o estudo desta sessão. O progresso fica em sessionStorage por usuário e é apagado ao sair ou fechar a aba; não há sincronização entre dispositivos ainda. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação. Lições privadas e progresso offline sincronizável ainda não estão disponíveis.
+XP, conclusão, revisão, moedas e roupas são ligados ao usuário Google e persistidos em um cookie HttpOnly criptografado por até um ano no navegador atual. Esse armazenamento compacto impede adulteração pelo JavaScript, mas não sincroniza entre aparelhos e pode ser apagado com os cookies do site. Compras simultâneas em abas diferentes não são recomendadas. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação ou recompensas. Lições privadas e progresso offline sincronizável ainda não estão disponíveis.
 
 ## Voz opcional
 
@@ -28,7 +28,11 @@ Sparky e Pinky têm perfis de altura e velocidade diferentes, com preferência p
 
 `src/lib/speech.ts` contém o adaptador ao vivo e seu contrato independente de fornecedor. O contrato futuro baseado em arquivos continua em `src/lib/sparky-types.ts`. Para conectar vozes customizadas será necessário escolher e validar um serviço, configurar credenciais no servidor e revisar custos, consentimento e retenção.
 
-O sistema de moedas e roupas está **planejado, não implementado**, em [docs/mascots-and-rewards-plan.md](docs/mascots-and-rewards-plan.md). A arte final da Pinky também está pendente.
+## Moedas e mascotes
+
+A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até dez vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
+
+Sparky e Pinky são gratuitos. A Pinky usa uma arte original criada para o projeto com o GPT Image, sem antenas e com fundo transparente. A implementação e as limitações da primeira versão estão registradas em [docs/mascots-and-rewards-plan.md](docs/mascots-and-rewards-plan.md).
 
 ## Validation
 

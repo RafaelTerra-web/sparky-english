@@ -8,6 +8,7 @@ import {
   Check,
   ChevronRight,
   Clock3,
+  Coins,
   Globe2,
   GraduationCap,
   Home,
@@ -29,6 +30,12 @@ import {
 import { GoogleLogin } from "./google-login";
 import { CourseCatalog } from "./course-catalog";
 import { SpeechPractice } from "./speech-practice";
+import {
+  MascotFigure,
+  MascotStudio,
+  type RewardAction,
+} from "./mascot-studio";
+import type { PublicRewardState } from "@/lib/rewards-shared";
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
@@ -39,6 +46,14 @@ type Progress = {
   level: Level;
 };
 const emptyProgress: Progress = { completed: {}, reviews: {}, level: "A1" };
+const emptyRewards: PublicRewardState = {
+  coins: 0,
+  completed: {},
+  reviews: {},
+  owned: [],
+  mascot: "sparky",
+  equipped: { sparky: {}, pinky: {} },
+};
 const navigation = [
   { id: "today" as View, label: "Hoje", icon: Home },
   { id: "course" as View, label: "Curso", icon: BookOpen },
@@ -90,6 +105,9 @@ export default function SparkyApp() {
   } | null>(null);
   const [notice, setNotice] = useState("");
   const [signingOut, setSigningOut] = useState(false);
+  const [reward, setReward] = useState<PublicRewardState>(emptyRewards);
+  const [rewardBusy, setRewardBusy] = useState(false);
+  const [rewardAvailable, setRewardAvailable] = useState(true);
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -99,10 +117,24 @@ export default function SparkyApp() {
         if (!response.ok) throw new Error("session");
         return response.json();
       })
-      .then((session) => {
+      .then(async (session) => {
         if (session.authenticated && session.user) {
           setUser(session.user);
-          setProgress(readProgress(session.user.id));
+          const local = readProgress(session.user.id);
+          try {
+            const response = await fetch("/api/rewards", { cache: "no-store" });
+            if (!response.ok) throw new Error("rewards");
+            const rewards = (await response.json()) as PublicRewardState;
+            setReward(rewards);
+            setProgress({
+              level: local.level,
+              completed: rewards.completed,
+              reviews: rewards.reviews,
+            });
+          } catch {
+            setRewardAvailable(false);
+            setProgress(local);
+          }
         } else {
           try {
             clearPrivateStorage();
@@ -195,6 +227,7 @@ export default function SparkyApp() {
       window.google?.accounts?.id?.disableAutoSelect();
       setUser(null);
       setProgress(emptyProgress);
+      setReward(emptyRewards);
       setActive(null);
       setView("today");
     } catch {
@@ -206,30 +239,75 @@ export default function SparkyApp() {
     }
   }
 
-  function finish() {
-    if (!active) return;
+  async function rewardRequest(action: RewardAction | { action: "complete"; lessonId: string; review: boolean }) {
+    if (rewardBusy) return null;
+    setRewardBusy(true);
+    try {
+      const response = await fetch("/api/rewards", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(action),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        if (data.error === "insufficient-coins")
+          setNotice("Você ainda não tem moedas suficientes para esse item.");
+        else setNotice("Não foi possível atualizar o guarda-roupa agora.");
+        return null;
+      }
+      setReward(data);
+      setProgress((current) => ({
+        level: current.level,
+        completed: data.completed,
+        reviews: data.reviews,
+      }));
+      setRewardAvailable(true);
+      return data as PublicRewardState & { earned?: number; spent?: number; reason?: string };
+    } catch {
+      setNotice("Não foi possível salvar essa mudança. Verifique a conexão.");
+      return null;
+    } finally {
+      setRewardBusy(false);
+    }
+  }
+
+  async function handleWardrobe(action: RewardAction) {
+    const result = await rewardRequest(action);
+    if (!result) return false;
+    setNotice(
+      action.action === "buy"
+        ? result.spent
+          ? `Item adquirido por ${result.spent} moedas.`
+          : "Esse item já estava no seu inventário."
+        : action.action === "equip"
+          ? "Visual atualizado."
+          : `${action.mascot === "pinky" ? "Pinky" : "Sparky"} agora acompanha suas lições.`,
+    );
+    return true;
+  }
+
+  async function finish() {
+    if (!active || rewardBusy) return;
     const now = new Date();
     setToday(now);
-    const id = active.lesson.id;
-    save({
-      ...progress,
-      completed: {
-        ...progress.completed,
-        [id]: progress.completed[id] || now.toISOString(),
-      },
-      reviews: {
-        ...progress.reviews,
-        [id]: new Date(
-          now.getTime() + (active.review ? 3 : 1) * 86400000,
-        ).toISOString(),
-      },
+    const result = await rewardRequest({
+      action: "complete",
+      lessonId: active.lesson.id,
+      review: active.review,
     });
-    setNotice(
-      active.review
-        ? "Revisão concluída. Próxima revisão em 3 dias."
-        : "Lição concluída. Você pode revisá-la amanhã.",
-    );
-    setActive(null);
+    if (result) {
+      const earned = result.earned ?? 0;
+      setNotice(
+        active.review
+          ? earned
+            ? `Revisão concluída. +${earned} moedas; próxima revisão em 3 dias.`
+            : "Revisão concluída. Esta prática não gerou uma nova recompensa."
+          : earned
+            ? `Lição concluída. +${earned} moedas.`
+            : "Lição concluída novamente. A recompensa da primeira conclusão já foi recebida.",
+      );
+      setActive(null);
+    }
   }
 
   if (loading)
@@ -380,15 +458,14 @@ export default function SparkyApp() {
                     <ArrowRight size={17} />
                   </button>
                 </div>
-                <Image
-                  className="hero-panda"
-                  src="/visuals/sparky-panda.png"
-                  alt="Sparky com seu caderno"
-                  width={320}
-                  height={320}
-                  priority
+                <MascotFigure
+                  mascot={reward.mascot}
+                  equipped={reward.equipped}
+                  size="hero"
                 />
-                <div className="hero-caption">SPARKY / SEU GUIA DE ESTUDO</div>
+                <div className="hero-caption">
+                  {reward.mascot === "pinky" ? "PINKY" : "SPARKY"} / SEU GUIA DE ESTUDO
+                </div>
               </section>
               <aside className="study-summary">
                 <p className="eyebrow">Nesta sessão</p>
@@ -409,6 +486,10 @@ export default function SparkyApp() {
                 <div className="stat-row">
                   <span>Revisões para hoje</span>
                   <strong>{due}</strong>
+                </div>
+                <div className="stat-row coin-stat">
+                  <span>Moedas</span>
+                  <strong><Coins size={16} /> {reward.coins}</strong>
                 </div>
                 <button
                   className="text-button"
@@ -577,9 +658,10 @@ export default function SparkyApp() {
                 <Globe2 size={24} />
                 <h2>Sobre seu progresso</h2>
                 <p>
-                  Por enquanto, o progresso fica salvo nesta aba durante a
-                  sessão. Sair da conta ou fechar a aba apaga esses dados. A
-                  sincronização entre dispositivos ainda não está disponível.
+                  Conclusões, revisões, moedas e roupas ficam em um cookie
+                  criptografado ligado à sua conta neste navegador. Fechar a
+                  aba ou sair não apaga esses dados. A sincronização entre
+                  dispositivos ainda não está disponível.
                 </p>
                 <p>
                   {voiceEnabled
@@ -591,6 +673,19 @@ export default function SparkyApp() {
                 </a>
               </aside>
             </div>
+            {rewardAvailable ? (
+              <MascotStudio
+                reward={reward}
+                busy={rewardBusy}
+                onAction={handleWardrobe}
+              />
+            ) : (
+              <section className="profile-note reward-offline">
+                <Coins size={24} />
+                <h2>Moedas indisponíveis</h2>
+                <p>Conecte-se novamente para carregar seu saldo e guarda-roupa.</p>
+              </section>
+            )}
           </>
         )}
       </main>
@@ -612,6 +707,9 @@ export default function SparkyApp() {
           key={`${active.lesson.id}-${active.review}`}
           lesson={active.lesson}
           review={active.review}
+          mascot={reward.mascot}
+          equipped={reward.equipped}
+          saving={rewardBusy}
           onClose={() => setActive(null)}
           onFinish={finish}
         />
@@ -759,11 +857,17 @@ function isExercise(step: Step) {
 function LessonPlayer({
   lesson,
   review,
+  mascot,
+  equipped,
+  saving,
   onClose,
   onFinish,
 }: {
   lesson: Lesson;
   review: boolean;
+  mascot: PublicRewardState["mascot"];
+  equipped: PublicRewardState["equipped"];
+  saving: boolean;
   onClose: () => void;
   onFinish: () => void;
 }) {
@@ -841,13 +945,7 @@ function LessonPlayer({
       </header>
       <div className="lesson-body">
         {(index === 0 || step.kind === "summary") && (
-          <Image
-            src="/visuals/sparky-panda.png"
-            alt=""
-            width={92}
-            height={92}
-            className="lesson-mascot"
-          />
+          <MascotFigure mascot={mascot} equipped={equipped} size="small" decorative />
         )}
         <p className="eyebrow">
           {step.kind === "teach"
@@ -1012,10 +1110,12 @@ function LessonPlayer({
         </span>
         <button
           className="primary-button"
-          disabled={isExercise(step) && !selected}
+          disabled={saving || (isExercise(step) && !selected)}
           onClick={next}
         >
-          {isExercise(step) && !checked
+          {saving
+            ? "Salvando…"
+            : isExercise(step) && !checked
             ? "Verificar"
             : checked && !correct
               ? "Tentar novamente"

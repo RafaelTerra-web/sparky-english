@@ -23,12 +23,29 @@ export default function PrivacyPage() {
         no navegador.
       </p>
       <p>
-        Nesta versão, o progresso das lições fica armazenado nesta aba durante a
-        sessão. Fechar a aba ou sair da conta apaga o progresso local. A
-        sincronização entre dispositivos ainda não está disponível. Respostas de
-        autenticação e dados da conta não são armazenados no cache offline.
-        Rascunhos de escrita são temporários e apagados ao avançar de etapa ou
-        fechar a lição.
+        Conclusões, datas de revisão, moedas, inventário, roupas equipadas e o
+        mascote escolhido são compactados em um segundo cookie criptografado,
+        inacessível ao JavaScript e ligado ao identificador da sua Conta Google.
+        Ele pode permanecer neste navegador por até um ano mesmo depois do
+        logout, para que o progresso reapareça no próximo acesso da mesma conta.
+        Contas diferentes usam estados separados.
+      </p>
+      <p>
+        Essa persistência ainda não é um banco de dados e não sincroniza entre
+        navegadores ou dispositivos. Limpar os cookies do site remove o
+        progresso, saldo e inventário daquele navegador. Alterações simultâneas
+        em abas diferentes podem sobrescrever a mudança mais recente; faça
+        compras em uma aba por vez. Respostas de autenticação e dados da conta
+        não são armazenados no cache offline. Rascunhos de escrita continuam
+        temporários e são apagados ao avançar ou fechar a lição.
+      </p>
+      <h2>Moedas e roupas</h2>
+      <p>
+        As moedas são virtuais, não têm valor monetário e não podem ser compradas,
+        transferidas ou trocadas por dinheiro. O servidor calcula recompensas a
+        partir da primeira conclusão de cada lição, da conclusão de módulos e de
+        revisões vencidas. O app não usa voz, respostas erradas ou dados pessoais
+        para reduzir recompensas.
       </p>
       <h2>Ouvir a pronúncia</h2>
       <p>

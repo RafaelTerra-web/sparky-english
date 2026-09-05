@@ -10,6 +10,11 @@ assert.equal(oldInvite.status, 410);
 assert.equal(oldInvite.headers.get('set-cookie'), null);
 const config = await fetch(new URL('/api/auth/google', base));
 assert.ok([200, 503].includes(config.status));
+const rewards = await fetch(new URL('/api/rewards', base));
+assert.equal(rewards.status, 401);
+assert.match(rewards.headers.get('cache-control') || '', /no-store/);
+const foreignRewards = await fetch(new URL('/api/rewards', base), { method: 'POST', headers: { origin: 'https://attacker.example', 'content-type': 'application/json' }, body: JSON.stringify({ action: 'buy', itemId: 'campus-cap' }) });
+assert.equal(foreignRewards.status, 403);
 if (config.status === 200) {
   const { nonce, clientId } = await config.json();
   assert.match(clientId, /\.apps\.googleusercontent\.com$/);
@@ -21,4 +26,4 @@ if (config.status === 200) {
 } else {
   console.log('PENDING: Google client configuration; live ID-token route test not run.');
 }
-console.log('PASS: legacy-cookie bypass blocked, CSRF rejected, shared-code login removed.');
+console.log('PASS: legacy-cookie bypass blocked, rewards protected, CSRF rejected, shared-code login removed.');

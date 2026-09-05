@@ -1,6 +1,6 @@
 # Sparky, Pinky e guarda-roupa
 
-Plano para implementação posterior — 4 de setembro de 2026. Moedas, compras, inventário e troca visual de mascote ainda não estão disponíveis no app.
+Implementação inicial — atualizada em 5 de setembro de 2026. Moedas, compras, inventário, roupas e troca visual de mascote estão disponíveis. A persistência desta fase usa estado compacto autenticado em cookie, conforme as limitações registradas abaixo; banco e sincronização continuam como evolução necessária.
 
 ## Experiência
 
@@ -38,13 +38,13 @@ Sparky mantém o panda minimalista já utilizado: formas limpas, poucos detalhes
 
 Brief da Pinky: corpo inteiro de frente, pose neutra adequada a roupas, orelhas grandes arredondadas, barriga rosa clara, focinho compacto e poucos detalhes. **Sem antenas, fios, prolongamentos na cabeça ou tentáculos.** Fundo transparente. Não copiar logotipo, nome ou acessórios da personagem da referência. Testar legibilidade a 48, 96 e 256 px. Paleta curta, contorno consistente com Sparky, sem texturas ou excesso de brilho.
 
-A tentativa de gerar a arte a partir da imagem fornecida foi bloqueada pela ferramenta de imagem. Nenhuma imagem da Pinky foi gerada ou incorporada. A etapa permanece pendente; uma futura direção original deverá ser aprovada antes de produzir o conjunto final. O perfil de voz “Pinky” já pode ser usado independentemente da arte.
+A primeira tentativa de transformar diretamente a referência foi bloqueada. Em 5 de setembro foi criada, sem usar a referência como entrada, uma direção inteiramente original pelo GPT Image: corpo rosa compacto, barriga clara, nariz ameixa, duas orelhas grandes, sem antenas e em fundo transparente. O arquivo mestre publicado é `public/visuals/pinky-mascot.png`. O perfil de voz “Pinky” funciona independentemente da imagem.
 
 Preparar poses controladas: neutra, explicação, dúvida, incentivo, comemoração e revisão. Primeiro aprovar a neutra e suas proporções; só depois produzir variantes. Cada mascote precisa de pontos de ancoragem normalizados para cabeça, tronco e mãos, camadas de frente/fundo e máscara para respeitar as orelhas. Definir isso antes de desenhar chapéus e roupas.
 
 ## Pré-requisito: persistência confiável
 
-Hoje o progresso está em `sessionStorage`. Esse estado pode ser apagado e alterado no cliente; portanto não serve como fonte de saldo. Implementar primeiro persistência autenticada de conclusões no servidor e sincronização entre dispositivos. Não lançar moedas apenas em armazenamento local.
+Nesta primeira versão, o estado é calculado por uma rota autenticada e selado com criptografia autenticada em um cookie HttpOnly diferente por identificador Google. Isso impede que o JavaScript altere moedas ou gabaritos e sobrevive a logout e fechamento da aba no mesmo navegador. Não é sincronização entre dispositivos nem substitui um banco transacional: limpar cookies remove os dados e alterações simultâneas em abas distintas podem sobrescrever estado. A interface e a política avisam essa limitação.
 
 O login atual usa sessão Google validada no servidor, não Supabase Auth. Mapear o `sub` Google a um usuário interno estável. Toda rota consulta a sessão e a lista de acesso; o cliente nunca escolhe arbitrariamente `user_id`. A credencial administrativa de banco permanece exclusivamente no servidor. Para acesso direto pelo cliente, seria necessária integração explícita de identidade e políticas RLS compatíveis; a sessão atual sozinha não concede isso.
 
