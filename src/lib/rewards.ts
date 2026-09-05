@@ -1,3 +1,4 @@
+import { lessonLedger, moduleLedger } from "./content/ledger.ts";
 import { lessons, modules } from "./curriculum.ts";
 import {
   cosmeticCatalog,
@@ -13,6 +14,7 @@ export type RewardState = {
   completedBits: string;
   moduleBits: string;
   dueDays: number[];
+  reviewStages: number[];
   reviewDay: number;
   reviewBits: string;
   reviewCount: number;
@@ -22,8 +24,8 @@ export type RewardState = {
 };
 
 
-const lessonBytes = Math.ceil(lessons.length / 8);
-const moduleBytes = Math.ceil(modules.length / 8);
+const lessonBytes = Math.ceil(lessonLedger.length / 8);
+const moduleBytes = Math.ceil(moduleLedger.length / 8);
 const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 
 export function emptyRewardState(): RewardState {
@@ -32,7 +34,8 @@ export function emptyRewardState(): RewardState {
     coins: 0,
     completedBits: blankBits(lessonBytes),
     moduleBits: blankBits(moduleBytes),
-    dueDays: Array(lessons.length).fill(0),
+    dueDays: Array(lessonLedger.length).fill(0),
+    reviewStages: Array(lessonLedger.length).fill(0),
     reviewDay: 0,
     reviewBits: blankBits(lessonBytes),
     reviewCount: 0,
@@ -46,7 +49,10 @@ function decodeBits(value: unknown, bytes: number) {
   if (typeof value !== "string") return Buffer.alloc(bytes);
   try {
     const decoded = Buffer.from(value, "base64url");
-    return decoded.length === bytes ? Buffer.from(decoded) : Buffer.alloc(bytes);
+    if (decoded.length > bytes) return Buffer.alloc(bytes);
+    const expanded = Buffer.alloc(bytes);
+    decoded.copy(expanded);
+    return expanded;
   } catch {
     return Buffer.alloc(bytes);
   }
@@ -106,11 +112,15 @@ export function normalizeRewardState(input: unknown): RewardState {
         : 0,
     completedBits: decodeBits(raw.completedBits, lessonBytes).toString("base64url"),
     moduleBits: decodeBits(raw.moduleBits, moduleBytes).toString("base64url"),
-    dueDays: Array.from({ length: lessons.length }, (_, index) => {
+    dueDays: Array.from({ length: lessonLedger.length }, (_, index) => {
       const value = raw.dueDays?.[index];
       return typeof value === "number" && Number.isSafeInteger(value) && value >= 0
         ? value
         : 0;
+    }),
+    reviewStages: Array.from({ length: lessonLedger.length }, (_, index) => {
+      const stage = raw.reviewStages?.[index];
+      return typeof stage === "number" && Number.isInteger(stage) && stage >= 0 && stage <= 4 ? stage : 0;
     }),
     reviewDay:
       typeof raw.reviewDay === "number" && Number.isSafeInteger(raw.reviewDay)
@@ -134,7 +144,8 @@ export function publicRewardState(state: RewardState): PublicRewardState {
   const bits = decodeBits(state.completedBits, lessonBytes);
   const completed: Record<string, string> = {};
   const reviews: Record<string, string> = {};
-  lessons.forEach((lesson, index) => {
+  lessons.forEach((lesson) => {
+    const index = lessonLedger.indexOf(lesson.id as typeof lessonLedger[number]);
     if (hasBit(bits, index)) {
       completed[lesson.id] = "completed";
       if (state.dueDays[index]) reviews[lesson.id] = dayIso(state.dueDays[index]);
@@ -155,9 +166,10 @@ export function completeStudy(
   lessonId: string,
   review: boolean,
   now = new Date(),
+  independent = true,
 ) {
   const state = normalizeRewardState(current);
-  const index = lessons.findIndex((lesson) => lesson.id === lessonId);
+  const index = lessonLedger.indexOf(lessonId as typeof lessonLedger[number]);
   if (index < 0) throw new Error("lesson-not-found");
   const today = dayNumber(now);
   const completed = decodeBits(state.completedBits, lessonBytes);
@@ -176,15 +188,17 @@ export function completeStudy(
       hasBit(completed, index) &&
       due > 0 &&
       due <= today &&
-      !hasBit(reviewBits, index) &&
-      state.reviewCount < 10
+      !hasBit(reviewBits, index)
     ) {
       setBit(reviewBits, index);
       state.reviewBits = reviewBits.toString("base64url");
-      state.reviewCount++;
-      state.dueDays[index] = today + 3;
-      state.coins += 2;
-      earned = 2;
+      state.reviewStages[index] = independent ? Math.min(4, state.reviewStages[index] + 1) : 0;
+      state.dueDays[index] = today + [1, 3, 7, 14, 30][state.reviewStages[index]];
+      if (state.reviewCount < 10) {
+        state.reviewCount++;
+        state.coins += 2;
+        earned = 2;
+      }
       reason = "review";
     }
     return { state, earned, reason };
@@ -197,14 +211,14 @@ export function completeStudy(
     state.coins += 10;
     earned = 10;
     reason = "lesson";
-    const lesson = lessons[index];
-    const moduleIndex = modules.findIndex((module) => module.id === lesson.moduleId);
+    const lesson = lessons.find((item) => item.id === lessonId)!;
+    const moduleIndex = moduleLedger.indexOf(lesson.moduleId as typeof moduleLedger[number]);
     const moduleBits = decodeBits(state.moduleBits, moduleBytes);
     if (
       moduleIndex >= 0 &&
       !hasBit(moduleBits, moduleIndex) &&
-      modules[moduleIndex].lessons.every((item) => {
-        const lessonIndex = lessons.findIndex((candidate) => candidate.id === item.id);
+      modules.find((item) => item.id === lesson.moduleId)!.lessons.every((item) => {
+        const lessonIndex = lessonLedger.indexOf(item.id as typeof lessonLedger[number]);
         return lessonIndex >= 0 && hasBit(completed, lessonIndex);
       })
     ) {

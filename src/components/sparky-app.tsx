@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -21,15 +21,16 @@ import {
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
 import {
-  correctAnswer,
   lessons,
   type Lesson,
   type Level,
-  type Step,
 } from "@/lib/curriculum";
 import { GoogleLogin } from "./google-login";
-import { CourseCatalog } from "./course-catalog";
-import { SpeechPractice } from "./speech-practice";
+import dynamic from "next/dynamic";
+import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
+const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">Abrindo a lição…</p> });
+const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog));
+const LearningNotebook = dynamic(() => import("./learning-notebook"));
 import {
   MascotFigure,
   MascotStudio,
@@ -39,7 +40,7 @@ import type { PublicRewardState } from "@/lib/rewards-shared";
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
-type View = "today" | "course" | "review" | "profile";
+type View = "today" | "course" | "review" | "profile" | "notebook";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -58,13 +59,14 @@ const navigation = [
   { id: "today" as View, label: "Hoje", icon: Home },
   { id: "course" as View, label: "Curso", icon: BookOpen },
   { id: "review" as View, label: "Revisão", icon: RotateCcw },
+  { id: "notebook" as View, label: "Caderno", icon: GraduationCap },
   { id: "profile" as View, label: "Perfil", icon: Settings2 },
 ];
 
 function readProgress(userId: string): Progress {
   try {
     const saved = JSON.parse(
-      sessionStorage.getItem(`sparky-progress:${userId}`) || "null",
+      localStorage.getItem(`sparky-progress:${userId}`) || sessionStorage.getItem(`sparky-progress:${userId}`) || "null",
     );
     if (!saved || !saved.completed || !saved.reviews) return emptyProgress;
     const clean = (record: Record<string, unknown>) =>
@@ -73,7 +75,7 @@ function readProgress(userId: string): Progress {
           ([id, date]) =>
             lessons.some((lesson) => lesson.id === id) &&
             typeof date === "string" &&
-            Number.isFinite(Date.parse(date)),
+            (date === "completed" || Number.isFinite(Date.parse(date))),
         ),
       );
     return {
@@ -89,7 +91,7 @@ function readProgress(userId: string): Progress {
 function clearPrivateStorage() {
   for (const storage of [sessionStorage, localStorage]) {
     for (const key of Object.keys(storage))
-      if (key.startsWith("sparky-")) storage.removeItem(key);
+      if (key.startsWith("sparky-") && !key.startsWith("sparky-learning:") && !key.startsWith("sparky-progress:")) storage.removeItem(key);
   }
 }
 
@@ -108,6 +110,13 @@ export default function SparkyApp() {
   const [reward, setReward] = useState<PublicRewardState>(emptyRewards);
   const [rewardBusy, setRewardBusy] = useState(false);
   const [rewardAvailable, setRewardAvailable] = useState(true);
+  const [workspace, setWorkspace] = useState(blankWorkspace);
+  useEffect(() => {
+    if (!user) return;
+    const refresh = () => setWorkspace(readWorkspace(user.id));
+    refresh(); window.addEventListener("storage", refresh); window.addEventListener("sparky-workspace", refresh);
+    return () => { window.removeEventListener("storage", refresh); window.removeEventListener("sparky-workspace", refresh); };
+  }, [user]);
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -194,7 +203,7 @@ export default function SparkyApp() {
     setProgress(next);
     if (user)
       try {
-        sessionStorage.setItem(
+        localStorage.setItem(
           `sparky-progress:${user.id}`,
           JSON.stringify(next),
         );
@@ -239,32 +248,36 @@ export default function SparkyApp() {
     }
   }
 
-  async function rewardRequest(action: RewardAction | { action: "complete"; lessonId: string; review: boolean }) {
+  async function rewardRequest(action: RewardAction | { action: "complete"; lessonId: string; review: boolean; receipt: string }) {
     if (rewardBusy) return null;
     setRewardBusy(true);
     try {
-      const response = await fetch("/api/rewards", {
+      const send = () => fetch("/api/rewards", {
         method: "POST",
+        signal: AbortSignal.timeout(15000),
         headers: { "content-type": "application/json" },
         body: JSON.stringify(action),
       });
+      const response = navigator.locks ? await navigator.locks.request("sparky-account-update", send) : await send();
       const data = await response.json();
       if (!response.ok) {
+        if (action.action === "complete") throw new Error(data.error || "progress-unavailable");
         if (data.error === "insufficient-coins")
           setNotice("Você ainda não tem moedas suficientes para esse item.");
         else setNotice("Não foi possível atualizar o guarda-roupa agora.");
         return null;
       }
       setReward(data);
-      setProgress((current) => ({
-        level: current.level,
+      save({
+        level: progress.level,
         completed: data.completed,
         reviews: data.reviews,
-      }));
+      });
       setRewardAvailable(true);
       return data as PublicRewardState & { earned?: number; spent?: number; reason?: string };
-    } catch {
+    } catch (error) {
       setNotice("Não foi possível salvar essa mudança. Verifique a conexão.");
+      if (action.action === "complete") throw error;
       return null;
     } finally {
       setRewardBusy(false);
@@ -286,28 +299,31 @@ export default function SparkyApp() {
     return true;
   }
 
-  async function finish() {
-    if (!active || rewardBusy) return;
+  async function finish(receipt: string): Promise<boolean> {
+    if (!active || rewardBusy) return false;
     const now = new Date();
     setToday(now);
     const result = await rewardRequest({
       action: "complete",
       lessonId: active.lesson.id,
       review: active.review,
+      receipt,
     });
     if (result) {
       const earned = result.earned ?? 0;
       setNotice(
         active.review
           ? earned
-            ? `Revisão concluída. +${earned} moedas; próxima revisão em 3 dias.`
+            ? `Revisão concluída. +${earned} moedas; confira a próxima data na revisão.`
             : "Revisão concluída. Esta prática não gerou uma nova recompensa."
           : earned
             ? `Lição concluída. +${earned} moedas.`
             : "Lição concluída novamente. A recompensa da primeira conclusão já foi recebida.",
       );
       setActive(null);
+      return true;
     }
+    return false;
   }
 
   if (loading)
@@ -344,7 +360,10 @@ export default function SparkyApp() {
   const due = Object.entries(progress.reviews).filter(
     ([, date]) => Date.parse(date) <= today.getTime(),
   ).length;
-  const studied = lessons.filter((lesson) => progress.completed[lesson.id]);
+  const studied = lessons.filter((lesson) => progress.completed[lesson.id]).sort((a,b) => Date.parse(progress.reviews[a.id] || "9999-01-01") - Date.parse(progress.reviews[b.id] || "9999-01-01"));
+  const resume = Object.values(workspace.checkpoints).filter(p => lessons.some(l => l.id === p.lessonId)).sort((a,b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : studied.find(l => Date.parse(progress.reviews[l.id]) <= today.getTime()) || next;
+  const recommendedReview = resume ? resume.review : Boolean(progress.completed[recommended.id]);
   const open = (lesson: Lesson, review = false) => {
     setNotice("");
     setActive({ lesson, review });
@@ -442,19 +461,17 @@ export default function SparkyApp() {
               <section className="next-lesson">
                 <div className="lesson-copy">
                   <span className="lesson-label">
-                    PRÓXIMA LIÇÃO <span>{next.level}</span>
+                    {resume ? "RETOMAR PRÁTICA" : recommendedReview ? "REVISÃO PARA HOJE" : "PRÓXIMA LIÇÃO"} <span>{recommended.level}</span>
                   </span>
-                  <h2>{next.title}</h2>
-                  <p className="english-title" lang="en">
-                    {next.englishTitle}
-                  </p>
-                  <p className="lesson-description">{next.steps[0].body}</p>
+                  <h2>{recommended.title}</h2>
+                  {!recommendedReview && <p className="english-title" lang="en">{recommended.englishTitle}</p>}
+                  <p className="lesson-description">{recommendedReview ? "Recupere o que aprendeu antes de consultar os exemplos." : recommended.steps[0].body}</p>
                   <div className="lesson-meta">
                     <Clock3 size={15} />
-                    {next.minutes} min<span>•</span>Explicação + prática
+                    {recommended.minutes} min<span>•</span>Explicação + prática
                   </div>
-                  <button className="cream-button" onClick={() => open(next)}>
-                    {completed ? "Continuar o curso" : "Começar a lição"}
+                  <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
+                    {resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar a lição"}
                     <ArrowRight size={17} />
                   </button>
                 </div>
@@ -468,7 +485,7 @@ export default function SparkyApp() {
                 </div>
               </section>
               <aside className="study-summary">
-                <p className="eyebrow">Nesta sessão</p>
+                <p className="eyebrow">Seu percurso</p>
                 <div className="progress-number">
                   {completed}
                   <span>/{lessons.length}</span>
@@ -480,8 +497,8 @@ export default function SparkyApp() {
                   aria-label="Lições concluídas"
                 />
                 <div className="stat-row">
-                  <span>XP acumulado</span>
-                  <strong>{completed * 20}</strong>
+                  <span>Tentativas registradas</span>
+                  <strong>{workspace.attempts.length}</strong>
                 </div>
                 <div className="stat-row">
                   <span>Revisões para hoje</span>
@@ -579,13 +596,13 @@ export default function SparkyApp() {
                       <span className="eyebrow">
                         {lesson.level} · {lesson.title}
                       </span>
-                      <p lang="en">{lesson.steps[1].english}</p>
+                      <p>Pratique a recuperação antes de consultar o modelo.</p>
                       <span>
                         Revisão:{" "}
                         {new Intl.DateTimeFormat("pt-BR", {
                           day: "numeric",
                           month: "short",
-                        }).format(new Date(progress.reviews[lesson.id]))}
+                        }).format(new Date(progress.reviews[lesson.id] || today))}
                       </span>
                     </div>
                     <button
@@ -600,6 +617,7 @@ export default function SparkyApp() {
             )}
           </>
         )}
+        {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} />}
         {view === "profile" && (
           <>
             <div className="page-heading">
@@ -657,11 +675,11 @@ export default function SparkyApp() {
               <aside className="profile-note">
                 <Globe2 size={24} />
                 <h2>Sobre seu progresso</h2>
+                <p><strong>{reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador."}</strong></p>
                 <p>
                   Conclusões, revisões, moedas e roupas ficam em um cookie
                   criptografado ligado à sua conta neste navegador. Fechar a
-                  aba ou sair não apaga esses dados. A sincronização entre
-                  dispositivos ainda não está disponível.
+                  aba ou sair não apaga esses dados. Rascunhos, histórico e preferências ficam neste dispositivo, separados por conta, e podem ser exportados ou apagados no Caderno. A sincronização entre dispositivos depende da conexão do banco de dados.
                 </p>
                 <p>
                   {voiceEnabled
@@ -705,6 +723,7 @@ export default function SparkyApp() {
       {active && (
         <LessonPlayer
           key={`${active.lesson.id}-${active.review}`}
+          userId={user.id}
           lesson={active.lesson}
           review={active.review}
           mascot={reward.mascot}
@@ -847,284 +866,5 @@ function LessonCard({
       </span>
       <ChevronRight size={18} />
     </button>
-  );
-}
-
-function isExercise(step: Step) {
-  return ["choice", "complete_sentence", "order_words"].includes(step.kind);
-}
-
-function LessonPlayer({
-  lesson,
-  review,
-  mascot,
-  equipped,
-  saving,
-  onClose,
-  onFinish,
-}: {
-  lesson: Lesson;
-  review: boolean;
-  mascot: PublicRewardState["mascot"];
-  equipped: PublicRewardState["equipped"];
-  saving: boolean;
-  onClose: () => void;
-  onFinish: () => void;
-}) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
-  const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [tokens, setTokens] = useState<number[]>([]);
-  const [checked, setChecked] = useState(false);
-  const [translation, setTranslation] = useState(false);
-  const [draft, setDraft] = useState("");
-  const steps = review
-    ? lesson.steps.filter((step) => isExercise(step) || step.kind === "summary")
-    : lesson.steps;
-  const step = steps[index];
-  const selected =
-    step.kind === "order_words"
-      ? tokens.map((token) => step.options![token]).join(" ")
-      : answer;
-  const correct = correctAnswer(step, selected);
-  useEffect(() => {
-    dialog.current?.showModal();
-  }, []);
-  useEffect(() => {
-    heading.current?.focus();
-  }, [index]);
-  function next() {
-    if (isExercise(step) && !checked) {
-      setChecked(true);
-      return;
-    }
-    if (isExercise(step) && !correct) {
-      setChecked(false);
-      setAnswer("");
-      setTokens([]);
-      return;
-    }
-    if (index === steps.length - 1) {
-      onFinish();
-      return;
-    }
-    setIndex((value) => value + 1);
-    setAnswer("");
-    setTokens([]);
-    setChecked(false);
-    setTranslation(false);
-    setDraft("");
-  }
-  return (
-    <dialog
-      ref={dialog}
-      className="lesson-dialog"
-      onCancel={onClose}
-      aria-labelledby="lesson-title"
-    >
-      <header>
-        <button
-          className="icon-button"
-          onClick={onClose}
-          aria-label="Fechar lição"
-        >
-          <X size={20} />
-        </button>
-        <div>
-          <p>{review ? "Revisão" : lesson.title}</p>
-          <progress
-            value={index + 1}
-            max={steps.length}
-            aria-label="Etapas da lição"
-          />
-        </div>
-        <span>
-          {index + 1}/{steps.length}
-        </span>
-      </header>
-      <div className="lesson-body">
-        {(index === 0 || step.kind === "summary") && (
-          <MascotFigure mascot={mascot} equipped={equipped} size="small" decorative />
-        )}
-        <p className="eyebrow">
-          {step.kind === "teach"
-            ? "Entenda primeiro"
-            : step.kind === "summary"
-              ? "Resumo da lição"
-              : step.kind === "production"
-                ? "Escrita e auto-revisão"
-                : step.kind === "vocabulary"
-                  ? "Palavras em contexto"
-                  : isExercise(step)
-                    ? "Sua vez"
-                    : "Observe o exemplo"}
-        </p>
-        <h2 id="lesson-title" ref={heading} tabIndex={-1}>
-          {step.title}
-        </h2>
-        <p className="step-explanation">{step.body}</p>
-        {step.kind === "production" && (
-          <div className="production-workspace">
-            <label htmlFor="lesson-draft">Seu rascunho (opcional)</label>
-            <textarea
-              id="lesson-draft"
-              lang="en"
-              rows={7}
-              maxLength={4000}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Escreva sua resposta em inglês…"
-            />
-            <p>
-              Não há correção automática ou nota. O rascunho fica apenas nesta
-              etapa e é apagado ao avançar ou fechar a lição.
-            </p>
-            <strong>Antes de continuar, confira:</strong>
-            <ul>
-              <li>Respondi a todas as partes da proposta?</li>
-              <li>Usei a estrutura e o vocabulário estudados?</li>
-              <li>Sujeito, verbo e referência de tempo estão coerentes?</li>
-              <li>
-                Meu texto comunica a ideia sem depender de uma tradução palavra
-                por palavra?
-              </li>
-            </ul>
-          </div>
-        )}
-        {isExercise(step) && (
-          <details className="lesson-notes">
-            <summary>Consultar explicação e vocabulário</summary>
-            {lesson.steps
-              .filter(
-                (item) => item.kind === "teach" || item.kind === "vocabulary",
-              )
-              .map((item, noteIndex) => (
-                <section key={noteIndex}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </section>
-              ))}
-          </details>
-        )}
-        {step.english && (
-          <div
-            className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
-            lang="en"
-          >
-            {step.english}
-          </div>
-        )}
-        {step.translation && (
-          <div className="translation-block">
-            <button
-              className="text-button"
-              onClick={() => setTranslation(!translation)}
-              aria-expanded={translation}
-            >
-              <Languages size={16} />
-              {translation ? "Ocultar tradução" : "Ver tradução"}
-            </button>
-            {translation && <p>{step.translation}</p>}
-          </div>
-        )}
-        {voiceEnabled && step.english && step.kind === "example" && (
-          <SpeechPractice key={`${lesson.id}-${index}`} text={step.english} />
-        )}
-        {step.kind === "order_words" ? (
-          <div className="word-exercise">
-            <div className="word-answer" aria-label="Frase montada">
-              {tokens.length ? (
-                tokens.map((token) => (
-                  <button
-                    key={token}
-                    disabled={checked}
-                    onClick={() =>
-                      setTokens(tokens.filter((value) => value !== token))
-                    }
-                    lang="en"
-                  >
-                    {step.options![token]} <X size={12} />
-                  </button>
-                ))
-              ) : (
-                <span>Toque nas palavras abaixo para montar a frase.</span>
-              )}
-            </div>
-            <div className="word-bank">
-              {step.options!.map((word, token) => (
-                <button
-                  key={token}
-                  disabled={tokens.includes(token) || checked}
-                  onClick={() => setTokens([...tokens, token])}
-                  lang="en"
-                >
-                  {word}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          isExercise(step) && (
-            <div
-              className="answer-options"
-              role="group"
-              aria-label="Opções de resposta"
-            >
-              {step.options!.map((option, optionIndex) => (
-                <button
-                  key={option}
-                  disabled={checked}
-                  aria-pressed={answer === option}
-                  className={answer === option ? "selected" : ""}
-                  onClick={() => setAnswer(option)}
-                >
-                  <span>{String.fromCharCode(65 + optionIndex)}</span>
-                  <span lang="en">{option}</span>
-                  {answer === option && <Check size={17} />}
-                </button>
-              ))}
-            </div>
-          )
-        )}
-        {checked && (
-          <div
-            className={`answer-feedback ${correct ? "correct" : "retry"}`}
-            role="status"
-          >
-            <strong>
-              {correct ? "Resposta correta." : "Vamos rever essa resposta."}
-            </strong>
-            <p>{step.explanation}</p>
-            {!correct && (
-              <p>
-                Resposta: <span lang="en">{step.answer}</span>
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-      <footer>
-        <span>
-          {review ? "Prática de revisão" : "Você pode consultar as explicações"}
-        </span>
-        <button
-          className="primary-button"
-          disabled={saving || (isExercise(step) && !selected)}
-          onClick={next}
-        >
-          {saving
-            ? "Salvando…"
-            : isExercise(step) && !checked
-            ? "Verificar"
-            : checked && !correct
-              ? "Tentar novamente"
-              : index === steps.length - 1
-                ? "Concluir"
-                : "Continuar"}
-          <ArrowRight size={16} />
-        </button>
-      </footer>
-    </dialog>
   );
 }

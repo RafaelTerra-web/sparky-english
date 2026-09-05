@@ -8,6 +8,7 @@ export const b1Modules: ModuleDraft[] = [
     description: "Hábitos antigos, anterioridade e relatos mais precisos.",
     lessons: [
       {
+        id: "b1-narrativas-01",
         title: "Hábitos antigos com used to",
         rule: "Used to + verbo descreve um hábito ou estado passado que não é mais verdadeiro, ou que se contrasta com o presente. I used to live there destaca essa mudança. Em perguntas e negativas com did, a forma escrita padrão é use to.",
         example: "I used to walk to school every day.",
@@ -36,6 +37,7 @@ export const b1Modules: ModuleDraft[] = [
           "Compare sua rotina atual com uma rotina passada, real ou fictícia, em quatro frases. Use used to duas vezes.",
       },
       {
+        id: "b1-narrativas-02",
         title: "Anterior a outro momento passado",
         rule: "Had + particípio forma o past perfect. Ele ajuda a mostrar que uma ação já tinha acontecido antes de outro momento passado: When I arrived, they had left. Não é necessário usá-lo em toda frase de uma história; use quando a anterioridade precisar ficar clara.",
         example: "The film had started before we arrived.",
@@ -63,6 +65,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma pequena história em que alguém chega tarde porque uma ação já tinha ocorrido. Use past perfect uma vez.",
       },
       {
+        id: "b1-narrativas-03",
         title: "Construir o cenário de uma história",
         rule: "O passado contínuo mostra ações em andamento; o simples conduz os acontecimentos principais. While frequentemente liga ações simultâneas. Escolha o foco: I was walking apresenta o cenário; I noticed a wallet apresenta o evento que muda a história.",
         example: "While I was walking home, I noticed a wallet.",
@@ -91,6 +94,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva cinco frases sobre um objeto perdido: cenário, imprevisto, duas ações e desfecho.",
       },
       {
+        id: "b1-narrativas-04",
         title: "Descrever uma atividade que continua",
         rule: "Have/has been + -ing pode destacar a duração de uma atividade iniciada antes e ainda em andamento, ou com sinais recentes. Compare I've read three pages, resultado, com I've been reading for an hour, duração. Verbos de estado como know geralmente ficam no perfect simples.",
         example: "I have been studying for two hours.",
@@ -119,6 +123,7 @@ export const b1Modules: ModuleDraft[] = [
           "Descreva uma atividade em andamento com duração e outra com um resultado quantificado. Compare as formas verbais.",
       },
       {
+        id: "b1-narrativas-05",
         title: "Relatar o que alguém disse",
         rule: "Em relatos, said introduz o que foi dito; told normalmente precisa de destinatário: told me. Ao relatar de um ponto passado, os tempos frequentemente recuam: 'I am tired' → She said she was tired. Esse recuo depende do contexto, especialmente se a informação continua válida.",
         example: "She said she was tired.",
@@ -143,6 +148,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva duas falas fictícias e depois relate cada uma com said ou told me. Ajuste os pronomes.",
       },
       {
+        id: "b1-narrativas-06",
         title: "Habilidade passada e sucesso específico",
         rule: "Could descreve habilidade geral no passado: I could swim at six. Was/were able to pode destacar o sucesso de uma ação específica. Managed to indica que houve dificuldade, mas a ação foi concluída. Couldn't pode negar tanto habilidade quanto sucesso em um caso.",
         example: "We managed to catch the last train.",
@@ -180,6 +186,7 @@ export const b1Modules: ModuleDraft[] = [
       "Justificar, contrastar, exemplificar e discordar com respeito.",
     lessons: [
       {
+        id: "b1-argumentos-01",
         title: "Concordar parcialmente",
         rule: "I agree aceita uma opinião; I see your point reconhece o argumento sem necessariamente aceitar tudo. Acrescente but para uma ressalva e uma razão concreta. Evite interpretar uma expressão cortês como concordância completa.",
         example: "I see your point, but the cost is high.",
@@ -207,6 +214,7 @@ export const b1Modules: ModuleDraft[] = [
           "Responda a uma proposta: reconheça um ponto positivo, faça uma ressalva e dê uma razão.",
       },
       {
+        id: "b1-argumentos-02",
         title: "Contraste com although",
         rule: "Although introduz uma oração de contraste: Although it was late, we stayed. But liga ideias contrastantes de outra forma. Em uma construção simples, não é necessário usar although e but juntos para marcar o mesmo contraste.",
         example: "Although it was expensive, we chose the train.",
@@ -234,6 +242,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva duas frases com although que combinem uma dificuldade e um resultado positivo.",
       },
       {
+        id: "b1-argumentos-03",
         title: "Dar exemplos que sustentam a ideia",
         rule: "For example introduz um exemplo; such as apresenta itens de uma categoria. Um exemplo ilustra uma afirmação, mas não prova sozinho uma generalização. Deixe clara a ligação entre a ideia e o caso apresentado.",
         example: "I enjoy outdoor activities such as hiking.",
@@ -261,6 +270,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma opinião sobre estudos e dois exemplos concretos que a sustentem, sem dizer que se aplicam a todas as pessoas.",
       },
       {
+        id: "b1-argumentos-04",
         title: "Ponderar vantagens e desvantagens",
         rule: "One advantage is… apresenta um benefício; one drawback is… aponta uma limitação. On the other hand sinaliza outra perspectiva. Uma conclusão útil relaciona os critérios à situação, em vez de afirmar que uma escolha é sempre superior.",
         example: "One advantage of cycling is the low cost.",
@@ -289,6 +299,7 @@ export const b1Modules: ModuleDraft[] = [
           "Compare estudar sozinho e em grupo em um parágrafo com uma vantagem, uma desvantagem e uma escolha contextualizada.",
       },
       {
+        id: "b1-argumentos-05",
         title: "Recomendar com um critério",
         rule: "Recommend pode ser seguido de -ing: I recommend booking early. Também pode introduzir uma oração: I recommend that you book early. Uma recomendação fica mais útil quando menciona objetivo, restrição e razão.",
         example: "I recommend booking your tickets early.",
@@ -317,6 +328,7 @@ export const b1Modules: ModuleDraft[] = [
           "Recomende uma atividade para alguém com pouco tempo disponível. Explique como sua indicação atende à restrição.",
       },
       {
+        id: "b1-argumentos-06",
         title: "Fato, opinião e grau de certeza",
         rule: "I think marca uma avaliação pessoal; according to identifica a fonte de uma informação. Might e probably indicam incerteza em graus diferentes, sem garantir o resultado. Separe o dado observado da interpretação que você faz dele.",
         example: "According to the timetable, the train leaves at nine.",
@@ -354,6 +366,7 @@ export const b1Modules: ModuleDraft[] = [
       "Possibilidades, situações imaginárias e condições explícitas.",
     lessons: [
       {
+        id: "b1-hipoteses-01",
         title: "Possibilidades com may e might",
         rule: "May e might + verbo indicam possibilidade, sem afirmar certeza. Might frequentemente soa mais cauteloso, mas a diferença não é uma porcentagem fixa. Para dizer talvez no início, use maybe; may be são duas palavras com funções diferentes.",
         example: "We might change the date of the meeting.",
@@ -382,6 +395,7 @@ export const b1Modules: ModuleDraft[] = [
           "Descreva dois planos ainda incertos usando may/might e uma frase com maybe.",
       },
       {
+        id: "b1-hipoteses-02",
         title: "Deduzir a partir de indícios",
         rule: "Must pode expressar uma dedução forte: She must be tired. Can't pode indicar que algo parece impossível diante dos indícios. Might expressa uma possibilidade mais fraca. Essas formas não transformam uma dedução em fato comprovado.",
         example: "He must be tired after that long journey.",
@@ -410,6 +424,7 @@ export const b1Modules: ModuleDraft[] = [
           "Crie uma cena com dois indícios e uma dedução usando must ou can't. Deixe claro o que é observação e o que é conclusão.",
       },
       {
+        id: "b1-hipoteses-03",
         title: "Situações imaginárias com would",
         rule: "O segundo condicional usa if + passado e would + verbo para situações imaginárias ou pouco prováveis no presente/futuro. O passado aqui marca distância da realidade, não necessariamente tempo passado. If I were you é uma expressão comum para conselho.",
         example: "If I had more time, I would learn Italian.",
@@ -438,6 +453,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva duas decisões imaginárias: uma se tivesse mais tempo e outra se morasse em outra cidade.",
       },
       {
+        id: "b1-hipoteses-04",
         title: "Possível ou imaginário?",
         rule: "O primeiro condicional apresenta uma possibilidade concreta: If I finish early, I'll call. O segundo apresenta uma situação mais distante ou imaginária: If I had a car, I'd drive. A escolha depende da perspectiva do falante, não apenas de palavras isoladas.",
         example: "If I finish early, I will call you.",
@@ -462,6 +478,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva duas condições sobre viagens: uma possibilidade para amanhã e uma situação imaginária. Explique em português a diferença.",
       },
       {
+        id: "b1-hipoteses-05",
         title: "Unless e condições negativas",
         rule: "Unless significa 'a menos que' e costuma equivaler a if…not. We'll miss it unless we leave now significa que sair agora é a condição para evitar perder. Evite acrescentar not automaticamente, pois isso pode inverter o sentido.",
         example: "We will miss the bus unless we leave now.",
@@ -490,6 +507,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma condição com unless e reescreva com if…not. Verifique se o sentido foi preservado.",
       },
       {
+        id: "b1-hipoteses-06",
         title: "Expressar preferência com would rather",
         rule: "Would rather + verbo base expressa preferência: I'd rather stay. Para comparar ações, use than: I'd rather walk than wait. A negativa coloca not antes do verbo: I'd rather not go. Essa forma não usa to depois de rather.",
         example: "I would rather walk than wait for a taxi.",
@@ -527,6 +545,7 @@ export const b1Modules: ModuleDraft[] = [
       "Referências, voz passiva, padrões verbais e relações entre ideias.",
     lessons: [
       {
+        id: "b1-precisao-01",
         title: "Identificar pessoas e coisas",
         rule: "Orações relativas acrescentam informação para identificar um nome. Who retoma pessoas; which retoma coisas; that pode substituir ambos em muitas relativas restritivas. The person who called identifica qual pessoa, sem abrir uma nova frase.",
         example: "She is the colleague who helped me yesterday.",
@@ -554,6 +573,7 @@ export const b1Modules: ModuleDraft[] = [
           "Descreva uma pessoa e um objeto sem dizer seus nomes, usando who e which/that para identificá-los.",
       },
       {
+        id: "b1-precisao-02",
         title: "Dar foco ao que recebe a ação",
         rule: "A voz passiva usa be + particípio: The room is cleaned daily. Ela é útil quando o agente não é conhecido ou não é o foco. By pode introduzir o agente quando importa: written by Ana. O tempo é marcado em be, não no particípio.",
         example: "The library is cleaned every morning.",
@@ -577,6 +597,7 @@ export const b1Modules: ModuleDraft[] = [
           "Descreva como três objetos são produzidos ou usados. Inclua o agente com by em apenas uma frase, quando for relevante.",
       },
       {
+        id: "b1-precisao-03",
         title: "Notícias na voz passiva",
         rule: "No passado, a passiva usa was/were + particípio. The road was closed destaca a estrada e o evento, não quem fechou. Escolha singular/plural pelo sujeito. Uma notícia curta pode combinar o evento com data e motivo.",
         example: "The bridge was opened last year.",
@@ -600,6 +621,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma notícia fictícia de três frases sobre uma praça reformada: fechamento, reforma e reabertura.",
       },
       {
+        id: "b1-precisao-04",
         title: "Verbos seguidos de -ing ou to",
         rule: "Alguns verbos pedem -ing depois, como enjoy e avoid. Outros costumam pedir to + verbo, como decide e hope. Aprenda o par: enjoy reading, decide to leave. O sentido de alguns verbos muda conforme o padrão; não aplique uma regra única a todos.",
         example: "We decided to leave before lunch.",
@@ -628,6 +650,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva quatro frases usando enjoy, avoid, decide e hope. Confira o padrão que vem depois de cada verbo.",
       },
       {
+        id: "b1-precisao-05",
         title: "Verbos com partículas",
         rule: "Phrasal verbs combinam verbo e partícula, e o significado pode não ser literal: look after é cuidar de. Alguns se separam: turn off the light/turn the light off. Com pronome nesse caso, ele fica no meio: turn it off. Outros, como look after, não separam.",
         example: "Please turn it off before you leave.",
@@ -652,6 +675,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma instrução com turn off usando um nome e reescreva com it. Depois faça um pedido com look after.",
       },
       {
+        id: "b1-precisao-06",
         title: "Preposições depois de adjetivos",
         rule: "Alguns adjetivos costumam se combinar com preposições específicas: interested in, good at, worried about. Após a preposição, um verbo costuma aparecer em -ing: interested in learning. Memorize a expressão completa em contexto.",
         example: "She is interested in learning photography.",
@@ -685,6 +709,7 @@ export const b1Modules: ModuleDraft[] = [
     description: "Esclarecer, negociar prazos, resumir e manter a conversa.",
     lessons: [
       {
+        id: "b1-colaboracao-01",
         title: "Perguntas indiretas",
         rule: "Could you tell me…? torna uma pergunta mais indireta. Depois dessa abertura, use a ordem de afirmação: where the office is, não where is the office. Para perguntas de sim/não, introduza if ou whether: Do you know if it's open?",
         example: "Could you tell me where the office is?",
@@ -712,6 +737,7 @@ export const b1Modules: ModuleDraft[] = [
           "Transforme duas perguntas diretas em pedidos com Could you tell me ou Do you know. Revise a ordem interna.",
       },
       {
+        id: "b1-colaboracao-02",
         title: "Checar o entendimento",
         rule: "So, you mean…? apresenta sua interpretação para confirmação. Let me check that I understood dá espaço para resumir. Repita números, datas ou condições essenciais, não cada palavra. A outra pessoa precisa poder corrigir seu resumo.",
         example: "So, you mean the deadline is Friday?",
@@ -736,6 +762,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma instrução com dois prazos e uma resposta checando qual entrega corresponde a cada prazo.",
       },
       {
+        id: "b1-colaboracao-03",
         title: "Negociar um prazo",
         rule: "Explique a limitação e proponha uma alternativa concreta: I can send the summary today, but I need until Friday for the report. By Friday significa até sexta como limite; until Friday descreve continuidade até esse momento. Use Could we…? para propor mudança.",
         example: "Could we extend the deadline until Friday?",
@@ -760,6 +787,7 @@ export const b1Modules: ModuleDraft[] = [
           "Negocie por escrito uma entrega com duas etapas, sem prometer algo que a limitação apresentada torna impossível.",
       },
       {
+        id: "b1-colaboracao-04",
         title: "Pedir ajuda com contexto",
         rule: "Um pedido útil inclui o problema, o que você já tentou e a ajuda desejada. I've tried… mostra tentativa anterior. Could you show me how to…? pede uma demonstração. Evite um pedido vago quando você já sabe descrever a dificuldade.",
         example: "Could you show me how to upload this file?",
@@ -788,6 +816,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva um pedido de suporte fictício com problema, tentativa e pergunta específica. Não inclua dados privados.",
       },
       {
+        id: "b1-colaboracao-05",
         title: "Reclamar sem perder a clareza",
         rule: "Uma reclamação produtiva separa fato, impacto e solução desejada. I ordered… informa a compra; however… apresenta o problema; Could you…? solicita uma ação. Mantenha o tom firme sem acrescentar suposições sobre a intenção de alguém.",
         example: "I ordered a blue bag, but I received a green one.",
@@ -815,6 +844,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma reclamação de quatro frases sobre um pedido fictício: fato, problema, efeito e solução desejada.",
       },
       {
+        id: "b1-colaboracao-06",
         title: "Resumir decisões de uma reunião",
         rule: "Um resumo de decisões registra quem fará o quê e até quando. We agreed to… indica acordo. Ana will… atribui a ação. Evite confundir uma sugestão discutida com uma decisão aceita. Use marcadores de prazo para tornar o resumo verificável.",
         example: "We agreed to send the proposal by Tuesday.",
@@ -852,6 +882,7 @@ export const b1Modules: ModuleDraft[] = [
       "Ideias centrais, inferências sustentadas, registro e textos organizados.",
     lessons: [
       {
+        id: "b1-leitura-01",
         title: "Encontrar a ideia principal",
         rule: "A ideia principal resume o foco de um texto, não um detalhe isolado. Procure o assunto que conecta abertura, exemplos e conclusão. Uma boa síntese preserva a abrangência: não transforme uma experiência de uma pessoa em uma regra universal.",
         example: "The article explains why the club changed its schedule.",
@@ -880,6 +911,7 @@ export const b1Modules: ModuleDraft[] = [
           "Resuma a atualização em uma frase e depois liste dois detalhes que apoiam essa síntese.",
       },
       {
+        id: "b1-leitura-02",
         title: "Inferir sem inventar",
         rule: "Inferir é conectar indícios do texto, não acrescentar fatos sem apoio. Expressões como seems e probably deixam visível que há interpretação. Se o texto não informa uma data, nome ou motivo, reconheça o limite em vez de completar pela imaginação.",
         example: "She seems worried about the deadline.",
@@ -908,6 +940,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma informação explícita, uma inferência e uma pergunta sem resposta sobre a mensagem. Mantenha as categorias separadas.",
       },
       {
+        id: "b1-leitura-03",
         title: "Comparar informações de duas fontes",
         rule: "Ao comparar textos, confira se tratam do mesmo horário, versão ou contexto. Um aviso mais recente pode atualizar outro. Cite a fonte de cada informação e indique diferenças sem assumir que qualquer contradição é erro. Data e escopo ajudam a decidir o que vale.",
         example: "The latest notice gives a different opening time.",
@@ -936,6 +969,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva uma atualização de evento alterando apenas um detalhe. Diga explicitamente quais detalhes continuam iguais.",
       },
       {
+        id: "b1-leitura-04",
         title: "Ajustar o registro da mensagem",
         rule: "O registro depende do destinatário e do objetivo. Hi e Thanks funcionam em muitos contatos informais; Dear… e Kind regards ajudam em mensagens mais formais. Clareza, cortesia e pedido específico importam mais do que usar palavras difíceis.",
         example: "I am writing to ask about your evening course.",
@@ -961,6 +995,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva o mesmo pedido a um amigo e a uma escola. Mantenha a informação, mas ajuste saudação, tom e encerramento.",
       },
       {
+        id: "b1-leitura-05",
         title: "Construir um parágrafo coeso",
         rule: "Um parágrafo pode apresentar uma ideia central, explicá-la, dar exemplo e concluir. Conectores devem mostrar relações reais: for example ilustra; therefore apresenta consequência. Evite repetir o mesmo substantivo quando um pronome tiver referência clara.",
         example: "Regular practice helps because it builds familiarity.",
@@ -989,6 +1024,7 @@ export const b1Modules: ModuleDraft[] = [
           "Escreva um parágrafo de 60–80 palavras sobre sua forma preferida de estudar: ideia, razão, exemplo e conclusão. Faça uma auto-revisão; não há correção automática deste texto.",
       },
       {
+        id: "b1-leitura-06",
         title: "Projeto final: planejar e justificar",
         rule: "Um plano completo informa objetivo, restrições, escolha e próximos passos. Combine comparações, razões e condições sem empilhar estruturas desnecessárias. Revise se cada promessa tem responsável e prazo. Um bom texto permite ao leitor agir com as informações fornecidas.",
         example: "We chose the library because it is quiet and free.",

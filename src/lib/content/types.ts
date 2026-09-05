@@ -1,4 +1,6 @@
 export type LessonDraft = {
+  /** Published identity: independent of display order. Never reuse. */
+  id: string;
   title: string;
   rule: string;
   example: string;

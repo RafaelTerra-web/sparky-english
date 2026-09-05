@@ -36,9 +36,25 @@ export default function PrivacyPage() {
         progresso, saldo e inventário daquele navegador. Alterações simultâneas
         em abas diferentes podem sobrescrever a mudança mais recente; faça
         compras em uma aba por vez. Respostas de autenticação e dados da conta
-        não são armazenados no cache offline. Rascunhos de escrita continuam
-        temporários e são apagados ao avançar ou fechar a lição.
+        não são armazenados no cache offline. Quando a sincronização por conta
+        estiver habilitada pelo administrador, conclusões e recompensas serão
+        migradas para um banco com acesso restrito ao servidor, usando um
+        identificador derivado da conta Google. O Perfil informa o modo ativo.
       </p>
+      <h2>Caderno, tentativas e retomada</h2>
+      <p>O armazenamento local deste navegador guarda sua etapa atual, respostas,
+        consultas a explicações e traduções, rascunhos, versões dos textos,
+        frases favoritas e preferências de estudo. Esses dados ficam separados
+        por conta e permanecem após fechar a aba ou sair. Não são criptografados
+        no armazenamento local: em dispositivos compartilhados, use o botão
+        Apagar caderno local ao terminar. O Caderno permite exportar uma cópia.
+        Limpar os dados do site elimina a cópia local.</p>
+      <p>As respostas dos exercícios fechados são enviadas ao servidor para
+        verificação. Um comprovante criptografado de até oito horas permite
+        validar a conclusão sem guardar os textos das respostas no cookie.
+        Escrita livre permanece local e não é enviada a um serviço de IA.
+        O histórico local mantém até 600 tentativas, 100 versões de escrita e
+        200 frases. Os registros mais antigos cedem espaço aos novos.</p>
       <h2>Moedas e roupas</h2>
       <p>
         As moedas são virtuais, não têm valor monetário e não podem ser compradas,

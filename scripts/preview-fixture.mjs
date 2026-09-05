@@ -14,7 +14,7 @@ let authenticated = true;
 const proxy = createServer((incoming, outgoing) => {
   if (incoming.url === '/api/session' && incoming.method === 'DELETE') authenticated = false;
   const headers = { ...incoming.headers };
-  if (authenticated && incoming.url === '/api/session') headers.cookie = `__Host-sparky_session=${token}`;
+  if (authenticated) headers.cookie = `${headers.cookie || ""}; __Host-sparky_session=${token}`;
   const upstream = request({ hostname: '127.0.0.1', port: 3200, path: incoming.url, method: incoming.method, headers }, (response) => {
     outgoing.writeHead(response.statusCode || 500, response.headers); response.pipe(outgoing);
   });

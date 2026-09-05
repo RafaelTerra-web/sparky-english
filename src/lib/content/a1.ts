@@ -9,6 +9,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Nome, origem, idade e perguntas com o verbo be.",
     lessons: [
       {
+        id: "a1-identidade-01",
         title: "Perguntar o nome",
         rule: "What pergunta 'o quê/qual'. Para perguntar o nome, use What is your name? Your significa seu/sua e vem antes de name. Na conversa, What is costuma aparecer como What's; a contração não muda a pergunta.",
         example: "What is your name?",
@@ -33,6 +34,7 @@ export const a1Modules: ModuleDraft[] = [
           "Pergunte o nome de alguém e responda com seu próprio nome. Confira se usou your na pergunta e my na resposta.",
       },
       {
+        id: "a1-identidade-02",
         title: "Dizer de onde você é",
         rule: "Be from informa origem: I am from Brazil. Use am com I, is com he/she/it e are com you/we/they. Where significa 'onde'; Where are you from? pergunta a origem, não o endereço atual.",
         example: "I am from Brazil.",
@@ -55,6 +57,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva sua cidade e seu país de origem em duas frases com I'm from. Use maiúsculas nos nomes próprios.",
       },
       {
+        id: "a1-identidade-03",
         title: "Falar da idade",
         rule: "Para idade, o inglês usa be, não have: I am twenty. Years old pode completar a frase, mas é opcional. How old are you? pergunta a idade. Em situações pessoais, só faça essa pergunta quando houver contexto e abertura.",
         example: "I am twenty years old.",
@@ -79,6 +82,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva a idade de uma pessoa fictícia com is. Depois escreva a pergunta que você faria para saber essa idade.",
       },
       {
+        id: "a1-identidade-04",
         title: "Apresentar outra pessoa",
         rule: "This is apresenta alguém próximo: This is my friend. He e she podem retomar uma pessoa quando seus pronomes são conhecidos. It pode retomar um objeto. A frase afirmativa precisa de sujeito e verbo: She is a teacher.",
         example: "This is my friend Clara.",
@@ -102,6 +106,7 @@ export const a1Modules: ModuleDraft[] = [
           "Apresente uma pessoa fictícia pelo nome e pela profissão. Faça duas frases, ambas com o verbo be.",
       },
       {
+        id: "a1-identidade-05",
         title: "Negar e confirmar com be",
         rule: "Coloque not depois de be para negar: I am not, she is not, they are not. Is not pode virar isn't; are not pode virar aren't. Nas perguntas, be vem antes do sujeito: Are you ready? Na resposta curta, mantenha o sujeito e o verbo.",
         example: "We are not late.",
@@ -125,6 +130,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva uma pergunta com Are you e duas respostas curtas, uma afirmativa e outra negativa.",
       },
       {
+        id: "a1-identidade-06",
         title: "Soletrar e confirmar dados",
         rule: "How do you spell…? pede a sequência de letras de uma palavra. Em um cadastro, first name é o nome e last name é o sobrenome. Use That's right para confirmar e No, it's… para corrigir uma informação de modo direto.",
         example: "How do you spell your surname?",
@@ -156,6 +162,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Artigos, plurais, família, posse e descrição.",
     lessons: [
       {
+        id: "a1-pessoas-01",
         title: "Escolher a ou an",
         rule: "A e an acompanham um substantivo contável singular quando ele não é específico. A escolha depende do som inicial da palavra seguinte: a book, an apple. Use também artigo ao dizer profissão: She's a nurse.",
         example: "She is an engineer.",
@@ -180,6 +187,7 @@ export const a1Modules: ModuleDraft[] = [
           "Liste três objetos com a e três com an. Confira o som inicial, não apenas a letra.",
       },
       {
+        id: "a1-pessoas-02",
         title: "Contar no plural",
         rule: "Muitos substantivos recebem -s no plural: books. Depois de sons como os finais de bus e box, a escrita costuma receber -es: buses, boxes. Alguns plurais são irregulares, como child → children. O artigo a/an não acompanha plural.",
         example: "There are two boxes here.",
@@ -203,6 +211,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva quantos livros, caixas e bolsas há numa sala fictícia. Use um número antes de cada substantivo plural.",
       },
       {
+        id: "a1-pessoas-03",
         title: "Falar da família",
         rule: "Have expressa posse ou relações: I have a sister. Com he, she e it, use has. My, your, his e her vêm antes do substantivo para indicar relação ou posse. Em inglês, cousin pode ser primo ou prima.",
         example: "My sister has two children.",
@@ -225,6 +234,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva uma família real ou fictícia com have e has. Não é necessário fornecer dados pessoais.",
       },
       {
+        id: "a1-pessoas-04",
         title: "Indicar de quem é",
         rule: "Para indicar o dono, acrescente 's a um nome: Ana's bag. My/your/her/his acompanham um substantivo; mine/yours/hers/his podem substituí-lo. Em This is mine, mine já significa 'meu/minha' sem repetir o objeto.",
         example: "This is Ana's bag.",
@@ -248,6 +258,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva duas frases sobre o mesmo objeto: uma com nome + 's e outra com um possessivo como my ou her.",
       },
       {
+        id: "a1-pessoas-05",
         title: "Apontar perto e longe",
         rule: "This indica um item próximo; that, um item mais distante. No plural, use these e those. Combine this/that com is e these/those com are. A distância pode ser física ou a forma como você aponta algo na conversa.",
         example: "These shoes are new.",
@@ -272,6 +283,7 @@ export const a1Modules: ModuleDraft[] = [
           "Imagine uma loja e escreva uma frase com this e outra com those. Ajuste is/are ao número de objetos.",
       },
       {
+        id: "a1-pessoas-06",
         title: "Descrever sem mudar o adjetivo",
         rule: "Adjetivos geralmente vêm antes do substantivo: a small room. Também podem vir depois de be: The room is small. Eles não recebem plural nem flexão de gênero: two small rooms. Very intensifica uma característica.",
         example: "They have a small garden.",
@@ -304,6 +316,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Presente simples, frequência, perguntas e horários.",
     lessons: [
       {
+        id: "a1-rotina-01",
         title: "Hábitos com he e she",
         rule: "No presente simples afirmativo, he/she/it normalmente pedem -s no verbo: she works. Alguns verbos recebem -es: goes, watches. Verbos terminados em consoante + y trocam y por -ies: studies. O presente simples descreve hábitos, não só o que ocorre agora.",
         example: "She studies English every evening.",
@@ -328,6 +341,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva três hábitos de uma pessoa fictícia. Use um verbo com -s, um com -es e studies.",
       },
       {
+        id: "a1-rotina-02",
         title: "Dizer o que você não faz",
         rule: "Para negar verbos comuns no presente simples, use don't com I/you/we/they e doesn't com he/she/it. Depois desses auxiliares, o verbo fica na forma base: she doesn't drive. Don't é a contração de do not.",
         example: "I do not drink coffee.",
@@ -350,6 +364,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva duas coisas que você não faz e uma que outra pessoa não faz. Compare don't e doesn't.",
       },
       {
+        id: "a1-rotina-03",
         title: "Perguntar sobre hábitos",
         rule: "Use Do + sujeito + verbo para perguntas com I/you/we/they. Com he/she/it, use Does. O verbo principal fica na forma base. Nas respostas curtas, repita o auxiliar: Yes, I do; No, she doesn't.",
         example: "Do you work on Sundays?",
@@ -374,6 +389,7 @@ export const a1Modules: ModuleDraft[] = [
           "Faça duas perguntas sobre hábitos, uma com Do you e outra com Does your friend. Escreva respostas curtas.",
       },
       {
+        id: "a1-rotina-04",
         title: "Dizer com que frequência",
         rule: "Always, usually, sometimes e never indicam frequência. Em frases simples, costumam vir antes do verbo principal: I usually walk. Com be, normalmente vêm depois: She is always early. Never já tem sentido negativo.",
         example: "I usually walk to school.",
@@ -397,6 +413,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva quatro hábitos usando quatro frequências diferentes. Coloque uma delas depois de be.",
       },
       {
+        id: "a1-rotina-05",
         title: "Ler horas e agendas",
         rule: "Para informar horas, use It's + horário. Half past six é seis e meia; quarter past six é seis e quinze. At introduz a hora de um evento: at six thirty. Em uma agenda com AM/PM, PM indica o período do meio-dia até antes da meia-noite.",
         example: "The lesson starts at half past six.",
@@ -421,6 +438,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva dois horários de uma agenda em números e por extenso. Inclua morning ou evening para esclarecer o período.",
       },
       {
+        id: "a1-rotina-06",
         title: "Dias, meses e datas",
         rule: "Use on com dias da semana e datas; in com meses e anos; at com horas. Os dias e meses começam com maiúscula em inglês. Escrever o mês por extenso evita ambiguidades entre padrões de data britânico e americano.",
         example: "My birthday is in October.",
@@ -453,6 +471,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Existência, localização, lugares e instruções.",
     lessons: [
       {
+        id: "a1-casa-01",
         title: "Dizer o que há em um lugar",
         rule: "There is apresenta um item singular; there are apresenta itens plurais. A estrutura expressa existência, como 'há' ou 'tem' no português informal. Nas perguntas, inverta be: Is there a bank? Are there shops?",
         example: "There is a library near my home.",
@@ -475,6 +494,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva seu bairro, real ou fictício, com uma frase usando there is e outra usando there are.",
       },
       {
+        id: "a1-casa-02",
         title: "Localizar objetos",
         rule: "In indica dentro; on indica sobre uma superfície; under indica embaixo. A estrutura The keys are on the table localiza um objeto conhecido. Compare com There are keys on the table, que apresenta a existência de chaves.",
         example: "The keys are under the chair.",
@@ -498,6 +518,7 @@ export const a1Modules: ModuleDraft[] = [
           "Imagine três objetos numa sala. Escreva onde estão usando in, on e under.",
       },
       {
+        id: "a1-casa-03",
         title: "Descrever cômodos",
         rule: "Use there is/are para listar móveis e be + adjetivo para descrever cômodos. Bedroom é quarto; bathroom é banheiro. Em uma descrição, primeiro apresente o lugar e depois use the para retomar algo já mencionado.",
         example: "The kitchen is small but bright.",
@@ -520,6 +541,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva um apartamento em três frases: número de cômodos, um móvel e uma característica da cozinha.",
       },
       {
+        id: "a1-casa-04",
         title: "Pedir e dar direções",
         rule: "Where is…? pergunta a localização. Para orientar, use o imperativo sem sujeito: Go straight, turn left, turn right. Next to significa ao lado; opposite significa em frente, do outro lado. Acrescente please a um pedido para torná-lo mais cortês.",
         example: "Turn left at the bank.",
@@ -543,6 +565,7 @@ export const a1Modules: ModuleDraft[] = [
           "Crie um percurso de duas instruções até uma loja fictícia. Use um ponto de referência e uma direção.",
       },
       {
+        id: "a1-casa-05",
         title: "Usar transporte público",
         rule: "By + transporte indica o meio: by bus, by train. Para ir a pé, a expressão é on foot. Take pode indicar pegar um transporte: take the bus. Em bilhetes, single é só ida; return costuma indicar ida e volta no inglês britânico.",
         example: "I go to college by train.",
@@ -566,6 +589,7 @@ export const a1Modules: ModuleDraft[] = [
           "Diga como você vai a dois lugares. Use by com um transporte e on foot para o outro.",
       },
       {
+        id: "a1-casa-06",
         title: "Ler avisos de um lugar",
         rule: "O imperativo também aparece em avisos: Keep the door closed. A forma negativa usa Don't + verbo: Don't enter. No + substantivo ou -ing é comum em placas: No parking. Observe quem deve agir e qual ação é permitida ou proibida.",
         example: "Please keep the door closed.",
@@ -597,6 +621,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Pedidos, quantidades, preços e necessidades.",
     lessons: [
       {
+        id: "a1-consumo-01",
         title: "Pedir comida com educação",
         rule: "I'd like significa 'eu gostaria' e serve para pedidos. Pode vir antes de um substantivo: I'd like a sandwich. Please suaviza o pedido. Can I have…? também é comum ao pedir algo em um café ou restaurante.",
         example: "I would like a sandwich, please.",
@@ -620,6 +645,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva um pedido com uma bebida e um alimento. Inclua uma expressão cortês e não use apenas I want.",
       },
       {
+        id: "a1-consumo-02",
         title: "Gostar e não gostar",
         rule: "Like e love podem ser seguidos por um substantivo ou por um verbo com -ing: I like music; I like cooking. Para negar uma preferência, use don't/doesn't like. Preferências gerais normalmente usam plural sem the: I like apples.",
         example: "I like cooking with my friends.",
@@ -644,6 +670,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva uma preferência com substantivo e outra com verbo em -ing. Acrescente algo de que você não gosta.",
       },
       {
+        id: "a1-consumo-03",
         title: "Contáveis e não contáveis",
         rule: "Contáveis podem ser numerados: one apple, two apples. Não contáveis, como water e rice, normalmente não recebem a/an nem plural nesse sentido. Para contar porções, use uma unidade: a glass of water, two bags of rice.",
         example: "We need two bottles of water.",
@@ -668,6 +695,7 @@ export const a1Modules: ModuleDraft[] = [
           "Faça uma lista com dois alimentos contáveis e duas porções de alimentos não contáveis.",
       },
       {
+        id: "a1-consumo-04",
         title: "Some e any na despensa",
         rule: "Some costuma aparecer em afirmações com plural ou não contáveis: some eggs, some milk. Any é frequente em perguntas e negativas: Do we have any milk? We don't have any eggs. Em ofertas, some também é comum: Would you like some tea?",
         example: "There is some milk in the fridge.",
@@ -691,6 +719,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva uma geladeira fictícia: duas coisas que há com some e uma que não há com any.",
       },
       {
+        id: "a1-consumo-05",
         title: "Perguntar preços e quantidades",
         rule: "How much pergunta o preço ou a quantidade de algo não contável. How many pergunta quantos itens contáveis há. Compare How much is this shirt? e How many shirts do you need? A escolha muda a informação solicitada.",
         example: "How much is this blue shirt?",
@@ -714,6 +743,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva uma pergunta de preço, uma de quantidade contável e uma de quantidade não contável.",
       },
       {
+        id: "a1-consumo-06",
         title: "Comprar o tamanho certo",
         rule: "Em uma loja, Can I try this on? pede para experimentar uma peça. Too + adjetivo indica excesso: too small é pequeno demais. Para solicitar outra opção, use Do you have this in a larger size? Large, medium e small aparecem em etiquetas.",
         example: "This jacket is too small.",
@@ -745,6 +775,7 @@ export const a1Modules: ModuleDraft[] = [
     description: "Habilidades, pedidos, ações em andamento e mensagens curtas.",
     lessons: [
       {
+        id: "a1-interacao-01",
         title: "Falar de habilidades com can",
         rule: "Can + verbo na forma base expressa habilidade: I can swim. Can não recebe -s com he/she. Para negar, use can't ou cannot; para perguntar, coloque can antes do sujeito. Não use to depois de can.",
         example: "My brother can play the guitar.",
@@ -769,6 +800,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva duas habilidades e uma limitação com can/can't. Faça uma pergunta sobre a habilidade de outra pessoa.",
       },
       {
+        id: "a1-interacao-02",
         title: "Pedir permissão",
         rule: "Can I…? pede permissão para uma ação sua. Can you…? pede que outra pessoa faça algo. Sure e Of course podem conceder permissão. Sorry, you can't pode negá-la; acrescentar uma razão torna a resposta mais clara.",
         example: "Can I open the window?",
@@ -796,6 +828,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva um pedido de permissão com Can I e um pedido de ajuda com Can you. Confira quem executará cada ação.",
       },
       {
+        id: "a1-interacao-03",
         title: "Descrever o que acontece agora",
         rule: "O presente contínuo combina be + verbo em -ing: I am reading. Use am/is/are conforme o sujeito. Essa estrutura pode descrever uma ação em andamento. Compare a rotina I read every day com a ação atual I am reading now.",
         example: "They are waiting for the bus.",
@@ -818,6 +851,7 @@ export const a1Modules: ModuleDraft[] = [
           "Descreva três ações em uma foto imaginária usando is/are + -ing. Inclua um sujeito plural.",
       },
       {
+        id: "a1-interacao-04",
         title: "Perguntar sobre ações atuais",
         rule: "Em perguntas no presente contínuo, be vem antes do sujeito: Are you working? Para negar, use not depois de be. Perguntas com What mantêm essa inversão: What is she doing? Não acrescente do/does à construção.",
         example: "Are you listening to the teacher?",
@@ -842,6 +876,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva uma pergunta com What are you doing? e uma resposta negativa seguida da atividade real.",
       },
       {
+        id: "a1-interacao-05",
         title: "Clima e roupas",
         rule: "Para o clima, use it como sujeito: It's cold, it's sunny. Mesmo sem um 'ele' em português, o inglês pede esse sujeito. It's raining descreve chuva em andamento. Wear é usar roupa; carry é carregar um objeto.",
         example: "It is cold and windy today.",
@@ -865,6 +900,7 @@ export const a1Modules: ModuleDraft[] = [
           "Escreva uma previsão de duas frases para uma cidade fictícia e indique uma roupa adequada.",
       },
       {
+        id: "a1-interacao-06",
         title: "Entender uma mensagem curta",
         rule: "Em mensagens práticas, procure quem escreve, onde acontecerá algo e a que horas. Sorry pode introduzir uma mudança de plano. See you… encerra uma mensagem combinando o próximo contato. Uma informação explícita vale mais que uma suposição.",
         example: "See you at the library at four.",

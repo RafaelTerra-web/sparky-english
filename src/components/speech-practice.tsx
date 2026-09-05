@@ -11,11 +11,11 @@ import {
   type VoiceOption,
 } from "@/lib/speech";
 
-export function SpeechPractice({ text }: { text: string }) {
+export function SpeechPractice({ text, initialMascot = "sparky" }: { text: string; initialMascot?: MascotVoice }) {
   const provider = useRef<BrowserSpeechProvider | null>(null);
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [canRecognize, setCanRecognize] = useState(false);
-  const [mascot, setMascot] = useState<MascotVoice>("sparky");
+  const [mascot, setMascot] = useState<MascotVoice>(initialMascot);
   const [selection, setSelection] = useState<Record<MascotVoice, string>>({
     sparky: "",
     pinky: "",
@@ -128,6 +128,7 @@ export function SpeechPractice({ text }: { text: string }) {
         é a voz de uma criança real. O resultado varia conforme o navegador e as
         vozes instaladas.
       </p>
+      <details className="voice-preferences"><summary>Configurar voz e velocidade</summary>
       <div className="speech-settings">
         <label htmlFor={`${id}-mascot`}>
           Mascote
@@ -175,6 +176,7 @@ export function SpeechPractice({ text }: { text: string }) {
         />{" "}
         Ouvir mais devagar
       </label>
+      </details>
       <div className="speech-buttons">
         <button
           className="secondary-button"

@@ -14,6 +14,7 @@ export type EquippedItems = Record<
   Partial<Record<CosmeticSlot, string>>
 >;
 export type PublicRewardState = {
+  storage?: "browser" | "account";
   coins: number;
   completed: Record<string, string>;
   reviews: Record<string, string>;

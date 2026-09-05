@@ -22,6 +22,8 @@ import {
   type MascotId,
 } from "@/lib/rewards-shared";
 import type { RewardState } from "@/lib/rewards";
+import { verifyCompletion, type StudyReceipt } from "@/lib/study";
+import { loadRewards, persistRewards } from "@/lib/reward-store";
 
 const YEAR = 60 * 60 * 24 * 365;
 function cookieName(userId: string) {
@@ -34,7 +36,8 @@ async function context() {
   if (!user) return null;
   const name = cookieName(user.id);
   const payload = await unseal(store.get(name)?.value, `rewards:${user.id}`);
-  return { store, user, name, state: normalizeRewardState(payload?.state) };
+  const persisted = await loadRewards(user.id, normalizeRewardState(payload?.state));
+  return { store, user, name, ...persisted };
 }
 async function persistForUser(
   store: Awaited<ReturnType<typeof cookies>>,
@@ -47,13 +50,15 @@ async function persistForUser(
 }
 
 export async function GET() {
-  const value = await context();
+  let value;
+  try { value = await context(); }
+  catch { return NextResponse.json({ error: "progress-unavailable" }, { status: 503, headers: { "cache-control": "private, no-store" } }); }
   if (!value)
     return NextResponse.json(
       { error: "unauthorized" },
       { status: 401, headers: { "cache-control": "private, no-store" } },
     );
-  return NextResponse.json(publicRewardState(value.state), {
+  return NextResponse.json({ ...publicRewardState(value.state), storage: value.storage }, {
     headers: { "cache-control": "private, no-store" },
   });
 }
@@ -61,12 +66,17 @@ export async function GET() {
 export async function POST(request: Request) {
   if (!sameOrigin(request))
     return NextResponse.json({ error: "origin" }, { status: 403 });
-  const value = await context();
+  let value;
+  try { value = await context(); }
+  catch { return NextResponse.json({ error: "progress-unavailable" }, { status: 503 }); }
   if (!value)
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    const text = await request.text();
+    if (text.length > 12000) throw new Error("invalid-request");
+    body = JSON.parse(text);
+    if (!body || Array.isArray(body)) throw new Error("invalid-request");
   } catch {
     return NextResponse.json({ error: "invalid-json" }, { status: 400 });
   }
@@ -78,7 +88,10 @@ export async function POST(request: Request) {
     if (body.action === "complete") {
       if (typeof body.lessonId !== "string" || typeof body.review !== "boolean")
         throw new Error("invalid-request");
-      const result = completeStudy(state, body.lessonId, body.review);
+      if (typeof body.receipt !== "string") throw new Error("study-incomplete");
+      const proof = await unseal(body.receipt, `study:${value.user.id}`);
+      const quality = verifyCompletion(proof?.study as StudyReceipt | null, body.lessonId, body.review);
+      const result = completeStudy(state, body.lessonId, body.review, new Date(), quality.independent);
       state = result.state;
       earned = result.earned;
       reason = result.reason;
@@ -111,9 +124,15 @@ export async function POST(request: Request) {
     const status = code === "insufficient-coins" ? 409 : 400;
     return NextResponse.json({ error: code }, { status });
   }
-  await persistForUser(value.store, value.name, value.user.id, state);
+  try {
+    await persistRewards(value.user.id, state, value.revision);
+    if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "progress-unavailable";
+    return NextResponse.json({ error: code }, { status: code === "progress-conflict" ? 409 : 503 });
+  }
   return NextResponse.json(
-    { ...publicRewardState(state), earned, spent, reason },
+    { ...publicRewardState(state), earned, spent, reason, storage: value.storage },
     { headers: { "cache-control": "private, no-store" } },
   );
 }

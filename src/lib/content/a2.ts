@@ -9,6 +9,7 @@ export const a2Modules: ModuleDraft[] = [
     description: "Relatar acontecimentos, perguntar e organizar uma narrativa.",
     lessons: [
       {
+        id: "a2-passado-01",
         title: "Was e were",
         rule: "O passado de be é was com I/he/she/it e were com you/we/they. Use para estados, lugares e características em um momento encerrado. Para perguntar, inverta verbo e sujeito; para negar, use wasn't/weren't, sem did.",
         example: "We were at home last night.",
@@ -33,6 +34,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva onde você e duas pessoas fictícias estavam ontem. Use was e were e inclua uma negativa.",
       },
       {
+        id: "a2-passado-02",
         title: "Passado dos verbos regulares",
         rule: "Verbos regulares recebem -ed no passado: worked, visited. Se já terminam em e, acrescente só d: lived. Consoante + y costuma virar -ied: studied. O passado afirmativo tem a mesma forma para todos os sujeitos.",
         example: "She visited her aunt last weekend.",
@@ -60,6 +62,7 @@ export const a2Modules: ModuleDraft[] = [
           "Relate três ações de ontem com verbos regulares. Confira a terminação e acrescente um marcador de tempo.",
       },
       {
+        id: "a2-passado-03",
         title: "Passados irregulares frequentes",
         rule: "Alguns verbos não formam o passado com -ed: eat → ate, buy → bought, see → saw, take → took. Aprenda a forma junto de um contexto. Na afirmação, todos os sujeitos usam o mesmo passado: I bought, she bought.",
         example: "We bought fresh fruit at the market.",
@@ -84,6 +87,7 @@ export const a2Modules: ModuleDraft[] = [
           "Crie uma pequena história com bought, ate e saw. Mantenha as ações em um período passado definido.",
       },
       {
+        id: "a2-passado-04",
         title: "Negar e perguntar com did",
         rule: "No passado simples de verbos comuns, use did para perguntas e didn't para negativas. O verbo principal volta à forma base: Did she buy? She didn't buy. Did já carrega a marca do passado e não muda conforme o sujeito.",
         example: "They did not travel last month.",
@@ -108,6 +112,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva uma pergunta e uma negativa sobre uma viagem passada. Revise se o verbo depois de did/didn't está na base.",
       },
       {
+        id: "a2-passado-05",
         title: "Organizar uma sequência",
         rule: "First, then, after that e finally guiam a ordem de uma narrativa. Use passado simples para ações concluídas em sequência. After pode vir antes de um substantivo: after lunch. After that funciona sozinho como conector: depois disso.",
         example: "First we ate, then we visited the museum.",
@@ -136,6 +141,7 @@ export const a2Modules: ModuleDraft[] = [
           "Conte um passeio em quatro frases usando first, then, after that e finally. Mantenha os verbos no passado.",
       },
       {
+        id: "a2-passado-06",
         title: "Uma ação em andamento no passado",
         rule: "Was/were + -ing descreve uma ação em andamento num momento passado. O passado simples pode marcar um evento durante essa ação: I was cooking when the phone rang. When introduz aqui o acontecimento mais pontual.",
         example: "I was studying when the phone rang.",
@@ -167,6 +173,7 @@ export const a2Modules: ModuleDraft[] = [
     description: "Comparar opções, avaliar limites e especificar quantidades.",
     lessons: [
       {
+        id: "a2-escolhas-01",
         title: "Comparar duas opções",
         rule: "Adjetivos curtos geralmente recebem -er no comparativo: cheaper. Adjetivos mais longos costumam usar more: more comfortable. Than introduz o segundo termo da comparação. Better e worse são formas irregulares de good e bad.",
         example: "This train is cheaper than the bus.",
@@ -191,6 +198,7 @@ export const a2Modules: ModuleDraft[] = [
           "Compare dois meios de transporte usando um comparativo com -er e outro com more.",
       },
       {
+        id: "a2-escolhas-02",
         title: "Destacar uma opção no grupo",
         rule: "Superlativos destacam um item em um conjunto: the cheapest, the most useful. Normalmente incluem the. Good vira the best; bad vira the worst. Especifique o conjunto quando necessário: the best option for us.",
         example: "This is the quietest room in the hotel.",
@@ -215,6 +223,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escolha três lugares fictícios e atribua a cada um um superlativo diferente, indicando o grupo comparado.",
       },
       {
+        id: "a2-escolhas-03",
         title: "Dizer que são tão bons quanto",
         rule: "As + adjetivo + as expressa igualdade numa característica: as fast as. Not as…as indica que o primeiro elemento tem menos dessa característica. Entre os dois as, use o adjetivo básico, não o comparativo.",
         example: "The bus is not as fast as the train.",
@@ -238,6 +247,7 @@ export const a2Modules: ModuleDraft[] = [
           "Compare duas cidades com uma igualdade e uma desigualdade usando as…as e not as…as.",
       },
       {
+        id: "a2-escolhas-04",
         title: "Too e enough",
         rule: "Too + adjetivo indica excesso que cria um limite: too expensive. Enough vem depois do adjetivo: warm enough, mas antes do substantivo: enough money. Not enough indica insuficiência. Enough to + verbo explica a ação possível.",
         example: "This bag is too heavy to carry.",
@@ -266,6 +276,7 @@ export const a2Modules: ModuleDraft[] = [
           "Descreva um problema com too e uma solução com enough. Exemplo de tema: tamanho de mala ou tempo disponível.",
       },
       {
+        id: "a2-escolhas-05",
         title: "Much, many e a lot of",
         rule: "Many acompanha contáveis plurais; much acompanha não contáveis. Ambos são comuns em perguntas e negativas. A lot of funciona com os dois tipos e é frequente em afirmações. O verbo concorda com o nome: a lot of people are; a lot of water is.",
         example: "We do not have much time.",
@@ -289,6 +300,7 @@ export const a2Modules: ModuleDraft[] = [
           "Descreva uma festa usando many, much e a lot of. Use pelo menos uma negativa.",
       },
       {
+        id: "a2-escolhas-06",
         title: "A few e a little",
         rule: "A few significa alguns/poucos com nomes contáveis: a few minutes. A little indica uma pequena quantidade não contável: a little water. Sem a, few/little tendem a enfatizar escassez. O contexto define se a quantidade basta.",
         example: "We have a few minutes before the class.",
@@ -322,6 +334,7 @@ export const a2Modules: ModuleDraft[] = [
     description: "Introdução ao present perfect e sua relação com o presente.",
     lessons: [
       {
+        id: "a2-experiencias-01",
         title: "Experiências sem data definida",
         rule: "Have/has + particípio forma o present perfect. Ele pode relatar uma experiência sem dizer quando: I have visited Rome. O particípio pode ser regular, visited, ou irregular, seen. Com um período passado encerrado como yesterday, prefira o passado simples.",
         example: "I have visited three different countries.",
@@ -346,6 +359,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva duas experiências sem datas com have/has + particípio. Não use yesterday nessas frases.",
       },
       {
+        id: "a2-experiencias-02",
         title: "Ever e never",
         rule: "Ever pergunta se algo aconteceu em algum momento até agora: Have you ever…? Never afirma que isso não aconteceu: I have never… Coloque-os entre have/has e o particípio. Never já torna a afirmação negativa em sentido.",
         example: "Have you ever tried Korean food?",
@@ -369,6 +383,7 @@ export const a2Modules: ModuleDraft[] = [
           "Faça uma pergunta com Have you ever e responda usando never. Depois acrescente uma experiência diferente que você já teve.",
       },
       {
+        id: "a2-experiencias-03",
         title: "Just, already e yet",
         rule: "Just indica algo que acabou de acontecer; already, algo já realizado. Geralmente ficam entre have/has e o particípio. Yet aparece com frequência no fim de perguntas e negativas: Have you finished yet? I haven't finished yet.",
         example: "I have just finished my homework.",
@@ -397,6 +412,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva uma atualização com algo já feito e algo ainda pendente. Use already e not…yet.",
       },
       {
+        id: "a2-experiencias-04",
         title: "For e since",
         rule: "Com present perfect, for indica duração: for two years. Since indica o ponto inicial: since 2020. A situação pode continuar agora: I've lived here for two years. How long pergunta a duração dessa situação.",
         example: "She has lived here since 2020.",
@@ -421,6 +437,7 @@ export const a2Modules: ModuleDraft[] = [
           "Descreva duas situações que continuam no presente: uma com for + duração e outra com since + início.",
       },
       {
+        id: "a2-experiencias-05",
         title: "Been e gone",
         rule: "Have been to normalmente expressa visita com retorno ou experiência de conhecer um lugar. Have gone to indica que a pessoa foi e ainda não voltou no contexto atual. A escolha informa se ela está disponível aqui agora.",
         example: "Lia has gone to the supermarket.",
@@ -445,6 +462,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva duas mensagens: uma sobre alguém que saiu e outra sobre um lugar que você já visitou.",
       },
       {
+        id: "a2-experiencias-06",
         title: "Experiência ou passado encerrado?",
         rule: "O present perfect conecta uma experiência ou resultado ao presente. O passado simples localiza uma ação em um período encerrado: last week, in 2019. Uma conversa pode começar com experiência e passar a detalhes no passado simples.",
         example: "I saw that film last Friday.",
@@ -482,6 +500,7 @@ export const a2Modules: ModuleDraft[] = [
     description: "Futuro, convites, compromissos e consequências possíveis.",
     lessons: [
       {
+        id: "a2-planos-01",
         title: "Intenções com going to",
         rule: "Be going to + verbo expressa uma intenção ou plano. Ajuste be ao sujeito: I'm going to study; they're going to travel. A forma também pode indicar previsão baseada em evidência visível. Aqui o foco é um plano já pensado.",
         example: "We are going to visit our cousins.",
@@ -506,6 +525,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva duas intenções para a semana e uma pergunta sobre os planos de alguém.",
       },
       {
+        id: "a2-planos-02",
         title: "Decisões e ofertas com will",
         rule: "Will + verbo pode expressar uma decisão tomada na hora ou uma oferta. I'll é a contração de I will. Para negar, use won't. O verbo fica na forma base, sem to, e will não recebe -s com he/she.",
         example: "I will help you with those bags.",
@@ -528,6 +548,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva uma oferta de ajuda e uma promessa negativa com I'll e won't.",
       },
       {
+        id: "a2-planos-03",
         title: "Compromissos já combinados",
         rule: "O presente contínuo também pode indicar um compromisso futuro combinado: I'm meeting Ana tomorrow. Uma expressão de tempo deixa clara a referência futura. Esse uso destaca uma organização concreta, como uma consulta marcada.",
         example: "I am meeting my tutor on Thursday.",
@@ -556,6 +577,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva duas entradas de uma agenda usando presente contínuo e datas futuras explícitas.",
       },
       {
+        id: "a2-planos-04",
         title: "Convidar, aceitar e recusar",
         rule: "Would you like to + verbo faz um convite cortês. I'd love to aceita com entusiasmo. Para recusar, agradeça e explique brevemente: Thanks, but I can't. Uma alternativa com How about…? ajuda a manter o convite aberto.",
         example: "Would you like to join us for dinner?",
@@ -580,6 +602,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva um convite, uma recusa cortês e uma proposta alternativa de dia.",
       },
       {
+        id: "a2-planos-05",
         title: "Condições possíveis no futuro",
         rule: "Para uma condição futura possível, use if + presente e will + verbo no resultado: If it rains, we'll stay home. Não use will depois de if nesse modelo. A ordem das partes pode mudar sem alterar a condição.",
         example: "If it rains, we will stay at home.",
@@ -603,6 +626,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva dois planos dependentes de condições reais para amanhã. Use if + presente e will no resultado.",
       },
       {
+        id: "a2-planos-06",
         title: "Regras gerais com if e when",
         rule: "Para fatos gerais ou hábitos condicionais, use presente nas duas partes: If I work late, I take a taxi. When pode destacar algo esperado ou habitual. Isso difere de uma previsão única com will no resultado.",
         example: "When I finish work late, I take a taxi.",
@@ -635,6 +659,7 @@ export const a2Modules: ModuleDraft[] = [
       "Conselhos, obrigações, reservas e resolução de problemas cotidianos.",
     lessons: [
       {
+        id: "a2-servicos-01",
         title: "Dar conselhos com should",
         rule: "Should + verbo sugere uma ação; shouldn't sugere evitá-la. É uma recomendação, não uma obrigação automática. Você pode acrescentar because para explicar o motivo. Should não recebe -s nem exige to.",
         example: "You should check the timetable first.",
@@ -659,6 +684,7 @@ export const a2Modules: ModuleDraft[] = [
           "Dê dois conselhos sobre organização dos estudos, um com should e outro com shouldn't, explicando um motivo.",
       },
       {
+        id: "a2-servicos-02",
         title: "Obrigações com have to",
         rule: "Have to expressa necessidade ou obrigação: I have to leave. Com he/she, use has to. Em perguntas, use do/does: Does she have to work? Na pergunta com does, have volta à forma base.",
         example: "We have to show our tickets.",
@@ -687,6 +713,7 @@ export const a2Modules: ModuleDraft[] = [
           "Descreva duas regras de um evento fictício com have to/has to e faça uma pergunta sobre outra regra.",
       },
       {
+        id: "a2-servicos-03",
         title: "Proibido ou desnecessário?",
         rule: "Mustn't indica proibição. Don't have to indica ausência de obrigação: você pode fazer, mas não precisa. A diferença importa em regras de locais e serviços. Must + verbo é forte e comum em instruções obrigatórias.",
         example: "You must not park in front of the gate.",
@@ -709,6 +736,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva uma regra de proibição e uma informação opcional para um museu fictício. Não trate as duas como equivalentes.",
       },
       {
+        id: "a2-servicos-04",
         title: "Reservar um quarto",
         rule: "I'd like to book… solicita uma reserva. For two nights indica a duração da hospedagem. From…to… delimita datas. Pergunte Is breakfast included? para conferir serviços. Double room costuma ser um quarto com cama de casal; twin room costuma ter duas camas individuais.",
         example: "I would like to book a room for two nights.",
@@ -737,6 +765,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva um pedido de reserva com tipo de quarto, duração e uma pergunta sobre um serviço.",
       },
       {
+        id: "a2-servicos-05",
         title: "Relatar um problema numa compra",
         rule: "Explique o item e o problema antes do pedido: I bought these headphones yesterday. They don't work. Could I have a refund? pede reembolso; exchange pede troca. Mantenha datas, quantidade e descrição consistentes.",
         example: "These headphones do not work.",
@@ -761,6 +790,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva três frases para uma loja: quando comprou, qual é o defeito e qual solução gostaria de pedir.",
       },
       {
+        id: "a2-servicos-06",
         title: "Marcar e alterar uma consulta",
         rule: "I'd like to make an appointment solicita um horário. Reschedule significa remarcar; cancel significa cancelar. Are you available…? verifica disponibilidade. Ao confirmar, repita dia e hora para evitar mal-entendidos.",
         example: "Could we reschedule my appointment?",
@@ -793,6 +823,7 @@ export const a2Modules: ModuleDraft[] = [
       "Conectar ideias, entender instruções e escrever mensagens úteis.",
     lessons: [
       {
+        id: "a2-textos-01",
         title: "Retomar pessoas e coisas",
         rule: "Pronomes de objeto vêm depois de verbos ou preposições: help me, call her, with them. Eles evitam repetir nomes. It retoma singular; them retoma plural. Leia a frase anterior para identificar a referência correta.",
         example: "Please send them the address.",
@@ -817,6 +848,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva duas frases com nomes e reescreva a segunda usando it ou them para evitar repetição.",
       },
       {
+        id: "a2-textos-02",
         title: "Explicar causa e resultado",
         rule: "Because introduz uma causa; so introduz um resultado. Compare I stayed home because it rained com It rained, so I stayed home. But marca contraste. Escolha o conector pela relação de sentido, não por uma tradução isolada.",
         example: "The shop was closed, so we went home.",
@@ -844,6 +876,7 @@ export const a2Modules: ModuleDraft[] = [
           "Descreva um imprevisto em duas versões: uma usando because e outra usando so, invertendo a ordem das informações.",
       },
       {
+        id: "a2-textos-03",
         title: "Ler um e-mail de confirmação",
         rule: "Num e-mail de confirmação, identifique serviço, data, hora, local e ação exigida. Booked confirma a reserva; please arrive informa uma instrução. Não confunda o horário de chegada solicitado com o horário de início.",
         example: "Please arrive fifteen minutes before the tour.",
@@ -868,6 +901,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva um e-mail de confirmação fictício com hora de início, hora de chegada, local e item necessário.",
       },
       {
+        id: "a2-textos-04",
         title: "Interpretar uma avaliação",
         rule: "Avaliações combinam fatos e opiniões. Was clean descreve uma avaliação positiva; however/but pode introduzir um problema. Procure o balanço completo antes de concluir se a recomendação é favorável. Uma ressalva não apaga automaticamente os elogios.",
         example: "The room was clean, but the street was noisy.",
@@ -892,6 +926,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva uma avaliação curta de um lugar fictício com dois pontos positivos e uma ressalva.",
       },
       {
+        id: "a2-textos-05",
         title: "Escrever um pedido por e-mail",
         rule: "Um pedido simples deve dizer o motivo do contato, a informação necessária e um encerramento cortês. Could you send me…? faz uma solicitação. I look forward to your reply expressa expectativa de resposta; não é exigência de retorno imediato.",
         example: "Could you send me the course timetable?",
@@ -919,6 +954,7 @@ export const a2Modules: ModuleDraft[] = [
           "Escreva um e-mail de quatro linhas pedindo informações sobre um curso: saudação, interesse, pedido e agradecimento.",
       },
       {
+        id: "a2-textos-06",
         title: "Entender regras de um evento",
         rule: "Em instruções, diferencie obrigação, recomendação e possibilidade. Must indica exigência, should recomenda e can permite. Leia exceções e horários juntos: after 18:00 muda quando uma condição vale. Don't have to retira uma obrigação.",
         example: "You can enter after six with your ticket.",
