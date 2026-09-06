@@ -1,7 +1,7 @@
 import type { Lesson, Level, Step } from "../curriculum";
 import type { LessonDraft, ModuleDraft } from "./types";
 
-export const contentVersion = "2026-09-05.2";
+export const contentVersion = "2026-09-06.1";
 export const sourceIdsForLevel = (level: Level) => [
   "cefr",
   level === "B1" ? "bc-grammar-b1" : "bc-grammar-a1",

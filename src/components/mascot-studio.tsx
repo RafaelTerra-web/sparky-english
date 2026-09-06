@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Check, Coins, ShoppingBag } from "lucide-react";
 import {
   cosmeticCatalog,
+  type CosmeticCategory,
   type CosmeticSlot,
   type MascotId,
   type PublicRewardState,
@@ -31,32 +32,43 @@ export function MascotFigure({
   size?: "small" | "large" | "hero";
   decorative?: boolean;
 }) {
-  const activeIds = Object.values(equipped[mascot]);
+  const activeItems = Object.values(equipped[mascot])
+    .map((id) => cosmeticCatalog.find((entry) => entry.id === id))
+    .filter((item): item is (typeof cosmeticCatalog)[number] => Boolean(item));
+  const fullLook = activeItems.find(
+    (item) => item.slot === "style" && item.assetPath,
+  );
+  const visibleLayers = fullLook
+    ? []
+    : activeItems.filter((item) => item.slot !== "style");
+  const mascotName = mascot === "pinky" ? "Pinky" : "Sparky";
   return (
-    <div className={`mascot-figure mascot-${mascot} mascot-${size}`}>
+    <div
+      className={`mascot-figure mascot-${mascot} mascot-${size}${fullLook ? " mascot-with-full-look" : ""}`}
+    >
       <Image
-        src={
-          mascot === "pinky"
-            ? "/visuals/pinky-mascot.png"
-            : "/visuals/sparky-panda.png"
-        }
-        alt={decorative ? "" : mascot === "pinky" ? "Pinky" : "Sparky"}
+        src={fullLook?.assetPath ?? (mascot === "pinky" ? "/visuals/pinky-mascot.png" : "/visuals/sparky-panda.png")}
+        alt={decorative ? "" : fullLook ? `${mascotName} com ${fullLook.name}` : mascotName}
         width={512}
         height={512}
       />
-      {activeIds.map((id) => {
-        const item = cosmeticCatalog.find((entry) => entry.id === id);
-        return item ? (
-          <span
-            key={item.id}
-            className={`cosmetic-layer ${item.className}`}
-            aria-hidden="true"
-          />
-        ) : null;
-      })}
+      {visibleLayers.map((item) => (
+        <span
+          key={item.id}
+          className={`cosmetic-layer ${item.className}`}
+          aria-hidden="true"
+        />
+      ))}
     </div>
   );
 }
+
+const wardrobeFilters: Array<{ id: "all" | CosmeticCategory; label: string }> = [
+  { id: "all", label: "Tudo" },
+  { id: "looks", label: "Looks completos" },
+  { id: "head", label: "Cabeça e rosto" },
+  { id: "clothing", label: "Roupas e acessórios" },
+];
 
 export function MascotStudio({
   reward,
@@ -68,7 +80,17 @@ export function MascotStudio({
   onAction: (action: RewardAction) => Promise<boolean>;
 }) {
   const [confirmItem, setConfirmItem] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | CosmeticCategory>("all");
   const mascot = reward.mascot;
+  const mascotName = mascot === "sparky" ? "Sparky" : "Pinky";
+  const currentLook = cosmeticCatalog.find(
+    (item) =>
+      item.slot === "style" && reward.equipped[mascot].style === item.id,
+  );
+  const filteredItems = cosmeticCatalog.filter(
+    (item) =>
+      item.mascots.includes(mascot) && (filter === "all" || item.category === filter),
+  );
   return (
     <section className="mascot-studio" aria-labelledby="mascot-studio-title">
       <header className="studio-header">
@@ -88,6 +110,12 @@ export function MascotStudio({
               ? "Sparky estuda com calma e mantém o foco na próxima etapa."
               : "Pinky chegou para acompanhar suas práticas e revisões."}
           </p>
+          {currentLook && (
+            <p className="active-look-note" aria-live="polite">
+              Look completo equipado: <strong>{currentLook.name}</strong>. Os acessórios
+              individuais ficam guardados até você remover o look.
+            </p>
+          )}
         </div>
         <div className="mascot-selector" role="group" aria-label="Escolher mascote">
           {(["sparky", "pinky"] as const).map((choice) => (
@@ -116,16 +144,48 @@ export function MascotStudio({
         <span><strong>+20</strong> módulo completo</span>
         <span><strong>+2</strong> revisão vencida · até 10/dia</span>
       </div>
+      <div className="wardrobe-heading">
+        <div>
+          <p className="eyebrow">Monte do seu jeito</p>
+          <h3>Looks prontos ou acessórios para combinar</h3>
+          <p>Os itens são permanentes. Cada categoria mostra opções para {mascotName}.</p>
+        </div>
+        <span aria-live="polite">{filteredItems.length} opções</span>
+      </div>
+      <div className="wardrobe-filters" role="group" aria-label="Filtrar itens do guarda-roupa">
+        {wardrobeFilters.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={filter === option.id}
+            className={filter === option.id ? "selected" : ""}
+            onClick={() => {
+              setFilter(option.id);
+              setConfirmItem(null);
+            }}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
       <div className="cosmetic-grid">
-        {cosmeticCatalog.map((item) => {
+        {filteredItems.map((item) => {
           const owned = reward.owned.includes(item.id);
-          const compatible = item.mascots.includes(mascot);
           const equipped = reward.equipped[mascot][item.slot] === item.id;
           const confirming = confirmItem === item.id;
           return (
-            <article className="cosmetic-card" key={item.id}>
-              <div className={`cosmetic-swatch ${item.className}`} aria-hidden="true" />
+            <article className={`cosmetic-card${item.assetPath ? " cosmetic-card-look" : ""}`} key={item.id}>
+              {item.assetPath ? (
+                <div className="cosmetic-look-thumbnail" aria-hidden="true">
+                  <Image src={item.assetPath} alt="" width={160} height={160} sizes="80px" />
+                </div>
+              ) : (
+                <div className={`cosmetic-swatch ${item.className}`} aria-hidden="true" />
+              )}
               <div>
+                <span className="cosmetic-category-label">
+                  {item.category === "looks" ? "Look completo" : item.category === "head" ? "Cabeça e rosto" : "Acessório"}
+                </span>
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
               </div>
@@ -134,6 +194,7 @@ export function MascotStudio({
                   <div className="purchase-confirmation">
                     <p>Usar {item.price} moedas?</p>
                     <button
+                      type="button"
                       className="primary-button"
                       disabled={busy || reward.coins < item.price}
                       onClick={async () => {
@@ -143,12 +204,13 @@ export function MascotStudio({
                     >
                       Confirmar
                     </button>
-                    <button className="text-button" onClick={() => setConfirmItem(null)}>
+                    <button type="button" className="text-button" onClick={() => setConfirmItem(null)}>
                       Cancelar
                     </button>
                   </div>
                 ) : (
                   <button
+                    type="button"
                     className="secondary-button"
                     disabled={busy || reward.coins < item.price}
                     onClick={() => setConfirmItem(item.id)}
@@ -156,10 +218,9 @@ export function MascotStudio({
                     <ShoppingBag size={15} /> {item.price} moedas
                   </button>
                 )
-              ) : !compatible ? (
-                <span className="compatibility-note">Não serve em {mascot === "sparky" ? "Sparky" : "Pinky"}</span>
               ) : (
                 <button
+                  type="button"
                   className={equipped ? "secondary-button equipped" : "secondary-button"}
                   disabled={busy}
                   onClick={() =>

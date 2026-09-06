@@ -18,6 +18,51 @@
 .notebook-list article .secondary-button { margin-top: 12px; }
 .preserve-lines { white-space: pre-wrap; }
 input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.review-guidance, .review-empty {
+  border: 1px solid #d4dfca;
+  border-radius: 16px;
+  background: #eef3e8;
+  padding: 18px 20px;
+  max-width: 760px;
+}
+.review-guidance strong, .review-empty h2 { color: #315d42; }
+.review-guidance p, .review-empty p { margin: 7px 0 0; color: #52634f; line-height: 1.65; }
+.review-empty { margin-top: 24px; }
+.review-empty h2 { font-family: Georgia, serif; font-size: 20px; }
+.review-section { margin-top: 32px; }
+.review-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+.review-section-heading h2 { font-family: Georgia, serif; font-size: 23px; color: #244331; }
+.review-section-heading > span {
+  color: #52634f;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.review-card[data-priority="due"] {
+  border-color: #c8a06d;
+  box-shadow: inset 4px 0 #b47848;
+}
+.review-retrieval-note {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border: 1px solid #d5dfca;
+  border-radius: 14px;
+  background: #f1f4ea;
+  color: #365541;
+}
+.review-retrieval-note p { margin: 6px 0 14px; color: #52634f; line-height: 1.65; }
+.review-context-button { min-height: 44px; }
+.review-assistance-status {
+  margin: 18px 0 0;
+  color: #516c43;
+  font-size: 13px;
+  line-height: 1.55;
+}
 @media (max-width: 700px) {
   .next-lesson { display: grid; grid-template-columns: minmax(0, 1fr); padding-bottom: 35px; }
   .next-lesson .lesson-copy { width: 100%; max-width: none; }
@@ -30,4 +75,7 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .mobile-nav button { min-width: 0; }
   .notebook-section { padding: 20px; }
+  .review-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+  .review-section-heading h2 { font-size: 21px; }
+  .review-guidance, .review-empty { padding: 16px; }
 }

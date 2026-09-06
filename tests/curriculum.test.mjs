@@ -8,21 +8,24 @@ import {
 } from "../src/lib/curriculum.ts";
 import { a1Modules } from "../src/lib/content/a1.ts";
 import { a2Modules } from "../src/lib/content/a2.ts";
+import { a2CommunicationModules } from "../src/lib/content/a2-practice.ts";
 import { b1Modules } from "../src/lib/content/b1.ts";
 import { curriculumSources } from "../src/lib/content/build.ts";
 
-const drafts = [...a1Modules, ...a2Modules, ...b1Modules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules];
 const legacy = ["a1-1-1", "a1-2-1", "a2-3-1", "a2-4-1", "b1-5-1", "b1-6-1"];
-test("114 real lessons: 108 additions, 18 modules, 38 lessons per level", () => {
-  assert.equal(lessons.length, 114);
-  assert.equal(modules.length, 18);
-  assert.equal(drafts.flatMap((m) => m.lessons).length, 108);
+test("120 real lessons: 114 additions, 19 modules, and an extended A2 path", () => {
+  assert.equal(lessons.length, 120);
+  assert.equal(modules.length, 19);
+  assert.equal(drafts.flatMap((m) => m.lessons).length, 114);
+  const counts = { A1: 38, A2: 44, B1: 38 };
+  const moduleCounts = { A1: 6, A2: 7, B1: 6 };
   for (const level of ["A1", "A2", "B1"]) {
-    assert.equal(lessons.filter((l) => l.level === level).length, 38);
-    assert.equal(modules.filter((m) => m.level === level).length, 6);
+    assert.equal(lessons.filter((l) => l.level === level).length, counts[level]);
+    assert.equal(modules.filter((m) => m.level === level).length, moduleCounts[level]);
   }
-  assert.equal(new Set(lessons.map((l) => l.id)).size, 114);
-  assert.equal(new Set(lessons.map((l) => l.title)).size, 114);
+  assert.equal(new Set(lessons.map((l) => l.id)).size, 120);
+  assert.equal(new Set(lessons.map((l) => l.title)).size, 120);
   for (const id of legacy)
     assert.ok(
       lessons.find((l) => l.id === id),
@@ -32,7 +35,14 @@ test("114 real lessons: 108 additions, 18 modules, 38 lessons per level", () => 
 test("every module is ordered, connected and contains six distinct new authored lessons", () => {
   modules.forEach((m, index) => {
     assert.equal(m.order, index + 1);
-    assert.equal(m.prerequisiteId, index ? modules[index - 1].id : null);
+    assert.equal(
+      m.prerequisiteId,
+      m.id === "b1-narrativas"
+        ? "a2-textos"
+        : index
+          ? modules[index - 1].id
+          : null,
+    );
     assert.equal(m.lessons.filter((l) => !legacy.includes(l.id)).length, 6);
     for (const l of m.lessons) assert.equal(l.moduleId, m.id);
   });
@@ -108,11 +118,11 @@ test("every published exercise has one editorial key and rejects all distractors
       }
     }
   }
-  assert.equal(exercises, 342);
+  assert.equal(exercises, 360);
 });
 test("search supports accents, grammar terms, level isolation and empty results", () => {
-  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 114);
-  assert.equal(searchModules("A2", "").flatMap((m) => m.lessons).length, 38);
+  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 120);
+  assert.equal(searchModules("A2", "").flatMap((m) => m.lessons).length, 44);
   assert.ok(searchModules("all", "condicoes").length);
   assert.ok(
     searchModules("B1", "would rather")

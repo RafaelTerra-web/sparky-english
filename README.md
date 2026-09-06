@@ -16,7 +16,7 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.
 
-Há 114 lições completas (108 novas e as 6 originais), em 18 módulos: 38 lições por nível A1, A2 e B1. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada nova lição inclui explicação em PT-BR, exemplo traduzido, vocabulário, cuidado de uso, leitura contextualizada, três exercícios objetivos com feedback, produção escrita opcional e resumo. São 342 exercícios objetivos no total. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md).
+Há 120 lições completas (114 novas e as 6 originais), em 19 módulos: 38 lições em A1, 44 em A2 e 38 em B1. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada nova lição inclui explicação em PT-BR, exemplo traduzido, vocabulário, cuidado de uso, leitura contextualizada, três exercícios objetivos com feedback, produção escrita opcional e resumo. São 360 exercícios objetivos no total. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md).
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 

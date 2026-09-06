@@ -2,6 +2,7 @@ import { lessonLedger, moduleLedger } from "./content/ledger.ts";
 import { lessons, modules } from "./curriculum.ts";
 import {
   cosmeticCatalog,
+  cosmeticSlots,
   type CosmeticSlot,
   type EquippedItems,
   type MascotId,
@@ -89,7 +90,7 @@ export function normalizeRewardState(input: unknown): RewardState {
   const mascot: MascotId = raw.mascot === "pinky" ? "pinky" : "sparky";
   const equipped: EquippedItems = { sparky: {}, pinky: {} };
   for (const current of ["sparky", "pinky"] as const) {
-    for (const slot of ["head", "neck", "body"] as const) {
+    for (const slot of cosmeticSlots) {
       const id = raw.equipped?.[current]?.[slot];
       const item = cosmeticCatalog.find(
         (entry) =>

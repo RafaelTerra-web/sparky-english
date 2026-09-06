@@ -58,6 +58,26 @@ test("purchase and equipment validate balance, ownership, slot and mascot", () =
   assert.equal(selectMascot(state, "pinky").mascot, "pinky");
 });
 
+test("full looks persist in their own slot without discarding accessory choices", () => {
+  let state = emptyRewardState();
+  state.coins = 500;
+  state = buyCosmetic(state, "campus-cap").state;
+  state = buyCosmetic(state, "sparky-academy-look").state;
+  state = equipCosmetic(state, "sparky", "head", "campus-cap");
+  state = equipCosmetic(state, "sparky", "style", "sparky-academy-look");
+
+  assert.equal(state.equipped.sparky.head, "campus-cap");
+  assert.equal(state.equipped.sparky.style, "sparky-academy-look");
+  assert.deepEqual(
+    normalizeRewardState(state).equipped.sparky,
+    { head: "campus-cap", style: "sparky-academy-look" },
+  );
+  assert.throws(
+    () => equipCosmetic(state, "pinky", "style", "sparky-academy-look"),
+    /compatible/,
+  );
+});
+
 test("malformed stored values cannot mint currency or equip unowned items", () => {
   const state = normalizeRewardState({
     version: 1,

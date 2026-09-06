@@ -1,13 +1,13 @@
-# Currículo — edição 2026-09-04.1
+# Currículo — edição 2026-09-06.1
 
 ## Escopo publicado
 
-114 lições: 108 novas autorais e seis lições originais preservadas com seus identificadores. São 18 módulos, seis por nível, e 38 lições por nível. Os pré-requisitos orientam a sequência; não bloqueiam o acesso para quem deseja revisar um tópico.
+120 lições: 114 novas autorais e seis lições originais preservadas com seus identificadores. São 19 módulos: seis em A1, sete em A2 e seis em B1. A1 e B1 têm 38 lições cada; A2 tem 44. Os pré-requisitos orientam a sequência; não bloqueiam o acesso para quem deseja revisar um tópico.
 
-| Nível | Organização dos seis módulos |
+| Nível | Organização dos módulos |
 | --- | --- |
 | A1 | Identidade; pessoas; rotina; casa; consumo; interação |
-| A2 | Passado; escolhas; experiências; planos; serviços; textos |
+| A2 | Passado; escolhas; experiências; planos; serviços; textos; comunicação em situações reais |
 | B1 | Narrativas; argumentos; hipóteses; precisão; colaboração; leitura |
 
 As novas lições têm dez etapas: conceito, exemplo, vocabulário, cuidado de uso, leitura, interpretação, completar frase, ordenar palavras, produção escrita e resumo. A leitura reaparece na pergunta para permitir consulta. As alternativas são rotacionadas e as respostas incorretas têm feedback explicativo. A produção escrita é opcional, sem correção automática: uma lista de revisão ajuda o aluno a verificar o próprio texto.

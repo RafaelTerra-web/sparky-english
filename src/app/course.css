@@ -219,6 +219,142 @@
   border-radius: 99px;
   background: #d2c5a5;
 }
+.mascot-sparky .cosmetic-readers {
+  top: 28%;
+  left: 25%;
+}
+.mascot-pinky .cosmetic-readers {
+  top: 35%;
+  left: 24%;
+}
+.cosmetic-layer.cosmetic-readers {
+  width: 48%;
+  height: 12%;
+  background: linear-gradient(#916b20, #916b20) center / 24% 12% no-repeat;
+}
+.cosmetic-layer.cosmetic-readers::before,
+.cosmetic-layer.cosmetic-readers::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 32%;
+  height: 100%;
+  border: max(1px, 0.012em) solid #916b20;
+  border-radius: 48%;
+  background: rgba(250, 212, 113, 0.17);
+}
+.cosmetic-layer.cosmetic-readers::before { left: 7%; }
+.cosmetic-layer.cosmetic-readers::after { right: 7%; }
+.mascot-sparky .cosmetic-headphones {
+  top: 6%;
+  left: 23%;
+}
+.mascot-pinky .cosmetic-headphones {
+  top: 19%;
+  left: 22%;
+}
+.cosmetic-layer.cosmetic-headphones {
+  width: 55%;
+  height: 31%;
+  border: max(2px, 0.03em) solid #275f60;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+.cosmetic-layer.cosmetic-headphones::before,
+.cosmetic-layer.cosmetic-headphones::after {
+  content: "";
+  position: absolute;
+  top: 62%;
+  width: 19%;
+  height: 28%;
+  border-radius: 42% 42% 48% 48%;
+  background: #275f60;
+  border: max(1px, 0.012em) solid #173f42;
+}
+.cosmetic-layer.cosmetic-headphones::before { left: -8%; }
+.cosmetic-layer.cosmetic-headphones::after { right: -8%; }
+.mascot-pinky .cosmetic-beret {
+  top: 20%;
+  left: 33%;
+}
+.cosmetic-layer.cosmetic-beret {
+  width: 33%;
+  height: 12%;
+  border-radius: 70% 55% 45% 45%;
+  background: #775792;
+  border: max(1px, 0.012em) solid #523970;
+  transform: rotate(-11deg);
+  box-shadow: inset 0 -0.35em #5e4478;
+}
+.cosmetic-layer.cosmetic-beret::after {
+  content: "";
+  position: absolute;
+  top: -32%;
+  left: 47%;
+  width: 15%;
+  height: 41%;
+  border-radius: 99px;
+  background: #d9b575;
+}
+.mascot-sparky .cosmetic-satchel {
+  top: 52%;
+  left: 36%;
+}
+.cosmetic-layer.cosmetic-satchel {
+  width: 35%;
+  height: 25%;
+  border: max(1px, 0.012em) solid #244d42;
+  border-radius: 18% 18% 32% 32%;
+  background: #4d826d;
+  box-shadow: inset 0 -0.55em #376654;
+  transform: rotate(-8deg);
+}
+.cosmetic-layer.cosmetic-satchel::before {
+  content: "";
+  position: absolute;
+  width: 98%;
+  height: 96%;
+  left: -32%;
+  top: -79%;
+  border: max(1px, 0.012em) solid #244d42;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 54% 0 0;
+  transform: rotate(-10deg);
+}
+.cosmetic-layer.cosmetic-satchel::after {
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 43%;
+  width: 15%;
+  height: 15%;
+  border-radius: 50%;
+  background: #d9b575;
+}
+.mascot-sparky .cosmetic-cardigan {
+  top: 52%;
+  left: 32%;
+}
+.cosmetic-layer.cosmetic-cardigan {
+  width: 39%;
+  height: 31%;
+  border: max(1px, 0.012em) solid #1f3541;
+  border-radius: 28% 28% 38% 38%;
+  background: #2d455e;
+  box-shadow: inset 0 0.55em #3d5a79;
+}
+.cosmetic-layer.cosmetic-cardigan::after {
+  content: "";
+  position: absolute;
+  top: 16%;
+  left: 48%;
+  width: 9%;
+  height: 9%;
+  border-radius: 50%;
+  background: #d9b575;
+  box-shadow: 0 0.75em 0 -0.02em #d9b575, 0 1.5em 0 -0.02em #d9b575;
+}
 .coin-stat strong,
 .coin-balance {
   display: inline-flex;
@@ -316,6 +452,58 @@
   font-size: 10px;
 }
 .reward-rules strong { color: #7d5d13; }
+.wardrobe-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 18px;
+  margin: 28px 0 13px;
+}
+.wardrobe-heading h3 {
+  margin: 5px 0 7px;
+  font: 400 clamp(19px, 2.3vw, 25px)/1.15 Georgia, serif;
+  color: #344d3b;
+}
+.wardrobe-heading p { color: #6b7465; font-size: 12px; line-height: 1.55; }
+.wardrobe-heading > span {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 99px;
+  background: #e3ecda;
+  color: #41643a;
+  font-size: 11px;
+  font-weight: 700;
+}
+.wardrobe-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.wardrobe-filters button {
+  min-height: 35px;
+  padding: 7px 11px;
+  border: 1px solid #cbd7c3;
+  border-radius: 99px;
+  background: #fffefa;
+  color: #496044;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+}
+.wardrobe-filters button[aria-pressed="true"] {
+  border-color: #496e42;
+  background: #e3ecda;
+  color: #2f5129;
+}
+.active-look-note {
+  margin-top: 9px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: #eff3e9;
+  color: #496044 !important;
+  font-size: 10px !important;
+}
 .cosmetic-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -333,6 +521,15 @@
 }
 .cosmetic-card h3 { font-size: 14px; margin-bottom: 6px; }
 .cosmetic-card p { color: #6b7465; font-size: 11px; line-height: 1.55; }
+.cosmetic-category-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #6b7f63;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 .cosmetic-swatch {
   position: relative;
   place-self: center;
@@ -371,6 +568,91 @@
   background: #275f60;
   border: 1px solid #173f42;
 }
+.cosmetic-swatch.cosmetic-readers::before,
+.cosmetic-swatch.cosmetic-readers::after {
+  content: "";
+  position: absolute;
+  top: 21px;
+  width: 18px;
+  height: 14px;
+  border: 2px solid #916b20;
+  border-radius: 50%;
+  background: rgba(250, 212, 113, 0.25);
+}
+.cosmetic-swatch.cosmetic-readers::before { left: 14px; }
+.cosmetic-swatch.cosmetic-readers::after { right: 14px; }
+.cosmetic-swatch.cosmetic-headphones::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 13px;
+  width: 31px;
+  height: 30px;
+  border: 5px solid #275f60;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+.cosmetic-swatch.cosmetic-headphones::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 35px;
+  width: 42px;
+  height: 12px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #275f60 0 21%, transparent 21% 79%, #275f60 79%);
+}
+.cosmetic-swatch.cosmetic-beret::after {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 21px;
+  width: 37px;
+  height: 18px;
+  border-radius: 70% 55% 45% 45%;
+  background: #775792;
+  box-shadow: inset 0 -5px #5e4478;
+  transform: rotate(-10deg);
+}
+.cosmetic-swatch.cosmetic-satchel::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 22px;
+  width: 31px;
+  height: 25px;
+  border: 1px solid #244d42;
+  border-radius: 6px 6px 11px 11px;
+  background: #4d826d;
+  box-shadow: inset 0 -6px #376654;
+}
+.cosmetic-swatch.cosmetic-cardigan::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 12px;
+  width: 34px;
+  height: 42px;
+  border: 1px solid #1f3541;
+  border-radius: 12px 12px 16px 16px;
+  background: #2d455e;
+  box-shadow: inset 0 6px #3d5a79;
+}
+.cosmetic-look-thumbnail {
+  display: grid;
+  place-items: center;
+  place-self: center;
+  width: 82px;
+  height: 70px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: radial-gradient(circle at 50% 35%, #fffdf5, #e3ead8 74%);
+}
+.cosmetic-look-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 .cosmetic-card > .secondary-button { align-self: end; width: 100%; justify-content: center; }
 .cosmetic-card > .equipped { background: #e3ecda; color: #3b6032; }
 .compatibility-note { color: #7b7468; font-size: 10px; align-self: center; }
@@ -383,6 +665,7 @@
 @media (max-width: 900px) {
   .cosmetic-grid { grid-template-columns: 1fr; }
   .cosmetic-card { grid-template-columns: 75px 1fr minmax(125px, auto); grid-template-rows: auto; align-items: center; }
+  .cosmetic-look-thumbnail { width: 75px; height: 64px; }
 }
 @media (max-width: 700px) {
   .next-lesson > .mascot-hero { width: 158px; height: 205px; right: -8px; bottom: 22px; }
@@ -392,6 +675,7 @@
   .mascot-selector > button { grid-template-columns: 48px 1fr; }
   .mascot-selector > button > svg { display: none; }
   .mascot-selector .mascot-small { width: 46px; height: 46px; }
+  .wardrobe-heading { align-items: flex-start; flex-direction: column; gap: 9px; }
   .cosmetic-card { grid-template-columns: 62px 1fr; }
   .cosmetic-card > :last-child { grid-column: 1 / -1; }
 }

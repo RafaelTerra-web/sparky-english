@@ -18,6 +18,7 @@ import {
   selectMascot,
 } from "@/lib/rewards";
 import {
+  cosmeticSlots,
   type CosmeticSlot,
   type MascotId,
 } from "@/lib/rewards-shared";
@@ -108,7 +109,7 @@ export async function POST(request: Request) {
     } else if (body.action === "equip") {
       if (
         (body.mascot !== "sparky" && body.mascot !== "pinky") ||
-        !["head", "neck", "body"].includes(String(body.slot)) ||
+        !cosmeticSlots.includes(body.slot as CosmeticSlot) ||
         (typeof body.itemId !== "string" && body.itemId !== null)
       )
         throw new Error("invalid-request");

@@ -41,6 +41,7 @@ export default function LessonPlayer({
   const [correct, setCorrect] = useState(Boolean(initial?.correct));
   const [translation, setTranslation] = useState(Boolean(initial?.translation));
   const [assisted, setAssisted] = useState(Boolean(initial?.assisted));
+  const [contextVisible, setContextVisible] = useState(!review || Boolean(initial?.contextVisible));
   const [draft, setDraft] = useState(recovered?.draft || "");
   const [receipt, setReceipt] = useState(initial?.receipt || "");
   const [verifying, setVerifying] = useState(false);
@@ -48,6 +49,8 @@ export default function LessonPlayer({
   const [storageError, setStorageError] = useState(false);
   const [savedPhrase, setSavedPhrase] = useState(false);
   const step = steps[index];
+  const retrievalExercise = review && isExercise(step);
+  const canSeeContext = !retrievalExercise || contextVisible;
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
@@ -60,9 +63,9 @@ export default function LessonPlayer({
   useEffect(() => { heading.current?.focus(); }, [index]);
   useEffect(() => {
     const saved = saveCheckpoint(userId, { lessonId: lesson.id, review, index, answer, tokens, checked, correct,
-      translation, assisted, receipt, draft, updatedAt: new Date().toISOString(), contentVersion });
+      translation, assisted, contextVisible, receipt, draft, updatedAt: new Date().toISOString(), contentVersion });
     if (!saved) queueMicrotask(() => setStorageError(true));
-  }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, receipt, draft]);
+  }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, receipt, draft]);
   function saveWriting() {
     if (!draft.trim()) return;
     const ok = updateWorkspace(userId, current => current.writings.some(w => w.lessonId === lesson.id && w.text === draft) ? current : ({ ...current,
@@ -91,7 +94,7 @@ export default function LessonPlayer({
         const result = await response.json();
         if (!response.ok) {
           if (["study-expired", "study-out-of-order"].includes(result.error)) {
-            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]);
+            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(!review);
             throw new Error("A validação desta prática expirou. Retome os exercícios desde o início; seu rascunho foi preservado.");
           }
           throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Tente novamente; sua resposta continua aqui.");
@@ -119,14 +122,14 @@ export default function LessonPlayer({
         });
       } catch (cause) {
         if (cause instanceof Error && cause.message === "study-incomplete") {
-          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]);
+          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(!review);
           setError("A validação da prática expirou. Retome os exercícios; seus textos foram preservados.");
         } else setError("Não foi possível salvar a conclusão. Verifique a conexão e tente Concluir novamente. Sua prática foi preservada.");
       }
       return;
     }
     setIndex(value => value + 1); setAnswer(""); setTokens([]); setChecked(false);
-    setCorrect(false); setTranslation(false); setAssisted(false); setSavedPhrase(false);
+    setCorrect(false); setTranslation(false); setAssisted(false); setContextVisible(!review); setSavedPhrase(false);
   }
   return (
     <dialog
@@ -206,8 +209,25 @@ export default function LessonPlayer({
             </ul>
           </div>
         )}
+        {retrievalExercise && !contextVisible && (
+          <aside className="review-retrieval-note" aria-label="Estratégia de revisão">
+            <strong>Recupere primeiro.</strong>
+            <p>Escolha com o que você lembra. Se precisar, revele o contexto; a tentativa será registrada com apoio.</p>
+            <button
+              className="secondary-button review-context-button"
+              onClick={() => { setContextVisible(true); setAssisted(true); }}
+            >
+              Ver contexto da lição
+            </button>
+          </aside>
+        )}
         {isExercise(step) && (
-          <details className="lesson-notes" onToggle={(event) => { if (event.currentTarget.open) setAssisted(true); }}>
+          <details className="lesson-notes" onToggle={(event) => {
+            if (event.currentTarget.open) {
+              setAssisted(true);
+              if (review) setContextVisible(true);
+            }
+          }}>
             <summary>Consultar explicação e vocabulário</summary>
             {lesson.steps
               .filter(
@@ -221,7 +241,12 @@ export default function LessonPlayer({
               ))}
           </details>
         )}
-        {step.english && (
+        {retrievalExercise && contextVisible && (
+          <p className="review-assistance-status" role="status">
+            Contexto exibido: esta tentativa será registrada com apoio.
+          </p>
+        )}
+        {step.english && canSeeContext && (
           <div
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
             lang="en"
@@ -229,7 +254,7 @@ export default function LessonPlayer({
             {step.english}
           </div>
         )}
-        {step.translation && (
+        {step.translation && canSeeContext && (
           <div className="translation-block">
             <button
               className="text-button"
@@ -321,7 +346,13 @@ export default function LessonPlayer({
       </div>
       <footer>
         <span>
-          {review ? "Prática de revisão" : "Você pode consultar as explicações"}
+          {review
+            ? retrievalExercise
+              ? contextVisible
+                ? "Contexto consultado nesta prática"
+                : "Tente lembrar antes de consultar o contexto"
+              : "Prática de revisão"
+            : "Você pode consultar as explicações"}
         </span>
         <button
           className="primary-button"

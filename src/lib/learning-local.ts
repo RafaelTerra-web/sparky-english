@@ -8,6 +8,7 @@ export type Attempt = {
 export type Checkpoint = {
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
   checked: boolean; correct: boolean; translation: boolean; assisted: boolean;
+  contextVisible: boolean;
   receipt: string; draft: string; updatedAt: string; contentVersion: string;
 };
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
@@ -26,11 +27,19 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
   // Local data is untrusted: filter corrupted entries before rendering or resuming.
   const string = (v: unknown) => typeof v === "string";
   const date = (v: unknown) => string(v) && Number.isFinite(Date.parse(v as string));
-  const checkpoints = Object.fromEntries(Object.entries(value.checkpoints || {}).filter(([, p]) =>
-    p && string(p.lessonId) && typeof p.review === "boolean" && p.contentVersion === contentVersion &&
-    Number.isSafeInteger(p.index) && p.index >= 0 && p.index < 30 && string(p.answer) &&
-    Array.isArray(p.tokens) && p.tokens.length <= 100 && p.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
-    string(p.receipt) && string(p.draft) && p.draft.length <= 4000 && date(p.updatedAt)));
+  const checkpoints = Object.fromEntries(Object.entries(value.checkpoints || {})
+    .filter(([, p]) =>
+      p && string(p.lessonId) && typeof p.review === "boolean" && p.contentVersion === contentVersion &&
+      Number.isSafeInteger(p.index) && p.index >= 0 && p.index < 30 && string(p.answer) &&
+      Array.isArray(p.tokens) && p.tokens.length <= 100 && p.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
+      typeof p.checked === "boolean" && typeof p.correct === "boolean" && typeof p.translation === "boolean" && typeof p.assisted === "boolean" &&
+      string(p.receipt) && string(p.draft) && p.draft.length <= 4000 && date(p.updatedAt))
+    .map(([key, p]) => [key, {
+      ...p,
+      // Checkpoints saved before retrieval-first reviews have no context field.
+      // Keep them resumable while defaulting to the safer hidden-context state.
+      contextVisible: typeof p.contextVisible === "boolean" ? p.contextVisible : false,
+    }]));
   const writings = Array.isArray(value.writings) ? value.writings.filter(w => w && string(w.id) && string(w.lessonId) && string(w.text) && w.text.length <= 4000 && date(w.createdAt)) : [];
   for (const p of Object.values(value.checkpoints || {})) {
     if (p && p.contentVersion !== contentVersion && string(p.lessonId) && string(p.draft) && p.draft.trim() && p.draft.length <= 4000 && date(p.updatedAt) &&

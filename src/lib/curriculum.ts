@@ -1,5 +1,6 @@
 import { a1Modules } from "./content/a1.ts";
 import { a2Modules } from "./content/a2.ts";
+import { a2CommunicationModules } from "./content/a2-practice.ts";
 import { b1Modules } from "./content/b1.ts";
 import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
 
@@ -275,7 +276,7 @@ const introductoryLessons: Lesson[] = [
   }),
 ];
 
-const drafts = [...a1Modules, ...a2Modules, ...b1Modules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules];
 export const modules = drafts.map((module, index) => {
   const items = module.lessons.map((draft, position) =>
     buildLesson(draft, module, position),
@@ -297,7 +298,7 @@ export const modules = drafts.map((module, index) => {
     level: module.level,
     description: module.description,
     order: index + 1,
-    prerequisiteId: index > 0 ? drafts[index - 1].id : null,
+    prerequisiteId: module.prerequisiteId ?? (index > 0 ? drafts[index - 1].id : null),
     lessons: items,
   };
 });

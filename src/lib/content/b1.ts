@@ -5,6 +5,8 @@ export const b1Modules: ModuleDraft[] = [
     id: "b1-narrativas",
     title: "Narrativas com contexto",
     level: "B1",
+    // A2 communication is an optional extension; preserve the established B1 entry point.
+    prerequisiteId: "a2-textos",
     description: "Hábitos antigos, anterioridade e relatos mais precisos.",
     lessons: [
       {

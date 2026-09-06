@@ -211,7 +211,7 @@ export function CourseCatalog({
       <details className="curriculum-references">
         <summary>Sobre o conteúdo e as referências</summary>
         <p>
-          108 lições novas e 6 lições iniciais preservadas. Textos e exercícios
+          114 lições novas e 6 lições iniciais preservadas. Textos e exercícios
           próprios, com explicações em PT-BR. A produção escrita é uma atividade
           de auto-revisão, sem nota ou correção automática. A trilha atual não
           avalia compreensão oral nem pronúncia.

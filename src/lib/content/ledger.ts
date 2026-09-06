@@ -113,7 +113,13 @@ export const lessonLedger = [
   "b1-leitura-03",
   "b1-leitura-04",
   "b1-leitura-05",
-  "b1-leitura-06"
+  "b1-leitura-06",
+  "a2-comunicacao-01",
+  "a2-comunicacao-02",
+  "a2-comunicacao-03",
+  "a2-comunicacao-04",
+  "a2-comunicacao-05",
+  "a2-comunicacao-06"
 ] as const;
 export const moduleLedger = [
   "a1-identidade",
@@ -133,5 +139,6 @@ export const moduleLedger = [
   "b1-hipoteses",
   "b1-precisao",
   "b1-colaboracao",
-  "b1-leitura"
+  "b1-leitura",
+  "a2-comunicacao"
 ] as const;

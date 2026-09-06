@@ -24,5 +24,7 @@ export type ModuleDraft = {
   level: "A1" | "A2" | "B1";
   description: string;
   legacyId?: string;
+  /** Override the visual prerequisite when an optional extension precedes another level. */
+  prerequisiteId?: string | null;
   lessons: LessonDraft[];
 };

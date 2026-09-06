@@ -69,17 +69,17 @@ function readProgress(userId: string): Progress {
       localStorage.getItem(`sparky-progress:${userId}`) || sessionStorage.getItem(`sparky-progress:${userId}`) || "null",
     );
     if (!saved || !saved.completed || !saved.reviews) return emptyProgress;
-    const clean = (record: Record<string, unknown>) =>
+    const clean = (record: Record<string, unknown>, allowLegacyMarker = false) =>
       Object.fromEntries(
         Object.entries(record).filter(
           ([id, date]) =>
             lessons.some((lesson) => lesson.id === id) &&
             typeof date === "string" &&
-            (date === "completed" || Number.isFinite(Date.parse(date))),
+            ((allowLegacyMarker && date === "completed") || Number.isFinite(Date.parse(date))),
         ),
       );
     return {
-      completed: clean(saved.completed),
+      completed: clean(saved.completed, true),
       reviews: clean(saved.reviews),
       level: ["A1", "A2", "B1"].includes(saved.level) ? saved.level : "A1",
     } as Progress;
@@ -357,10 +357,13 @@ export default function SparkyApp() {
     ) ||
     lessons.find((lesson) => !progress.completed[lesson.id]) ||
     lessons[0];
-  const due = Object.entries(progress.reviews).filter(
-    ([, date]) => Date.parse(date) <= today.getTime(),
-  ).length;
-  const studied = lessons.filter((lesson) => progress.completed[lesson.id]).sort((a,b) => Date.parse(progress.reviews[a.id] || "9999-01-01") - Date.parse(progress.reviews[b.id] || "9999-01-01"));
+  const studied = lessons
+    .filter((lesson) => progress.completed[lesson.id])
+    .sort((a, b) => Date.parse(progress.reviews[a.id] || "9999-01-01") - Date.parse(progress.reviews[b.id] || "9999-01-01"));
+  const dueLessons = studied.filter((lesson) => Date.parse(progress.reviews[lesson.id]) <= today.getTime());
+  const earlyLessons = studied.filter((lesson) => !dueLessons.some((item) => item.id === lesson.id));
+  const due = dueLessons.length;
+  const dueLabel = `${due} para hoje`;
   const resume = Object.values(workspace.checkpoints).filter(p => lessons.some(l => l.id === p.lessonId)).sort((a,b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
   const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : studied.find(l => Date.parse(progress.reviews[l.id]) <= today.getTime()) || next;
   const recommendedReview = resume ? resume.review : Boolean(progress.completed[recommended.id]);
@@ -574,7 +577,7 @@ export default function SparkyApp() {
                 <p className="eyebrow">Vocabulário e expressões</p>
                 <h1>Revisão</h1>
               </div>
-              <span className="language-chip">{due} para hoje</span>
+              <span className="language-chip">{dueLabel}</span>
             </div>
             {studied.length === 0 ? (
               <section className="empty-state">
@@ -589,31 +592,49 @@ export default function SparkyApp() {
                 </button>
               </section>
             ) : (
-              <div className="review-list">
-                {studied.map((lesson) => (
-                  <section className="review-card" key={lesson.id}>
-                    <div>
-                      <span className="eyebrow">
-                        {lesson.level} · {lesson.title}
-                      </span>
-                      <p>Pratique a recuperação antes de consultar o modelo.</p>
-                      <span>
-                        Revisão:{" "}
-                        {new Intl.DateTimeFormat("pt-BR", {
-                          day: "numeric",
-                          month: "short",
-                        }).format(new Date(progress.reviews[lesson.id] || today))}
-                      </span>
+              <>
+                <section className="review-guidance" aria-label="Como usar a revisão">
+                  <strong>{due ? `${due} ${due === 1 ? "revisão vence" : "revisões vencem"} hoje.` : "Nenhuma revisão vence hoje."}</strong>
+                  <p>Recupere a resposta antes de consultar exemplos ou explicações. Revelar o contexto marca a tentativa como apoiada.</p>
+                </section>
+                {dueLessons.length > 0 ? (
+                  <section className="review-section" aria-labelledby="due-review-heading">
+                    <div className="review-section-heading">
+                      <div>
+                        <p className="eyebrow">Prioridade de hoje</p>
+                        <h2 id="due-review-heading">Revisar agora</h2>
+                      </div>
+                      <span>{due} {due === 1 ? "lição" : "lições"}</span>
                     </div>
-                    <button
-                      className="secondary-button"
-                      onClick={() => open(lesson, true)}
-                    >
-                      Praticar <ArrowRight size={16} />
-                    </button>
+                    <div className="review-list">
+                      {dueLessons.map((lesson) => (
+                        <ReviewCard key={lesson.id} lesson={lesson} reviewAt={progress.reviews[lesson.id]} due onOpen={() => open(lesson, true)} />
+                      ))}
+                    </div>
                   </section>
-                ))}
-              </div>
+                ) : (
+                  <section className="review-empty" aria-labelledby="available-review-heading">
+                    <h2 id="available-review-heading">Prática antecipada disponível</h2>
+                    <p>Você pode praticar uma lição antes da próxima data sem alterar a ordem do curso.</p>
+                  </section>
+                )}
+                {earlyLessons.length > 0 && (
+                  <section className="review-section" aria-labelledby="early-review-heading">
+                    <div className="review-section-heading">
+                      <div>
+                        <p className="eyebrow">Opcional</p>
+                        <h2 id="early-review-heading">{due ? "Praticar antes da data" : "Revisões disponíveis"}</h2>
+                      </div>
+                      <span>{earlyLessons.length} {earlyLessons.length === 1 ? "lição" : "lições"}</span>
+                    </div>
+                    <div className="review-list">
+                      {earlyLessons.map((lesson) => (
+                        <ReviewCard key={lesson.id} lesson={lesson} reviewAt={progress.reviews[lesson.id]} onOpen={() => open(lesson, true)} />
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
             )}
           </>
         )}
@@ -837,6 +858,44 @@ function LoginScreen() {
         </footer>
       </div>
     </main>
+  );
+}
+
+function ReviewCard({
+  lesson,
+  reviewAt,
+  due = false,
+  onOpen,
+}: {
+  lesson: Lesson;
+  reviewAt?: string;
+  due?: boolean;
+  onOpen: () => void;
+}) {
+  const reviewDate = Date.parse(reviewAt || "");
+  const schedule = Number.isFinite(reviewDate)
+    ? new Intl.DateTimeFormat("pt-BR", {
+        day: "numeric",
+        month: "short",
+      }).format(new Date(reviewDate))
+    : "Disponível agora";
+  return (
+    <section className="review-card" data-priority={due ? "due" : "early"}>
+      <div>
+        <span className="eyebrow">
+          {lesson.level} · {lesson.title}
+        </span>
+        <p>Pratique a recuperação antes de consultar o modelo.</p>
+        <span>{due ? "Venceu: " : "Próxima revisão: "}{schedule}</span>
+      </div>
+      <button
+        className="secondary-button"
+        onClick={onOpen}
+        aria-label={`Praticar revisão de ${lesson.title}`}
+      >
+        Praticar <ArrowRight size={16} />
+      </button>
+    </section>
   );
 }
 
