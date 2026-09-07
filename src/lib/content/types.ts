@@ -29,6 +29,13 @@ export type LessonExperience = {
   challenge: string;
   application: string;
   memoryCue?: string;
+  recall?: { title: string; prompt: string; model: string };
+};
+export type ProductionSupport = {
+  plan: string[];
+  model: string;
+  notice: string;
+  transfer: string;
 };
 export type PronunciationGuide = {
   focus: string;
@@ -41,7 +48,7 @@ export type PronunciationGuide = {
   contrast?: [string, string];
 };
 export type UsageContrast = {
-  label: "MUITO NATURAL" | "ARMADILHA" | "CORREÇÃO";
+  label: "MODELO DA LIÇÃO" | "COMPARE NO CONTEXTO" | "AJUSTE EXPLICADO";
   text: string;
   tone: "good" | "warning" | "fixed";
 };

@@ -9,7 +9,7 @@ import { c2Modules } from "./content/c2.ts";
 import { c2ExtensionModules } from "./content/c2-extension.ts";
 import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
 import { authoredStepOrders, createLessonExperience, createPronunciationGuide, usageContrasts } from "./content/pedagogy.ts";
-import type { ModuleDraft, LessonExperience, PronunciationGuide, UsageContrast } from "./content/types.ts";
+import type { ModuleDraft, LessonExperience, PronunciationGuide, UsageContrast, ProductionSupport } from "./content/types.ts";
 
 import type { Level } from "./levels";
 export type { Level } from "./levels";
@@ -40,6 +40,7 @@ export type Step = {
   speakingTask?: string;
   pronunciation?: PronunciationGuide;
   contrasts?: UsageContrast[];
+  productionSupport?: ProductionSupport;
 };
 export type Lesson = {
   id: string;
@@ -161,9 +162,9 @@ function personalizeLegacyLesson(original: Lesson, module: ModuleDraft, position
   const base: Record<string, Step> = Object.fromEntries(original.steps.map(step => [step.kind, step]));
   base.hook = { kind: "hook", title: experience.mechanic, body: experience.mission };
   base.pronunciation = { kind: "pronunciation", title: "Pronúncia que destrava a frase", body: "Treine o movimento primeiro; depois copie o ritmo da frase inteira.", pronunciation: createPronunciationGuide(draft, original.level, position) };
-  base.error_analysis = { kind: "error_analysis", title: "Ajuste de naturalidade", body: teach.body, contrasts: usageContrasts(draft) };
+  base.error_analysis = { kind: "error_analysis", title: "Ajuste de naturalidade", body: teach.body, contrasts: usageContrasts(draft), explanation: gap.explanation };
   base.production = { kind: "production", title: "Leve para a sua vida", body: `Crie uma resposta curta usando “${original.title}” em uma situação sua. Troque pelo menos um detalhe do exemplo.`, speakingTask: `Diga sua versão, escute o modelo novamente e repita copiando a palavra mais forte e as ligações.` };
-  base.summary = { ...base.summary, body: `Agora você consegue ${experience.application}. ${teach.body}` };
+  base.summary = { ...base.summary, body: `Você praticou como ${experience.application}. ${teach.body} Tente criar outro exemplo sem olhar.` };
   const order = authoredStepOrders[position % authoredStepOrders.length];
   return { ...original, minutes: 7, experience, steps: order.map(key => base[key]).filter(Boolean) };
 }
@@ -329,12 +330,9 @@ const introductoryLessons: Lesson[] = [
 ];
 
 const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules];
-let previousAuthoredTitle: string | undefined;
 export const modules = drafts.map((module, index) => {
   const items = module.lessons.map((draft, position) => {
-    const built = buildLesson(draft, module, position, previousAuthoredTitle);
-    previousAuthoredTitle = draft.title;
-    return built;
+    return buildLesson(draft, module, position, module.lessons[position - 1]);
   });
   const introductory = introductoryLessons.find(
     (item) => item.id === module.legacyId,

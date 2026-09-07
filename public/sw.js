@@ -1,11 +1,11 @@
-const CACHE_NAME = "sparky-public-v4";
+const CACHE_NAME = "sparky-public-v5";
 const SHELL = [
   "/offline.html",
   "/visuals/sparky-panda.png",
-  "/icons/sparky-192.png",
-  "/icons/sparky-512.png",
-  "/icons/sparky-maskable-512.png",
-  "/icons/apple-touch-icon.png",
+  "/icons/sparky-192-v2.png",
+  "/icons/sparky-512-v2.png",
+  "/icons/sparky-maskable-512-v2.png",
+  "/icons/apple-touch-icon-v2.png",
 ];
 
 self.addEventListener("install", (event) => {

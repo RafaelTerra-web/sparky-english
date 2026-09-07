@@ -91,7 +91,7 @@ export function InstallAppPrompt() {
     <aside className="install-prompt" aria-label="Instalar Sparky English no celular">
       <button className="install-dismiss" onClick={dismiss} aria-label="Fechar convite de instalação"><X size={17} /></button>
       <div className="install-heading">
-        <Image src="/icons/sparky-192.png" alt="" width={46} height={46} />
+        <Image src="/icons/sparky-192-v2.png" alt="" width={46} height={46} />
         <div>
           <p className="eyebrow">Sparky no celular</p>
           <h2>{title}</h2>

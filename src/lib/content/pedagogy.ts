@@ -45,7 +45,7 @@ function compact(text: string, length = 145) {
   return first.length <= length ? first : first.slice(0, length - 1).trimEnd() + "…";
 }
 
-export function createLessonExperience(data: Pick<LessonDraft, "title" | "example" | "translation" | "dialogueTranslation">, module: Pick<ModuleDraft, "id" | "level">, position: number, previousTitle?: string): LessonExperience {
+export function createLessonExperience(data: Pick<LessonDraft, "title" | "example" | "translation" | "dialogueTranslation">, module: Pick<ModuleDraft, "id" | "level">, position: number, previous?: Pick<LessonDraft, "title" | "example" | "translation">): LessonExperience {
   const theme = themes[module.id] ?? { personality: "Professor particular", setting: "uma situação real", application: "usar a estrutura fora da lição" };
   const mechanic = mechanics[position % mechanics.length];
   const scene = compact(data.dialogueTranslation, 125);
@@ -64,7 +64,8 @@ export function createLessonExperience(data: Pick<LessonDraft, "title" | "exampl
     discovery: `${mechanic.discovery} A intenção que precisa sobreviver é: “${compact(data.translation, 105)}”`,
     challenge: levelChallenge[module.level],
     application: theme.application,
-    memoryCue: previousTitle ? `Puxe da memória “${previousTitle}”: uma ideia anterior reaparecerá discretamente nesta missão.` : undefined,
+    memoryCue: previous ? `Retome “${previous.title}”: tente formular a ideia em inglês antes de consultar o modelo.` : undefined,
+    recall: previous ? { title: previous.title, prompt: previous.translation, model: previous.example } : undefined,
   };
 }
 
@@ -72,25 +73,25 @@ const functionWords = /^(a|an|and|are|as|at|can|for|from|has|have|in|is|of|on|or
 function contentWord(example: string) {
   return example.replace(/[^A-Za-z' -]/g, "").split(/\s+/).find(word => word.length > 3 && !functionWords.test(word)) ?? example.split(/\s+/)[0];
 }
-function grouped(example: string) {
-  return example.split(" ").map((word, index) => index && (functionWords.test(word) || /^[aeiou]/i.test(word)) ? "‿" + word : (index ? " | " : "") + word).join("");
-}
-
 export function createPronunciationGuide(data: Pick<LessonDraft, "title" | "rule" | "example" | "vocabulary">, level: Level, position: number): PronunciationGuide {
-  const haystack = `${data.title} ${data.rule} ${data.example}`.toLowerCase();
+  // Choose sound targets from the actual recording, never from Portuguese rules
+  // or counterexamples that the learner will not hear.
+  const haystack = data.example.toLowerCase();
   const word = contentWord(data.example);
-  const ladder: [string, string, string] = [word, data.example.split(/\s+/).slice(0, Math.min(5, data.example.split(/\s+/).length)).join(" "), data.example];
-  const common = { careful: data.example.split(" ").join(" · "), natural: grouped(data.example), drill: ladder };
+  const words = data.example.split(/\s+/);
+  const phraseLength = Math.min(5, Math.max(1, words.length - 1));
+  const phrase = words.slice(0, phraseLength).join(" ");
+  const ladder: [string, string, string] = [word, phrase === word ? words.at(-1)! : phrase, data.example];
+  const common = { careful: data.example, natural: "Ouça devagar para localizar os sons. Volte a 1× e observe onde a voz faz pausas e dá destaque. A escrita abaixo é ortográfica, não uma transcrição dos sons.", drill: ladder };
   if (/\b(?:think|three|through|thought|thank|thing|thirty|healthy|method)\b/.test(haystack)) return { focus: "TH sem virar T, S ou F", ipa: "/θ/", mouth: "Encoste levemente a ponta da língua entre os dentes e solte o ar. Não bloqueie o ar como em T.", change: "Na fala ligada, mantenha o TH curto, mas não esconda a língua nem acrescente uma vogal.", contrast: ["three", "tree"], ...common };
-  if (/\b(?:live|leave|ship|sheep)\b/.test(haystack)) return { focus: "I curto e I longo", ipa: "/ɪ/ × /iː/", mouth: "Para /ɪ/, deixe a língua alta e relaxada; para /iː/, aproxime-a mais do céu da boca e sustente o som sem abrir um sorriso exagerado.", change: "A duração e a posição da língua mudam a palavra, por isso treine o contraste antes da frase.", contrast: ["ship", "sheep"], ...common };
+  if (/\b(?:leave|ship|sheep)\b/.test(haystack)) return { focus: "I curto e I longo", ipa: "/ɪ/ × /iː/", mouth: "Para /ɪ/, deixe a língua alta e relaxada; para /iː/, aproxime-a mais do céu da boca e sustente o som sem abrir um sorriso exagerado.", change: "A duração e a posição da língua mudam a palavra, por isso treine o contraste antes da frase.", contrast: ["ship", "sheep"], ...common };
   if (/\b(?:very|visit|voice|work|would|went|week|view|review)\b/.test(haystack) && position % 2 === 1) return { focus: "V e W começam de lugares diferentes", ipa: "/v/ × /w/", mouth: "Em V, os dentes superiores tocam o lábio inferior e o ar vibra. Em W, arredonde os lábios sem tocar os dentes.", change: "Alterne o gesto antes de acelerar; o começo da palavra precisa continuar distinto.", contrast: ["vest", "west"], ...common };
-  const explicitPastFocus = /passad|past simple|used to|didn't|did not/.test(haystack);
-  const foundationalEdExample = ["A1", "A2", "B1"].includes(level) && /\b\w+ed\b/.test(data.example.toLowerCase());
-  if (explicitPastFocus || foundationalEdExample) return { focus: "Final de passado sem sílaba extra", ipa: "/t/, /d/ ou /ɪd/", mouth: "Não coloque um 'i' depois de todo -ed. Crie uma sílaba extra apenas após sons de T ou D.", change: "No ritmo natural, o final pode ser curto, mas precisa continuar ligado à palavra seguinte.", contrast: ["worked", "wanted"], ...common };
-  if (/plural|terceira pessoa|\b(?:likes|works|needs|uses|changes)\b/.test(haystack)) return { focus: "O pequeno som do final", ipa: "/s/, /z/ ou /ɪz/", mouth: "Mantenha o ar no final. Toque a garganta: com vibração, você ouve /z/; sem vibração, /s/.", change: "O final se liga à próxima vogal e pode soar como o começo da palavra seguinte.", ...common };
-  if (/\b(?:i'm|isn't|aren't|don't|doesn't|didn't|haven't|hasn't|won't|can't|couldn't|wouldn't|shouldn't|we're|they're|i've)\b/.test(haystack)) return { focus: "Contração como uma unidade", ipa: "forma reduzida", mouth: "Não faça uma pausa onde o apóstrofo aparece. Una sujeito e auxiliar em um único impulso de voz.", change: "A contração encurta palavras gramaticais e deixa a palavra de conteúdo receber o destaque.", ...common };
+  const regularEdTarget = /\b(?:worked|visited|wanted|needed|started|arrived|finished|watched|cleaned|played|lived|studied|stayed|provided|reported|suggested|contributed)\b/.test(haystack);
+  if (regularEdTarget) return { focus: "Final de passado sem sílaba extra", ipa: "/t/, /d/ ou /ɪd/", mouth: "Nos verbos regulares, -ed forma uma sílaba extra depois dos sons /t/ e /d/, como em wanted. Compare com worked, cujo final é /t/.", change: "Observe o último som do verbo, não apenas a letra. Não transforme todos os finais em 'édi'.", contrast: ["worked", "wanted"], ...common };
+  if (/\b(?:likes|works|needs|uses|changes)\b/.test(haystack)) return { focus: "O pequeno som do final", ipa: "/s/, /z/ ou /ɪz/", mouth: "Mantenha o final: works termina em /s/, needs em /z/ e uses, como verbo, em /ɪz/. Compare a vibração e a presença de uma sílaba extra.", change: "Ouça o final na frase completa. Plural e terceira pessoa não devem desaparecer quando você acelera.", ...common };
+  if (/\b(?:i'm|isn't|aren't|don't|doesn't|didn't|haven't|hasn't|won't|can't|couldn't|wouldn't|shouldn't|we're|they're|i've)\b/.test(haystack)) return { focus: "Contração como uma unidade", mouth: "Não faça uma pausa no apóstrofo. Em I'm, I e am se unem; em don't, do e not se unem. Preserve o som que distingue a afirmação da negação.", change: "A contração costuma encurtar a expressão. Escute o contexto e não apague a negação ao repetir.", ...common };
   if (/\b(?:how|home|hotel|help|have|has|had|him|her)\b/.test(haystack) && position % 2 === 0) return { focus: "H é ar, não R brasileiro", ipa: "/h/", mouth: "Abra a passagem do ar como se embaçasse um vidro. A língua não raspa o céu da boca e a garganta não vibra.", change: "Em palavras pouco fortes, o H pode ficar discreto; pratique primeiro de modo claro e depois reduza.", contrast: ["heat", "eat"], ...common };
-  if (/pergunta|question|\?$/.test(haystack)) return { focus: "Entonação mostra o tipo de pergunta", mouth: "Mantenha a mandíbula solta. Dê destaque à palavra que pede informação; não suba automaticamente no fim de toda pergunta.", change: "Perguntas de sim ou não tendem a abrir continuação; perguntas com what, where ou why costumam fechar com queda.", ...common };
+  if (/\?$/.test(haystack)) return { focus: "Entonação mostra o tipo de pergunta", mouth: "Mantenha a mandíbula solta. Dê destaque à informação que procura; não suba automaticamente no fim de toda pergunta.", change: "Perguntas com what, where ou why frequentemente terminam com queda. A intenção pode mudar esse padrão: observe o áudio, sem tratar a tendência como regra absoluta.", ...common };
   if (["B2", "C1", "C2"].includes(level)) return { focus: "Ritmo guiado por ideias", ipa: "/ə/ nas formas fracas", mouth: "Destaque substantivos, verbos e contrastes. Reduza palavras gramaticais; o schwa é curto e relaxado, sem uma vogal portuguesa cheia.", change: "Na forma natural, grupos de sentido substituem a leitura palavra por palavra. A ênfase revela sua interpretação.", ...common };
   if (position % 3 === 0) return { focus: "Consoante final audível", mouth: "Feche a palavra antes de começar a próxima. Evite acrescentar um 'i' depois da consoante final.", change: "Quando a palavra seguinte começa por vogal, a consoante se liga a ela sem desaparecer.", ...common };
   if (position % 3 === 1) return { focus: "Palavras fortes marcam o compasso", mouth: "Alongue levemente a vogal da palavra importante e mantenha as palavras pequenas mais curtas.", change: "O inglês alterna batidas fortes e trechos reduzidos; não dê o mesmo peso a cada palavra.", ...common };
@@ -99,9 +100,9 @@ export function createPronunciationGuide(data: Pick<LessonDraft, "title" | "rule
 
 export function usageContrasts(data: Pick<LessonDraft, "example" | "gap" | "fills">): UsageContrast[] {
   return [
-    { label: "MUITO NATURAL", text: data.example, tone: "good" },
-    { label: "ARMADILHA", text: data.gap.replace("___", data.fills[1]), tone: "warning" },
-    { label: "CORREÇÃO", text: data.gap.replace("___", data.fills[0]), tone: "fixed" },
+    { label: "MODELO DA LIÇÃO", text: data.example, tone: "good" },
+    { label: "COMPARE NO CONTEXTO", text: data.gap.replace("___", data.fills[1]), tone: "warning" },
+    { label: "AJUSTE EXPLICADO", text: data.gap.replace("___", data.fills[0]), tone: "fixed" },
   ];
 }
 

@@ -12,10 +12,12 @@ No iPhone e iPad, navegadores Chromium não oferecem `beforeinstallprompt`. O ca
 
 O ícone anterior, um livro genérico, foi substituído por uma marca compacta baseada no rosto, no cachecol coral e na paleta do Sparky. Os arquivos publicados são:
 
-- `sparky-192.png` e `sparky-512.png` para lançadores que preservam a composição quadrada;
-- `sparky-maskable-512.png`, com o rosto dentro da zona segura para recortes circulares, arredondados ou em formato de gota no Android;
-- `apple-touch-icon.png` em 180 px para iPhone e iPad;
-- `src/app/icon.svg` para favicon vetorial e metadados do Next.js, com fallback ICO em 32 e 48 px. A mesma marca aparece no cabeçalho e no convite de instalação.
+- `sparky-192-v2.png` e `sparky-512-v2.png` para lançadores que preservam a composição quadrada;
+- `sparky-maskable-512-v2.png`, com margem adicional para recortes adaptativos no Android;
+- `apple-touch-icon-v2.png` em 180 px para iPhone e iPad;
+- `src/app/icon.png` para os metadados do Next.js, com fallback ICO em 16, 32 e 48 px. A mesma marca aparece no cabeçalho e no convite de instalação.
+
+A versão v2 usa ilustração gerada com GPT Image a partir do Sparky original, substituindo o SVG rejeitado. O master é `public/visuals/sparky-app-icon.png`; `node scripts/build-app-icons.mjs` reproduz os tamanhos sem novas chamadas de geração. Os PNG antigos continuam disponíveis para clientes durante a transição; o manifesto e o service worker v5 apontam para a nova arte. Ícones já fixados na tela inicial dependem da atualização do sistema; remover e adicionar o atalho novamente permite buscar a nova imagem.
 
 O manifesto define `id`, `scope` e `start_url` na raiz, `display: standalone`, cores de tema e fundo, categorias educacionais e `prefer_related_applications: false`. A viewport usa `viewport-fit=cover`; as barras e rodapés móveis já incluem `env(safe-area-inset-bottom)`.
 

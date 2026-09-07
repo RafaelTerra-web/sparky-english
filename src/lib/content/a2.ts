@@ -41,7 +41,7 @@ export const a2Modules: ModuleDraft[] = [
         translation: "Ela visitou a tia no fim de semana passado.",
         vocabulary: "visit — visitar\nfinish — terminar\nstay — ficar",
         pitfall:
-          "He visiteds não existe: -ed já indica passado e não recebe -s de terceira pessoa. A escrita -ed tem diferentes pronúncias, não treinadas por áudio aqui.",
+          "He visiteds não existe: -ed já indica passado e não recebe -s de terceira pessoa. Ouça visited no exemplo: depois do som /t/, -ed acrescenta a sílaba /ɪd/. Compare com worked, que termina em /t/, e cleaned, que termina em /d/.",
         dialogue:
           "Lia: What did you do on Saturday?\nAna: I cleaned the kitchen and watched a film.",
         dialogueTranslation:

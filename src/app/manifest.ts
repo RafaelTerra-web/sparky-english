@@ -16,9 +16,9 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["education", "productivity"],
     prefer_related_applications: false,
     icons: [
-      { src: "/icons/sparky-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/sparky-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/sparky-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/sparky-192-v2.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/sparky-512-v2.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/sparky-maskable-512-v2.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }

@@ -30,7 +30,7 @@ try {
   await iosPrompt.getByText("Adicionar à Tela de Início", { exact: false }).waitFor();
   await iosPrompt.getByText("Abrir como App da Web", { exact: false }).waitFor();
   assert.equal(await iosPrompt.getByText("Primeiro:", { exact: false }).count(), 0, "Safari should not receive the open-in-Safari warning");
-  assert.ok((await ios.page.locator('link[rel="apple-touch-icon"]').getAttribute("href"))?.includes("apple-touch-icon.png"));
+  assert.ok((await ios.page.locator('link[rel="apple-touch-icon"]').getAttribute("href"))?.includes("apple-touch-icon-v2.png"));
   assert.ok((await ios.page.locator('meta[name="viewport"]').getAttribute("content"))?.includes("viewport-fit=cover"));
   await iosPrompt.screenshot({ path: new URL("install-iphone.png", output).pathname.replace(/^\/([A-Z]:)/, "$1") });
   await iosPrompt.getByRole("button", { name: "Fechar convite de instalação" }).click();
@@ -107,7 +107,7 @@ try {
     return paths;
   });
   assert.ok(cachedPaths.includes('/offline.html'));
-  assert.ok(cachedPaths.includes('/icons/sparky-192.png'));
+  assert.ok(cachedPaths.includes('/icons/sparky-192-v2.png'));
   assert.ok(!cachedPaths.some(path => path.startsWith('/api/')),'private endpoints must stay outside offline cache');
   await workerContext.setOffline(true);
   await workerPage.goto('http://localhost:3201/');

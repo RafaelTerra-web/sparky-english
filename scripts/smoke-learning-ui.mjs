@@ -193,6 +193,49 @@ try {
     if (isExercise(step)) await answer(step);
     await forward();
   }
+  await dialog.getByRole('button',{name:'Fechar lição'}).click();
+  for (const id of ['a1-identidade-02', 'b2-argumentacao-01', 'c2-estilo-cultura-02']) {
+    const selected = lessons.find(lesson => lesson.id === id);
+    await openLesson(selected);
+    if (selected.experience.recall) {
+      const warmup = dialog.locator('.recall-card');
+      assert.equal(await warmup.locator('details').evaluate(node => node.open), false);
+      assert.equal(await warmup.locator('p[lang="en"]').isVisible(), false);
+      await warmup.locator('summary').click();
+      assert.equal(await warmup.locator('p[lang="en"]').innerText(), selected.experience.recall.model);
+    }
+    for (const step of selected.steps) {
+      await dialog.locator('#lesson-title').filter({hasText:step.title}).waitFor();
+      if (step.kind === 'vocabulary') assert.equal(await dialog.locator('.vocabulary-cards dd').count(), 3);
+      if (step.kind === 'error_analysis') {
+        const reason = dialog.locator('.usage-contrast details');
+        assert.equal(await reason.evaluate(node => node.open), false);
+        await reason.locator('summary').click();
+        assert.ok((await reason.innerText()).includes(step.explanation));
+      }
+      if (step.kind === 'production') {
+        assert.equal(await dialog.locator('.writing-plan li').count(), 3);
+        assert.equal(await dialog.locator('.writing-model blockquote').isVisible(), false);
+        await dialog.getByLabel('Seu rascunho (opcional)').fill('My first draft stays while I consult the model.');
+        await dialog.locator('.writing-model summary').click();
+        assert.equal(await dialog.locator('.writing-model blockquote').innerText(), step.productionSupport.model);
+        await noOverflow();
+        await dialog.locator('.writing-model').screenshot({path:new URL(`writing-model-${selected.level}.png`, output).pathname.replace(/^\/([A-Z]:)/,'$1')});
+        await dialog.getByRole('button',{name:'Voltar etapa'}).click();
+        await forward();
+        assert.equal(await dialog.getByLabel('Seu rascunho (opcional)').inputValue(), 'My first draft stays while I consult the model.');
+        await dialog.getByRole('button',{name:'Fechar lição'}).click();
+        break;
+      }
+      if (isExercise(step)) await answer(step);
+      await noOverflow();
+      await forward();
+    }
+  }
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await nav('Perfil');
+  await page.waitForFunction(() => window.scrollY === 0 && document.activeElement?.id === 'conteudo');
   assert.deepEqual(errors,[]);
   console.log('PASS: listening-first reveal, natural/slow playback for both mascots, mobile layout, six levels, backward lesson navigation, Ana/Anna, extra-word rejection, microphone cleanup, private transcript, help reset, visible review context and advanced writing resume.');
+  console.log('PASS: actual retrieval with hidden model, vocabulary cards, explained contrasts, A1/B2/C2 writing scaffolds, draft preservation and navigation focus/scroll.');
 } finally { await browser.close(); }

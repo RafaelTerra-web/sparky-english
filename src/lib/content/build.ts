@@ -1,6 +1,7 @@
 import type { Lesson, Level, Step } from "../curriculum";
 import type { LessonDraft, ModuleDraft } from "./types";
 import { authoredStepOrders, createLessonExperience, createPronunciationGuide, firstSentence, usageContrasts } from "./pedagogy.ts";
+import { productionSupport } from "./production-support.ts";
 
 export const contentVersion = "2026-09-07.2";
 export const sourceIdsForLevel = (level: Level) => ["B2", "C1", "C2"].includes(level) ? ["cefr", "cefr-global", "cefr-spoken"] : [
@@ -19,10 +20,10 @@ export function buildLesson(
   data: LessonDraft,
   module: ModuleDraft,
   position: number,
-  previousTitle?: string,
+  previous?: Pick<LessonDraft, "title" | "example" | "translation">,
 ): Lesson {
   const words = data.example.split(" ");
-  const experience = createLessonExperience(data, module, position, previousTitle);
+  const experience = createLessonExperience(data, module, position, previous);
   const base: Record<string, Step> = {
     hook: { kind: "hook", title: experience.mechanic, body: experience.mission },
     error_preview: { kind: "discovery", title: "Tem algo para descobrir", body: `${experience.discovery} Ainda não procure a regra: formule uma hipótese e teste-a nas próximas etapas.` },
@@ -78,6 +79,7 @@ export function buildLesson(
       title: "Por que a armadilha engana",
       body: data.pitfall,
       contrasts: usageContrasts(data),
+      explanation: data.gapExplanation,
     },
     order_words: {
       kind: "order_words",
@@ -92,12 +94,13 @@ export function buildLesson(
       title: "Produza com suas palavras",
       body: data.production,
       checklist: data.productionChecklist,
+      productionSupport: productionSupport[data.id],
       speakingTask: data.speakingTask ?? `Crie uma versão pessoal de “${data.example}”. Diga-a uma vez com cuidado e outra copiando o ritmo natural do áudio.`,
     },
     summary: {
       kind: "summary",
       title: "O que ficou mais fácil agora",
-      body: `Agora você consegue ${experience.application}. Ideia central: ${firstSentence(data.rule)}${experience.memoryCue ? ` Conexão recuperada: ${experience.memoryCue}` : ""}`,
+      body: `Você praticou como ${experience.application}. Ideia central: ${firstSentence(data.rule)} Feche o modelo e tente criar outro exemplo. Se precisar de apoio, retome a explicação e tente novamente.`,
       english: data.example,
       translation: data.translation,
     },
@@ -108,12 +111,20 @@ export function buildLesson(
     title: data.title,
     englishTitle: data.example,
     level: module.level,
-    minutes: ["C1", "C2"].includes(module.level) ? 20 : module.level === "B2" ? 15 : module.level === "B1" ? 9 : 7,
+    minutes: estimateLessonMinutes(data.production, module.level),
     moduleId: module.id,
     sourceIds: sourceIdsForLevel(module.level),
     steps,
     experience,
   };
+}
+
+export function estimateLessonMinutes(production: string, level: Level) {
+  const base = ["C1", "C2"].includes(level) ? 20 : level === "B2" ? 15 : level === "B1" ? 9 : 7;
+  const targets = [...production.matchAll(/(\d+)(?:[–-](\d+))? palavras/g)];
+  const words = Math.max(0, ...targets.map(match => Number(match[2] ?? match[1])));
+  // Editorial planning allowance for drafting + revision, not a fluency score.
+  return base + Math.ceil(words / 60) * 5;
 }
 
 export const curriculumSources = [

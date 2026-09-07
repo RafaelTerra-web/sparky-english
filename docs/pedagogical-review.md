@@ -1,4 +1,6 @@
-# Revisão pedagógica integral — 7 de setembro de 2026
+# Revisão da estrutura pedagógica — 7 de setembro de 2026
+
+Registro da primeira reorganização. A [revisão posterior do produto](product-review-2026-09-07.md) corrige as marcações automáticas de fala, a retomada apenas nominal e o apoio à produção. Variedade de textos gerados e de sequências não comprova diversidade pedagógica nem domínio do aluno. Este documento não representa uma revisão linguística individual das 168 lições.
 
 ## Diagnóstico do curso anterior
 

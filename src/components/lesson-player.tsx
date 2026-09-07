@@ -229,26 +229,47 @@ export default function LessonPlayer({
         <h2 id="lesson-title" ref={heading} tabIndex={-1}>
           {step.title}
         </h2>
-        <p className="step-explanation">{step.body}</p>
+        {step.kind === "vocabulary" ? (
+          <dl className="vocabulary-cards" aria-label="Vocabulário da lição">
+            {step.body.split("\n").filter(Boolean).map((line, lineIndex) => {
+              const separator = line.indexOf(" — ");
+              return <div key={lineIndex}>
+                <dt lang={separator >= 0 ? "en" : undefined}>{separator >= 0 ? line.slice(0, separator) : line}</dt>
+                {separator >= 0 && <dd>{line.slice(separator + 3)}</dd>}
+              </div>;
+            })}
+          </dl>
+        ) : <p className="step-explanation">{step.body}</p>}
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
-            <strong>{lesson.experience.discovery}</strong>
             <p><b>Seu desafio:</b> {lesson.experience.challenge}</p>
             <p>Aplicação real: {lesson.experience.application}.</p>
-            {lesson.experience.memoryCue && <p>{lesson.experience.memoryCue}</p>}
+            <details className="learning-disclosure"><summary>Uma pista para observar</summary><p>{lesson.experience.discovery}</p></details>
           </div>
+        )}
+        {step.kind === "hook" && lesson.experience.recall && (
+          <aside className="recall-card" aria-label="Aquecimento de memória">
+            <h3>Antes de começar · 30 segundos</h3>
+            <p>{lesson.experience.memoryCue}</p>
+            <blockquote>{lesson.experience.recall.prompt}</blockquote>
+            <details key={index} className="learning-disclosure">
+              <summary>Conferir uma forma possível</summary>
+              <p lang="en">{lesson.experience.recall.model}</p>
+              <p>Outras formulações também podem comunicar a ideia. Se o assunto for novo, use o modelo como aquecimento e tente repeti-lo sem olhar.</p>
+            </details>
+          </aside>
         )}
         {step.kind === "pronunciation" && step.pronunciation && (
           <section className="pronunciation-lab" aria-label="Treino de pronúncia">
             <div className="pronunciation-focus"><strong>{step.pronunciation.focus}</strong>{step.pronunciation.ipa && <span>{step.pronunciation.ipa}</span>}</div>
             <p><strong>Posição da boca:</strong> {step.pronunciation.mouth}</p>
             <div className="speech-forms">
-              <div><span>FORMA CUIDADOSA</span><p lang="en">{step.pronunciation.careful}</p></div>
-              <div><span>FORMA NATURAL</span><p lang="en">{step.pronunciation.natural}</p></div>
+              <div><span>FRASE DO ÁUDIO</span><p lang="en">{step.pronunciation.careful}</p></div>
+              <div><span>COMO ESCUTAR</span><p>{step.pronunciation.natural}</p></div>
             </div>
             <p><strong>O que muda:</strong> {step.pronunciation.change}</p>
             {step.pronunciation.contrast && (
-              <div className="contrast-drill"><span>CONTRAST DRILL</span><p lang="en">{step.pronunciation.contrast[0]} <strong>×</strong> {step.pronunciation.contrast[1]}</p><small>Alterne as duas formas sem acelerar. Perceba qual movimento muda.</small></div>
+              <div className="contrast-drill"><span>COMPARE OS SONS</span><p lang="en">{step.pronunciation.contrast[0]} <strong>×</strong> {step.pronunciation.contrast[1]}</p><small>Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.</small></div>
             )}
             <ol className="repeat-ladder">
               {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{drillIndex + 1}</span><span lang="en">{item}</span></li>)}
@@ -259,11 +280,18 @@ export default function LessonPlayer({
         )}
         {step.kind === "error_analysis" && step.contrasts && (
           <div className="usage-contrast" aria-label="Comparação de uso">
-            {step.contrasts.map(item => <div key={item.label} data-tone={item.tone}><span>{item.label}</span><p lang="en">{item.text}</p></div>)}
+            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{item.label}</span><p lang="en">{item.text}</p></div>)}
+            <p>Que escolha precisa mudar para atender ao contexto da frase?</p>
+            <details key={index} className="learning-disclosure">
+              <summary>Ver o ajuste e o motivo</summary>
+              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{item.text}</p>)}
+              <p>{step.explanation}</p>
+            </details>
           </div>
         )}
         {step.kind === "production" && (
           <div className="production-workspace">
+            {step.productionSupport && <section className="writing-plan" aria-label="Planeje sua resposta"><h3>Um caminho para começar</h3><ol>{step.productionSupport.plan.map(item => <li key={item}>{item}</li>)}</ol></section>}
             <label htmlFor="lesson-draft">Seu rascunho (opcional)</label>
             <textarea
               id="lesson-draft"
@@ -278,6 +306,14 @@ export default function LessonPlayer({
             <p>
               Seu rascunho é salvo neste dispositivo. Ao avançar ou fechar, uma versão vai para o Caderno. Não há correção automática ou nota.
             </p>
+            {step.productionSupport && <details key={index} className="learning-disclosure writing-model">
+              <summary>Consultar exemplo comentado</summary>
+              <p>Tente primeiro. Este modelo mostra uma possibilidade de organização.</p>
+              <blockquote lang="en">{step.productionSupport.model}</blockquote>
+              <p><strong>Observe:</strong> {step.productionSupport.notice}</p>
+              <p><strong>Agora adapte:</strong> {step.productionSupport.transfer}</p>
+            </details>}
+            <p>O tempo estimado da lição inclui rascunho e revisão. Você pode sair e continuar depois.</p>
             <strong>Antes de continuar, confira:</strong>
             <ul>
               {(step.checklist ?? ["Respondi a todas as partes da proposta?", "Usei a estrutura e o vocabulário estudados?", "Sujeito, verbo e referência de tempo estão coerentes?", "Meu texto comunica a ideia sem tradução palavra por palavra?"]).map(item => <li key={item}>{item}</li>)}

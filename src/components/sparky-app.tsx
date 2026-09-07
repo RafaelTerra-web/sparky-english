@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -101,6 +101,13 @@ export default function SparkyApp() {
   const [loading, setLoading] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
   const [view, setView] = useState<View>("today");
+  const lastView = useRef(view);
+  useEffect(() => {
+    if (lastView.current === view) return;
+    lastView.current = view;
+    document.getElementById("conteudo")?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [view]);
   const [progress, setProgress] = useState<Progress>(emptyProgress);
   const [active, setActive] = useState<{
     lesson: Lesson;
@@ -416,7 +423,7 @@ export default function SparkyApp() {
           {signingOut ? "Saindo…" : "Sair da conta"}
         </button>
       </aside>
-      <main className="workspace" id="conteudo">
+      <main className="workspace" id="conteudo" tabIndex={-1}>
         <header className="workspace-header">
           <div className="mobile-brand">
             <Brand />
@@ -527,8 +534,8 @@ export default function SparkyApp() {
               <div>
                 <h2>Explicações em português. Prática em inglês.</h2>
                 <p>
-                  Leia o exemplo, consulte a tradução e teste o que entendeu. O
-                  feedback explica o motivo de cada resposta.
+                  Ouça, tente entender e revele a frase para conferir. Depois
+                  use a ideia em uma resposta sua. Nas revisões, tente lembrar antes de consultar.
                 </p>
               </div>
             </section>
@@ -761,7 +768,7 @@ function Brand() {
   return (
     <div className="brand">
       <span className="brand-mark">
-        <Image src="/icon.svg" alt="" width={44} height={44} />
+        <Image src="/icons/sparky-192-v2.png" alt="" width={44} height={44} />
       </span>
       <span>
         Sparky<span className="brand-english">English</span>

@@ -48,6 +48,8 @@ Sparky e Pinky são gratuitos. A Pinky usa uma arte original criada para o proje
 
 ## Validation
 
+A [revisão do produto de 7 de setembro](docs/product-review-2026-09-07.md) registra o novo ícone, as correções de pronúncia, os aquecimentos de memória, os apoios de produção e as próximas lacunas pedagógicas. Para reproduzir os tamanhos do ícone a partir da arte aprovada, execute `node scripts/build-app-icons.mjs`.
+
 ```bash
 npm run lint
 npm run build
