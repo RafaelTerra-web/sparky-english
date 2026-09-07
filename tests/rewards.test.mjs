@@ -46,36 +46,58 @@ test("due reviews reward at most once per lesson and ten times per day", () => {
 
 test("purchase and equipment validate balance, ownership, slot and mascot", () => {
   let state = emptyRewardState();
-  assert.throws(() => buyCosmetic(state, "campus-cap"), /insufficient-coins/);
+  assert.throws(() => buyCosmetic(state, "sparky-explorer-look"), /insufficient-coins/);
   for (const lesson of lessons.slice(0, 8)) state = completeStudy(state, lesson.id, false).state;
-  const purchase = buyCosmetic(state, "campus-cap");
-  assert.equal(purchase.spent, 80);
+  const purchase = buyCosmetic(state, "sparky-explorer-look");
+  assert.equal(purchase.spent, 60);
   state = purchase.state;
-  state = equipCosmetic(state, "sparky", "head", "campus-cap");
-  assert.equal(state.equipped.sparky.head, "campus-cap");
-  assert.throws(() => equipCosmetic(state, "sparky", "body", "campus-cap"), /compatible/);
-  assert.equal(buyCosmetic(state, "campus-cap").spent, 0);
+  state = equipCosmetic(state, "sparky", "style", "sparky-explorer-look");
+  assert.equal(state.equipped.sparky.style, "sparky-explorer-look");
+  assert.throws(() => equipCosmetic(state, "sparky", "body", "sparky-explorer-look"), /compatible/);
+  assert.equal(buyCosmetic(state, "sparky-explorer-look").spent, 0);
   assert.equal(selectMascot(state, "pinky").mascot, "pinky");
 });
 
-test("full looks persist in their own slot without discarding accessory choices", () => {
+test("a fitted look and scene coexist and survive normalization", () => {
   let state = emptyRewardState();
   state.coins = 500;
-  state = buyCosmetic(state, "campus-cap").state;
+  state = buyCosmetic(state, "scene-garden").state;
   state = buyCosmetic(state, "sparky-academy-look").state;
-  state = equipCosmetic(state, "sparky", "head", "campus-cap");
+  state = equipCosmetic(state, "sparky", "scene", "scene-garden");
   state = equipCosmetic(state, "sparky", "style", "sparky-academy-look");
 
-  assert.equal(state.equipped.sparky.head, "campus-cap");
+  assert.equal(state.equipped.sparky.scene, "scene-garden");
   assert.equal(state.equipped.sparky.style, "sparky-academy-look");
   assert.deepEqual(
     normalizeRewardState(state).equipped.sparky,
-    { head: "campus-cap", style: "sparky-academy-look" },
+    { scene: "scene-garden", style: "sparky-academy-look" },
   );
   assert.throws(
     () => equipCosmetic(state, "pinky", "style", "sparky-academy-look"),
     /compatible/,
   );
+});
+
+test("retired accessories are refunded once while original complete looks and progress survive", () => {
+  const old = completeStudy(emptyRewardState(), lessons[0].id, false).state;
+  delete old.wardrobeVersion;
+  delete old.wardrobeRefund;
+  old.coins = 25;
+  old.owned = ["campus-cap", "campus-cap", "quiet-hoodie", "pinky-atelier-look", "not-real"];
+  old.equipped = { sparky: { head: "campus-cap" }, pinky: { body: "quiet-hoodie", style: "pinky-atelier-look" } };
+  const migrated = normalizeRewardState(old);
+  assert.equal(migrated.coins, 255);
+  assert.equal(migrated.wardrobeRefund, 230);
+  assert.deepEqual(migrated.owned, ["pinky-atelier-look"]);
+  assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { style: "pinky-atelier-look" } });
+  assert.equal(migrated.completedBits, old.completedBits);
+  assert.deepEqual(normalizeRewardState(migrated), migrated);
+  const purchased = buyCosmetic(migrated, "practice-travel").state;
+  assert.equal(normalizeRewardState(purchased).coins, 215);
+  assert.ok(publicRewardState(purchased).owned.includes("practice-travel"));
+  assert.equal(buyCosmetic(purchased, "practice-travel").spent, 0);
+  assert.throws(() => equipCosmetic(purchased, "pinky", "style", "practice-travel"), /compatible/);
+  assert.throws(() => buyCosmetic(purchased, "campus-cap"), /item-not-found/);
 });
 
 test("malformed stored values cannot mint currency or equip unowned items", () => {

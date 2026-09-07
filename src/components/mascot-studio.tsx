@@ -1,247 +1,115 @@
 "use client";
-
 import Image from "next/image";
-import { useState } from "react";
-import { Check, Coins, ShoppingBag } from "lucide-react";
-import {
-  cosmeticCatalog,
-  type CosmeticCategory,
-  type CosmeticSlot,
-  type MascotId,
-  type PublicRewardState,
-} from "@/lib/rewards-shared";
+import { useRef, useState } from "react";
+import { Check, Coins, Compass, Eye, ShoppingBag } from "lucide-react";
+import { cosmeticCatalog, storeCatalog, type CosmeticSlot, type MascotId, type PublicRewardState } from "@/lib/rewards-shared";
+import { StorePractice } from "./store-practice";
 
 export type RewardAction =
   | { action: "buy"; itemId: string }
   | { action: "select-mascot"; mascot: MascotId }
-  | {
-      action: "equip";
-      mascot: MascotId;
-      slot: CosmeticSlot;
-      itemId: string | null;
-    };
+  | { action: "equip"; mascot: MascotId; slot: CosmeticSlot; itemId: string | null };
 
-export function MascotFigure({
-  mascot,
-  equipped,
-  size = "large",
-  decorative = false,
-}: {
-  mascot: MascotId;
-  equipped: PublicRewardState["equipped"];
-  size?: "small" | "large" | "hero";
-  decorative?: boolean;
+export function MascotFigure({ mascot, equipped, size = "large", decorative = false }: {
+  mascot: MascotId; equipped: PublicRewardState["equipped"];
+  size?: "small" | "large" | "hero"; decorative?: boolean;
 }) {
-  const activeItems = Object.values(equipped[mascot])
-    .map((id) => cosmeticCatalog.find((entry) => entry.id === id))
-    .filter((item): item is (typeof cosmeticCatalog)[number] => Boolean(item));
-  const fullLook = activeItems.find(
-    (item) => item.slot === "style" && item.assetPath,
-  );
-  const visibleLayers = fullLook
-    ? []
-    : activeItems.filter((item) => item.slot !== "style");
-  const mascotName = mascot === "pinky" ? "Pinky" : "Sparky";
-  return (
-    <div
-      className={`mascot-figure mascot-${mascot} mascot-${size}${fullLook ? " mascot-with-full-look" : ""}`}
-    >
-      <Image
-        src={fullLook?.assetPath ?? (mascot === "pinky" ? "/visuals/pinky-mascot.png" : "/visuals/sparky-panda.png")}
-        alt={decorative ? "" : fullLook ? `${mascotName} com ${fullLook.name}` : mascotName}
-        width={512}
-        height={512}
-      />
-      {visibleLayers.map((item) => (
-        <span
-          key={item.id}
-          className={`cosmetic-layer ${item.className}`}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  );
+  const look = cosmeticCatalog.find(item => item.id === equipped[mascot].style && item.slot === "style" && item.mascots.includes(mascot));
+  const scene = cosmeticCatalog.find(item => item.id === equipped[mascot].scene && item.slot === "scene");
+  const name = mascot === "pinky" ? "Pinky" : "Sparky";
+  return <div className={`mascot-figure mascot-${mascot} mascot-${size} ${scene?.className ?? ""}`}>
+    <Image src={look?.assetPath ?? (mascot === "pinky" ? "/visuals/pinky-v2.png" : "/visuals/sparky-panda.png")}
+      alt={decorative ? "" : `${name}${look ? ` com ${look.name}` : ""}${scene ? ` em ${scene.name}` : ""}`}
+      width={640} height={640} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
+  </div>;
 }
 
-const wardrobeFilters: Array<{ id: "all" | CosmeticCategory; label: string }> = [
-  { id: "all", label: "Tudo" },
-  { id: "looks", label: "Looks completos" },
-  { id: "head", label: "Cabeça e rosto" },
-  { id: "clothing", label: "Roupas e acessórios" },
-];
-
-export function MascotStudio({
-  reward,
-  busy,
-  onAction,
-}: {
-  reward: PublicRewardState;
-  busy: boolean;
-  onAction: (action: RewardAction) => Promise<boolean>;
+export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
+  reward: PublicRewardState; busy: boolean; userId: string;
+  onAction: (action: RewardAction) => Promise<boolean>; onStudy: () => void;
 }) {
-  const [confirmItem, setConfirmItem] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | CosmeticCategory>("all");
+  const [filter, setFilter] = useState<"looks" | "scenes" | "missions" | "owned">("looks");
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [pack, setPack] = useState<string | null>(null);
+  const previewHeading = useRef<HTMLHeadingElement>(null);
+  const purchaseConfirmation = useRef<HTMLElement>(null);
   const mascot = reward.mascot;
-  const mascotName = mascot === "sparky" ? "Sparky" : "Pinky";
-  const currentLook = cosmeticCatalog.find(
-    (item) =>
-      item.slot === "style" && reward.equipped[mascot].style === item.id,
-  );
-  const filteredItems = cosmeticCatalog.filter(
-    (item) =>
-      item.mascots.includes(mascot) && (filter === "all" || item.category === filter),
-  );
-  return (
-    <section className="mascot-studio" aria-labelledby="mascot-studio-title">
-      <header className="studio-header">
-        <div>
-          <p className="eyebrow">Guarda-roupa</p>
-          <h2 id="mascot-studio-title">Seu companheiro de estudo</h2>
+  const name = mascot === "pinky" ? "Pinky" : "Sparky";
+  const preview = cosmeticCatalog.find(item => item.id === previewId && item.mascots.includes(mascot));
+  const previewEquipped = preview ? { ...reward.equipped, [mascot]: { ...reward.equipped[mascot], [preview.slot]: preview.id } } : reward.equipped;
+  const items = storeCatalog.filter(item => {
+    const cosmetic = "slot" in item;
+    if (cosmetic && !item.mascots.includes(mascot)) return false;
+    return filter === "owned" ? reward.owned.includes(item.id) : filter === "missions" ? !cosmetic : cosmetic && item.category === filter;
+  });
+  function clearPreview() { setPreviewId(null); setConfirmId(null); }
+  function requestPurchase(id: string) {
+    setConfirmId(id);
+    requestAnimationFrame(() => {
+      purchaseConfirmation.current?.focus({ preventScroll: true });
+      purchaseConfirmation.current?.scrollIntoView({ block: "center" });
+    });
+  }
+  function tryItem(id: string) {
+    setPreviewId(id); setConfirmId(null);
+    previewHeading.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    previewHeading.current?.focus({ preventScroll: true });
+  }
+  return <section className="mascot-studio shop-v2" aria-labelledby="mascot-studio-title">
+    <header className="studio-header"><div><p className="eyebrow">Aprenda · conquiste · escolha</p><h2 id="mascot-studio-title">Loja de descobertas</h2></div><span className="coin-balance" aria-label={`${reward.coins} moedas`}><Coins size={20} /> {reward.coins}</span></header>
+    <p className="shop-intro">Seu estudo vira novas possibilidades: um look, um cenário ou uma missão extra para usar o inglês.</p>
+    {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund} moedas devolvidas pelos acessórios antigos</summary><p>Os oito acessórios sobrepostos foram substituídos por looks completos. Devolvemos integralmente as compras retiradas. Seus looks Academia e Ateliê continuam no inventário.</p></details>}
+    <div className="studio-main">
+      <div className="mascot-preview"><h3 ref={previewHeading} tabIndex={-1}>{preview ? `Experimentando: ${preview.name}` : `Seu visual: ${name}`}</h3>
+        <MascotFigure mascot={mascot} equipped={previewEquipped} />
+        <p aria-live="polite">{preview ? "Esta é uma prévia. Suas moedas e seu visual continuam iguais até você confirmar." : "Combine um look completo com um cenário. As roupas já fazem parte do desenho."}</p>
+        {preview && <div className="preview-actions">
+          {reward.owned.includes(preview.id) ? <button className="primary-button" disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: preview.slot, itemId: preview.id })) clearPreview(); }}>Usar este visual</button>
+            : <button className="primary-button" disabled={busy || reward.coins < preview.price} onClick={() => requestPurchase(preview.id)}>Comprar por {preview.price} moedas</button>}
+          <button className="text-button" disabled={busy} onClick={clearPreview}>Sair da prévia</button>
+        </div>}
+      </div>
+      <div className="shop-companion-panel"><div className="mascot-selector" role="group" aria-label="Escolher mascote">
+        {(["sparky", "pinky"] as const).map(choice => <button key={choice} className={choice === mascot ? "selected" : ""} aria-pressed={choice === mascot} disabled={busy} onClick={async () => { if (await onAction({ action: "select-mascot", mascot: choice })) clearPreview(); }}>
+          <MascotFigure mascot={choice} equipped={reward.equipped} size="small" decorative /><span>{choice === "pinky" ? "Pinky" : "Sparky"}</span>{choice === mascot && <Check size={16} />}
+        </button>)}
+      </div><div className="shop-earning"><h3>Um próximo objetivo</h3><p>Com 30 moedas você já escolhe um cenário. Com 40, desbloqueia duas missões do cotidiano ou o look Pinky em foco.</p>
+        <div className="reward-rules"><span><strong>+10</strong> primeira conclusão</span><span><strong>+20</strong> módulo completo</span><span><strong>+2</strong> por revisão vencida · até 10 revisões/dia</span></div>
+        <button className="secondary-button" disabled={busy} onClick={onStudy}>Praticar para ganhar moedas <Compass size={16} /></button>
+        <p>Errar faz parte: corrija e continue. As moedas não compram respostas, notas ou conclusão de lições.</p>
+      </div></div>
+    </div>
+    {confirmId && (() => { const item = storeCatalog.find(entry => entry.id === confirmId); if (!item) return null; return <section ref={purchaseConfirmation} tabIndex={-1} className="shop-confirm" role="region" aria-label="Confirmar compra">
+      <h3>Adquirir {item.name}?</h3><p>Preço: {item.price} moedas · Saldo depois da compra: {Math.max(0, reward.coins - item.price)} moedas. Compra permanente.</p>
+      <button className="primary-button" disabled={busy || reward.coins < item.price} onClick={async () => { if (await onAction({ action: "buy", itemId: item.id })) { setConfirmId(null); setFilter("owned"); } }}>Confirmar compra</button>
+      <button className="text-button" disabled={busy} onClick={() => setConfirmId(null)}>Cancelar compra</button>
+    </section>; })()}
+    <div className="wardrobe-filters" role="group" aria-label="Categorias da loja">
+      {([ ["looks", "Looks"], ["scenes", "Cenários"], ["missions", "Missões extras"], ["owned", "Meus itens"] ] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setConfirmId(null); }}>{label}</button>)}
+    </div>
+    {filter === "missions" && <p className="shop-explanation">Cada pacote inclui duas situações, quatro decisões com explicação e duas propostas de escrita com modelo. Você compra uma vez e pratica quando quiser. O curso A1–C2 continua acessível.</p>}
+    {items.length === 0 && <p className="shop-empty">Seu inventário para {name} ainda está vazio. Experimente um look ou veja as missões extras.</p>}
+    <div className="shop-grid">{items.map(item => {
+      const cosmetic = "slot" in item;
+      const owned = reward.owned.includes(item.id);
+      const equipped = cosmetic && reward.equipped[mascot][item.slot] === item.id;
+      const shortfall = Math.max(0, item.price - reward.coins);
+      const shown = cosmetic ? { ...reward.equipped, [mascot]: { ...reward.equipped[mascot], [item.slot]: item.id } } : reward.equipped;
+      return <article className="shop-card" key={item.id} data-item={item.id}>
+        <div className="shop-card-art">{cosmetic ? <MascotFigure mascot={mascot} equipped={shown} decorative /> : <><Compass size={46} /><strong>{item.level}</strong><span>2 missões de prática</span></>}</div>
+        <div className="shop-card-copy"><p className="eyebrow">{owned ? equipped ? "Em uso" : "Adquirido" : cosmetic ? item.category === "looks" ? "Look completo" : "Cenário" : "Pacote permanente"}</p><h3>{item.name}</h3><p>{item.description}</p></div>
+        <div className="shop-card-actions">
+          {cosmetic && <button className="text-button" disabled={busy} onClick={() => tryItem(item.id)}><Eye size={16} /> Experimentar</button>}
+          {owned ? cosmetic ? <button className="secondary-button" disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: item.slot, itemId: equipped ? null : item.id })) clearPreview(); }}>{equipped ? "Remover" : "Usar"}</button>
+            : <button className="primary-button" onClick={() => setPack(item.id)}>Abrir missões</button>
+            : <><span className="shop-price"><Coins size={16} /> {item.price} moedas</span>
+              {shortfall > 0 ? <><p className="shop-shortfall">Faltam {shortfall} moedas</p><button className="secondary-button" disabled={busy} onClick={onStudy}>Continuar estudando</button></> : <button className="secondary-button" disabled={busy} onClick={() => requestPurchase(item.id)}><ShoppingBag size={16} /> Adquirir</button>}
+            </>}
         </div>
-        <span className="coin-balance" aria-label={`${reward.coins} moedas`}>
-          <Coins size={18} /> {reward.coins}
-        </span>
-      </header>
-      <div className="studio-main">
-        <div className="mascot-preview">
-          <MascotFigure mascot={mascot} equipped={reward.equipped} />
-          <p>
-            {mascot === "sparky"
-              ? "Sparky estuda com calma e mantém o foco na próxima etapa."
-              : "Pinky chegou para acompanhar suas práticas e revisões."}
-          </p>
-          {currentLook && (
-            <p className="active-look-note" aria-live="polite">
-              Look completo equipado: <strong>{currentLook.name}</strong>. Os acessórios
-              individuais ficam guardados até você remover o look.
-            </p>
-          )}
-        </div>
-        <div className="mascot-selector" role="group" aria-label="Escolher mascote">
-          {(["sparky", "pinky"] as const).map((choice) => (
-            <button
-              key={choice}
-              type="button"
-              className={mascot === choice ? "selected" : ""}
-              aria-pressed={mascot === choice}
-              disabled={busy}
-              onClick={() => void onAction({ action: "select-mascot", mascot: choice })}
-            >
-              <MascotFigure
-                mascot={choice}
-                equipped={reward.equipped}
-                size="small"
-                decorative
-              />
-              <span>{choice === "sparky" ? "Sparky" : "Pinky"}</span>
-              {mascot === choice && <Check size={16} />}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="reward-rules">
-        <span><strong>+10</strong> primeira conclusão</span>
-        <span><strong>+20</strong> módulo completo</span>
-        <span><strong>+2</strong> revisão vencida · até 10/dia</span>
-      </div>
-      <div className="wardrobe-heading">
-        <div>
-          <p className="eyebrow">Monte do seu jeito</p>
-          <h3>Looks prontos ou acessórios para combinar</h3>
-          <p>Os itens são permanentes. Cada categoria mostra opções para {mascotName}.</p>
-        </div>
-        <span aria-live="polite">{filteredItems.length} opções</span>
-      </div>
-      <div className="wardrobe-filters" role="group" aria-label="Filtrar itens do guarda-roupa">
-        {wardrobeFilters.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            aria-pressed={filter === option.id}
-            className={filter === option.id ? "selected" : ""}
-            onClick={() => {
-              setFilter(option.id);
-              setConfirmItem(null);
-            }}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-      <div className="cosmetic-grid">
-        {filteredItems.map((item) => {
-          const owned = reward.owned.includes(item.id);
-          const equipped = reward.equipped[mascot][item.slot] === item.id;
-          const confirming = confirmItem === item.id;
-          return (
-            <article className={`cosmetic-card${item.assetPath ? " cosmetic-card-look" : ""}`} key={item.id}>
-              {item.assetPath ? (
-                <div className="cosmetic-look-thumbnail" aria-hidden="true">
-                  <Image src={item.assetPath} alt="" width={160} height={160} sizes="80px" />
-                </div>
-              ) : (
-                <div className={`cosmetic-swatch ${item.className}`} aria-hidden="true" />
-              )}
-              <div>
-                <span className="cosmetic-category-label">
-                  {item.category === "looks" ? "Look completo" : item.category === "head" ? "Cabeça e rosto" : "Acessório"}
-                </span>
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-              </div>
-              {!owned ? (
-                confirming ? (
-                  <div className="purchase-confirmation">
-                    <p>Usar {item.price} moedas?</p>
-                    <button
-                      type="button"
-                      className="primary-button"
-                      disabled={busy || reward.coins < item.price}
-                      onClick={async () => {
-                        if (await onAction({ action: "buy", itemId: item.id }))
-                          setConfirmItem(null);
-                      }}
-                    >
-                      Confirmar
-                    </button>
-                    <button type="button" className="text-button" onClick={() => setConfirmItem(null)}>
-                      Cancelar
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={busy || reward.coins < item.price}
-                    onClick={() => setConfirmItem(item.id)}
-                  >
-                    <ShoppingBag size={15} /> {item.price} moedas
-                  </button>
-                )
-              ) : (
-                <button
-                  type="button"
-                  className={equipped ? "secondary-button equipped" : "secondary-button"}
-                  disabled={busy}
-                  onClick={() =>
-                    void onAction({
-                      action: "equip",
-                      mascot,
-                      slot: item.slot,
-                      itemId: equipped ? null : item.id,
-                    })
-                  }
-                >
-                  {equipped ? <><Check size={15} /> Remover</> : "Vestir"}
-                </button>
-              )}
-            </article>
-          );
-        })}
-      </div>
-      <p className="wardrobe-note">
-        Moedas são apenas virtuais, não expiram e não podem ser compradas ou transferidas.
-      </p>
-    </section>
-  );
+      </article>;
+    })}</div>
+    <p className="wardrobe-note">Moedas virtuais, sem compra com dinheiro, prazo de validade ou sorteios. Cenários funcionam com ambos os mascotes; looks respeitam o personagem indicado.</p>
+    {pack && reward.owned.includes(pack) && <StorePractice key={pack} packId={pack} userId={userId} onClose={() => setPack(null)} />}
+  </section>;
 }

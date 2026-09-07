@@ -17,6 +17,7 @@ import {
   LogOut,
   RotateCcw,
   Settings2,
+  ShoppingBag,
   X,
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
@@ -41,7 +42,7 @@ import type { PublicRewardState } from "@/lib/rewards-shared";
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
-type View = "today" | "course" | "review" | "profile" | "notebook";
+type View = "today" | "course" | "review" | "profile" | "notebook" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -61,6 +62,7 @@ const navigation = [
   { id: "course" as View, label: "Curso", icon: BookOpen },
   { id: "review" as View, label: "Revisão", icon: RotateCcw },
   { id: "notebook" as View, label: "Caderno", icon: GraduationCap },
+  { id: "shop" as View, label: "Loja", icon: ShoppingBag },
   { id: "profile" as View, label: "Perfil", icon: Settings2 },
 ];
 
@@ -272,7 +274,7 @@ export default function SparkyApp() {
         if (action.action === "complete") throw new Error(data.error || "progress-unavailable");
         if (data.error === "insufficient-coins")
           setNotice("Você ainda não tem moedas suficientes para esse item.");
-        else setNotice("Não foi possível atualizar o guarda-roupa agora.");
+        else setNotice("Não foi possível atualizar a loja agora. Tente novamente.");
         return null;
       }
       setReward(data);
@@ -647,6 +649,10 @@ export default function SparkyApp() {
           </>
         )}
         {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} />}
+        {view === "shop" && <>
+          <div className="page-heading"><div><p className="eyebrow">Suas conquistas</p><h1>Loja</h1></div></div>
+          {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">Conecte-se novamente para carregar seu saldo e sua loja.</p>}
+        </>}
         {view === "profile" && (
           <>
             <div className="page-heading">
@@ -718,19 +724,7 @@ export default function SparkyApp() {
                 </a>
               </aside>
             </div>
-            {rewardAvailable ? (
-              <MascotStudio
-                reward={reward}
-                busy={rewardBusy}
-                onAction={handleWardrobe}
-              />
-            ) : (
-              <section className="profile-note reward-offline">
-                <Coins size={24} />
-                <h2>Moedas indisponíveis</h2>
-                <p>Conecte-se novamente para carregar seu saldo e guarda-roupa.</p>
-              </section>
-            )}
+            <button className="secondary-button" onClick={() => setView("shop")}><ShoppingBag size={18} /> Escolher mascote e abrir a loja</button>
           </>
         )}
       </main>

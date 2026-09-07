@@ -99,7 +99,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
   return (
     <section className="speech-practice speech-studio" aria-label="Ouvir e praticar fala">
       <div className="speech-mascot-heading">
-        <Image src={initialMascot === "sparky" ? "/visuals/sparky-panda.png" : "/visuals/pinky-mascot.png"} alt="" width={64} height={64} />
+        <Image src={initialMascot === "sparky" ? "/visuals/sparky-panda.png" : "/visuals/pinky-v2.png"} alt="" width={64} height={64} />
         <div><p className="eyebrow">Prática guiada</p><h3>Fale com {mascotName}</h3><p>Voz gerada por IA · inglês natural</p></div>
       </div>
       <p>Ouça a frase, perceba o ritmo e tente repeti-la. {mascotName} lê apenas o conteúdo da lição.</p>

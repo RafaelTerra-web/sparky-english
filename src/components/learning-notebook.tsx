@@ -2,7 +2,10 @@
 import { useState } from "react";
 import { lessons, type Lesson } from "@/lib/curriculum";
 import { contentVersion } from "@/lib/content/build";
+import { storeMissions } from "@/lib/content/store-missions";
 import { blankWorkspace, updateWorkspace, writingLimit, type LearningWorkspace } from "@/lib/learning-local";
+
+const missionTitles = Object.fromEntries(Object.entries(storeMissions).flatMap(([packId, missions]) => missions.map(m => [`mission:${packId}:${m.id}`, `Missão: ${m.title}`])));
 
 export default function LearningNotebook({ userId, workspace, onOpen }: {
   userId: string; workspace: LearningWorkspace; onOpen: (lesson: Lesson, review?: boolean) => void;
@@ -63,7 +66,7 @@ export default function LearningNotebook({ userId, workspace, onOpen }: {
           const ok = updateWorkspace(userId, current => ({ ...current, writings: [...current.writings, { ...editing, id: crypto.randomUUID(), contentVersion, createdAt: new Date().toISOString() }].slice(-100) }));
           if (ok) { setEditing(null); setMessage("Nova versão salva; a anterior foi mantida."); } else setMessage("Não foi possível salvar. Copie seu texto antes de sair.");
         }}>Salvar nova versão</button></div>}
-      <div className="notebook-list">{workspace.writings.slice(-20).reverse().map(writing => <article key={writing.id}><h3>{lessons.find(l => l.id === writing.lessonId)?.title || "Produção escrita"}</h3><small>{new Date(writing.createdAt).toLocaleString("pt-BR")}</small><p lang="en" className="preserve-lines">{writing.text}</p><button className="secondary-button" onClick={() => setEditing({ lessonId: writing.lessonId, text: writing.text })}>Criar nova versão</button></article>)}</div>
+      <div className="notebook-list">{workspace.writings.slice(-20).reverse().map(writing => <article key={writing.id}><h3>{lessons.find(l => l.id === writing.lessonId)?.title || missionTitles[writing.lessonId] || "Produção escrita"}</h3><small>{new Date(writing.createdAt).toLocaleString("pt-BR")}</small><p lang="en" className="preserve-lines">{writing.text}</p><button className="secondary-button" onClick={() => setEditing({ lessonId: writing.lessonId, text: writing.text })}>Criar nova versão</button></article>)}</div>
     </section>
     <section className="profile-card notebook-section"><h2>Seus dados neste dispositivo</h2><p>O caderno guarda até 600 tentativas, 100 versões de texto e 200 frases. Dados antigos cedem espaço aos novos. Exporte antes de limpar os dados do site ou usar outro dispositivo. Em computadores compartilhados, apague o caderno ao terminar.</p>
       <button className="secondary-button" onClick={exportData}>Exportar caderno</button>{" "}

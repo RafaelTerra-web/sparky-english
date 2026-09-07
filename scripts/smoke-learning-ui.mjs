@@ -115,7 +115,7 @@ try {
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   await dialog.getByRole('button',{name:'Fechar lição'}).click();
   if (voices[legacy.id]?.pinky) {
-    await nav('Perfil');
+    await nav('Loja');
     const pinky = page.locator('.mascot-selector button').filter({hasText:'Pinky'});
     await pinky.click();
     await page.waitForFunction(() => [...document.querySelectorAll('.mascot-selector button')].some(button => button.textContent.includes('Pinky') && button.getAttribute('aria-pressed') === 'true'));

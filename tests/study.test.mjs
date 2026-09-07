@@ -8,7 +8,7 @@ import { gradeAttempt, verifyCompletion, exerciseId, isExercise } from '../src/l
 import { normalizeWorkspace, blankWorkspace, writingLimit } from '../src/lib/learning-local.ts';
 import { normalizeRewardState, publicRewardState, emptyRewardState, completeStudy } from '../src/lib/rewards.ts';
 import { seal } from '../src/lib/auth-session.ts';
-import { cosmeticCatalog, cosmeticSlots } from '../src/lib/rewards-shared.ts';
+import { cosmeticCatalog, cosmeticSlots, storeCatalog } from '../src/lib/rewards-shared.ts';
 
 test('published identities survive editorial reordering; ledger covers all lessons and modules', () => {
   const courseModule = a1Modules[0], draft = courseModule.lessons[0];
@@ -80,7 +80,7 @@ test('maximum published progress fits comfortably within a browser cookie', asyn
   process.env.SPARKY_SESSION_SECRET='test-only-secret-with-at-least-32-characters';
   let state=emptyRewardState();
   for(const lesson of lessons) state=completeStudy(state,lesson.id,false).state;
-  state.owned = cosmeticCatalog.map(item => item.id);
+  state.owned = storeCatalog.map(item => item.id);
   for (const mascot of ['sparky', 'pinky']) {
     for (const slot of cosmeticSlots) {
       const item = cosmeticCatalog.find(item => item.slot === slot && item.mascots.includes(mascot));

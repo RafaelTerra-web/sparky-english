@@ -3,6 +3,8 @@ import { lessons, modules } from "./curriculum.ts";
 import {
   cosmeticCatalog,
   cosmeticSlots,
+  storeCatalog,
+  retiredCosmeticPrices,
   type CosmeticSlot,
   type EquippedItems,
   type MascotId,
@@ -11,6 +13,8 @@ import {
 
 export type RewardState = {
   version: 1;
+  wardrobeVersion: 2;
+  wardrobeRefund: number;
   coins: number;
   completedBits: string;
   moduleBits: string;
@@ -32,6 +36,8 @@ const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 export function emptyRewardState(): RewardState {
   return {
     version: 1,
+    wardrobeVersion: 2,
+    wardrobeRefund: 0,
     coins: 0,
     completedBits: blankBits(lessonBytes),
     moduleBits: blankBits(moduleBytes),
@@ -85,10 +91,13 @@ export function normalizeRewardState(input: unknown): RewardState {
   if (!input || typeof input !== "object") return blank;
   const raw = input as Partial<RewardState>;
   const owned = Array.isArray(raw.owned)
-    ? [...new Set(raw.owned.filter((id) => cosmeticCatalog.some((item) => item.id === id)))]
+    ? [...new Set(raw.owned.filter((id) => storeCatalog.some((item) => item.id === id)))]
     : [];
   const mascot: MascotId = raw.mascot === "pinky" ? "pinky" : "sparky";
   const equipped: EquippedItems = { sparky: {}, pinky: {} };
+  const validBalance = typeof raw.coins === "number" && Number.isSafeInteger(raw.coins) && raw.coins >= 0 && raw.coins <= 100000;
+  const refund = raw.version === 1 && raw.wardrobeVersion !== 2 && validBalance && Array.isArray(raw.owned)
+    ? [...new Set(raw.owned.filter(id => typeof id === "string"))].reduce((sum, id) => sum + (Object.hasOwn(retiredCosmeticPrices, id) ? retiredCosmeticPrices[id] : 0), 0) : 0;
   for (const current of ["sparky", "pinky"] as const) {
     for (const slot of cosmeticSlots) {
       const id = raw.equipped?.[current]?.[slot];
@@ -104,13 +113,9 @@ export function normalizeRewardState(input: unknown): RewardState {
   }
   return {
     version: 1,
-    coins:
-      typeof raw.coins === "number" &&
-      Number.isSafeInteger(raw.coins) &&
-      raw.coins >= 0 &&
-      raw.coins <= 100000
-        ? raw.coins
-        : 0,
+    wardrobeVersion: 2,
+    wardrobeRefund: raw.wardrobeVersion === 2 && Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : refund,
+    coins: validBalance ? Math.min(100000, raw.coins! + refund) : 0,
     completedBits: decodeBits(raw.completedBits, lessonBytes).toString("base64url"),
     moduleBits: decodeBits(raw.moduleBits, moduleBytes).toString("base64url"),
     dueDays: Array.from({ length: lessonLedger.length }, (_, index) => {
@@ -159,6 +164,7 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     owned: state.owned,
     mascot: state.mascot,
     equipped: state.equipped,
+    wardrobeRefund: state.wardrobeRefund,
   };
 }
 
@@ -235,7 +241,7 @@ export function completeStudy(
 
 export function buyCosmetic(current: RewardState, itemId: string) {
   const state = normalizeRewardState(current);
-  const item = cosmeticCatalog.find((entry) => entry.id === itemId);
+  const item = storeCatalog.find((entry) => entry.id === itemId);
   if (!item) throw new Error("item-not-found");
   if (state.owned.includes(item.id)) return { state, spent: 0, alreadyOwned: true };
   if (state.coins < item.price) throw new Error("insufficient-coins");

@@ -1,7 +1,8 @@
-const CACHE_NAME = "sparky-public-v5";
+const CACHE_NAME = "sparky-public-v6";
 const SHELL = [
   "/offline.html",
   "/visuals/sparky-panda.png",
+  "/visuals/pinky-v2.png",
   "/icons/sparky-192-v2.png",
   "/icons/sparky-512-v2.png",
   "/icons/sparky-maskable-512-v2.png",
