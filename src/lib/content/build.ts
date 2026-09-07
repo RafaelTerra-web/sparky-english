@@ -1,7 +1,8 @@
 import type { Lesson, Level, Step } from "../curriculum";
 import type { LessonDraft, ModuleDraft } from "./types";
+import { authoredStepOrders, createLessonExperience, createPronunciationGuide, firstSentence, usageContrasts } from "./pedagogy.ts";
 
-export const contentVersion = "2026-09-06.2";
+export const contentVersion = "2026-09-07.2";
 export const sourceIdsForLevel = (level: Level) => ["B2", "C1", "C2"].includes(level) ? ["cefr", "cefr-global", "cefr-spoken"] : [
   "cefr",
   ["B1", "B2", "C1", "C2"].includes(level) ? "bc-grammar-b1" : "bc-grammar-a1",
@@ -18,32 +19,41 @@ export function buildLesson(
   data: LessonDraft,
   module: ModuleDraft,
   position: number,
+  previousTitle?: string,
 ): Lesson {
   const words = data.example.split(" ");
-  const steps: Step[] = [
-    { kind: "teach", title: data.title, body: data.rule },
-    {
+  const experience = createLessonExperience(data, module, position, previousTitle);
+  const base: Record<string, Step> = {
+    hook: { kind: "hook", title: experience.mechanic, body: experience.mission },
+    error_preview: { kind: "discovery", title: "Tem algo para descobrir", body: `${experience.discovery} Ainda não procure a regra: formule uma hipótese e teste-a nas próximas etapas.` },
+    teach: { kind: "teach", title: "Organize a descoberta", body: data.rule },
+    example: {
       kind: "example",
-      title: "Estrutura em uso",
-      body: "Observe a frase e consulte a tradução quando precisar.",
+      title: "Ouça antes de revelar",
+      body: "Primeiro procure as palavras fortes e a intenção. Depois revele o texto e confira sua hipótese.",
       english: data.example,
       translation: data.translation,
     },
-    {
+    vocabulary: {
       kind: "vocabulary",
-      title: "Vocabulário de apoio",
+      title: "Três peças que valem guardar",
       body: data.vocabulary,
     },
-    { kind: "teach", title: "Atenção ao uso", body: data.pitfall },
-    {
+    pronunciation: {
+      kind: "pronunciation",
+      title: "Pronúncia que destrava a frase",
+      body: "Faça o movimento devagar, suba pela escada de repetição e termine copiando o ritmo do áudio natural.",
+      pronunciation: createPronunciationGuide(data, module.level, position),
+    },
+    dialogue: {
       kind: "dialogue",
-      title: "Leia em contexto",
-      body: "Leia o texto completo. Na próxima etapa, você vai interpretar uma informação dele.",
+      title: "A cena completa",
+      body: "Entre na situação e acompanhe a intenção de cada fala. A próxima decisão depende de uma pista do contexto.",
       english: data.dialogue,
       translation: data.dialogueTranslation,
       translationSummary: ["B2", "C1", "C2"].includes(module.level),
     },
-    {
+    choice: {
       kind: "choice",
       title: "Interpretação",
       body: data.question,
@@ -54,7 +64,7 @@ export function buildLesson(
       answer: data.choices[0],
       explanation: data.explanation,
     },
-    {
+    complete_sentence: {
       kind: "complete_sentence",
       title: "Pratique a estrutura",
       body: "Escolha a opção que completa a frase no contexto indicado.",
@@ -63,7 +73,13 @@ export function buildLesson(
       answer: data.fills[0],
       explanation: data.gapExplanation,
     },
-    {
+    error_analysis: {
+      kind: "error_analysis",
+      title: "Por que a armadilha engana",
+      body: data.pitfall,
+      contrasts: usageContrasts(data),
+    },
+    order_words: {
       kind: "order_words",
       title: "Reconstrua a frase",
       body: data.translation,
@@ -71,21 +87,22 @@ export function buildLesson(
       answer: data.example,
       explanation: data.rule,
     },
-    {
+    production: {
       kind: "production",
       title: "Produza com suas palavras",
       body: data.production,
       checklist: data.productionChecklist,
-      speakingTask: data.speakingTask,
+      speakingTask: data.speakingTask ?? `Crie uma versão pessoal de “${data.example}”. Diga-a uma vez com cuidado e outra copiando o ritmo natural do áudio.`,
     },
-    {
+    summary: {
       kind: "summary",
-      title: "Guarde a ideia central",
-      body: data.rule,
+      title: "O que ficou mais fácil agora",
+      body: `Agora você consegue ${experience.application}. Ideia central: ${firstSentence(data.rule)}${experience.memoryCue ? ` Conexão recuperada: ${experience.memoryCue}` : ""}`,
       english: data.example,
       translation: data.translation,
     },
-  ];
+  };
+  const steps = authoredStepOrders[position % authoredStepOrders.length].map(key => base[key]);
   return {
     id: data.id,
     title: data.title,
@@ -95,6 +112,7 @@ export function buildLesson(
     moduleId: module.id,
     sourceIds: sourceIdsForLevel(module.level),
     steps,
+    experience,
   };
 }
 

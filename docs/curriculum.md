@@ -1,4 +1,4 @@
-# Currículo — edição 2026-09-06.2, extensão de 7 de setembro
+# Currículo — edição 2026-09-07.2
 
 ## Escopo publicado
 
@@ -13,7 +13,7 @@
 | C1 | Síntese crítica; interação profissional e mediação; evidência e comunicação pública |
 | C2 | Nuance e interpretação; produção precisa para públicos distintos; estilo, cultura e intervenção crítica |
 
-As novas lições têm dez etapas: conceito, exemplo, vocabulário, cuidado de uso, leitura, interpretação, completar frase, ordenar palavras, produção escrita e resumo. A leitura reaparece na pergunta para permitir consulta. As alternativas são rotacionadas e as respostas incorretas têm feedback explicativo. A produção escrita é opcional, sem correção automática: uma lista de revisão ajuda o aluno a verificar o próprio texto.
+As lições têm de 11 a 13 etapas escolhidas entre oito sequências pedagógicas. Todas incluem missão, descoberta, escuta antes da revelação, explicação, vocabulário quando aplicável, microtreino de pronúncia, análise de erro, leitura em contexto, três exercícios, produção e síntese. Algumas começam pelo diálogo ou por uma escolha; outras, por pista sonora, regra ou erro. A leitura reaparece na pergunta para permitir consulta. As alternativas são rotacionadas e as respostas incorretas têm feedback explicativo. A produção escrita é opcional, sem correção automática: uma lista de revisão ajuda o aluno a verificar o próprio texto.
 
 As estimativas de sete minutos em A1/A2, nove em B1, 15 em B2 e 20 em C1/C2 incluem leitura e prática; o aluno pode levar mais tempo na escrita. Não são promessas de duração medida. As seis introduções originais continuam mais curtas. Cada lição avançada inclui uma lista de revisão específica para a escrita e uma proposta oral de aplicação, sem gravação ou correção automática. Projetos exigem síntese, justificativa e adaptação de registro.
 
@@ -41,4 +41,4 @@ Para futuras alterações: editar os dados em `src/lib/content`, atualizar `cont
 
 ## Limites da voz
 
-O áudio lê exemplos em inglês. A prática oral é opcional, não concede XP adicional e não impede a conclusão. A comparação da transcrição serve para perceber diferenças nas palavras reconhecidas; não atribui nota de pronúncia ou penaliza sotaques. Reconhecimento pode falhar mesmo quando a pronúncia é compreensível.
+O áudio lê exemplos em inglês em velocidade natural ou a 75%, preservando a altura. O texto começa oculto para estimular compreensão oral e pode ser revelado a qualquer momento. A prática oral é opcional, não concede XP adicional e não impede a conclusão. A comparação da transcrição serve para perceber diferenças nas palavras reconhecidas; não atribui nota de pronúncia ou penaliza sotaques. Reconhecimento pode falhar mesmo quando a pronúncia é compreensível.

@@ -16,7 +16,7 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.
 
-Há 168 lições (162 autorais e as 6 originais), em 27 módulos: 38 lições em A1, 44 em A2, 38 em B1, 12 em B2 e 18 em C1 e C2. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada nova lição inclui explicação em PT-BR, exemplo traduzido, vocabulário, cuidado de uso, leitura contextualizada, três exercícios objetivos com feedback, produção escrita opcional e resumo. São 504 exercícios objetivos. Os níveis avançados acrescentam critérios de revisão específicos e propostas de produção oral. A trilha orienta o estudo até temas C2; sua conclusão não comprova fluência nem cobertura integral do CEFR. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md).
+Há 168 lições (162 autorais e as 6 originais), em 27 módulos: 38 lições em A1, 44 em A2, 38 em B1, 12 em B2 e 18 em C1 e C2. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada lição tem missão, descoberta, escuta antes da revelação, pronúncia, contraste de erros, três exercícios objetivos com feedback e transferência escrita e oral. O curso alterna oito sequências de atividade em vez de repetir uma ordem fixa. São 504 exercícios objetivos. A trilha orienta o estudo até temas C2; sua conclusão não comprova fluência nem cobertura integral do CEFR. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md), e o redesenho em [docs/pedagogical-review.md](docs/pedagogical-review.md).
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 
@@ -28,7 +28,7 @@ Para sincronizar conclusões, revisões, moedas e roupas entre dispositivos, apl
 
 ## Voz opcional
 
-Nos exemplos, o aluno pode ouvir o áudio publicado de Sparky ou Pinky e praticar com o microfone mediante consentimento explícito. A voz acompanha o mascote equipado; não há seletor de voz, altura ou velocidade. `NEXT_PUBLIC_VOICE_ENABLED=false` desativa a interface na próxima build.
+Nos exemplos, o aluno ouve primeiro e pode revelar o texto quando estiver pronto. Nos exemplos e nos microtreinos, Sparky e Pinky oferecem **Ouvir natural** e **Ouvir devagar**; a segunda opção reproduz o mesmo áudio a 75% da velocidade preservando a altura. Depois, o aluno pode fazer shadowing ou praticar com o microfone mediante consentimento explícito. A voz acompanha o mascote equipado; não há seletor livre de voz ou altura. `NEXT_PUBLIC_VOICE_ENABLED=false` desativa a interface na próxima build.
 
 Sparky usa `gpt-4o-mini-tts-2025-12-15` com Cedar; Pinky usa `tts-1-hd` com Nova. As 168 lições possuem as duas vozes: 336 MP3, 16,78 minutos e 15,36 MiB. Os exemplos são gerados administrativamente; ouvir novamente não chama a API. Não há endpoint que aceite texto livre ou transcrição para geração de voz. Os arquivos possuem cache duradouro e nomes derivados do texto e perfil. O site não precisa de chave de API para reproduzi-los. Veja [docs/voice-publishing.md](docs/voice-publishing.md) para gerar e revisar futuras falas.
 
@@ -47,6 +47,7 @@ npm run lint
 npm run build
 npm test
 npm run audit:curriculum
+npm run audit:experience
 node scripts/smoke-auth.mjs https://sparky-english-iota.vercel.app
 ```
 
@@ -54,6 +55,6 @@ Após uma build local, `node scripts/preview-fixture.mjs` abre uma conta fictíc
 
 Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado de exercícios, proteção CSRF, comprovante de conclusão, persistência por cookie e bloqueio de recompensas duplicadas. A especificação de evolução, migração e limites desta entrega está em [docs/evolution-2026-09.md](docs/evolution-2026-09.md).
 
-`node scripts/smoke-learning-ui.mjs` valida a interface com Playwright instalado: níveis A1–C2, retorno à etapa anterior, revisão com contexto visível, reset de ajuda, variantes de nomes, rejeição de palavras extras, encerramento do microfone e retomada de textos avançados no celular. `PLAYWRIGHT_MODULE_PATH` pode apontar para o módulo `playwright/index.mjs` já instalado; `PLAYWRIGHT_CHANNEL=msedge` permite usar o Edge. O teste usa apenas a conta fictícia local e simula o reconhecedor, sem capturar voz real. Imagens de inspeção ficam em `.next/ui-checks`.
+`node scripts/smoke-learning-ui.mjs` valida a interface com Playwright instalado: escuta antes da revelação, áudio natural/lento dos dois mascotes, níveis A1–C2, retorno à etapa anterior, revisão com contexto visível, reset de ajuda, variantes de nomes, rejeição de palavras extras, encerramento do microfone e retomada de textos avançados no celular. `PLAYWRIGHT_MODULE_PATH` pode apontar para o módulo `playwright/index.mjs` já instalado; `PLAYWRIGHT_CHANNEL=msedge` permite usar o Edge. O teste usa apenas a conta fictícia local e simula o reconhecedor, sem capturar voz real. Imagens de inspeção ficam em `.next/ui-checks`.
 
 O contrato de banco inicial está em `supabase/migrations/20260903000100_sparky_english.sql`; a sincronização só fica ativa após aplicar também `20260905000100_durable_google_progress.sql` e configurar a flag descrita acima.

@@ -61,23 +61,31 @@ try {
   await forward();
   await dialog.getByRole('button',{name:'Voltar etapa'}).click();
   await dialog.getByRole('heading',{name:legacy.steps[0].title}).waitFor();
+  await dialog.locator('.lesson-body').screenshot({path:new URL('mission-a1-desktop.png',output).pathname.replace(/^\/([A-Z]:)/,'$1')});
   await forward();
   await dialog.getByRole('heading',{name:legacy.steps[1].title}).waitFor();
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   assert.equal(await dialog.locator('.speech-studio select,input[type="range"]').count(),0);
   if (voices[legacy.id]?.sparky) {
-    await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).click();
-    await dialog.getByText('Sparky está falando…',{exact:true}).waitFor();
+    assert.equal(await dialog.locator('.english-example').count(),0,'listening text starts hidden');
+    await dialog.getByRole('button',{name:'Ouvir natural',exact:true}).click();
+    await dialog.getByText('Sparky está falando em velocidade natural…',{exact:true}).waitFor();
     assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),false);
     await dialog.getByRole('button',{name:'Parar',exact:true}).click();
     assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),true);
     assert.equal(await page.evaluate(() => window.__audio.at(-1).getAttribute('src')),null);
+    await dialog.getByRole('button',{name:'Ouvir devagar',exact:true}).click();
+    await dialog.getByText('Sparky está falando devagar…',{exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).playbackRate),0.75);
+    await dialog.getByRole('button',{name:'Parar',exact:true}).click();
+    await dialog.getByRole('button',{name:'Revelar frase',exact:true}).click();
+    assert.equal(await dialog.locator('.english-example').innerText(),legacy.steps.find(step => step.kind === 'example').english);
     const failedAudio = '**' + voices[legacy.id].sparky;
     await page.route(failedAudio, route => route.abort());
-    await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).click();
+    await dialog.getByRole('button',{name:'Ouvir natural',exact:true}).click();
     await dialog.locator('.speech-live-status').filter({hasText:/Não foi possível/}).waitFor();
     await page.unroute(failedAudio);
-    assert.equal(await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).isEnabled(),true);
+    assert.equal(await dialog.getByRole('button',{name:'Ouvir natural',exact:true}).isEnabled(),true);
   }
   await dialog.locator('.speech-consent summary').click();
   await dialog.getByLabel('Autorizo o microfone nesta prática.').check();
@@ -96,6 +104,15 @@ try {
   await openLesson(legacy);
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   assert.equal(await dialog.locator('.speech-result').count(),0,'transcription must not persist');
+  await forward();
+  await forward();
+  await dialog.getByRole('heading',{name:'Pronúncia que destrava a frase'}).waitFor();
+  await dialog.locator('.pronunciation-lab').screenshot({path:new URL('pronunciation-a1-mobile.png',output).pathname.replace(/^\/([A-Z]:)/,'$1')});
+  await dialog.getByRole('button',{name:'Ouvir devagar',exact:true}).scrollIntoViewIfNeeded();
+  await dialog.locator('.speech-studio').screenshot({path:new URL('pronunciation-audio-a1-mobile.png',output).pathname.replace(/^\/([A-Z]:)/,'$1')});
+  await dialog.getByRole('button',{name:'Voltar etapa'}).click();
+  await dialog.getByRole('button',{name:'Voltar etapa'}).click();
+  await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   await dialog.getByRole('button',{name:'Fechar lição'}).click();
   if (voices[legacy.id]?.pinky) {
     await nav('Perfil');
@@ -104,8 +121,9 @@ try {
     await page.waitForFunction(() => [...document.querySelectorAll('.mascot-selector button')].some(button => button.textContent.includes('Pinky') && button.getAttribute('aria-pressed') === 'true'));
     await openLesson(legacy);
     await dialog.getByRole('heading',{name:'Fale com Pinky'}).waitFor();
-    await dialog.getByRole('button',{name:'Ouvir Pinky',exact:true}).click();
-    await dialog.getByText('Pinky está falando…',{exact:true}).waitFor();
+    await dialog.getByRole('button',{name:'Ouvir devagar',exact:true}).click();
+    await dialog.getByText('Pinky está falando devagar…',{exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).playbackRate),0.75);
     assert.ok((await page.evaluate(() => window.__audio.at(-1).src)).endsWith(voices[legacy.id].pinky));
     await dialog.getByRole('button',{name:'Fechar lição'}).click();
     assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),true);
@@ -150,6 +168,7 @@ try {
   await dialog.getByRole('button',{name:'Fechar lição'}).click();
 
   await nav('Curso');
+  await page.locator('.catalog-levels').waitFor();
   assert.equal(await page.locator('.catalog-levels button').count(),7);
   await page.locator('.catalog-levels button').filter({has:page.locator('strong',{hasText:/^C2$/})}).click();
   assert.equal(await page.locator('.catalog-lesson').count(),18);
@@ -175,5 +194,5 @@ try {
     await forward();
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS: mobile layout, six levels, backward lesson navigation, Ana/Anna, extra-word rejection, microphone cleanup, private transcript, help reset, visible review context and advanced writing resume.');
+  console.log('PASS: listening-first reveal, natural/slow playback for both mascots, mobile layout, six levels, backward lesson navigation, Ana/Anna, extra-word rejection, microphone cleanup, private transcript, help reset, visible review context and advanced writing resume.');
 } finally { await browser.close(); }

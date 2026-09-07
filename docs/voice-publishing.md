@@ -28,3 +28,7 @@ O comando sem `--generate` nunca chama a API. `--concurrency=3` permite até tr�
 A comparação aceita apenas variantes cadastradas de nomes capitalizados na frase-alvo. Exemplo: “Hi, I'm Anna” corresponde a “Hi, I'm Ana”. Também normaliza contrações condicionadas ao alvo e grafias britânicas/americanas conhecidas. Não usa similaridade genérica para aprovar frases: palavras extras, inversões e negações continuam diferenças. Alternativas do reconhecedor são analisadas como frases completas. A lista de variantes pode crescer com casos reais, acompanhados por testes de aceitação e rejeição.
 
 O serviço ainda depende da Web Speech API e de sua disponibilidade. A transcrição não permite provar quem falou, detectar toda brincadeira ou avaliar pronúncia. Por isso esta prática não concede recompensas nem serve como avaliação de proficiência.
+
+## Uso pedagógico no player
+
+O texto do exemplo começa oculto. **Ouvir natural** reproduz o MP3 em sua velocidade original; **Ouvir devagar** usa `playbackRate = 0.75` e preservação de altura no navegador. Os dois controles existem para Sparky e Pinky e reutilizam o mesmo arquivo, sem nova chamada à API. A etapa de pronúncia apresenta os controles novamente ao lado da forma cuidadosa, agrupamento conectado, gesto articulatório, repeat ladder, shadowing e prática opcional com o microfone.

@@ -190,7 +190,7 @@ export function CourseCatalog({
                     </span>
                     <span className="catalog-lesson-copy">
                       <strong>{lesson.title}</strong>
-                      <span lang="en">{lesson.steps[1].english}</span>
+                      <span>{lesson.experience.personality} · {lesson.experience.mechanic}</span>
                     </span>
                     <span className="catalog-duration">
                       {lesson.minutes} min
@@ -206,10 +206,10 @@ export function CourseCatalog({
       <details className="curriculum-references">
         <summary>Sobre o conteúdo e as referências</summary>
         <p>
-          150 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
+          162 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
           próprios, com explicações em PT-BR. A produção escrita é uma atividade
           de auto-revisão, sem nota ou correção automática. A trilha atual não
-          avalia compreensão oral nem pronúncia.
+          certifica compreensão oral nem pronúncia; os microtreinos oferecem prática e feedback textual.
         </p>
         <p>
           As fontes abaixo orientaram a organização e a consulta de estruturas.

@@ -91,16 +91,23 @@ test("all new lessons contain substantial theory, context, translations, vocabul
 });
 test("every published exercise has one editorial key and rejects all distractors", () => {
   let exercises = 0;
+  const authoredSequences = new Set();
   for (const lesson of lessons) {
-    assert.equal(lesson.steps[0].kind, "teach");
+    assert.equal(lesson.steps[0].kind, "hook");
     assert.equal(lesson.steps.at(-1).kind, "summary");
+    assert.ok(lesson.experience.personality && lesson.experience.mechanic);
+    assert.ok(lesson.experience.mission.includes(lesson.title));
+    assert.ok(lesson.steps.some((s) => s.kind === "pronunciation" && s.pronunciation?.drill.length === 3));
+    assert.ok(lesson.steps.some((s) => s.kind === "error_analysis" && s.contrasts?.length === 3));
     const keys = lesson.sourceIds;
     assert.ok(keys.length >= 3);
     assert.ok(keys.every((id) => curriculumSources.some((s) => s.id === id)));
     if (!legacy.includes(lesson.id)) {
-      assert.equal(lesson.steps.length, 10);
+      assert.ok(lesson.steps.length >= 12 && lesson.steps.length <= 13);
       assert.ok(lesson.steps.some((s) => s.kind === "production"));
       assert.ok(lesson.steps.some((s) => s.kind === "vocabulary"));
+      assert.ok(lesson.steps.find((s) => s.kind === "production").speakingTask);
+      authoredSequences.add(lesson.steps.map(step => step.kind).join(">"));
     }
     for (const step of lesson.steps) {
       if (!["choice", "complete_sentence", "order_words"].includes(step.kind))
@@ -124,6 +131,7 @@ test("every published exercise has one editorial key and rejects all distractors
     }
   }
   assert.equal(exercises, 504);
+  assert.equal(authoredSequences.size, 6);
 });
 test("search supports accents, grammar terms, level isolation and empty results", () => {
   assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 168);

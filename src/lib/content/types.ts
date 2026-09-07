@@ -21,6 +21,30 @@ export type LessonDraft = {
   productionChecklist?: string[];
   speakingTask?: string;
 };
+export type LessonExperience = {
+  personality: string;
+  mechanic: string;
+  mission: string;
+  discovery: string;
+  challenge: string;
+  application: string;
+  memoryCue?: string;
+};
+export type PronunciationGuide = {
+  focus: string;
+  ipa?: string;
+  mouth: string;
+  careful: string;
+  natural: string;
+  change: string;
+  drill: [string, string, string];
+  contrast?: [string, string];
+};
+export type UsageContrast = {
+  label: "MUITO NATURAL" | "ARMADILHA" | "CORREÇÃO";
+  text: string;
+  tone: "good" | "warning" | "fixed";
+};
 export type ModuleDraft = {
   id: string;
   title: string;

@@ -3,6 +3,41 @@
 .lesson-body { min-height: 0; overscroll-behavior: contain; }
 .lesson-dialog .icon-button { min-width: 44px; min-height: 44px; }
 .lesson-body > .text-button { margin: 12px 0; }
+.lesson-identity-card {
+  margin-top: 22px;
+  padding: 20px;
+  border: 1px solid #cdd9c5;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f3f6ed, #fffaf0);
+  color: #2f513d;
+}
+.lesson-identity-card strong { display: block; font-family: Georgia, serif; font-size: 18px; line-height: 1.45; }
+.lesson-identity-card p { margin: 9px 0 0; line-height: 1.6; color: #52634f; }
+.pronunciation-lab { margin-top: 22px; display: grid; gap: 16px; }
+.pronunciation-lab > p { margin: 0; line-height: 1.7; }
+.pronunciation-focus { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px; border-radius: 14px; background: #263f32; color: white; }
+.pronunciation-focus strong { font-family: Georgia, serif; font-size: 19px; }
+.pronunciation-focus span { padding: 5px 10px; border-radius: 999px; background: #ffffff1f; font-size: 14px; }
+.speech-forms { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.speech-forms > div { min-width: 0; padding: 15px 17px; border: 1px solid #d7dfd0; border-radius: 13px; background: #fffefa; }
+.speech-forms span, .usage-contrast span { display: block; color: #687566; font-size: 9px; font-weight: 800; letter-spacing: 1.1px; }
+.speech-forms p { margin: 8px 0 0; overflow-wrap: anywhere; line-height: 1.55; }
+.repeat-ladder { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.repeat-ladder li { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px; background: #edf2e8; }
+.repeat-ladder li > span:first-child { display: grid; place-items: center; flex: 0 0 25px; height: 25px; border-radius: 50%; background: #66835e; color: white; font-size: 11px; font-weight: 800; }
+.microtrain-instruction { padding-left: 14px; border-left: 3px solid #b47848; color: #52634f; }
+.contrast-drill { padding: 14px 16px; border-radius: 12px; background: #fff4e5; border: 1px solid #e3c69c; }
+.contrast-drill > span { color: #7a5b34; font-size: 9px; font-weight: 800; letter-spacing: 1.1px; }
+.contrast-drill p { margin: 7px 0 3px; font-size: 20px; }
+.contrast-drill small { color: #6c6459; line-height: 1.5; }
+.usage-contrast { display: grid; gap: 10px; margin-top: 20px; }
+.usage-contrast > div { padding: 14px 16px; border: 1px solid #d8dfd2; border-radius: 12px; }
+.usage-contrast > div[data-tone="good"] { background: #edf5e9; border-color: #bad0b3; }
+.usage-contrast > div[data-tone="warning"] { background: #fff5e8; border-color: #e4c79e; }
+.usage-contrast > div[data-tone="fixed"] { background: #f2f4ef; }
+.usage-contrast p { margin: 7px 0 0; line-height: 1.55; }
+.listening-reveal { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 13px 15px; border-radius: 12px; background: #eef2e9; }
+.listening-reveal p { margin: 0; color: #52634f; font-size: 13px; line-height: 1.45; }
 .notebook-section summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
 .notebook-section { margin: 22px 0; }
 .notebook-section h2 { font-family: Georgia, serif; font-size: 25px; margin-bottom: 12px; }
@@ -90,4 +125,7 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .review-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
   .review-section-heading h2 { font-size: 21px; }
   .review-guidance, .review-empty { padding: 16px; }
+  .speech-forms { grid-template-columns: 1fr; }
+  .listening-reveal { align-items: stretch; flex-direction: column; }
+  .listening-reveal button { justify-content: center; }
 }

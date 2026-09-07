@@ -67,9 +67,9 @@ test('corrupt storage cannot crash notebook and obsolete checkpoints cannot resu
   assert.deepEqual(state.checkpoints,{}); assert.equal(state.writings.length,0); assert.equal(state.attempts.length,0); assert.equal(state.minutes,10);
 });
 test('lesson checkpoint preserves bounded state for backward navigation', () => {
-  const step = {answer:'A',tokens:[],checked:true,correct:true,translation:false,assisted:false,contextVisible:false};
+  const step = {answer:'A',tokens:[],checked:true,correct:true,translation:false,assisted:false,contextVisible:false,revealed:true,listened:true};
   const checkpoint = {lessonId:'a1-identidade-01',review:false,index:2,answer:'',tokens:[],checked:false,correct:false,
-    translation:false,assisted:false,contextVisible:false,receipt:'receipt',draft:'',updatedAt:'2026-09-07T12:00:00Z',contentVersion,
+    translation:false,assisted:false,contextVisible:false,revealed:false,listened:false,receipt:'receipt',draft:'',updatedAt:'2026-09-07T12:00:00Z',contentVersion,
     furthestIndex:4,history:{'1':step,'99':step,'2':{...step,tokens:[999]}}};
   const normalized=normalizeWorkspace({...blankWorkspace(),checkpoints:{lesson:checkpoint}}).checkpoints.lesson;
   assert.equal(normalized.furthestIndex,4);

@@ -9,6 +9,7 @@ export type Attempt = {
 export type CheckpointStepState = {
   answer: string; tokens: number[]; checked: boolean; correct: boolean;
   translation: boolean; assisted: boolean; contextVisible: boolean;
+  revealed: boolean; listened: boolean;
 };
 export type Checkpoint = {
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
@@ -16,6 +17,7 @@ export type Checkpoint = {
   contextVisible: boolean;
   receipt: string; draft: string; updatedAt: string; contentVersion: string;
   furthestIndex?: number; history?: Record<string, CheckpointStepState>;
+  revealed: boolean; listened: boolean;
 };
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
 export type Notebook = { id: string; english: string; translation: string; lessonId: string };
@@ -39,6 +41,7 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
       Number.isSafeInteger(p.index) && p.index >= 0 && p.index < 30 && string(p.answer) &&
       Array.isArray(p.tokens) && p.tokens.length <= 100 && p.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
       typeof p.checked === "boolean" && typeof p.correct === "boolean" && typeof p.translation === "boolean" && typeof p.assisted === "boolean" &&
+      typeof p.revealed === "boolean" && typeof p.listened === "boolean" &&
       string(p.receipt) && string(p.draft) && p.draft.length <= writingLimit && date(p.updatedAt))
     .map(([key, p]) => [key, {
       ...p,
@@ -50,7 +53,8 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
         return Number.isSafeInteger(position) && position >= 0 && position < 30 && state &&
           typeof state.answer === "string" && Array.isArray(state.tokens) && state.tokens.length <= 100 && state.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
           typeof state.checked === "boolean" && typeof state.correct === "boolean" && typeof state.translation === "boolean" &&
-          typeof state.assisted === "boolean" && typeof state.contextVisible === "boolean";
+          typeof state.assisted === "boolean" && typeof state.contextVisible === "boolean" &&
+          typeof state.revealed === "boolean" && typeof state.listened === "boolean";
       })) : {},
     }]));
   const writings = Array.isArray(value.writings) ? value.writings.filter(w => w && string(w.id) && string(w.lessonId) && string(w.text) && w.text.length <= writingLimit && date(w.createdAt)) : [];

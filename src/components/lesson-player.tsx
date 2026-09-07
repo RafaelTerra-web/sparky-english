@@ -43,6 +43,8 @@ export default function LessonPlayer({
   const [translation, setTranslation] = useState(Boolean(initial?.translation));
   const [assisted, setAssisted] = useState(Boolean(initial?.assisted));
   const [contextVisible, setContextVisible] = useState(Boolean(initial?.contextVisible));
+  const [revealed, setRevealed] = useState(Boolean(initial?.revealed));
+  const [listened, setListened] = useState(Boolean(initial?.listened));
   const [draft, setDraft] = useState(recovered?.draft || "");
   const [receipt, setReceipt] = useState(initial?.receipt || "");
   const [verifying, setVerifying] = useState(false);
@@ -64,12 +66,12 @@ export default function LessonPlayer({
   }, []);
   useEffect(() => { heading.current?.focus(); }, [index]);
   useEffect(() => {
-    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible };
+    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
     const saved = saveCheckpoint(userId, { lessonId: lesson.id, review, index, answer, tokens, checked, correct,
-      translation, assisted, contextVisible, receipt, draft, furthestIndex: furthestIndex.current,
+      translation, assisted, contextVisible, revealed, listened, receipt, draft, furthestIndex: furthestIndex.current,
       history: history.current, updatedAt: new Date().toISOString(), contentVersion });
     if (!saved) queueMicrotask(() => setStorageError(true));
-  }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, receipt, draft]);
+  }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened, receipt, draft]);
   function tokensForAnswer(target: number) {
     const targetStep = steps[target];
     if (targetStep.kind !== "order_words") return [];
@@ -80,7 +82,7 @@ export default function LessonPlayer({
     });
   }
   function moveTo(target: number) {
-    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible };
+    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
     const previous = history.current[target];
     const alreadyPassed = target < furthestIndex.current && isExercise(steps[target]);
     setIndex(target);
@@ -91,6 +93,8 @@ export default function LessonPlayer({
     setTranslation(previous?.translation ?? false);
     setAssisted(previous?.assisted ?? false);
     setContextVisible(previous?.contextVisible ?? false);
+    setRevealed(previous?.revealed ?? false);
+    setListened(previous?.listened ?? false);
     setSavedPhrase(false);
   }
   function previous() {
@@ -128,7 +132,7 @@ export default function LessonPlayer({
         if (!response.ok) {
           if (["study-expired", "study-out-of-order"].includes(result.error)) {
             history.current = {}; furthestIndex.current = 0;
-            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
+            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false); setRevealed(false); setListened(false);
             throw new Error("A validação desta prática expirou. Retome os exercícios desde o início; seu rascunho foi preservado.");
           }
           throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Tente novamente; sua resposta continua aqui.");
@@ -157,7 +161,7 @@ export default function LessonPlayer({
       } catch (cause) {
         if (cause instanceof Error && cause.message === "study-incomplete") {
           history.current = {}; furthestIndex.current = 0;
-          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
+          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false); setRevealed(false); setListened(false);
           setError("A validação da prática expirou. Retome os exercícios; seus textos foram preservados.");
         } else setError("Não foi possível salvar a conclusão. Verifique a conexão e tente Concluir novamente. Sua prática foi preservada.");
       }
@@ -204,12 +208,20 @@ export default function LessonPlayer({
         <p className="eyebrow">
           {step.kind === "teach"
             ? "Entenda primeiro"
+            : step.kind === "hook"
+              ? lesson.experience.personality
+              : step.kind === "discovery"
+                ? "Descubra antes da regra"
             : step.kind === "summary"
               ? "Resumo da lição"
               : step.kind === "production"
                 ? "Escrita e auto-revisão"
                 : step.kind === "vocabulary"
                   ? "Palavras em contexto"
+                  : step.kind === "pronunciation"
+                    ? "Microtreino · 20–90 segundos"
+                    : step.kind === "error_analysis"
+                      ? "Erro como pista"
                   : isExercise(step)
                     ? "Sua vez"
                     : "Observe o exemplo"}
@@ -218,6 +230,38 @@ export default function LessonPlayer({
           {step.title}
         </h2>
         <p className="step-explanation">{step.body}</p>
+        {step.kind === "hook" && (
+          <div className="lesson-identity-card">
+            <strong>{lesson.experience.discovery}</strong>
+            <p><b>Seu desafio:</b> {lesson.experience.challenge}</p>
+            <p>Aplicação real: {lesson.experience.application}.</p>
+            {lesson.experience.memoryCue && <p>{lesson.experience.memoryCue}</p>}
+          </div>
+        )}
+        {step.kind === "pronunciation" && step.pronunciation && (
+          <section className="pronunciation-lab" aria-label="Treino de pronúncia">
+            <div className="pronunciation-focus"><strong>{step.pronunciation.focus}</strong>{step.pronunciation.ipa && <span>{step.pronunciation.ipa}</span>}</div>
+            <p><strong>Posição da boca:</strong> {step.pronunciation.mouth}</p>
+            <div className="speech-forms">
+              <div><span>FORMA CUIDADOSA</span><p lang="en">{step.pronunciation.careful}</p></div>
+              <div><span>FORMA NATURAL</span><p lang="en">{step.pronunciation.natural}</p></div>
+            </div>
+            <p><strong>O que muda:</strong> {step.pronunciation.change}</p>
+            {step.pronunciation.contrast && (
+              <div className="contrast-drill"><span>CONTRAST DRILL</span><p lang="en">{step.pronunciation.contrast[0]} <strong>×</strong> {step.pronunciation.contrast[1]}</p><small>Alterne as duas formas sem acelerar. Perceba qual movimento muda.</small></div>
+            )}
+            <ol className="repeat-ladder">
+              {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{drillIndex + 1}</span><span lang="en">{item}</span></li>)}
+            </ol>
+            <p className="microtrain-instruction"><strong>Shadowing:</strong> use o áudio abaixo, ouça em velocidade natural e comece a repetir um instante depois da voz. Copie batidas, ligações e entonação, não apenas as palavras.</p>
+            {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} />}
+          </section>
+        )}
+        {step.kind === "error_analysis" && step.contrasts && (
+          <div className="usage-contrast" aria-label="Comparação de uso">
+            {step.contrasts.map(item => <div key={item.label} data-tone={item.tone}><span>{item.label}</span><p lang="en">{item.text}</p></div>)}
+          </div>
+        )}
         {step.kind === "production" && (
           <div className="production-workspace">
             <label htmlFor="lesson-draft">Seu rascunho (opcional)</label>
@@ -272,7 +316,18 @@ export default function LessonPlayer({
             Você consultou apoio nesta etapa. A tentativa será registrada com apoio.
           </p>
         )}
-        {step.english && (
+        {voiceEnabled && step.english && step.kind === "example" && (
+          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} />
+        )}
+        {voiceEnabled && step.kind === "example" && (
+          <div className="listening-reveal">
+            <p>{listened ? "Você já ouviu. Agora confira sua hipótese." : "Tente ouvir pelo menos uma vez antes de revelar."}</p>
+            <button className="secondary-button" onClick={() => setRevealed(value => !value)} aria-expanded={revealed}>
+              {revealed ? "Ocultar frase" : "Revelar frase"}
+            </button>
+          </div>
+        )}
+        {step.english && (step.kind !== "example" || !voiceEnabled || revealed) && (
           <div
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
             lang="en"
@@ -280,7 +335,7 @@ export default function LessonPlayer({
             {step.english}
           </div>
         )}
-        {step.translation && (
+        {step.translation && (step.kind !== "example" || !voiceEnabled || revealed) && (
           <div className="translation-block">
             <button
               className="text-button"
@@ -294,9 +349,6 @@ export default function LessonPlayer({
           </div>
         )}
         {step.english && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno"}</button>}
-        {voiceEnabled && step.english && step.kind === "example" && (
-          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} />
-        )}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
             <div className="word-answer" aria-label="Frase montada">

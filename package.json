@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "node --test tests/*.test.mjs",
     "audit:curriculum": "node scripts/audit-curriculum.mjs",
+    "audit:experience": "node scripts/audit-learning-experience.mjs",
     "voice:generate": "node scripts/generate-voices.mjs"
   },
   "dependencies": {

@@ -5,7 +5,7 @@ import { Mic, Square, Volume2 } from "lucide-react";
 import { BrowserSpeechProvider, chooseTranscript, compareTranscript, recognitionMessage, type MascotVoice } from "@/lib/speech";
 import { lessonAudio } from "@/lib/voice-assets";
 
-export function SpeechPractice({ lessonId, text, initialMascot = "sparky" }: { lessonId: string; text: string; initialMascot?: MascotVoice }) {
+export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPlayed }: { lessonId: string; text: string; initialMascot?: MascotVoice; onPlayed?: () => void }) {
   const provider = useRef<BrowserSpeechProvider | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
   const generation = useRef(0);
@@ -16,6 +16,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky" }: { l
   const [state, setState] = useState<"idle" | "loading" | "speaking" | "starting" | "listening">("idle");
   const [transcript, setTranscript] = useState("");
   const [message, setMessage] = useState("");
+  const [playbackRate, setPlaybackRate] = useState(1);
   const hasResult = useRef(false);
   const id = useId();
   const mascotName = initialMascot === "sparky" ? "Sparky" : "Pinky";
@@ -74,18 +75,21 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky" }: { l
       },
     });
   }
-  async function speak() {
+  async function speak(rate: 0.75 | 1) {
     if (!source || busyRef.current) return;
     release(); busyRef.current = true;
     const attempt = generation.current;
     setMessage(""); setState("loading");
     const sound = new Audio(source);
+    sound.playbackRate = rate;
+    sound.preservesPitch = true;
+    setPlaybackRate(rate);
     audio.current = sound;
     const finish = (error = "") => {
       if (attempt !== generation.current) return;
       release(); setState("idle"); setMessage(error);
     };
-    sound.onplaying = () => { if (attempt === generation.current) setState("speaking"); };
+    sound.onplaying = () => { if (attempt === generation.current) { setState("speaking"); onPlayed?.(); } };
     sound.onended = () => finish();
     sound.onerror = () => finish("Não foi possível carregar o áudio. Confira a conexão e tente novamente.");
     playbackTimer.current = setTimeout(() => finish("O áudio demorou demais. Tente novamente."), 60000);
@@ -100,8 +104,11 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky" }: { l
       </div>
       <p>Ouça a frase, perceba o ritmo e tente repeti-la. {mascotName} lê apenas o conteúdo da lição.</p>
       <div className="speech-buttons">
-        <button className="secondary-button" disabled={busy || !source} onClick={speak}>
-          <Volume2 size={17} /> Ouvir {mascotName}
+        <button className="secondary-button" disabled={busy || !source} onClick={() => speak(1)}>
+          <Volume2 size={17} /> Ouvir natural
+        </button>
+        <button className="secondary-button" disabled={busy || !source} onClick={() => speak(0.75)}>
+          <Volume2 size={17} /> Ouvir devagar
         </button>
         {busy && <button className="secondary-button" onClick={stop}><Square size={16} /> Parar</button>}
       </div>
@@ -121,7 +128,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky" }: { l
         {!canRecognize && <p>{recognitionMessage("not-supported")}</p>}
       </details>
       <p className="speech-live-status" role="status" aria-live="polite">
-        {state === "loading" ? "Carregando áudio…" : state === "speaking" ? mascotName + " está falando…" :
+        {state === "loading" ? "Carregando áudio…" : state === "speaking" ? `${mascotName} está falando ${playbackRate < 1 ? "devagar" : "em velocidade natural"}…` :
           state === "starting" ? "Aguardando o microfone…" : state === "listening" ? "Ouvindo você…" : message}
       </p>
       {comparison && (
