@@ -160,7 +160,7 @@ export default function SparkyApp() {
         if (!controller.signal.aborted) setLoading(false);
       });
     if ("serviceWorker" in navigator)
-      void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+      void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(() => undefined);
     return () => controller.abort();
   }, []);
 
@@ -761,7 +761,7 @@ function Brand() {
   return (
     <div className="brand">
       <span className="brand-mark">
-        <BookOpen size={23} strokeWidth={1.8} />
+        <Image src="/icon.svg" alt="" width={44} height={44} />
       </span>
       <span>
         Sparky<span className="brand-english">English</span>

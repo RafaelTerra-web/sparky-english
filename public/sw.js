@@ -1,5 +1,12 @@
-const CACHE_NAME = "sparky-public-v3";
-const SHELL = ["/offline.html", "/visuals/sparky-panda.png"];
+const CACHE_NAME = "sparky-public-v4";
+const SHELL = [
+  "/offline.html",
+  "/visuals/sparky-panda.png",
+  "/icons/sparky-192.png",
+  "/icons/sparky-512.png",
+  "/icons/sparky-maskable-512.png",
+  "/icons/apple-touch-icon.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL)));

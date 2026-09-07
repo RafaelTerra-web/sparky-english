@@ -38,6 +38,35 @@
 .usage-contrast p { margin: 7px 0 0; line-height: 1.55; }
 .listening-reveal { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 13px 15px; border-radius: 12px; background: #eef2e9; }
 .listening-reveal p { margin: 0; color: #52634f; font-size: 13px; line-height: 1.45; }
+.install-prompt {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 80;
+  width: min(370px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: 20px;
+  border: 1px solid #cbd7c5;
+  border-radius: 22px;
+  background: #fffdf7;
+  box-shadow: 0 22px 70px #102f2940;
+}
+.install-dismiss { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: transparent; color: #657469; }
+.install-dismiss:hover { background: #edf1e8; }
+.install-heading { display: flex; align-items: center; gap: 13px; padding-right: 30px; }
+.install-heading > img { flex: 0 0 46px; border-radius: 12px; }
+.brand-mark img { width: 100%; height: 100%; object-fit: contain; }
+.install-heading h2 { margin-top: 4px; font-family: Georgia, serif; font-size: 22px; }
+.install-prompt > p { margin: 15px 0 0; color: #586b61; font-size: 13px; line-height: 1.65; }
+.install-actions { margin-top: 16px; }
+.install-actions button { width: 100%; }
+.install-instructions { margin-top: 16px; padding: 15px; border-radius: 15px; background: #eef3e9; }
+.install-instructions ol { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.install-instructions li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; }
+.install-instructions li > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #315846; color: white; font-size: 11px; font-weight: 750; }
+.install-instructions li p { margin: 3px 0 0; color: #41594d; font-size: 12px; line-height: 1.55; }
+.install-browser-note { margin: 0 0 13px; padding-bottom: 12px; border-bottom: 1px solid #d2ddcc; color: #6c4b31; font-size: 12px; line-height: 1.55; }
 .notebook-section summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
 .notebook-section { margin: 22px 0; }
 .notebook-section h2 { font-family: Georgia, serif; font-size: 25px; margin-bottom: 12px; }
@@ -128,4 +157,8 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .speech-forms { grid-template-columns: 1fr; }
   .listening-reveal { align-items: stretch; flex-direction: column; }
   .listening-reveal button { justify-content: center; }
+  .install-prompt { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
+  .app-frame ~ .install-prompt { bottom: calc(88px + env(safe-area-inset-bottom)); max-height: calc(100dvh - 112px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .workspace { padding-top: max(22px, env(safe-area-inset-top)); padding-bottom: calc(108px + env(safe-area-inset-bottom)); padding-left: max(21px, env(safe-area-inset-left)); padding-right: max(21px, env(safe-area-inset-right)); }
+  .login-shell { padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: max(20px, env(safe-area-inset-bottom)); }
 }

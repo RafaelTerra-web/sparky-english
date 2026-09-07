@@ -34,6 +34,12 @@ Sparky usa `gpt-4o-mini-tts-2025-12-15` com Cedar; Pinky usa `tts-1-hd` com Nova
 
 O reconhecimento usa o serviço do navegador, com no máximo três alternativas completas, limite de 20 segundos, parada explícita e descarte de eventos atrasados. A comparação aceita variantes conhecidas de nomes presentes no alvo, como Ana/Anna e Sara/Sarah, mas preserva ordem, negações e palavras extras. Não é um detector infalível de brincadeiras nem uma nota de pronúncia: não concede moedas ou conclui etapas. O app não grava a fala nem salva transcrições. O serviço do navegador pode processar voz remotamente e ter sua própria retenção; a política de privacidade e o consentimento informam essa limitação.
 
+## Instalação no celular
+
+O site é uma PWA instalável. No Android, o convite usa o diálogo nativo do navegador quando `beforeinstallprompt` está disponível e mantém instruções manuais como alternativa. No iPhone e iPad, o convite orienta o caminho real do Safari: **Compartilhar → Adicionar à Tela de Início → Abrir como App da Web**. O convite desaparece no modo standalone e pode ser dispensado durante a navegação atual.
+
+O manifesto publica ícones próprios do Sparky em 192 e 512 px, uma versão maskable para os recortes do Android e um Apple Touch Icon de 180 px. O app instalado abre em janela própria, respeita as áreas seguras do aparelho e continua recebendo as versões publicadas pelo service worker. Detalhes de implementação e verificação estão em [docs/pwa-installation.md](docs/pwa-installation.md).
+
 ## Moedas e mascotes
 
 A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até dez vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
@@ -56,5 +62,7 @@ Após uma build local, `node scripts/preview-fixture.mjs` abre uma conta fictíc
 Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado de exercícios, proteção CSRF, comprovante de conclusão, persistência por cookie e bloqueio de recompensas duplicadas. A especificação de evolução, migração e limites desta entrega está em [docs/evolution-2026-09.md](docs/evolution-2026-09.md).
 
 `node scripts/smoke-learning-ui.mjs` valida a interface com Playwright instalado: escuta antes da revelação, áudio natural/lento dos dois mascotes, níveis A1–C2, retorno à etapa anterior, revisão com contexto visível, reset de ajuda, variantes de nomes, rejeição de palavras extras, encerramento do microfone e retomada de textos avançados no celular. `PLAYWRIGHT_MODULE_PATH` pode apontar para o módulo `playwright/index.mjs` já instalado; `PLAYWRIGHT_CHANNEL=msedge` permite usar o Edge. O teste usa apenas a conta fictícia local e simula o reconhecedor, sem capturar voz real. Imagens de inspeção ficam em `.next/ui-checks`.
+
+`node scripts/smoke-pwa-install.mjs` simula Safari no iPhone e Chrome no Android. Ele verifica as instruções do iOS, o prompt nativo do Android, a ocultação quando o app já está instalado, manifesto standalone, ícones e cabeçalhos do service worker.
 
 O contrato de banco inicial está em `supabase/migrations/20260903000100_sparky_english.sql`; a sincronização só fica ativa após aplicar também `20260905000100_durable_google_progress.sql` e configurar a flag descrita acima.
