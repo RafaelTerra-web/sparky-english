@@ -82,9 +82,15 @@ const nameVariants = [
   ["ana", "anna"], ["sara", "sarah"], ["sofia", "sophia"], ["john", "jon"],
   ["luca", "luka"], ["clara", "klara"], ["catherine", "katherine", "katharine"],
   ["steven", "stephen"], ["sean", "shawn", "shaun"], ["nora", "norah"], ["isabel", "isabelle"],
+  ["lia", "lea", "leah"],
 ] as const;
 const smallNumbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
 const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+const spellingVariants: Record<string, string> = {
+  colour:"color", colours:"colors", favourite:"favorite", favourites:"favorites",
+  favour:"favor", favours:"favors", organisation:"organization", organisations:"organizations",
+  judgement:"judgment", judgements:"judgments", centre:"center", centres:"centers",
+};
 function spokenNumber(digits: string): string {
   // Only ordinary cardinals. Leading-zero codes and large identifiers stay literal.
   if (!/^(0|[1-9]\d{0,1})$/.test(digits)) return digits;
@@ -108,7 +114,8 @@ export function normalizeSpeech(text: string) {
       return spokenNumber(whole) + " point " + fraction.split("").map(digit => smallNumbers[Number(digit)]).join(" ");
     })
     .replace(/\b\d+\b/g, spokenNumber)
-    .replace(/[^a-z0-9'\s]/g, " ").replace(/\s+/g, " ").trim();
+    .replace(/[^a-z0-9'\s]/g, " ").replace(/\b[a-z]+\b/g, word => spellingVariants[word] ?? word)
+    .replace(/\s+/g, " ").trim();
 }
 /** Text alignment, not pronunciation grading. No fuzzy match of arbitrary words. */
 export function compareTranscript(target: string, heard: string) {
@@ -118,7 +125,11 @@ export function compareTranscript(target: string, heard: string) {
   const limited = tooLong || rawExpected.length > 160 || rawReceived.length > 160;
   const names = new Set((target.slice(0, 4000).match(/\b[A-Z][a-z]+\b/g) ?? []).map(normalizeSpeech));
   const groups = nameVariants.filter(group => group.some(name => names.has(name)));
-  const canonical = (word: string) => groups.find(group => (group as readonly string[]).includes(word))?.[0] ?? word;
+  const canonical = (word: string) => {
+    const possessive = word.endsWith("'s") ? "'s" : "";
+    const name = possessive ? word.slice(0, -2) : word;
+    return (groups.find(group => (group as readonly string[]).includes(name))?.[0] ?? name) + possessive;
+  };
   const expected = rawExpected.slice(0, 160).map(canonical);
   const received = rawReceived.slice(0, 160).map(canonical);
   const lengths = Array.from({ length: expected.length + 1 }, () => Array(received.length + 1).fill(0) as number[]);

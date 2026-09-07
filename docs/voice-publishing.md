@@ -4,7 +4,7 @@ Sparky usa Cedar e Pinky usa Marin no GPT-4o Mini TTS. O aluno ouve arquivos pub
 
 ## Preparação e custo
 
-O pacote atual contém 312 exemplos (156 lições × 2 mascotes), cerca de 17 minutos a 140 palavras por minuto. Essa conta não inclui a narração integral de leituras e explicações. Repetições do mesmo arquivo não geram novas chamadas de TTS; armazenamento e tráfego seguem o plano de hospedagem. A estimativa por duração é apenas planejamento: a [cobrança oficial](https://developers.openai.com/api/docs/models/gpt-4o-mini-tts) é por tokens de texto e áudio.
+O pacote publicado contém 312 exemplos (156 lições × 2 mascotes), com duração decodificada total de 16,17 minutos e 14,81 MiB. Isso não inclui a narração integral de leituras e explicações. Repetições do mesmo arquivo não geram novas chamadas de TTS; armazenamento e tráfego seguem o plano de hospedagem. A [cobrança oficial](https://developers.openai.com/api/docs/models/gpt-4o-mini-tts) é por tokens de texto e áudio.
 
 `OPENAI_API_KEY` é necessária apenas no processo administrativo de geração. Não use prefixo `NEXT_PUBLIC_`, não registre a chave no código e não coloque geração automática na build. O site em produção pode reproduzir os arquivos sem a chave. Se a chave estiver no Vercel, use o gerenciamento seguro de variáveis para disponibilizá-la ao processo administrativo, sem colá-la em logs ou conversas.
 
@@ -16,7 +16,11 @@ O pacote atual contém 312 exemplos (156 lições × 2 mascotes), cerca de 17 mi
 4. Execute `npm run voice:generate -- --generate --limit=1000`. Interrupções preservam cada arquivo já gerado. O hash inclui texto, modelo, voz e instruções; mudanças criam arquivos novos.
 5. Revise amostras de todos os níveis, rode lint/build/testes e publique os MP3 junto de `src/lib/content/voice-manifest.json`.
 
-O comando sem `--generate` nunca chama a API. O manifesto inicialmente vazio é intencional: nenhum áudio foi gerado ou avaliado sem a credencial. A interface mantém o microfone e explica a ausência de áudio. Não há fallback para voz do sistema nem controles de personalização vocal.
+O comando sem `--generate` nunca chama a API. `--concurrency=3` permite até três requisições simultâneas (máximo quatro). Arquivos e manifesto são gravados atomicamente; a primeira falha impede iniciar novos itens, preservando respostas já recebidas. Não há repetição automática de chamadas com resultado desconhecido. A interface explica a ausência de áudio se um arquivo ainda não tiver sido publicado. Não há fallback para voz do sistema nem controles de personalização vocal.
+
+`node scripts/audit-voice-assets.mjs` usa Playwright para decodificar todos os arquivos, medir duração e verificar silêncio/saturação, sem chamadas pagas. Usa as mesmas variáveis `PLAYWRIGHT_MODULE_PATH` e `PLAYWRIGHT_CHANNEL` do smoke de interface.
+
+`node scripts/check-voice-transcripts.mjs` simula a fila de conferência de conteúdo. Com `--check` e chave no processo, transcreve os áudios gerados usando GPT-4o Mini Transcribe, sem informar a resposta esperada ao modelo. É uma operação administrativa paga, separada do reconhecimento do aluno. `--recheck --model=gpt-4o-transcribe` confere novamente apenas divergências. Os resultados ficam em `.voice-qa/`, ignorados pelo Git, e são reutilizados. A conferência textual e a análise do sinal não substituem avaliação humana de naturalidade e timbre.
 
 ## Reconhecimento
 

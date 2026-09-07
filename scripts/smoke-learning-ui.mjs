@@ -2,9 +2,11 @@
 import assert from 'node:assert/strict';
 import { pathToFileURL } from 'node:url';
 import { mkdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { lessons } from '../src/lib/curriculum.ts';
 import { isExercise, exerciseId } from '../src/lib/study.ts';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE_PATH ? pathToFileURL(process.env.PLAYWRIGHT_MODULE_PATH).href : 'playwright');
+const voices = JSON.parse(await readFile(new URL('../src/lib/content/voice-manifest.json', import.meta.url), 'utf8'));
 const browser = await chromium.launch({ headless:true, ...(process.env.PLAYWRIGHT_CHANNEL ? {channel:process.env.PLAYWRIGHT_CHANNEL} : {}) });
 const context = await browser.newContext({ viewport:{width:1280,height:900}, serviceWorkers:'block' });
 const page = await context.newPage();
@@ -13,6 +15,11 @@ page.on('pageerror', error => errors.push(error.message));
 const output = new URL('../.next/ui-checks/', import.meta.url);
 await mkdir(output, {recursive:true});
 await page.addInitScript(() => {
+  window.__audio = [];
+  const NativeAudio = window.Audio;
+  window.Audio = class extends NativeAudio {
+    constructor(...args) { super(...args); window.__audio.push(this); }
+  };
   window.__recognitions = [];
   window.SpeechRecognition = class {
     constructor() { window.__recognitions.push(this); }
@@ -53,6 +60,20 @@ try {
   await forward();
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   assert.equal(await dialog.locator('.speech-studio select,input[type="range"]').count(),0);
+  if (voices[legacy.id]?.sparky) {
+    await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).click();
+    await dialog.getByText('Sparky está falando…',{exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),false);
+    await dialog.getByRole('button',{name:'Parar',exact:true}).click();
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),true);
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).getAttribute('src')),null);
+    const failedAudio = '**' + voices[legacy.id].sparky;
+    await page.route(failedAudio, route => route.abort());
+    await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).click();
+    await dialog.locator('.speech-live-status').filter({hasText:/Não foi possível/}).waitFor();
+    await page.unroute(failedAudio);
+    assert.equal(await dialog.getByRole('button',{name:'Ouvir Sparky',exact:true}).isEnabled(),true);
+  }
   await dialog.locator('.speech-consent summary').click();
   await dialog.getByLabel('Autorizo o microfone nesta prática.').check();
   await dialog.getByRole('button',{name:'Começar a falar'}).click();
@@ -71,6 +92,19 @@ try {
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   assert.equal(await dialog.locator('.speech-result').count(),0,'transcription must not persist');
   await dialog.getByRole('button',{name:'Fechar lição'}).click();
+  if (voices[legacy.id]?.pinky) {
+    await nav('Perfil');
+    const pinky = page.locator('.mascot-selector button').filter({hasText:'Pinky'});
+    await pinky.click();
+    await page.waitForFunction(() => [...document.querySelectorAll('.mascot-selector button')].some(button => button.textContent.includes('Pinky') && button.getAttribute('aria-pressed') === 'true'));
+    await openLesson(legacy);
+    await dialog.getByRole('heading',{name:'Fale com Pinky'}).waitFor();
+    await dialog.getByRole('button',{name:'Ouvir Pinky',exact:true}).click();
+    await dialog.getByText('Pinky está falando…',{exact:true}).waitFor();
+    assert.ok((await page.evaluate(() => window.__audio.at(-1).src)).endsWith(voices[legacy.id].pinky));
+    await dialog.getByRole('button',{name:'Fechar lição'}).click();
+    assert.equal(await page.evaluate(() => window.__audio.at(-1).paused),true);
+  }
 
   // Seed a completed authored lesson through the real API, in this fixture only.
   const authored = lessons.find(lesson => lesson.id === 'a1-identidade-01');

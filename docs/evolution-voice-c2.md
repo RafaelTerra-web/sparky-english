@@ -12,12 +12,14 @@
 
 ## Validação
 
-28 testes unitários passaram; lint e build de produção passaram. Auditoria editorial: 150 lições autorais, 33.117 palavras nos campos antes da renderização, sem falhas estruturais. `npm audit --omit=dev`: zero vulnerabilidades reportadas.
+29 testes unitários passaram, incluindo cobertura dos arquivos de voz; lint e build de produção passaram. Auditoria editorial: 150 lições autorais, 33.117 palavras nos campos antes da renderização, sem falhas estruturais. `npm audit --omit=dev`: zero vulnerabilidades reportadas.
 
 Smoke de API no fixture local passou: correção, tentativa errada, CSRF, comprovantes, persistência por cookie e prevenção de recompensa duplicada. Smoke Playwright no Edge passou com viewport móvel de 390 × 844: nomes, palavras extras, encerramento do microfone, transcrição descartada, contexto visível, reset de ajuda, filtros A1–C2 e retomada de um texto com mais de 4.000 caracteres. A inspeção visual conferiu catálogo, prática de voz e escrita. Reconhecimento foi simulado no teste; não se trata de avaliação acústica com falantes reais.
 
-## Pendências concretas
+## Ativação e limites
 
-O ambiente Production ainda não possui `OPENAI_API_KEY`. Nenhum áudio neural foi gerado ou validado auditivamente; o manifesto está vazio e a interface sinaliza a indisponibilidade. Para ativar: gerar duas amostras, escutar, gerar o lote e publicar arquivos mais manifesto conforme [voice-publishing.md](voice-publishing.md). A chave é necessária no processo administrativo, não no navegador nem para reproduções do site.
+A conferência por transcrição correspondeu ao alvo nas 312 falas, aceitando variantes explícitas de nomes e grafias britânicas/americanas. Dois casos inicialmente divergentes foram conferidos com GPT-4o Transcribe, sem fornecer o texto-alvo ao reconhecedor, que recuperou o texto correto. Não houve geração de áudio a partir de fala ou dados de alunos.
 
-O pacote inicial cobre 312 frases de exemplo e cerca de 17 minutos estimados; não narra as aulas completas. As lições avançadas formam uma extensão inicial, não um programa completo ou certificado de fluência. Próximos avanços pedagógicos: ampliar escuta de gêneros variados, conversação espontânea e feedback de professores sobre produção oral e escrita. O reconhecimento permanece dependente do serviço e do suporte do navegador.
+**Atualização de ativação:** os 312 arquivos foram gerados com a credencial fornecida para o processo administrativo e o manifesto foi preenchido. O site reproduz arquivos públicos e não depende da chave no ambiente Production. A credencial não foi gravada no repositório ou no pacote publicado. A conferência de sinal decodificou todos os MP3: 16,17 minutos, 14,81 MiB, sem saturação detectada. O smoke de navegador agora também testa reprodução real de Sparky e Pinky, parada, recuperação de erro de carregamento e troca de mascote.
+
+O pacote inicial cobre 312 frases de exemplo; não narra as aulas completas. As lições avançadas formam uma extensão inicial, não um programa completo ou certificado de fluência. Próximos avanços pedagógicos: ampliar escuta de gêneros variados, conversação espontânea e feedback de professores sobre produção oral e escrita. O reconhecimento permanece dependente do serviço e do suporte do navegador. A validação automática dos áudios não equivale a uma avaliação humana de naturalidade.
