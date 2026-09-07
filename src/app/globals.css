@@ -1647,3 +1647,15 @@ progress::-moz-progress-bar {
     animation-duration: 0.01ms !important;
   }
 }
+/* Long-form listening keeps controls and transcripts usable on narrow screens. */
+.conversation-listening { margin: 1.25rem 0; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid #b6d9d2; border-radius: 1.25rem; background: #f2faf7; color: #213e3b; }
+.conversation-heading { display: flex; align-items: flex-start; gap: .75rem; }
+.conversation-heading > svg { flex: 0 0 auto; margin-top: .2rem; }
+.conversation-heading p { margin: .4rem 0 1rem; }
+.conversation-controls { display: flex; flex-wrap: wrap; gap: .6rem; }
+.conversation-controls button { min-height: 44px; }
+.conversation-transcript ol { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .8rem; }
+.conversation-transcript li { padding: 1rem; border-radius: 1rem; background: white; border-left: 4px solid #3b8776; overflow-wrap: anywhere; }
+.conversation-transcript li[data-speaker="pinky"] { border-left-color: #b94d80; }
+.conversation-transcript p { margin: .4rem 0; line-height: 1.7; white-space: normal; }
+.conversation-transcript .conversation-translation { border-top: 1px solid #dde7e2; padding-top: .7rem; color: #4f625c; }

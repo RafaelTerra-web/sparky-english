@@ -12,6 +12,7 @@ import { authoredStepOrders, createLessonExperience, createPronunciationGuide, u
 import type { ModuleDraft, LessonExperience, PronunciationGuide, UsageContrast, ProductionSupport } from "./content/types.ts";
 
 import type { Level } from "./levels";
+import type { ListeningConversation } from "./listening-types";
 export type { Level } from "./levels";
 export type Step = {
   kind:
@@ -21,6 +22,8 @@ export type Step = {
     | "example"
     | "dialogue"
     | "choice"
+    | "listening_detail"
+    | "listening_inference"
     | "complete_sentence"
     | "order_words"
     | "vocabulary"
@@ -41,6 +44,8 @@ export type Step = {
   pronunciation?: PronunciationGuide;
   contrasts?: UsageContrast[];
   productionSupport?: ProductionSupport;
+  listening?: ListeningConversation;
+  mediation?: string;
 };
 export type Lesson = {
   id: string;

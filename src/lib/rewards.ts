@@ -1,10 +1,12 @@
 import { lessonLedger, moduleLedger } from "./content/ledger.ts";
 import { lessons, modules } from "./curriculum.ts";
+import { storeLedger } from "./store-ledger.ts";
 import {
   cosmeticCatalog,
   cosmeticSlots,
   storeCatalog,
   retiredCosmeticPrices,
+  notebookThemeCatalog,
   type CosmeticSlot,
   type EquippedItems,
   type MascotId,
@@ -12,7 +14,7 @@ import {
 } from "./rewards-shared.ts";
 
 export type RewardState = {
-  version: 1;
+  version: 3;
   wardrobeVersion: 2;
   wardrobeRefund: number;
   coins: number;
@@ -23,7 +25,8 @@ export type RewardState = {
   reviewDay: number;
   reviewBits: string;
   reviewCount: number;
-  owned: string[];
+  ownedBits: string;
+  notebookTheme: string | null;
   mascot: MascotId;
   equipped: EquippedItems;
 };
@@ -31,11 +34,12 @@ export type RewardState = {
 
 const lessonBytes = Math.ceil(lessonLedger.length / 8);
 const moduleBytes = Math.ceil(moduleLedger.length / 8);
+const storeBytes = Math.ceil(storeLedger.length / 8);
 const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 
 export function emptyRewardState(): RewardState {
   return {
-    version: 1,
+    version: 3,
     wardrobeVersion: 2,
     wardrobeRefund: 0,
     coins: 0,
@@ -46,7 +50,8 @@ export function emptyRewardState(): RewardState {
     reviewDay: 0,
     reviewBits: blankBits(lessonBytes),
     reviewCount: 0,
-    owned: [],
+    ownedBits: blankBits(storeBytes),
+    notebookTheme: null,
     mascot: "sparky",
     equipped: { sparky: {}, pinky: {} },
   };
@@ -89,10 +94,16 @@ function dayIso(day: number) {
 export function normalizeRewardState(input: unknown): RewardState {
   const blank = emptyRewardState();
   if (!input || typeof input !== "object") return blank;
-  const raw = input as Partial<RewardState>;
-  const owned = Array.isArray(raw.owned)
-    ? [...new Set(raw.owned.filter((id) => storeCatalog.some((item) => item.id === id)))]
-    : [];
+  const raw = input as Partial<Omit<RewardState, "version">> & { version?: number; owned?: unknown[] };
+  if (raw.version !== 1 && raw.version !== 3) return blank;
+  const ownedBits = raw.version === 3 ? decodeBits(raw.ownedBits, storeBytes) : Buffer.alloc(storeBytes);
+  if (raw.version === 1 && Array.isArray(raw.owned)) {
+    for (const id of raw.owned) {
+      const index = storeLedger.indexOf(id as typeof storeLedger[number]);
+      if (index >= 0) setBit(ownedBits, index);
+    }
+  }
+  const owned: string[] = storeLedger.filter((id, index) => hasBit(ownedBits, index) && storeCatalog.some(item => item.id === id));
   const mascot: MascotId = raw.mascot === "pinky" ? "pinky" : "sparky";
   const equipped: EquippedItems = { sparky: {}, pinky: {} };
   const validBalance = typeof raw.coins === "number" && Number.isSafeInteger(raw.coins) && raw.coins >= 0 && raw.coins <= 100000;
@@ -112,7 +123,7 @@ export function normalizeRewardState(input: unknown): RewardState {
     }
   }
   return {
-    version: 1,
+    version: 3,
     wardrobeVersion: 2,
     wardrobeRefund: raw.wardrobeVersion === 2 && Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : refund,
     coins: validBalance ? Math.min(100000, raw.coins! + refund) : 0,
@@ -140,7 +151,8 @@ export function normalizeRewardState(input: unknown): RewardState {
       raw.reviewCount <= 10
         ? raw.reviewCount
         : 0,
-    owned,
+    ownedBits: ownedBits.toString("base64url"),
+    notebookTheme: notebookThemeCatalog.some(item => item.id === raw.notebookTheme && owned.includes(item.id)) ? raw.notebookTheme! : null,
     mascot,
     equipped,
   };
@@ -161,7 +173,8 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     coins: state.coins,
     completed,
     reviews,
-    owned: state.owned,
+    owned: storeLedger.filter((id, index) => hasBit(decodeBits(state.ownedBits, storeBytes), index) && storeCatalog.some(item => item.id === id)),
+    notebookTheme: state.notebookTheme,
     mascot: state.mascot,
     equipped: state.equipped,
     wardrobeRefund: state.wardrobeRefund,
@@ -243,10 +256,14 @@ export function buyCosmetic(current: RewardState, itemId: string) {
   const state = normalizeRewardState(current);
   const item = storeCatalog.find((entry) => entry.id === itemId);
   if (!item) throw new Error("item-not-found");
-  if (state.owned.includes(item.id)) return { state, spent: 0, alreadyOwned: true };
+  const index = storeLedger.indexOf(item.id as typeof storeLedger[number]);
+  if (index < 0) throw new Error("item-not-found");
+  const ownedBits = decodeBits(state.ownedBits, storeBytes);
+  if (hasBit(ownedBits, index)) return { state, spent: 0, alreadyOwned: true };
   if (state.coins < item.price) throw new Error("insufficient-coins");
   state.coins -= item.price;
-  state.owned.push(item.id);
+  setBit(ownedBits, index);
+  state.ownedBits = ownedBits.toString("base64url");
   return { state, spent: item.price, alreadyOwned: false };
 }
 
@@ -272,9 +289,18 @@ export function equipCosmetic(
       entry.id === itemId &&
       entry.slot === slot &&
       entry.mascots.includes(mascot) &&
-      state.owned.includes(entry.id),
+      publicRewardState(state).owned.includes(entry.id),
   );
   if (!item) throw new Error("item-not-owned-or-compatible");
   state.equipped[mascot][slot] = item.id;
+  return state;
+}
+
+export function equipNotebookTheme(current: RewardState, itemId: string | null) {
+  const state = normalizeRewardState(current);
+  if (itemId !== null && !notebookThemeCatalog.some(item => item.id === itemId && publicRewardState(state).owned.includes(item.id))) {
+    throw new Error("item-not-owned-or-compatible");
+  }
+  state.notebookTheme = itemId;
   return state;
 }

@@ -9,6 +9,7 @@ import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey, writingL
 import type { CheckpointStepState } from "@/lib/learning-local";
 import { SpeechPractice } from "./speech-practice";
 import { MascotFigure } from "./mascot-studio";
+import { ConversationListening } from "./conversation-listening";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
 export default function LessonPlayer({
@@ -319,8 +320,12 @@ export default function LessonPlayer({
               {(step.checklist ?? ["Respondi a todas as partes da proposta?", "Usei a estrutura e o vocabulário estudados?", "Sujeito, verbo e referência de tempo estão coerentes?", "Meu texto comunica a ideia sem tradução palavra por palavra?"]).map(item => <li key={item}>{item}</li>)}
             </ul>
             {step.speakingTask && <aside className="oral-challenge"><h3>Leve a ideia para a fala</h3><p>{step.speakingTask}</p><p>Prática livre, sem gravação ou nota automática. Se possível, peça feedback a um parceiro ou professor.</p></aside>}
+            {step.mediation && <aside className="oral-challenge"><h3>Mediação: leve a mensagem a outra pessoa</h3><p>{step.mediation}</p><p>Acrescente sua resposta ao rascunho sob o título “Mediação”. Preserve a intenção original e adapte a informação ao destinatário.</p></aside>}
           </div>
         )}
+        {step.listening && <ConversationListening key={`${lesson.id}:${index}`} conversation={step.listening}
+          attempted={checked || step.kind !== "choice" || readWorkspace(userId).attempts.some(attempt => attempt.lessonId === lesson.id && attempt.stepId === exerciseId(lesson, step) && attempt.review === review && attempt.contentVersion === contentVersion)}
+          onAssisted={() => setAssisted(true)} />}
         {retrievalExercise && (
           <aside className="review-retrieval-note" aria-label="Estratégia de revisão">
             <strong>Leia o enunciado e tente responder.</strong>

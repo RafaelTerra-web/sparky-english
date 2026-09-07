@@ -61,6 +61,7 @@ export function InstallAppPrompt() {
   }, []);
 
   function dismiss() {
+    try { sessionStorage.setItem("sparky-install-dismissed", "1"); } catch { /* Dismissal still works without browser storage. */ }
     setDismissed(true);
   }
 
@@ -83,7 +84,9 @@ export function InstallAppPrompt() {
 
   const detected = hydrated ? detectPlatform() : { platform: "checking" as InstallPlatform, safari: false };
   const platform = detected.platform;
-  if (platform === "checking" || platform === "other" || installed || (hydrated && isStandalone()) || dismissed) return null;
+  let dismissedInSession = false;
+  if (hydrated) { try { dismissedInSession = sessionStorage.getItem("sparky-install-dismissed") === "1"; } catch { /* Optional preference only. */ } }
+  if (platform === "checking" || platform === "other" || installed || (hydrated && isStandalone()) || dismissed || dismissedInSession) return null;
   const nativeInstall = platform === "android" && Boolean(promptEvent);
   const title = platform === "ios" ? (/iPhone|iPod/i.test(navigator.userAgent) ? "Instale no iPhone" : "Instale no iPad") : "Instale no Android";
 

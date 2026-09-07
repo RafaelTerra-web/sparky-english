@@ -40,6 +40,14 @@
 .mascot-figure.scene-garden::before { background: radial-gradient(ellipse at 18% 90%, #57866a 0 18%, transparent 19%), radial-gradient(ellipse at 85% 80%, #8db97a 0 23%, transparent 24%), linear-gradient(#d8edbf, #a9d2b9); }
 .mascot-figure.scene-sunset::before { background: radial-gradient(circle at 70% 25%, #ffe8a2 0 14%, transparent 15%), linear-gradient(160deg, #f2bc9c, #eab87c 65%, #c89181); }
 .mascot-figure.scene-night::before { background: radial-gradient(circle at 23% 20%, #fff4c5 0 1.4%, transparent 1.8%), radial-gradient(circle at 75% 16%, #fff4c5 0 6%, transparent 6.5%), radial-gradient(circle at 84% 46%, #fff4c5 0 1.4%, transparent 1.8%), linear-gradient(#273d5b, #666184); }
+.mascot-figure.has-illustrated-scene::before { content: none; }
+.mascot-scenery { position: absolute; inset: 0; z-index: 0; border-radius: 22px; background-size: cover; background-position: center; background-color: #e1e8dd; box-shadow: inset 0 0 0 1px #173e3626; }
+.mascot-figure.has-illustrated-scene > img { width: 86%; height: 86%; align-self: end; margin-bottom: 3%; }
+.mascot-small .mascot-scenery { border-radius: 14px; }
+.shop-card-art:has(.has-illustrated-scene) { padding: 0; }
+.shop-card-art .has-illustrated-scene { width: 100%; height: 200px; }
+.shop-card-art .mascot-scenery { border-radius: 0; }
+.shop-card-art .has-illustrated-scene > img { width: 174px; height: 174px; margin-bottom: 6px; }
 .store-practice-dialog { width: min(800px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); margin: auto; padding: 26px; border: 1px solid #cad8c0; border-radius: 22px; background: #fffdf6; color: #263f32; overflow-y: auto; overscroll-behavior: contain; }
 .store-practice-dialog::backdrop { background: #122e29b8; }
 .store-practice-dialog > header { position: sticky; top: -26px; z-index: 3; padding: 14px 0; background: #fffdf6; border-bottom: 1px solid #d5ddce; display: flex; align-items: start; justify-content: space-between; gap: 18px; }
@@ -64,6 +72,7 @@
 .mission-writing ul { padding-left: 22px; list-style: disc; }
 @media (max-width: 1050px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) {
+  html { scroll-padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
   .shop-v2 { padding: 18px; }
   .shop-v2 .studio-main { grid-template-columns: 1fr; }
   .shop-grid { grid-template-columns: 1fr; }

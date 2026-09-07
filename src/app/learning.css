@@ -91,6 +91,26 @@
 .notebook-list article { padding: 18px; border: 1px solid var(--line); border-radius: 14px; min-width: 0; }
 .notebook-list article h4 { font-weight: 650; }
 .notebook-list article .secondary-button { margin-top: 12px; }
+
+/* The same palette is used by shop previews and the real notebook. */
+.notebook-mint { --notebook-paper: #edf7ef; --notebook-ink: #173f35; --notebook-muted: #36594b; --notebook-line: #91b8a0; --notebook-input: #fcfffc; --notebook-accent: #205541; }
+.notebook-midnight { --notebook-paper: #182a3c; --notebook-ink: #f2f5fc; --notebook-muted: #c1d0e3; --notebook-line: #73879e; --notebook-input: #22384e; --notebook-accent: #b8dfcf; }
+.notebook-classic { --notebook-paper: #fbf1da; --notebook-ink: #433322; --notebook-muted: #64503a; --notebook-line: #b59b74; --notebook-input: #fffbef; --notebook-accent: #664528; }
+.notebook-berry { --notebook-paper: #fff0f5; --notebook-ink: #54223d; --notebook-muted: #75405d; --notebook-line: #c594ac; --notebook-input: #fffafd; --notebook-accent: #7b3053; }
+.notebook-theme-preview, .notebook-theme-art { color: var(--notebook-ink, var(--foreground)); }
+.learning-notebook[class*="notebook-"] { --line: var(--notebook-line); }
+.learning-notebook[class*="notebook-"] .notebook-section { background: var(--notebook-paper); color: var(--notebook-ink); border-color: var(--notebook-line); }
+.learning-notebook[class*="notebook-"] .notebook-section :is(h2, h3, h4, p, label, summary, small) { color: var(--notebook-ink); }
+.learning-notebook[class*="notebook-"] .notebook-section :is(input, select, textarea) { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
+.learning-notebook[class*="notebook-"] .notebook-section .secondary-button { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
+.learning-notebook[class*="notebook-"] .notebook-section .text-button { color: var(--notebook-accent); }
+.notebook-theme-preview { padding: 26px; border-radius: 18px; border: 1px solid var(--notebook-line); background: var(--notebook-paper); margin-bottom: 22px; scroll-margin-top: 24px; }
+.notebook-theme-preview h3 { font: 26px Georgia, serif; margin: 12px 0; }
+.notebook-theme-preview p { line-height: 1.8; margin: 12px 0; }
+.notebook-theme-preview .eyebrow { color: var(--notebook-muted); }
+.notebook-theme-preview .secondary-button { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
+.shop-card-art.notebook-theme-art { background: var(--notebook-paper); color: var(--notebook-ink); border-bottom: 1px solid var(--notebook-line); }
+.shop-card-art.notebook-theme-art strong { font: 18px Georgia, serif; text-align: center; }
 .preserve-lines { white-space: pre-wrap; }
 input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .review-guidance, .review-empty {

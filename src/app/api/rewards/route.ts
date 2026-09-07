@@ -13,6 +13,7 @@ import {
   buyCosmetic,
   completeStudy,
   equipCosmetic,
+  equipNotebookTheme,
   normalizeRewardState,
   publicRewardState,
   selectMascot,
@@ -102,6 +103,9 @@ export async function POST(request: Request) {
       state = result.state;
       spent = result.spent;
       reason = result.alreadyOwned ? "already-owned" : "purchased";
+    } else if (body.action === "notebook-theme") {
+      if (typeof body.itemId !== "string" && body.itemId !== null) throw new Error("invalid-request");
+      state = equipNotebookTheme(state, body.itemId as string | null);
     } else if (body.action === "select-mascot") {
       if (body.mascot !== "sparky" && body.mascot !== "pinky")
         throw new Error("invalid-request");

@@ -54,6 +54,7 @@ const emptyRewards: PublicRewardState = {
   completed: {},
   reviews: {},
   owned: [],
+  notebookTheme: null,
   mascot: "sparky",
   equipped: { sparky: {}, pinky: {} },
 };
@@ -304,6 +305,8 @@ export default function SparkyApp() {
           : "Esse item já estava no seu inventário."
         : action.action === "equip"
           ? "Visual atualizado."
+          : action.action === "notebook-theme"
+            ? "Tema do caderno atualizado. Seus textos foram preservados."
           : `${action.mascot === "pinky" ? "Pinky" : "Sparky"} agora acompanha suas lições.`,
     );
     return true;
@@ -648,7 +651,7 @@ export default function SparkyApp() {
             )}
           </>
         )}
-        {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} />}
+        {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">Suas conquistas</p><h1>Loja</h1></div></div>
           {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">Conecte-se novamente para carregar seu saldo e sua loja.</p>}

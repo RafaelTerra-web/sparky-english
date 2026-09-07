@@ -80,6 +80,7 @@ test("a fitted look and scene coexist and survive normalization", () => {
 
 test("retired accessories are refunded once while original complete looks and progress survive", () => {
   const old = completeStudy(emptyRewardState(), lessons[0].id, false).state;
+  old.version = 1;
   delete old.wardrobeVersion;
   delete old.wardrobeRefund;
   old.coins = 25;
@@ -88,7 +89,7 @@ test("retired accessories are refunded once while original complete looks and pr
   const migrated = normalizeRewardState(old);
   assert.equal(migrated.coins, 255);
   assert.equal(migrated.wardrobeRefund, 230);
-  assert.deepEqual(migrated.owned, ["pinky-atelier-look"]);
+  assert.deepEqual(publicRewardState(migrated).owned, ["pinky-atelier-look"]);
   assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { style: "pinky-atelier-look" } });
   assert.equal(migrated.completedBits, old.completedBits);
   assert.deepEqual(normalizeRewardState(migrated), migrated);
@@ -109,7 +110,7 @@ test("malformed stored values cannot mint currency or equip unowned items", () =
     equipped: { sparky: { head: "campus-cap" } },
   });
   assert.equal(state.coins, 0);
-  assert.deepEqual(state.owned, []);
+  assert.deepEqual(publicRewardState(state).owned, []);
   assert.deepEqual(state.equipped.sparky, {});
   assert.equal(state.mascot, "sparky");
 });

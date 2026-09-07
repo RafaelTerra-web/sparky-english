@@ -80,7 +80,7 @@ test('maximum published progress fits comfortably within a browser cookie', asyn
   process.env.SPARKY_SESSION_SECRET='test-only-secret-with-at-least-32-characters';
   let state=emptyRewardState();
   for(const lesson of lessons) state=completeStudy(state,lesson.id,false).state;
-  state.owned = storeCatalog.map(item => item.id);
+  state = normalizeRewardState({ ...state, version: 1, owned: storeCatalog.map(item => item.id) });
   for (const mascot of ['sparky', 'pinky']) {
     for (const slot of cosmeticSlots) {
       const item = cosmeticCatalog.find(item => item.slot === slot && item.mascots.includes(mascot));

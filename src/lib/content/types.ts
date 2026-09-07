@@ -1,4 +1,5 @@
 import type { Level } from "../levels";
+import type { ListeningConversation } from "../listening-types";
 export type LessonDraft = {
   /** Published identity: independent of display order. Never reuse. */
   id: string;
@@ -20,6 +21,7 @@ export type LessonDraft = {
   production: string;
   productionChecklist?: string[];
   speakingTask?: string;
+  listening?: ListeningConversation;
 };
 export type LessonExperience = {
   personality: string;

@@ -3,7 +3,7 @@ import { contentVersion } from "./content/build.ts";
 
 export const evaluationVersion = "closed-exact-1";
 export const isExercise = (step: Step) =>
-  ["choice", "complete_sentence", "order_words"].includes(step.kind);
+  ["choice", "listening_detail", "listening_inference", "complete_sentence", "order_words"].includes(step.kind);
 // Each published lesson has one exercise of each kind; editorial tests enforce it.
 export const exerciseId = (lesson: Lesson, step: Step) => `${lesson.id}:${step.kind}`;
 export type StudyReceipt = {

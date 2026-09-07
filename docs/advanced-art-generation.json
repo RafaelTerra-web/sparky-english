@@ -1,0 +1,111 @@
+[
+  {
+    "id": "sparky-reader-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-0ce316eb-8573-4436-b523-51148a649821.png",
+    "prompt": "Use case: identity-preserve. Edit only the clothes of this original seated Sparky panda mascot. Keep exact face, coral scarf, eye patches, pose, body size and friendly expression. Outfit: cozy reader in a fitted oatmeal cable-knit sweater, subtle round tortoiseshell glasses sitting correctly on nose, holding a small deep green book. Forepaws in front of sweater, no extra limbs. Full body centered on a square with 8% margin. Same clean softly shaded illustration. Output a genuinely transparent RGBA background outside character. No background, checkerboard, text, watermark or scene.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "packaged-alpha-verified",
+    "assetPath": "/visuals/advanced/sparky-reader.png",
+    "width": 640,
+    "height": 640,
+    "sha256": "f98138dd7f1dc9fef388c0eb40b39c76b48525efa02f96165c70ffdc00aa4322",
+    "visualReview": "pending-edge-cleanup-and-in-app-review"
+  },
+  {
+    "id": "sparky-urban-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-91b45edd-9eaa-4927-8067-be504927ad68.png",
+    "prompt": "Use case: identity-preserve. Edit only the outfit of this original seated Sparky panda mascot. Keep exactly its face, rounded eye patches, ears, body proportions, seated pose and friendly calm expression. New outfit: urban traveller with fitted teal bomber jacket, coral scarf, small tan crossbody satchel correctly strapped over the torso, comfortable navy shoes integrated with seated paws. No hat, luggage, extra limbs or objects outside its silhouette. Full body centred square with 8% margin, clean softly shaded illustration matching reference. Real transparent RGBA background outside character, no checkerboard, background, text or watermark.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-opaque-checkerboard"
+  },
+  {
+    "id": "sparky-urban-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-3f79fa3b-26ff-4f27-bb8d-1291a2cfb322.png",
+    "prompt": "Use case: background-extraction. Edit target: supplied Sparky urban traveler sprite. Remove ONLY the opaque checkerboard backdrop and deliver an actual transparent RGBA PNG with alpha zero outside the mascot. Preserve the exact panda, pose, facial expression, proportions, teal fitted jacket, coral scarf, tan crossbody bag and navy shoes. Full seated character centered with all ears and feet inside frame. No other changes. No checkerboard pixels, no painted white background, no ground shadow. This is a production transparent sprite that will be composited over illustrated scenes.",
+    "assetPath": "/visuals/advanced/sparky-urban.png",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "packaged-alpha-verified",
+    "width": 640,
+    "height": 640,
+    "sha256": "f4581b9e27336c6ded1834db46faa6712d0a42280a75b2559d6ca394db4b3649",
+    "visualReview": "pending-edge-cleanup-and-in-app-review"
+  },
+  {
+    "id": "sparky-science-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-6e96bfdd-bbc6-4838-bd39-ad4e9c5241bb.png",
+    "prompt": "Use case: identity-preserve. App shop outfit sprite for Sparky English. Edit target is the attached original Sparky panda. Preserve exactly the friendly face, eye patches, coral cheeks, ears, hair tuft, head proportions and seated pose. New integrated outfit: science club, a fitted cream lab coat over a teal shirt, coral neck scarf, a small simple atom-shaped embroidered badge (no text), holding one closed teal lab notebook between the two forepaws. No glassware, no goggles covering eyes, no extra limbs. Full character contained in a square with 8 percent margin. Match original clean softly shaded illustration and bold readable silhouette. Genuine transparent RGBA background with alpha zero outside the character; no backdrop, checkerboard, ground, shadow outside the silhouette, text, watermark or white fringe. This is a complete dressed character, not separate overlay clothing.",
+    "editPrompt": "Use case: background-extraction. Remove the entire checkerboard backdrop from the attached dressed Sparky panda, producing a genuinely transparent PNG with an alpha channel. Keep the character's face, cream science coat, coral scarf, teal notebook, paws, colors and proportions unchanged. Clean precise antialiased cutout boundary. Pixels outside the character must be fully transparent, including all corners. No new background or drawn checker pattern, no cast shadow and no white halo. Output the isolated complete character.",
+    "assetPath": "/visuals/advanced/sparky-science.png",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "packaged-alpha-verified",
+    "width": 640,
+    "height": 640,
+    "sha256": "5d31d56960635b83904d3779a8c03201989298bd8ae782c764638f16a1e61a98",
+    "visualReview": "pending-edge-cleanup-and-in-app-review"
+  },
+  {
+    "id": "sparky-debate-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-e8cd6931-2d3d-4bd5-aa52-2cdb70cfcbb3.png",
+    "prompt": "Use case: identity-preserve. Create one complete fitted outfit sprite by editing the attached original Sparky panda. Keep his exact recognizable face, head tilt, ears, eye patches, coral cheeks and friendly seated pose. Outfit: debate club captain, a tailored midnight navy blazer with warm gold piping, cream shirt and coral bow tie. His forepaws hold two small cream speaking-note cards with no writing. Both hands are visible and integrated naturally with blazer sleeves. Same polished softly shaded illustrated style. Whole character in square frame, generous clear margin. Transparent background, alpha cutout, clean edges. Only the character; no floor, scenery, text or watermark.",
+    "assetPath": "/visuals/advanced/sparky-debate.png",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "packaged-alpha-verified",
+    "width": 640,
+    "height": 640,
+    "sha256": "f0d218de660941ed0bdef18f577659e82b98c869037fc698dcf895b4b5cfef97",
+    "visualReview": "pending-edge-cleanup-and-in-app-review"
+  },
+  {
+    "id": "sparky-science-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-bce9dd8a-c958-4ec0-bfd8-c9d1199dbabf.png",
+    "prompt": "Use case: identity-preserve. App shop outfit sprite for Sparky English. Edit target is the attached original Sparky panda. Preserve exactly the friendly face, eye patches, coral cheeks, ears, hair tuft, head proportions and seated pose. New integrated outfit: science club, a fitted cream lab coat over a teal shirt, coral neck scarf, a small simple atom-shaped embroidered badge (no text), holding one closed teal lab notebook between the two forepaws. No glassware, no goggles covering eyes, no extra limbs. Full character contained in a square with 8 percent margin. Match original clean softly shaded illustration and bold readable silhouette. Genuine transparent RGBA background with alpha zero outside the character; no backdrop, checkerboard, ground, shadow outside the silhouette, text, watermark or white fringe. This is a complete dressed character, not separate overlay clothing.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  },
+  {
+    "id": "pinky-campus-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-bb5b7843-85ec-42ae-bc08-cdd72d3f8184.png",
+    "prompt": "Use case: identity-preserve. Edit the attached original Pinky into a complete campus outfit sprite. Preserve her exact pink face, enormous rounded ears, plum eyes and nose, hair tuft, warm smile, seated body proportions and four paws. Dress her in a fitted mint varsity cardigan over a cream top, small plum skirt draping naturally between the seated legs and comfortable cream campus sneakers around the feet. A small coral ribbon at the collar; no hat, glasses or book. The cardigan sleeves surround the arms with pink forepaws visible. Same clean softly shaded app mascot illustration. Entire character contained in a square, 8 percent clear margin including ears. Transparent background with a real alpha channel and clean cutout edges. Only one character, no ground, scenery, text, watermark or overlapping accessories.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  },
+  {
+    "id": "pinky-campus-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-4a425768-f80b-4d93-8beb-c0241267f02f.png",
+    "prompt": "Use case: background-extraction. Remove only the checkerboard background from this Pinky campus outfit image. Keep every part of the character and clothing unchanged, including enormous pink ears, mint cardigan, bow, skirt and cream sneakers. Return an actual transparent PNG: alpha zero on all background pixels and all four corners, precise clean cutout around the silhouette. No painted checkerboard, halo, ground shadow or added objects.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  },
+  {
+    "id": "pinky-campus-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-1ada4f29-5158-4055-a929-725660aba14e.png",
+    "prompt": "Put a mint campus cardigan with a cream collar and small coral bow on Pinky. Preserve the original Pinky's face, enormous ears, body and sitting pose, with her paws visible. Keep the original transparent background transparent. Output only the complete dressed character as a clean transparent cutout.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  },
+  {
+    "id": "pinky-presenter-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-3c876bb4-9d90-4af0-ad9d-a5fdcfbfc618.png",
+    "prompt": "Use case: identity-preserve. Pinky presenter outfit, full mascot sprite. Edit the original pink mascot in the reference, retaining the same face, enormous round ears, plum eyes, hair tuft, friendly expression and seated proportions. Dress her in a fitted deep plum blazer over a cream top and matching plum trousers around her seated legs. One pink forepaw holds a small black handheld microphone at chest height, the other rests naturally in her lap; retain two hind paws. No hat or eyewear. Clean soft illustrated style matching the reference. Center entire character with clear margin. Export with an actual transparent alpha channel around the silhouette; the background is absent rather than depicted. No environment, floor, shadows outside the body, text, watermark, white border or checkerboard pixels.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  },
+  {
+    "id": "sparky-urban-look",
+    "source": "C:/Users/rafae/.codex/generated_images/01a06fc3-3c5c-7491-b2f0-387d57a698bb/exec-284af5c9-51f1-41fe-9e0b-765fad14fcfd.png",
+    "prompt": "Clean up this transparent mascot sprite. Remove the stray white specks below the shoes and all white halos outside the outline. Keep the existing transparent background and do not add any background. Preserve the panda, clothes, face, shoes, pose and colors exactly. Produce a neatly cut out transparent character with smooth clean edges.",
+    "model": "GPT Image (built-in)",
+    "generatedAt": "2026-09-07",
+    "status": "rejected-visible-checkerboard"
+  }
+]

@@ -3,12 +3,13 @@ import { useState } from "react";
 import { lessons, type Lesson } from "@/lib/curriculum";
 import { contentVersion } from "@/lib/content/build";
 import { storeMissions } from "@/lib/content/store-missions";
+import { notebookThemeCatalog } from "@/lib/rewards-shared";
 import { blankWorkspace, updateWorkspace, writingLimit, type LearningWorkspace } from "@/lib/learning-local";
 
 const missionTitles = Object.fromEntries(Object.entries(storeMissions).flatMap(([packId, missions]) => missions.map(m => [`mission:${packId}:${m.id}`, `Missão: ${m.title}`])));
 
-export default function LearningNotebook({ userId, workspace, onOpen }: {
-  userId: string; workspace: LearningWorkspace; onOpen: (lesson: Lesson, review?: boolean) => void;
+export default function LearningNotebook({ userId, workspace, onOpen, themeId }: {
+  userId: string; workspace: LearningWorkspace; onOpen: (lesson: Lesson, review?: boolean) => void; themeId: string | null;
 }) {
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<{ lessonId: string; text: string } | null>(null);
@@ -23,7 +24,8 @@ export default function LearningNotebook({ userId, workspace, onOpen }: {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setMessage("Caderno exportado. O arquivo contém seus textos e respostas pessoais.");
   }
-  return <>
+  const theme = notebookThemeCatalog.find(item => item.id === themeId);
+  return <div className={`learning-notebook ${theme?.className ?? ""}`}>
     <div className="page-heading"><div><p className="eyebrow">Aprender com evidências</p><h1>Seu caderno de inglês</h1></div></div>
     {message && <p role="status" className="notice">{message}</p>}
     <section className="profile-card notebook-section">
@@ -76,5 +78,5 @@ export default function LearningNotebook({ userId, workspace, onOpen }: {
         }
       }}>Apagar caderno local</button>
     </section>
-  </>;
+  </div>;
 }

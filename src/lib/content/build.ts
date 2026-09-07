@@ -105,7 +105,24 @@ export function buildLesson(
       translation: data.translation,
     },
   };
-  const steps = authoredStepOrders[position % authoredStepOrders.length].map(key => base[key]);
+  let steps = authoredStepOrders[position % authoredStepOrders.length].map(key => base[key]);
+  if (data.listening) {
+    const conversation = data.listening;
+    const listeningStep = (kind: "choice" | "listening_detail" | "listening_inference", question: typeof conversation.gist, title: string): Step => ({
+      kind, title, body: question.question, listening: conversation,
+      options: rotate(question.choices, position + (kind === "listening_detail" ? 2 : 1)),
+      answer: question.choices[0], explanation: question.explanation,
+    });
+    // The gist task precedes explanations and transcript. No sentence TTS is
+    // substituted for a complete conversation, and no transcript is exposed in
+    // the generic english/example fields before the listening attempt.
+    steps = [base.hook,
+      listeningStep("choice", conversation.gist, "Escuta global: qual é a intenção?"),
+      listeningStep("listening_detail", conversation.detail, "Ouça de novo: encontre o detalhe"),
+      listeningStep("listening_inference", conversation.inference, "Além das palavras: atitude e inferência"),
+      base.teach, base.vocabulary, base.complete_sentence, base.error_analysis,
+      base.order_words, { ...base.production, mediation: conversation.mediation }, base.summary];
+  }
   return {
     id: data.id,
     title: data.title,
