@@ -31,6 +31,7 @@ try {
   await iosPrompt.getByText("Abrir como App da Web", { exact: false }).waitFor();
   assert.equal(await iosPrompt.getByText("Primeiro:", { exact: false }).count(), 0, "Safari should not receive the open-in-Safari warning");
   assert.ok((await ios.page.locator('link[rel="apple-touch-icon"]').getAttribute("href"))?.includes("apple-touch-icon-v2.png"));
+  assert.equal(await ios.page.locator('link[rel="icon"][href="/icons/sparky-192-v2.png"]').count(), 1);
   assert.ok((await ios.page.locator('meta[name="viewport"]').getAttribute("content"))?.includes("viewport-fit=cover"));
   await iosPrompt.screenshot({ path: new URL("install-iphone.png", output).pathname.replace(/^\/([A-Z]:)/, "$1") });
   await iosPrompt.getByRole("button", { name: "Fechar convite de instalação" }).click();

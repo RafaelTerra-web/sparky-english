@@ -23,7 +23,10 @@ export const metadata: Metadata = {
   description: "Inglês para falantes de português do Brasil. Explicações em PT-BR, exemplos e prática em inglês.",
   applicationName: "Sparky English",
   appleWebApp: { capable: true, title: "Sparky English", statusBarStyle: "default" },
-  icons: { apple: [{ url: "/icons/apple-touch-icon-v2.png", sizes: "180x180", type: "image/png" }] },
+  icons: {
+    icon: [{ url: "/icons/sparky-192-v2.png", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/icons/apple-touch-icon-v2.png", sizes: "180x180", type: "image/png" }],
+  },
   formatDetection: { telephone: false },
   openGraph: {
     title: "Sparky English",
