@@ -4,7 +4,7 @@
 import { createHash } from "node:crypto";
 import { readFile, writeFile, mkdir, access, rename } from "node:fs/promises";
 import { lessons } from "../src/lib/curriculum.ts";
-import { voiceProfiles, ttsModel } from "../src/lib/voice-config.ts";
+import { voiceProfiles } from "../src/lib/voice-config.ts";
 const root = new URL("../", import.meta.url);
 const folder = new URL("public/audio/mascots/", root);
 const manifestPath = new URL("src/lib/content/voice-manifest.json", root);
@@ -16,13 +16,19 @@ if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1000) throw new Error("
 const concurrencyArg = process.argv.find(arg => arg.startsWith("--concurrency="));
 const concurrency = concurrencyArg ? Number(concurrencyArg.split("=")[1]) : 2;
 if (!Number.isSafeInteger(concurrency) || concurrency < 1 || concurrency > 4) throw new Error("concurrency must be between 1 and 4");
+const mascotArg = process.argv.find(arg => arg.startsWith("--mascot="));
+const mascotFilter = mascotArg?.split("=")[1];
+if (mascotFilter && !(mascotFilter in voiceProfiles)) throw new Error("mascot must be sparky or pinky");
 const pending = [];
 for (const lesson of lessons) {
   const text = lesson.steps.find(step => step.kind === "example")?.english;
   if (!text || text.length > 4096) throw new Error("Missing or oversized published example: " + lesson.id);
   if (manifest[lesson.id]?.text !== text) manifest[lesson.id] = { text };
   for (const [mascot, profile] of Object.entries(voiceProfiles)) {
-    const hash = createHash("sha256").update(JSON.stringify({ model: ttsModel, text, ...profile })).digest("hex").slice(0, 32);
+    if (mascotFilter && mascot !== mascotFilter) continue;
+    const hash = createHash("sha256").update(JSON.stringify({ model: profile.model, text, voice: profile.voice,
+      ...( "instructions" in profile ? { instructions: profile.instructions } : {}),
+    })).digest("hex").slice(0, 32);
     const url = "/audio/mascots/" + hash + ".mp3";
     const file = new URL(hash + ".mp3", folder);
     try { await access(file); manifest[lesson.id][mascot] = url; }
@@ -31,7 +37,8 @@ for (const lesson of lessons) {
 }
 const batch = pending.slice(0, limit);
 const words = batch.reduce((sum, item) => sum + item.text.split(/\s+/).length, 0);
-console.log(JSON.stringify({ pending: pending.length, selected: batch.length, estimatedMinutesAt140Wpm: +(words / 140).toFixed(2), mode: generate ? "generate" : "dry-run" }));
+const charactersByModel = Object.fromEntries(Object.keys(voiceProfiles).map(name => [voiceProfiles[name].model, batch.filter(item => item.profile.model === voiceProfiles[name].model).reduce((sum, item) => sum + item.text.length, 0)]));
+console.log(JSON.stringify({ pending: pending.length, selected: batch.length, mascot: mascotFilter ?? "all", charactersByModel, estimatedMinutesAt140Wpm: +(words / 140).toFixed(2), mode: generate ? "generate" : "dry-run" }));
 if (!generate) process.exit(0);
 if (!process.env.OPENAI_API_KEY) throw new Error("Configure OPENAI_API_KEY securely before generating.");
 await mkdir(folder, { recursive: true });
@@ -49,7 +56,13 @@ async function generateItem(item) {
   const response = await fetch("https://api.openai.com/v1/audio/speech", {
     method: "POST", signal: AbortSignal.timeout(60000),
     headers: { authorization: "Bearer " + process.env.OPENAI_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ model: ttsModel, input: item.text, voice: item.profile.voice, instructions: item.profile.instructions, response_format: "mp3" }),
+    body: JSON.stringify({
+      model: item.profile.model,
+      input: item.text,
+      voice: item.profile.voice,
+      ...("instructions" in item.profile ? { instructions: item.profile.instructions } : {}),
+      response_format: "mp3",
+    }),
   });
   if (!response.ok) throw new Error("TTS failed (HTTP " + response.status + "). No provider response or secret logged.");
   const bytes = Buffer.from(await response.arrayBuffer());

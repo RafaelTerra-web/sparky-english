@@ -23,3 +23,9 @@ A conferência por transcrição correspondeu ao alvo nas 312 falas, aceitando v
 **Atualização de ativação:** os 312 arquivos foram gerados com a credencial fornecida para o processo administrativo e o manifesto foi preenchido. O site reproduz arquivos públicos e não depende da chave no ambiente Production. A credencial não foi gravada no repositório ou no pacote publicado. A conferência de sinal decodificou todos os MP3: 16,17 minutos, 14,81 MiB, sem saturação detectada. O smoke de navegador agora também testa reprodução real de Sparky e Pinky, parada, recuperação de erro de carregamento e troca de mascote.
 
 O pacote inicial cobre 312 frases de exemplo; não narra as aulas completas. As lições avançadas formam uma extensão inicial, não um programa completo ou certificado de fluência. Próximos avanços pedagógicos: ampliar escuta de gêneros variados, conversação espontânea e feedback de professores sobre produção oral e escrita. O reconhecimento permanece dependente do serviço e do suporte do navegador. A validação automática dos áudios não equivale a uma avaliação humana de naturalidade.
+
+## Extensão C1/C2 e Pinky HD — 7 de setembro de 2026
+
+Foram acrescentados dois módulos de seis lições: evidência e comunicação pública em C1; estilo, cultura e intervenção crítica em C2. O total passou a 168 lições, 27 módulos e 504 exercícios objetivos. O aluno também pode voltar uma etapa durante a lição; respostas, traduções e apoio consultado são preservados no checkpoint.
+
+As 168 falas da Pinky foram substituídas por `tts-1-hd` com Nova. O Sparky preservou Cedar no snapshot do GPT-4o Mini TTS e recebeu 12 falas para as novas lições. Os 336 MP3 ativos passaram pela transcrição sem texto-alvo e por decodificação: 16,78 minutos, 15,36 MiB e nenhuma saturação detectada. Os 156 arquivos antigos da Pinky, já sem referência, foram removidos depois da verificação do manifesto.

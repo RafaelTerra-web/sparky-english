@@ -83,7 +83,7 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .lesson-dialog { width: 100%; height: 100dvh; border-radius: 0; border: 0; }
   .lesson-dialog > header { padding-top: max(12px, env(safe-area-inset-top)); }
   .lesson-dialog > footer { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
-  .lesson-dialog > footer > button { min-height: 48px; font-size: 14px; }
+  .lesson-dialog > footer button { min-height: 48px; font-size: 14px; }
   .mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .mobile-nav button { min-width: 0; }
   .notebook-section { padding: 20px; }

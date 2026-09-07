@@ -1239,6 +1239,15 @@ progress::-moz-progress-bar {
   font-size: 11px;
   color: var(--muted);
 }
+.lesson-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lesson-back-button,
+.lesson-forward-button {
+  min-height: 44px;
+}
 .privacy-page {
   max-width: 750px;
   margin: 60px auto;
@@ -1614,9 +1623,19 @@ progress::-moz-progress-bar {
     max-width: 130px;
     font-size: 10px;
   }
-  .lesson-dialog > footer > button {
+  .lesson-dialog > footer button {
     font-size: 12px;
     padding: 12px 16px;
+  }
+  .lesson-dialog > footer > span {
+    display: none;
+  }
+  .lesson-footer-actions {
+    width: 100%;
+  }
+  .lesson-footer-actions > button {
+    flex: 1;
+    justify-content: center;
   }
 }
 @media (prefers-reduced-motion: reduce) {

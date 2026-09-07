@@ -90,6 +90,7 @@ const spellingVariants: Record<string, string> = {
   colour:"color", colours:"colors", favourite:"favorite", favourites:"favorites",
   favour:"favor", favours:"favors", organisation:"organization", organisations:"organizations",
   judgement:"judgment", judgements:"judgments", centre:"center", centres:"centers",
+  behaviour:"behavior", behaviours:"behaviors",
 };
 function spokenNumber(digits: string): string {
   // Only ordinary cardinals. Leading-zero codes and large identifiers stay literal.
@@ -121,7 +122,16 @@ export function normalizeSpeech(text: string) {
 export function compareTranscript(target: string, heard: string) {
   const tooLong = target.length > 4000 || heard.length > 4000;
   const rawExpected = normalizeSpeech(target.slice(0, 4000)).split(" ").filter(Boolean);
-  const rawReceived = normalizeSpeech(heard.slice(0, 4000)).split(" ").filter(Boolean);
+  const heardWords = normalizeSpeech(heard.slice(0, 4000)).split(" ").filter(Boolean);
+  // Resolve the genuinely ambiguous 's from the published target: it may mean is or has.
+  const rawReceived = heardWords.flatMap(word => {
+    const match = /^(he|she|it)'s$/.exec(word);
+    if (!match) return [word];
+    const subject = match[1];
+    if (rawExpected.some((expected, index) => expected === subject && rawExpected[index + 1] === "is")) return [subject, "is"];
+    if (rawExpected.some((expected, index) => expected === subject && rawExpected[index + 1] === "has")) return [subject, "has"];
+    return [word];
+  });
   const limited = tooLong || rawExpected.length > 160 || rawReceived.length > 160;
   const names = new Set((target.slice(0, 4000).match(/\b[A-Z][a-z]+\b/g) ?? []).map(normalizeSpeech));
   const groups = nameVariants.filter(group => group.some(name => names.has(name)));

@@ -4,7 +4,9 @@ import { a2CommunicationModules } from "./content/a2-practice.ts";
 import { b1Modules } from "./content/b1.ts";
 import { b2Modules } from "./content/b2.ts";
 import { c1Modules } from "./content/c1.ts";
+import { c1ExtensionModules } from "./content/c1-extension.ts";
 import { c2Modules } from "./content/c2.ts";
+import { c2ExtensionModules } from "./content/c2-extension.ts";
 import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
 
 import type { Level } from "./levels";
@@ -283,7 +285,7 @@ const introductoryLessons: Lesson[] = [
   }),
 ];
 
-const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c2Modules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules];
 export const modules = drafts.map((module, index) => {
   const items = module.lessons.map((draft, position) =>
     buildLesson(draft, module, position),

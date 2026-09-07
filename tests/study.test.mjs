@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { lessons, modules } from '../src/lib/curriculum.ts';
 import { a1Modules } from '../src/lib/content/a1.ts';
-import { buildLesson } from '../src/lib/content/build.ts';
+import { buildLesson, contentVersion } from '../src/lib/content/build.ts';
 import { lessonLedger, moduleLedger } from '../src/lib/content/ledger.ts';
 import { gradeAttempt, verifyCompletion, exerciseId, isExercise } from '../src/lib/study.ts';
 import { normalizeWorkspace, blankWorkspace, writingLimit } from '../src/lib/learning-local.ts';
@@ -65,6 +65,16 @@ test('corrupt storage cannot crash notebook and obsolete checkpoints cannot resu
   assert.deepEqual(normalizeWorkspace(null), blankWorkspace());
   const state=normalizeWorkspace({version:1, checkpoints:{bad:{contentVersion:'old'}}, writings:[null,{}], attempts:[null,{}], vocabulary:[null],minutes:99});
   assert.deepEqual(state.checkpoints,{}); assert.equal(state.writings.length,0); assert.equal(state.attempts.length,0); assert.equal(state.minutes,10);
+});
+test('lesson checkpoint preserves bounded state for backward navigation', () => {
+  const step = {answer:'A',tokens:[],checked:true,correct:true,translation:false,assisted:false,contextVisible:false};
+  const checkpoint = {lessonId:'a1-identidade-01',review:false,index:2,answer:'',tokens:[],checked:false,correct:false,
+    translation:false,assisted:false,contextVisible:false,receipt:'receipt',draft:'',updatedAt:'2026-09-07T12:00:00Z',contentVersion,
+    furthestIndex:4,history:{'1':step,'99':step,'2':{...step,tokens:[999]}}};
+  const normalized=normalizeWorkspace({...blankWorkspace(),checkpoints:{lesson:checkpoint}}).checkpoints.lesson;
+  assert.equal(normalized.furthestIndex,4);
+  assert.deepEqual(Object.keys(normalized.history),['1']);
+  assert.equal(normalized.history['1'].correct,true);
 });
 test('maximum published progress fits comfortably within a browser cookie', async () => {
   process.env.SPARKY_SESSION_SECRET='test-only-secret-with-at-least-32-characters';

@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Languages, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Languages, X } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum";
 import type { PublicRewardState } from "@/lib/rewards-shared";
 import { contentVersion } from "@/lib/content/build";
 import { isExercise, exerciseId } from "@/lib/study";
 import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey, writingLimit } from "@/lib/learning-local";
+import type { CheckpointStepState } from "@/lib/learning-local";
 import { SpeechPractice } from "./speech-practice";
 import { MascotFigure } from "./mascot-studio";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
@@ -48,6 +49,8 @@ export default function LessonPlayer({
   const [error, setError] = useState("");
   const [storageError, setStorageError] = useState(false);
   const [savedPhrase, setSavedPhrase] = useState(false);
+  const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
+  const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
   const step = steps[index];
   const retrievalExercise = review && isExercise(step);
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
@@ -61,10 +64,41 @@ export default function LessonPlayer({
   }, []);
   useEffect(() => { heading.current?.focus(); }, [index]);
   useEffect(() => {
+    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible };
     const saved = saveCheckpoint(userId, { lessonId: lesson.id, review, index, answer, tokens, checked, correct,
-      translation, assisted, contextVisible, receipt, draft, updatedAt: new Date().toISOString(), contentVersion });
+      translation, assisted, contextVisible, receipt, draft, furthestIndex: furthestIndex.current,
+      history: history.current, updatedAt: new Date().toISOString(), contentVersion });
     if (!saved) queueMicrotask(() => setStorageError(true));
   }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, receipt, draft]);
+  function tokensForAnswer(target: number) {
+    const targetStep = steps[target];
+    if (targetStep.kind !== "order_words") return [];
+    const unused = targetStep.options!.map((word, token) => ({ word, token }));
+    return targetStep.answer!.split(" ").map(word => {
+      const found = unused.findIndex(item => item.word === word);
+      return unused.splice(found, 1)[0].token;
+    });
+  }
+  function moveTo(target: number) {
+    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible };
+    const previous = history.current[target];
+    const alreadyPassed = target < furthestIndex.current && isExercise(steps[target]);
+    setIndex(target);
+    setAnswer(previous?.answer ?? (alreadyPassed && steps[target].kind !== "order_words" ? steps[target].answer! : ""));
+    setTokens(previous?.tokens ?? (alreadyPassed ? tokensForAnswer(target) : []));
+    setChecked(previous?.checked ?? alreadyPassed);
+    setCorrect(previous?.correct ?? alreadyPassed);
+    setTranslation(previous?.translation ?? false);
+    setAssisted(previous?.assisted ?? false);
+    setContextVisible(previous?.contextVisible ?? false);
+    setSavedPhrase(false);
+  }
+  function previous() {
+    if (index === 0 || verifying || saving) return;
+    setError("");
+    if (step.kind === "production") saveWriting();
+    moveTo(index - 1);
+  }
   function saveWriting() {
     if (!draft.trim()) return;
     const ok = updateWorkspace(userId, current => current.writings.some(w => w.lessonId === lesson.id && w.text === draft) ? current : ({ ...current,
@@ -93,6 +127,7 @@ export default function LessonPlayer({
         const result = await response.json();
         if (!response.ok) {
           if (["study-expired", "study-out-of-order"].includes(result.error)) {
+            history.current = {}; furthestIndex.current = 0;
             setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
             throw new Error("A validação desta prática expirou. Retome os exercícios desde o início; seu rascunho foi preservado.");
           }
@@ -121,14 +156,16 @@ export default function LessonPlayer({
         });
       } catch (cause) {
         if (cause instanceof Error && cause.message === "study-incomplete") {
+          history.current = {}; furthestIndex.current = 0;
           setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
           setError("A validação da prática expirou. Retome os exercícios; seus textos foram preservados.");
         } else setError("Não foi possível salvar a conclusão. Verifique a conexão e tente Concluir novamente. Sua prática foi preservada.");
       }
       return;
     }
-    setIndex(value => value + 1); setAnswer(""); setTokens([]); setChecked(false);
-    setCorrect(false); setTranslation(false); setAssisted(false); setContextVisible(false); setSavedPhrase(false);
+    const target = index + 1;
+    furthestIndex.current = Math.max(furthestIndex.current, target);
+    moveTo(target);
   }
   return (
     <dialog
@@ -343,22 +380,32 @@ export default function LessonPlayer({
               : "Prática de revisão"
             : "Você pode consultar as explicações"}
         </span>
-        <button
-          className="primary-button"
-          disabled={saving || verifying || (isExercise(step) && !selected)}
-          onClick={next}
-        >
-          {verifying ? "Verificando…" : saving
-            ? "Salvando…"
-            : isExercise(step) && !checked
-            ? "Verificar"
-            : checked && !correct
-              ? "Tentar novamente"
-              : index === steps.length - 1
-                ? "Concluir"
-                : "Continuar"}
-          <ArrowRight size={16} />
-        </button>
+        <div className="lesson-footer-actions">
+          <button
+            className="secondary-button lesson-back-button"
+            disabled={index === 0 || saving || verifying}
+            onClick={previous}
+          >
+            <ArrowLeft size={16} />
+            Voltar etapa
+          </button>
+          <button
+            className="primary-button lesson-forward-button"
+            disabled={saving || verifying || (isExercise(step) && !selected)}
+            onClick={next}
+          >
+            {verifying ? "Verificando…" : saving
+              ? "Salvando…"
+              : isExercise(step) && !checked
+              ? "Verificar"
+              : checked && !correct
+                ? "Tentar novamente"
+                : index === steps.length - 1
+                  ? "Concluir"
+                  : "Continuar"}
+            <ArrowRight size={16} />
+          </button>
+        </div>
       </footer>
     </dialog>
   );

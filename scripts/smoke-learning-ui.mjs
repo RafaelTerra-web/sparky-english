@@ -28,7 +28,7 @@ await page.addInitScript(() => {
   };
 });
 const dialog = page.locator('.lesson-dialog');
-const forward = () => dialog.locator('footer button').click();
+const forward = () => dialog.locator('.lesson-forward-button').click();
 async function nav(name) { await page.locator((page.viewportSize().width < 700 ? '.mobile-nav' : '.sidebar') + ' button').filter({hasText:new RegExp('^' + name + '$')}).click(); }
 async function openLesson(lesson) {
   await nav('Curso');
@@ -57,7 +57,12 @@ try {
   await page.locator('.app-frame').waitFor();
   const legacy = lessons.find(lesson => lesson.id === 'a1-1-1');
   await openLesson(legacy);
+  assert.equal(await dialog.getByRole('button',{name:'Voltar etapa'}).isDisabled(),true);
   await forward();
+  await dialog.getByRole('button',{name:'Voltar etapa'}).click();
+  await dialog.getByRole('heading',{name:legacy.steps[0].title}).waitFor();
+  await forward();
+  await dialog.getByRole('heading',{name:legacy.steps[1].title}).waitFor();
   await dialog.getByRole('heading',{name:'Fale com Sparky'}).waitFor();
   assert.equal(await dialog.locator('.speech-studio select,input[type="range"]').count(),0);
   if (voices[legacy.id]?.sparky) {
@@ -134,6 +139,10 @@ try {
   await dialog.locator('.english-example').waitFor();
   assert.equal(await dialog.locator('.english-example').innerText(),reviewSteps[1].english);
   assert.equal(await dialog.locator('.lesson-notes').evaluate(node => node.open),false,'help must reset');
+  await dialog.getByRole('button',{name:'Voltar etapa'}).click();
+  await dialog.getByText('Resposta correta.',{exact:true}).waitFor();
+  await forward();
+  await dialog.locator('.english-example').filter({hasText:reviewSteps[1].english}).waitFor();
   const independent = page.waitForRequest(request => request.url().endsWith('/api/study') && request.method() === 'POST');
   await answer(reviewSteps[1]);
   assert.equal((await independent).postDataJSON().assisted,false);
@@ -143,7 +152,7 @@ try {
   await nav('Curso');
   assert.equal(await page.locator('.catalog-levels button').count(),7);
   await page.locator('.catalog-levels button').filter({has:page.locator('strong',{hasText:/^C2$/})}).click();
-  assert.equal(await page.locator('.catalog-lesson').count(),12);
+  assert.equal(await page.locator('.catalog-lesson').count(),18);
   await noOverflow();
   await page.screenshot({path:new URL('course-c2-mobile.png',output).pathname.replace(/^\/([A-Z]:)/,'$1'),fullPage:true});
   const advanced = lessons.find(lesson => lesson.id === 'c2-producao-06');
@@ -166,5 +175,5 @@ try {
     await forward();
   }
   assert.deepEqual(errors,[]);
-  console.log('PASS: mobile layout, six levels, Ana/Anna, extra-word rejection, microphone cleanup, private transcript, help reset, visible review context and advanced writing resume. TTS audio quality requires generated files and manual listening.');
+  console.log('PASS: mobile layout, six levels, backward lesson navigation, Ana/Anna, extra-word rejection, microphone cleanup, private transcript, help reset, visible review context and advanced writing resume.');
 } finally { await browser.close(); }

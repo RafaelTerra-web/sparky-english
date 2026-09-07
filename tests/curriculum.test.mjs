@@ -12,23 +12,25 @@ import { a2CommunicationModules } from "../src/lib/content/a2-practice.ts";
 import { b1Modules } from "../src/lib/content/b1.ts";
 import { b2Modules } from "../src/lib/content/b2.ts";
 import { c1Modules } from "../src/lib/content/c1.ts";
+import { c1ExtensionModules } from "../src/lib/content/c1-extension.ts";
 import { c2Modules } from "../src/lib/content/c2.ts";
+import { c2ExtensionModules } from "../src/lib/content/c2-extension.ts";
 import { curriculumSources } from "../src/lib/content/build.ts";
 
-const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c2Modules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules];
 const legacy = ["a1-1-1", "a1-2-1", "a2-3-1", "a2-4-1", "b1-5-1", "b1-6-1"];
-test("156 lessons across all six levels with preserved published identities", () => {
-  assert.equal(lessons.length, 156);
-  assert.equal(modules.length, 25);
-  assert.equal(drafts.flatMap((m) => m.lessons).length, 150);
-  const counts = { A1: 38, A2: 44, B1: 38, B2: 12, C1: 12, C2: 12 };
-  const moduleCounts = { A1: 6, A2: 7, B1: 6, B2: 2, C1: 2, C2: 2 };
+test("168 lessons across all six levels with preserved published identities", () => {
+  assert.equal(lessons.length, 168);
+  assert.equal(modules.length, 27);
+  assert.equal(drafts.flatMap((m) => m.lessons).length, 162);
+  const counts = { A1: 38, A2: 44, B1: 38, B2: 12, C1: 18, C2: 18 };
+  const moduleCounts = { A1: 6, A2: 7, B1: 6, B2: 2, C1: 3, C2: 3 };
   for (const level of Object.keys(counts)) {
     assert.equal(lessons.filter((l) => l.level === level).length, counts[level]);
     assert.equal(modules.filter((m) => m.level === level).length, moduleCounts[level]);
   }
-  assert.equal(new Set(lessons.map((l) => l.id)).size, 156);
-  assert.equal(new Set(lessons.map((l) => l.title)).size, 156);
+  assert.equal(new Set(lessons.map((l) => l.id)).size, 168);
+  assert.equal(new Set(lessons.map((l) => l.title)).size, 168);
   for (const id of legacy)
     assert.ok(
       lessons.find((l) => l.id === id),
@@ -121,10 +123,10 @@ test("every published exercise has one editorial key and rejects all distractors
       }
     }
   }
-  assert.equal(exercises, 468);
+  assert.equal(exercises, 504);
 });
 test("search supports accents, grammar terms, level isolation and empty results", () => {
-  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 156);
+  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 168);
   assert.equal(searchModules("A2", "").flatMap((m) => m.lessons).length, 44);
   assert.ok(searchModules("all", "condicoes").length);
   assert.ok(

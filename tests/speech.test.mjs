@@ -28,6 +28,9 @@ test("proper-name spelling variants are accepted without loosening the rest of t
   assert.equal(compareTranscript("This is Ana's bag.", "This is Anna bag").exact, false);
   assert.equal(compareTranscript("Lia has gone to the supermarket.", "Lea has gone to the supermarket").exact, true);
   assert.equal(compareTranscript("The organisation favours her judgement.", "The organization favors her judgment").exact,true);
+  assert.equal(compareTranscript("A permanent change in behaviour.", "A permanent change in behavior.").exact,true);
+  assert.equal(compareTranscript("She is interested in photography.", "She's interested in photography.").exact,true);
+  assert.equal(compareTranscript("She has finished the report.", "She's finished the report.").exact,true);
   assert.equal(compareTranscript("The authors caution us.", "The authors cautioned us").exact,false);
   assert.equal(compareTranscript("She seems worried.", "He seems worried").exact,false);
   assert.deepEqual(compareTranscript("I'm Ana.", "I am Anna hello").extraWords, ["hello"]);

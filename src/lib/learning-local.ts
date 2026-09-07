@@ -6,11 +6,16 @@ export type Attempt = {
   correct: boolean; assisted: boolean; review: boolean;
   createdAt: string; contentVersion: string; evaluationVersion: string;
 };
+export type CheckpointStepState = {
+  answer: string; tokens: number[]; checked: boolean; correct: boolean;
+  translation: boolean; assisted: boolean; contextVisible: boolean;
+};
 export type Checkpoint = {
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
   checked: boolean; correct: boolean; translation: boolean; assisted: boolean;
   contextVisible: boolean;
   receipt: string; draft: string; updatedAt: string; contentVersion: string;
+  furthestIndex?: number; history?: Record<string, CheckpointStepState>;
 };
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
 export type Notebook = { id: string; english: string; translation: string; lessonId: string };
@@ -39,6 +44,14 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
       ...p,
       // The disclosure state is independent of the question's visible context.
       contextVisible: typeof p.contextVisible === "boolean" ? p.contextVisible : false,
+      furthestIndex: Number.isSafeInteger(p.furthestIndex) && p.furthestIndex! >= p.index && p.furthestIndex! < 30 ? p.furthestIndex : p.index,
+      history: p.history && typeof p.history === "object" ? Object.fromEntries(Object.entries(p.history).filter(([index, state]) => {
+        const position = Number(index);
+        return Number.isSafeInteger(position) && position >= 0 && position < 30 && state &&
+          typeof state.answer === "string" && Array.isArray(state.tokens) && state.tokens.length <= 100 && state.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
+          typeof state.checked === "boolean" && typeof state.correct === "boolean" && typeof state.translation === "boolean" &&
+          typeof state.assisted === "boolean" && typeof state.contextVisible === "boolean";
+      })) : {},
     }]));
   const writings = Array.isArray(value.writings) ? value.writings.filter(w => w && string(w.id) && string(w.lessonId) && string(w.text) && w.text.length <= writingLimit && date(w.createdAt)) : [];
   for (const p of Object.values(value.checkpoints || {})) {

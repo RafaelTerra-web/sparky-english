@@ -2,781 +2,841 @@
   "a1-1-1": {
     "text": "Hi, I'm Ana.",
     "sparky": "/audio/mascots/a16dab367a720bf2bf88ecc589288bc1.mp3",
-    "pinky": "/audio/mascots/2bba51e4458160ea2a25c984f30aecd8.mp3"
+    "pinky": "/audio/mascots/cb25d9eed61ba59136da97a82bbbb9b6.mp3"
   },
   "a1-identidade-01": {
     "text": "What is your name?",
     "sparky": "/audio/mascots/b2a36ed0789e73cf5f7014676ed27ccb.mp3",
-    "pinky": "/audio/mascots/a730133b5096b0bc919f65df5de0ace7.mp3"
+    "pinky": "/audio/mascots/af3458c0a820240cdfc70ef98148c64f.mp3"
   },
   "a1-identidade-02": {
     "text": "I am from Brazil.",
     "sparky": "/audio/mascots/6ab2764fcdc466ed0c1a95a23ccc48bb.mp3",
-    "pinky": "/audio/mascots/2fc5ae81c1bccae7c6f302eec0c7e711.mp3"
+    "pinky": "/audio/mascots/6cd9121b3f81831f2653b0bc3bab36d9.mp3"
   },
   "a1-identidade-03": {
     "text": "I am twenty years old.",
-    "pinky": "/audio/mascots/c8dc3554d8683a43d9718f99aeff1cee.mp3",
+    "pinky": "/audio/mascots/d1214ff1855c91c78c548f52e3aa2265.mp3",
     "sparky": "/audio/mascots/72b7da3655b2d24296eb454b817ae0ed.mp3"
   },
   "a1-identidade-04": {
     "text": "This is my friend Clara.",
-    "pinky": "/audio/mascots/12b2125d0d381a148d6d8ea8e43399c9.mp3",
+    "pinky": "/audio/mascots/ef85b74e329d8bdd8270f0e8ea104a27.mp3",
     "sparky": "/audio/mascots/de547bbe444330b83b2e36eccf5e3843.mp3"
   },
   "a1-identidade-05": {
     "text": "We are not late.",
     "sparky": "/audio/mascots/2062056398a574687b405e9f02e530d6.mp3",
-    "pinky": "/audio/mascots/c233827f9bbc3fa7ba24ecafd5c47cfe.mp3"
+    "pinky": "/audio/mascots/7f843f3d21ff0bdef766399a889ed765.mp3"
   },
   "a1-identidade-06": {
     "text": "How do you spell your surname?",
     "sparky": "/audio/mascots/2fb40e51e88b5195d9771ba41b6432df.mp3",
-    "pinky": "/audio/mascots/f432d3f119e1bb94e5c85b99b326de1a.mp3"
+    "pinky": "/audio/mascots/a0151ec2dcc23bb6dace0cfebe89aaf3.mp3"
   },
   "a1-pessoas-01": {
     "text": "She is an engineer.",
-    "pinky": "/audio/mascots/1d9aa909af3c6d63e63f9f66d628eebd.mp3",
+    "pinky": "/audio/mascots/cdc898ec9e69a55b837cdbf66b26ef7a.mp3",
     "sparky": "/audio/mascots/ee040a0a166208c3a51812fd71883747.mp3"
   },
   "a1-pessoas-02": {
     "text": "There are two boxes here.",
-    "pinky": "/audio/mascots/3b319262b3e50de00c69dd3aaf5596fc.mp3",
+    "pinky": "/audio/mascots/d85badf0208e3663e700cc5ebf702459.mp3",
     "sparky": "/audio/mascots/21fee33679cff3cb974289e757a7ad8b.mp3"
   },
   "a1-pessoas-03": {
     "text": "My sister has two children.",
     "sparky": "/audio/mascots/ef3aadac040ec2daef6e9bdfd237d259.mp3",
-    "pinky": "/audio/mascots/a6ad73b46f73e326d6b7cbff3dccb057.mp3"
+    "pinky": "/audio/mascots/8a287cdd2fb42e2d0473d9452ee5738c.mp3"
   },
   "a1-pessoas-04": {
     "text": "This is Ana's bag.",
-    "pinky": "/audio/mascots/994ae6cc474d743d8d85c0151e1a4d4e.mp3",
+    "pinky": "/audio/mascots/831a516c33cf430e2413a94fcb07ce09.mp3",
     "sparky": "/audio/mascots/48b5b7d49409f63f30ac312276d5e237.mp3"
   },
   "a1-pessoas-05": {
     "text": "These shoes are new.",
     "sparky": "/audio/mascots/338dae941dced4694725e79f9587e66f.mp3",
-    "pinky": "/audio/mascots/1d46d0b04924e3b661af4de2edc12a47.mp3"
+    "pinky": "/audio/mascots/5b52993d812f2ca7309ad52a5f6176b9.mp3"
   },
   "a1-pessoas-06": {
     "text": "They have a small garden.",
     "sparky": "/audio/mascots/c6ef171d5fb5f294af0a09e4cd8a1684.mp3",
-    "pinky": "/audio/mascots/2d14e76345cc530d13e4befd28b3194f.mp3"
+    "pinky": "/audio/mascots/cf942d33f60ca80fe5b0d3d3f1134059.mp3"
   },
   "a1-2-1": {
     "text": "I start work at nine.",
-    "pinky": "/audio/mascots/e2890e24249eaa1963bd69be7a13db19.mp3",
+    "pinky": "/audio/mascots/fdbec1b5f69bf5a4fe2bbe7669165ed3.mp3",
     "sparky": "/audio/mascots/eb8b33c46c1773a4d73e434effe9011e.mp3"
   },
   "a1-rotina-01": {
     "text": "She studies English every evening.",
     "sparky": "/audio/mascots/5442f9b0c28ac4dd89fdac2331c80578.mp3",
-    "pinky": "/audio/mascots/e82299d086c0b4c02514f1309c6b4d06.mp3"
+    "pinky": "/audio/mascots/5050d07800700063771b20d7cfe18e6c.mp3"
   },
   "a1-rotina-02": {
     "text": "I do not drink coffee.",
     "sparky": "/audio/mascots/b99f855cdee8428bce6e21627d47ad92.mp3",
-    "pinky": "/audio/mascots/ec4c9e8ce8d5b15e5f728e94a7e28350.mp3"
+    "pinky": "/audio/mascots/51c66a30d0a0cb7b65e8c098d98b2142.mp3"
   },
   "a1-rotina-03": {
     "text": "Do you work on Sundays?",
     "sparky": "/audio/mascots/c7d02635db321bf253a2f1310a1337e0.mp3",
-    "pinky": "/audio/mascots/8a8ed0352988459dd5c9a1536e1aaff7.mp3"
+    "pinky": "/audio/mascots/d01020e7b7bf6e47d3516627536874e8.mp3"
   },
   "a1-rotina-04": {
     "text": "I usually walk to school.",
     "sparky": "/audio/mascots/6d9e64c3d423a1c68090cd9bdbe16d3e.mp3",
-    "pinky": "/audio/mascots/2fac07dbbd0116a202e09e9a7d1cbff6.mp3"
+    "pinky": "/audio/mascots/f3a0066cb2cabe9ae7799856245a13a5.mp3"
   },
   "a1-rotina-05": {
     "text": "The lesson starts at half past six.",
-    "pinky": "/audio/mascots/75af533fc7087ea3f6fee00f43f92b69.mp3",
+    "pinky": "/audio/mascots/6c125d67b97c3540e57a3ce711718e2e.mp3",
     "sparky": "/audio/mascots/6cb3b8e22a4db20f052aab26da9f8a04.mp3"
   },
   "a1-rotina-06": {
     "text": "My birthday is in October.",
     "sparky": "/audio/mascots/5b48030132fcc4885982d93b2b6ffaec.mp3",
-    "pinky": "/audio/mascots/6ba20a9bf923e92abaa2b58d8e80f3ae.mp3"
+    "pinky": "/audio/mascots/6fb468d2e1928f41ce33cb8360b87ca0.mp3"
   },
   "a1-casa-01": {
     "text": "There is a library near my home.",
     "sparky": "/audio/mascots/74b721336ebb656f2a0e47be73b0e166.mp3",
-    "pinky": "/audio/mascots/fa17812437ce61c0a16899006da2b475.mp3"
+    "pinky": "/audio/mascots/cdfd16251bf4a9176618cd8d66f4d4b4.mp3"
   },
   "a1-casa-02": {
     "text": "The keys are under the chair.",
     "sparky": "/audio/mascots/38b4591fdee8c32cacdd0423bbe7efbb.mp3",
-    "pinky": "/audio/mascots/543ce6e0bff9e5fb15bd4015e7968788.mp3"
+    "pinky": "/audio/mascots/ae48e27566729040ead64a7eddb8fdc2.mp3"
   },
   "a1-casa-03": {
     "text": "The kitchen is small but bright.",
     "sparky": "/audio/mascots/bb98e582573b2a64717da7c324e3aed4.mp3",
-    "pinky": "/audio/mascots/a60a68efbdaff49e3ad116fc4c965c4c.mp3"
+    "pinky": "/audio/mascots/6e09d62cac6ff170a123abc411f64e4b.mp3"
   },
   "a1-casa-04": {
     "text": "Turn left at the bank.",
     "sparky": "/audio/mascots/e794a68eeca06ab63bc91aa08d39054a.mp3",
-    "pinky": "/audio/mascots/9489e1adfa770db426b8347074cf24cc.mp3"
+    "pinky": "/audio/mascots/55e39e7524491ad8bfb68a9234b67a63.mp3"
   },
   "a1-casa-05": {
     "text": "I go to college by train.",
     "sparky": "/audio/mascots/9bc1e2a0c7eac57ba6b57015a9b19a23.mp3",
-    "pinky": "/audio/mascots/3a72daa363f6bb1c45c009f00e9a5835.mp3"
+    "pinky": "/audio/mascots/3dc14dfcfcea6497f7deeed93f5fbc7e.mp3"
   },
   "a1-casa-06": {
     "text": "Please keep the door closed.",
     "sparky": "/audio/mascots/b84cf260ccdb7d6fb9b6db1db9d640bb.mp3",
-    "pinky": "/audio/mascots/e6ead932518b8e8fc679f946366852e5.mp3"
+    "pinky": "/audio/mascots/ba15d6c50c750d54cf236fb43a22e668.mp3"
   },
   "a1-consumo-01": {
     "text": "I would like a sandwich, please.",
     "sparky": "/audio/mascots/0260e97e69448ab16f263c50988ad4c2.mp3",
-    "pinky": "/audio/mascots/92e7864e34bf6ab9c9ddf58bdfe78bff.mp3"
+    "pinky": "/audio/mascots/48bfd907bbe16e2bc102baf14497f8a6.mp3"
   },
   "a1-consumo-02": {
     "text": "I like cooking with my friends.",
     "sparky": "/audio/mascots/bf17c93ba30cdce14a38a0cd431172aa.mp3",
-    "pinky": "/audio/mascots/6005f5b118e7699144df3ab70c754045.mp3"
+    "pinky": "/audio/mascots/86ee19108fd7955a7d690bde9ab08149.mp3"
   },
   "a1-consumo-03": {
     "text": "We need two bottles of water.",
-    "pinky": "/audio/mascots/c60b008499354a36554be233e80fbd9c.mp3",
+    "pinky": "/audio/mascots/4fbe6f0b188ea3cea11c131c11da10ee.mp3",
     "sparky": "/audio/mascots/26e8df559b9ab6cbdd1e5c55240ed9ea.mp3"
   },
   "a1-consumo-04": {
     "text": "There is some milk in the fridge.",
     "sparky": "/audio/mascots/5aac745aaa98b6d2052cb8b9287757fb.mp3",
-    "pinky": "/audio/mascots/616c7fa0bff7ba7bde5519f906eba331.mp3"
+    "pinky": "/audio/mascots/a3debc075ed81939d1cd1164473a839c.mp3"
   },
   "a1-consumo-05": {
     "text": "How much is this blue shirt?",
     "sparky": "/audio/mascots/068b530930053779592dbc766525aa76.mp3",
-    "pinky": "/audio/mascots/e23188c7cfd61c520ae1444c9cc7b0e2.mp3"
+    "pinky": "/audio/mascots/cf636f524f580fb7b48c6c75b6567a65.mp3"
   },
   "a1-consumo-06": {
     "text": "This jacket is too small.",
     "sparky": "/audio/mascots/fb7cca18697fe7dcecb50b03953a64eb.mp3",
-    "pinky": "/audio/mascots/619e8a30e9ad5db00e0cb87d37709378.mp3"
+    "pinky": "/audio/mascots/d9675205f8b0a6d125511e1c86c22663.mp3"
   },
   "a1-interacao-01": {
     "text": "My brother can play the guitar.",
     "sparky": "/audio/mascots/745b18a37b03c36f8475a6613a4745ed.mp3",
-    "pinky": "/audio/mascots/1614662470f6a917b76953d35f586c2d.mp3"
+    "pinky": "/audio/mascots/a9d6e333fafe45042afef191e6d829f5.mp3"
   },
   "a1-interacao-02": {
     "text": "Can I open the window?",
-    "pinky": "/audio/mascots/b02296f373b5e5196a854474ad6c87c6.mp3",
+    "pinky": "/audio/mascots/b7a5105bbae59805cf246d78312e4a60.mp3",
     "sparky": "/audio/mascots/3f86842f58de77bd38ef986d54540d5b.mp3"
   },
   "a1-interacao-03": {
     "text": "They are waiting for the bus.",
-    "pinky": "/audio/mascots/5e829ec43fb236dd18875bacc493f5e5.mp3",
+    "pinky": "/audio/mascots/cd81886583fc1e1cd65af2260e4854c5.mp3",
     "sparky": "/audio/mascots/7c9dfc6793d66f52710ee2171ea10f02.mp3"
   },
   "a1-interacao-04": {
     "text": "Are you listening to the teacher?",
     "sparky": "/audio/mascots/c52d76fe4546a2da3fef3b4a49345a6e.mp3",
-    "pinky": "/audio/mascots/468d9821e5c50afcda526a1ccb92c4e5.mp3"
+    "pinky": "/audio/mascots/77ec5997396787ead6b1b3c5e27f7c09.mp3"
   },
   "a1-interacao-05": {
     "text": "It is cold and windy today.",
     "sparky": "/audio/mascots/2d3b14980977e4b9f63a5b6061441776.mp3",
-    "pinky": "/audio/mascots/b54ca979604f866c9d3e5abc3f6e8b28.mp3"
+    "pinky": "/audio/mascots/156dd933fb34727c05b2bb6a7a4d5dfd.mp3"
   },
   "a1-interacao-06": {
     "text": "See you at the library at four.",
     "sparky": "/audio/mascots/b504299ca4c2a9bcb67109ceaca555f0.mp3",
-    "pinky": "/audio/mascots/9a722afed22a00fed823d15d7fd64ebf.mp3"
+    "pinky": "/audio/mascots/17f5a4fa206eac8db38f25543e35d0ae.mp3"
   },
   "a2-passado-01": {
     "text": "We were at home last night.",
     "sparky": "/audio/mascots/fb2a3eaa940d009faabc430e644df4e5.mp3",
-    "pinky": "/audio/mascots/574dec9efebdb439e99a6435ee0f41bd.mp3"
+    "pinky": "/audio/mascots/307092cffeb78cc10df4f117ed623d3d.mp3"
   },
   "a2-passado-02": {
     "text": "She visited her aunt last weekend.",
     "sparky": "/audio/mascots/afff1cd3eab3a9d24700384f59d666f2.mp3",
-    "pinky": "/audio/mascots/92407814536edf5fc9e7edf05143096e.mp3"
+    "pinky": "/audio/mascots/1f8ec9a7e09fe68d195aadff48f8adbb.mp3"
   },
   "a2-passado-03": {
     "text": "We bought fresh fruit at the market.",
-    "pinky": "/audio/mascots/e5bd266234ceab7e4a8dc0b78ea72462.mp3",
+    "pinky": "/audio/mascots/6159c460ea44e3e65c67f3d72f12c9e8.mp3",
     "sparky": "/audio/mascots/048141520e01ccbbeaf8a4c8d20d0283.mp3"
   },
   "a2-4-1": {
     "text": "I went to the park yesterday.",
     "sparky": "/audio/mascots/a3acff359695ffba0ed26c34405ae5d7.mp3",
-    "pinky": "/audio/mascots/db546d1002422ea7be3f27aeb2a3edd9.mp3"
+    "pinky": "/audio/mascots/73b46649133408596eb73480ce35f235.mp3"
   },
   "a2-passado-04": {
     "text": "They did not travel last month.",
     "sparky": "/audio/mascots/16b2e69dab09f06b11d552f23996457c.mp3",
-    "pinky": "/audio/mascots/6b9b88064521dbeda808a1b8bdf47467.mp3"
+    "pinky": "/audio/mascots/0156758351a0ee58e97f6a8e01399b9f.mp3"
   },
   "a2-passado-05": {
     "text": "First we ate, then we visited the museum.",
     "sparky": "/audio/mascots/b2ee14ce4d1ef17edc9aec9f8586f54e.mp3",
-    "pinky": "/audio/mascots/78c587d8e1ad8e85e65957ca8c314ffe.mp3"
+    "pinky": "/audio/mascots/d89de6f30923c69342347e611f5a3339.mp3"
   },
   "a2-passado-06": {
     "text": "I was studying when the phone rang.",
-    "pinky": "/audio/mascots/1945f6d697e4d5844efc822bc373f528.mp3",
+    "pinky": "/audio/mascots/3e6207a3401e0d1d19299938d7da9fa8.mp3",
     "sparky": "/audio/mascots/7dd1bf6f56ea90fd79a40aaaae4e815b.mp3"
   },
   "a2-escolhas-01": {
     "text": "This train is cheaper than the bus.",
     "sparky": "/audio/mascots/ac1f7e431026793ccb39309b8f9295d5.mp3",
-    "pinky": "/audio/mascots/77655584726edceeb4df4a7ca81288a9.mp3"
+    "pinky": "/audio/mascots/b63b9b65ce9b0551d4c843dc0450d1c8.mp3"
   },
   "a2-escolhas-02": {
     "text": "This is the quietest room in the hotel.",
     "sparky": "/audio/mascots/f8231375933c3196465f796be5bf99d5.mp3",
-    "pinky": "/audio/mascots/b64cb57694eb24ab1da676f85f02e76e.mp3"
+    "pinky": "/audio/mascots/70cc91fe4cfdfb09a142a9b3f6cfd0e5.mp3"
   },
   "a2-escolhas-03": {
     "text": "The bus is not as fast as the train.",
     "sparky": "/audio/mascots/c383d997883b5106f8d0becba9805832.mp3",
-    "pinky": "/audio/mascots/6dd582c910f2ce1b6b288a401562a19e.mp3"
+    "pinky": "/audio/mascots/7e955e583434cd7242080eb74e68022f.mp3"
   },
   "a2-escolhas-04": {
     "text": "This bag is too heavy to carry.",
     "sparky": "/audio/mascots/31cadd3801ed3241eda60b8cd8c1809d.mp3",
-    "pinky": "/audio/mascots/57d105d3dc9c4363d542b2bffe413170.mp3"
+    "pinky": "/audio/mascots/237f5fb5ca91429a75859c8d53a7833b.mp3"
   },
   "a2-escolhas-05": {
     "text": "We do not have much time.",
-    "pinky": "/audio/mascots/9b94757b5f9c5ac9df60fd84baaab3b2.mp3",
+    "pinky": "/audio/mascots/e2dd2f4e41d10a89631607bbc2a5c871.mp3",
     "sparky": "/audio/mascots/dcfee07cab5b0965a9dcc54f49079250.mp3"
   },
   "a2-escolhas-06": {
     "text": "We have a few minutes before the class.",
     "sparky": "/audio/mascots/80e14b0b46c55f98214ef2cbe33fe267.mp3",
-    "pinky": "/audio/mascots/502d11e381ca4a3d33f3ecb9c05b7863.mp3"
+    "pinky": "/audio/mascots/eaca20c8d1babe1d08434ca58d578062.mp3"
   },
   "a2-experiencias-01": {
     "text": "I have visited three different countries.",
-    "pinky": "/audio/mascots/41100b5cb4b2615acd96dbe1267a8510.mp3",
+    "pinky": "/audio/mascots/c76cbbe49086f15d5c4b1a8f30d712ff.mp3",
     "sparky": "/audio/mascots/b83ab98fd1ff0be14f8674eaab80e68e.mp3"
   },
   "a2-experiencias-02": {
     "text": "Have you ever tried Korean food?",
     "sparky": "/audio/mascots/17ea1cfe2e0ca2c3a77fce374df6764a.mp3",
-    "pinky": "/audio/mascots/6ba2cedcedc4249261e3e408bfb5a29a.mp3"
+    "pinky": "/audio/mascots/df615a0b368672e9d58f37b9e7f600bb.mp3"
   },
   "a2-experiencias-03": {
     "text": "I have just finished my homework.",
     "sparky": "/audio/mascots/ec141ba70d7cbf943925bb283e1233b8.mp3",
-    "pinky": "/audio/mascots/f379d8b227720cff843af2b0a789369d.mp3"
+    "pinky": "/audio/mascots/71beb81e702b8c2fb69e5418697e7eca.mp3"
   },
   "a2-experiencias-04": {
     "text": "She has lived here since 2020.",
-    "pinky": "/audio/mascots/ef8271e61b2abfd349bec7d62ce40903.mp3",
+    "pinky": "/audio/mascots/e836b5b10585df31c2d3757074b650ac.mp3",
     "sparky": "/audio/mascots/32c817c47efcbecd59dace771d0369c8.mp3"
   },
   "a2-experiencias-05": {
     "text": "Lia has gone to the supermarket.",
     "sparky": "/audio/mascots/ce4a925eb0f08504b9d8492f170a0416.mp3",
-    "pinky": "/audio/mascots/d93d6a7dc8e096f6b2693084fc09826f.mp3"
+    "pinky": "/audio/mascots/d093227ed18e257c442cdbce0688b0c4.mp3"
   },
   "a2-experiencias-06": {
     "text": "I saw that film last Friday.",
     "sparky": "/audio/mascots/c6c43c44ab22f68ce8d39065f1e7148d.mp3",
-    "pinky": "/audio/mascots/0865f721479bfc755fe65fd7303964ec.mp3"
+    "pinky": "/audio/mascots/7601d88a4e3ce2682051c3b2716982ca.mp3"
   },
   "a2-3-1": {
     "text": "Let's meet on Saturday.",
     "sparky": "/audio/mascots/48e5087086b384767d20ef911cdb9940.mp3",
-    "pinky": "/audio/mascots/be96916133fa9afa5e5ad019e1d25de1.mp3"
+    "pinky": "/audio/mascots/ea2c67fd4c23460d75ee4052b58a326b.mp3"
   },
   "a2-planos-01": {
     "text": "We are going to visit our cousins.",
     "sparky": "/audio/mascots/a11541a047d0032d51b516702214088d.mp3",
-    "pinky": "/audio/mascots/199a5ea0260819d17f7ace098861da53.mp3"
+    "pinky": "/audio/mascots/b43e91a05f5c2ab92f83e41ba4b4d2b7.mp3"
   },
   "a2-planos-02": {
     "text": "I will help you with those bags.",
     "sparky": "/audio/mascots/941905ec2b5cee7dffe8e2626a6e3cbe.mp3",
-    "pinky": "/audio/mascots/c6636d4056adf9f6216dcfbfa67e32a7.mp3"
+    "pinky": "/audio/mascots/76112074315d085bdf15316269218635.mp3"
   },
   "a2-planos-03": {
     "text": "I am meeting my tutor on Thursday.",
     "sparky": "/audio/mascots/c6a01ab8d979afa7b574e149baab4d8e.mp3",
-    "pinky": "/audio/mascots/088bc069b2726bfb99a619693763fb7d.mp3"
+    "pinky": "/audio/mascots/7b4f8d9b276c25df67a0409b4f89e293.mp3"
   },
   "a2-planos-04": {
     "text": "Would you like to join us for dinner?",
     "sparky": "/audio/mascots/a2b5a96d6fcf72d88a8dd9423554d3eb.mp3",
-    "pinky": "/audio/mascots/3114837191f8694af8875ec546dc7586.mp3"
+    "pinky": "/audio/mascots/a5445069e9cacc50b22dc3a1ea34b018.mp3"
   },
   "a2-planos-05": {
     "text": "If it rains, we will stay at home.",
     "sparky": "/audio/mascots/faf7f60a6f44e1fe1c84cce885000ba3.mp3",
-    "pinky": "/audio/mascots/29b3122f3aa4b65ad31734daf69d54fa.mp3"
+    "pinky": "/audio/mascots/e219d907417245cb5aa5235133b1d452.mp3"
   },
   "a2-planos-06": {
     "text": "When I finish work late, I take a taxi.",
     "sparky": "/audio/mascots/f719b2eb4db4d5403609695ea978ccb2.mp3",
-    "pinky": "/audio/mascots/21ce5c409b9cd418192d93e8302539ce.mp3"
+    "pinky": "/audio/mascots/d5ae4e0221bca9fe8309a9bdba26f844.mp3"
   },
   "a2-servicos-01": {
     "text": "You should check the timetable first.",
     "sparky": "/audio/mascots/d81a1828fc8c12b3e7e5309a7ac329e7.mp3",
-    "pinky": "/audio/mascots/5e8e08288c0005a51ed1d16d033e2a01.mp3"
+    "pinky": "/audio/mascots/82e30b68cbff52cf02e3edff9ec830b6.mp3"
   },
   "a2-servicos-02": {
     "text": "We have to show our tickets.",
     "sparky": "/audio/mascots/b4db2bf3a77a9239f5e535c212684ed4.mp3",
-    "pinky": "/audio/mascots/026d6331bce3f419fe8b0b9fad85c9c0.mp3"
+    "pinky": "/audio/mascots/f45d444804a90e4d0c341be36b2dd1b9.mp3"
   },
   "a2-servicos-03": {
     "text": "You must not park in front of the gate.",
     "sparky": "/audio/mascots/53958b2bfc654be741d6789ee6c184e8.mp3",
-    "pinky": "/audio/mascots/54b0d65ad164a3da744d099ddd72e309.mp3"
+    "pinky": "/audio/mascots/2f2bc494b455ae09f3070e40302f093d.mp3"
   },
   "a2-servicos-04": {
     "text": "I would like to book a room for two nights.",
-    "pinky": "/audio/mascots/4bde05d9e9af9faf413913ed5466d01c.mp3",
+    "pinky": "/audio/mascots/3c477f9ba4806558d213d7e8dcb3e3a1.mp3",
     "sparky": "/audio/mascots/69640e709f3310b5e70b0a4e84fd6766.mp3"
   },
   "a2-servicos-05": {
     "text": "These headphones do not work.",
     "sparky": "/audio/mascots/0b860dcfe72619e887cd74d9c22b9b81.mp3",
-    "pinky": "/audio/mascots/9f71e2fc48155df446922d8cb5e6bba0.mp3"
+    "pinky": "/audio/mascots/dd38d4da92bee8b95dc4a22bdc1693f0.mp3"
   },
   "a2-servicos-06": {
     "text": "Could we reschedule my appointment?",
     "sparky": "/audio/mascots/4fa763f1a96fb75043bdefca53b24eb2.mp3",
-    "pinky": "/audio/mascots/31f3365f6b25b0753a0d7ff9561293f6.mp3"
+    "pinky": "/audio/mascots/7f18fd77a8f544e869cfb1ae2c630dc3.mp3"
   },
   "a2-textos-01": {
     "text": "Please send them the address.",
-    "pinky": "/audio/mascots/5dd5b63f8750966bf76cd7b5681aae3b.mp3",
+    "pinky": "/audio/mascots/edef96d7531a60b3f85bbdbcf10abe2e.mp3",
     "sparky": "/audio/mascots/3d4da712887a7e1e41deb00b30ad45b8.mp3"
   },
   "a2-textos-02": {
     "text": "The shop was closed, so we went home.",
     "sparky": "/audio/mascots/f4fa628d29e25c539c07bd43901acb1a.mp3",
-    "pinky": "/audio/mascots/55f12bf6b0bc072de5d251f036f1d613.mp3"
+    "pinky": "/audio/mascots/cb84d4a62de73254e85d1d8eb3df4380.mp3"
   },
   "a2-textos-03": {
     "text": "Please arrive fifteen minutes before the tour.",
     "sparky": "/audio/mascots/dff618f133a8c80886a7c05a6d8aa7c4.mp3",
-    "pinky": "/audio/mascots/d8809ee6df5ac47ce7cfd33ba3e7a715.mp3"
+    "pinky": "/audio/mascots/cf549c06930e9ce85f8a4788d598d538.mp3"
   },
   "a2-textos-04": {
     "text": "The room was clean, but the street was noisy.",
-    "pinky": "/audio/mascots/48fe945ea4fb74427d6049a02dfa5b7a.mp3",
+    "pinky": "/audio/mascots/bb4fbf3669e94c4cbfbd275454ed1b56.mp3",
     "sparky": "/audio/mascots/56e8d9cacc6b0c66963b51597c1d309a.mp3"
   },
   "a2-textos-05": {
     "text": "Could you send me the course timetable?",
     "sparky": "/audio/mascots/3edf55f58deac6e7caea29dad4771ab6.mp3",
-    "pinky": "/audio/mascots/d9aa288554503479f29ce13da74c287b.mp3"
+    "pinky": "/audio/mascots/c98daa311e30b4d3b8fde99170ff6d4f.mp3"
   },
   "a2-textos-06": {
     "text": "You can enter after six with your ticket.",
     "sparky": "/audio/mascots/3c8ff04522b9af27de8168bc95e58474.mp3",
-    "pinky": "/audio/mascots/eaf167c1be52556421317d12a9fbb2a1.mp3"
+    "pinky": "/audio/mascots/b168b5b22971b61a4ccb7998095d9b63.mp3"
   },
   "a2-comunicacao-01": {
     "text": "Could you tell me how to get to the library?",
     "sparky": "/audio/mascots/8099b01c0f9259786885d0ffa08cc0ff.mp3",
-    "pinky": "/audio/mascots/5641cebc1ceb7eae4983a6e47bfbc484.mp3"
+    "pinky": "/audio/mascots/ad626ebd4964a16f6a5a92e87472cfbe.mp3"
   },
   "a2-comunicacao-02": {
     "text": "Does this bus go to Central Station?",
     "sparky": "/audio/mascots/ff1026cb35ae8d3620eb9c21fbb1ef48.mp3",
-    "pinky": "/audio/mascots/47160135b2cc4af5445f5361ce8942b7.mp3"
+    "pinky": "/audio/mascots/4da7ba86aa7fc87195f3dd92b909bb90.mp3"
   },
   "a2-comunicacao-03": {
     "text": "Could I have the soup without cheese, please?",
-    "pinky": "/audio/mascots/7fdb5e8a4e0ac24e85122dc562b76e77.mp3",
+    "pinky": "/audio/mascots/4d46a4a00f2d175bb38fb7309f5f6623.mp3",
     "sparky": "/audio/mascots/ab138353fe0bcb9750eef8640faeea77.mp3"
   },
   "a2-comunicacao-04": {
     "text": "Could you say that more slowly, please?",
     "sparky": "/audio/mascots/68524fdbfda86050fb789d0920609d80.mp3",
-    "pinky": "/audio/mascots/693784e1f60fd205d8a3a1c45cc39d5a.mp3"
+    "pinky": "/audio/mascots/e29ff5bbbae4ea2d823819627ed21ff3.mp3"
   },
   "a2-comunicacao-05": {
     "text": "Would you mind closing the window?",
-    "pinky": "/audio/mascots/ba3ea39a48d8bc0130b2d757d6561928.mp3",
+    "pinky": "/audio/mascots/738f5bbc7e142d4ed3747f6812c12371.mp3",
     "sparky": "/audio/mascots/7f7578f99fd2e0655ba32566eb8ac84b.mp3"
   },
   "a2-comunicacao-06": {
     "text": "I'm running late, so could we meet at six thirty instead?",
     "sparky": "/audio/mascots/1e705957879e8d423212770e19b18185.mp3",
-    "pinky": "/audio/mascots/ada97a54ca3e249b78cb97db94877c99.mp3"
+    "pinky": "/audio/mascots/b7d5ef535c955b300a50779c88ea7cb0.mp3"
   },
   "b1-narrativas-01": {
     "text": "I used to walk to school every day.",
     "sparky": "/audio/mascots/072452eb83fcab03b530ad33f2fc13f9.mp3",
-    "pinky": "/audio/mascots/35df7b978500dce9fd55fa943da754d9.mp3"
+    "pinky": "/audio/mascots/66784aa709444a8beeb208249bcf3f09.mp3"
   },
   "b1-narrativas-02": {
     "text": "The film had started before we arrived.",
     "sparky": "/audio/mascots/6187599ed1a1fb4c5439ecffec213447.mp3",
-    "pinky": "/audio/mascots/e12c768f0543f39c3105e2a847e39e9a.mp3"
+    "pinky": "/audio/mascots/f6981021a89920d3ff616d42e3e1489b.mp3"
   },
   "b1-narrativas-03": {
     "text": "While I was walking home, I noticed a wallet.",
     "sparky": "/audio/mascots/4a7e683f54e1cd46dd970d926cad1d0a.mp3",
-    "pinky": "/audio/mascots/1f0f4b4cc884ed7dcbf856554201a130.mp3"
+    "pinky": "/audio/mascots/689900efe70155c2b691891cf1791cce.mp3"
   },
   "b1-narrativas-04": {
     "text": "I have been studying for two hours.",
     "sparky": "/audio/mascots/696774370ee3a5212a96f3c425e161e3.mp3",
-    "pinky": "/audio/mascots/f7e33ccedb55fbccd858621feba4a165.mp3"
+    "pinky": "/audio/mascots/c619c841ddd4ffd83f30eebbc3b7e25f.mp3"
   },
   "b1-narrativas-05": {
     "text": "She said she was tired.",
     "sparky": "/audio/mascots/15d15d17cd90fea75a72975c8dc9b990.mp3",
-    "pinky": "/audio/mascots/5525380cf8fce1e459049d598224ca55.mp3"
+    "pinky": "/audio/mascots/4525dac41cb39775b8b7a2e86ff70f45.mp3"
   },
   "b1-narrativas-06": {
     "text": "We managed to catch the last train.",
     "sparky": "/audio/mascots/9aee82ac988a904110e93fc7441c33d4.mp3",
-    "pinky": "/audio/mascots/a715f3375c3f5fb9db170c1f12cc402e.mp3"
+    "pinky": "/audio/mascots/99772b20cbb4755566e4aaa067453469.mp3"
   },
   "b1-5-1": {
     "text": "I think this plan is better.",
     "sparky": "/audio/mascots/45ff5b2df6090875b2a57a477ae69bed.mp3",
-    "pinky": "/audio/mascots/222dc8f8a0e6e162a62463fac17e66d4.mp3"
+    "pinky": "/audio/mascots/08040a875a56e539189042b3136504db.mp3"
   },
   "b1-argumentos-01": {
     "text": "I see your point, but the cost is high.",
     "sparky": "/audio/mascots/cbfa33bac4fa864471aa29f232271b20.mp3",
-    "pinky": "/audio/mascots/1cc6ae893de545339562f9826036d976.mp3"
+    "pinky": "/audio/mascots/1242a896a8923d33bf054d31b2c5c587.mp3"
   },
   "b1-argumentos-02": {
     "text": "Although it was expensive, we chose the train.",
     "sparky": "/audio/mascots/56d8830dc5dffd7742b9a392b6b85dbe.mp3",
-    "pinky": "/audio/mascots/a517f6fdb3f4961eaad7b86786f9115f.mp3"
+    "pinky": "/audio/mascots/3e84e66bb5fa7476bf26ae9620002786.mp3"
   },
   "b1-argumentos-03": {
     "text": "I enjoy outdoor activities such as hiking.",
-    "pinky": "/audio/mascots/e7202b09d2658f7cad9dedd37504c922.mp3",
+    "pinky": "/audio/mascots/4ad321e908013c984de9cba35f811734.mp3",
     "sparky": "/audio/mascots/834ac7a105a841c8bd4ffb5d0ff5279f.mp3"
   },
   "b1-argumentos-04": {
     "text": "One advantage of cycling is the low cost.",
     "sparky": "/audio/mascots/2020845fabb688ddb1047f22df97ce8f.mp3",
-    "pinky": "/audio/mascots/81a733ee9a36aea6bb2153602440da41.mp3"
+    "pinky": "/audio/mascots/50361544736fea8afef34c1d0f5e9eab.mp3"
   },
   "b1-argumentos-05": {
     "text": "I recommend booking your tickets early.",
     "sparky": "/audio/mascots/a284504ee56dd0e5a00f810ee627c7f3.mp3",
-    "pinky": "/audio/mascots/cd632f6fb6e1fe864b195dc10da0650d.mp3"
+    "pinky": "/audio/mascots/137b15002a852ed1c1b4c9e684c3d8bc.mp3"
   },
   "b1-argumentos-06": {
     "text": "According to the timetable, the train leaves at nine.",
     "sparky": "/audio/mascots/8aa13abcd0c56bf329044d1661aedcff.mp3",
-    "pinky": "/audio/mascots/f5219abcd74bc0eae27540ba1facc882.mp3"
+    "pinky": "/audio/mascots/effaa76cbca6e74ded9a1ad7a6bd955a.mp3"
   },
   "b1-hipoteses-01": {
     "text": "We might change the date of the meeting.",
     "sparky": "/audio/mascots/1a3e564ea80e10ccd22126ec09e0b76b.mp3",
-    "pinky": "/audio/mascots/26abc839ec40463a115ddc4a7cdb5628.mp3"
+    "pinky": "/audio/mascots/9c24fa2614d5afa4c8b7734f2917b1f1.mp3"
   },
   "b1-hipoteses-02": {
     "text": "He must be tired after that long journey.",
     "sparky": "/audio/mascots/d5d6c3470a3999848a2b877b8c4f0ef4.mp3",
-    "pinky": "/audio/mascots/53759fe8a65e19939009ace8a3b6094b.mp3"
+    "pinky": "/audio/mascots/5cfaa4f858d9f5000f15b4813ef7d677.mp3"
   },
   "b1-hipoteses-03": {
     "text": "If I had more time, I would learn Italian.",
     "sparky": "/audio/mascots/821fdc69c1e3d1eb7ea0cbb5dffa4b0a.mp3",
-    "pinky": "/audio/mascots/4a579d40a484ac5c0b685cee89bb0dd3.mp3"
+    "pinky": "/audio/mascots/8cc27ad9731f26bca1891307b8cef8ff.mp3"
   },
   "b1-hipoteses-04": {
     "text": "If I finish early, I will call you.",
     "sparky": "/audio/mascots/9095b60f7ad625c65e940242b34ff9cc.mp3",
-    "pinky": "/audio/mascots/5b5679951e29ee906018cc1b1679b4f1.mp3"
+    "pinky": "/audio/mascots/bc70d81058d32f657f9e68974d03ef05.mp3"
   },
   "b1-hipoteses-05": {
     "text": "We will miss the bus unless we leave now.",
     "sparky": "/audio/mascots/d2cdb6467880220d2d0dcb21999afd4a.mp3",
-    "pinky": "/audio/mascots/aed9895cb82bd9396116ce3344399656.mp3"
+    "pinky": "/audio/mascots/d890daa0e33c8953e1497174fd87255e.mp3"
   },
   "b1-hipoteses-06": {
     "text": "I would rather walk than wait for a taxi.",
     "sparky": "/audio/mascots/5c47824d87410bb9a29a6068ba978339.mp3",
-    "pinky": "/audio/mascots/5073997ab2971cf9ef439f27298d9b9f.mp3"
+    "pinky": "/audio/mascots/11bb10e2ad665063799a78dde544b4b5.mp3"
   },
   "b1-precisao-01": {
     "text": "She is the colleague who helped me yesterday.",
     "sparky": "/audio/mascots/4affa72d70e36502cd0f77e31176b559.mp3",
-    "pinky": "/audio/mascots/7c98cebdef079ccd1c5e49a6e9f98e4d.mp3"
+    "pinky": "/audio/mascots/9720ab8a905f5ac04d8eb001190af53a.mp3"
   },
   "b1-precisao-02": {
     "text": "The library is cleaned every morning.",
     "sparky": "/audio/mascots/760b2cac4a0afd9ca27615d4bb854d1c.mp3",
-    "pinky": "/audio/mascots/dafe44331e17abfb892a0e7208dd5e23.mp3"
+    "pinky": "/audio/mascots/6ac7955ada526a3c1c7a4d2e4cd076a9.mp3"
   },
   "b1-precisao-03": {
     "text": "The bridge was opened last year.",
     "sparky": "/audio/mascots/516f8232d8a3d75ca87eed70a67a6dce.mp3",
-    "pinky": "/audio/mascots/1484cb786cbeeb79982151f03295e123.mp3"
+    "pinky": "/audio/mascots/57c73bc8da6c6b810484c51a63a5b12a.mp3"
   },
   "b1-precisao-04": {
     "text": "We decided to leave before lunch.",
     "sparky": "/audio/mascots/f1fbc102b585324cd470f7eaeb599662.mp3",
-    "pinky": "/audio/mascots/a33e84784d042eec303134eaa637c69f.mp3"
+    "pinky": "/audio/mascots/8dc1a8c7eff3ee7a2ab7c0dd9b059979.mp3"
   },
   "b1-precisao-05": {
     "text": "Please turn it off before you leave.",
     "sparky": "/audio/mascots/9e8e27d7fecac82f0cff8500ceae8146.mp3",
-    "pinky": "/audio/mascots/af44caadef70a752a26bca147cd117a3.mp3"
+    "pinky": "/audio/mascots/cd2f215838c3567acb93b9e2693bf35c.mp3"
   },
   "b1-precisao-06": {
     "text": "She is interested in learning photography.",
     "sparky": "/audio/mascots/6f960a39a3439c0988f91c019927f10b.mp3",
-    "pinky": "/audio/mascots/79d27e8bd4e8ffa5dcb760aa058728d9.mp3"
+    "pinky": "/audio/mascots/b1004110a01c04482db755312a5508bc.mp3"
   },
   "b1-6-1": {
     "text": "Could you explain that again?",
     "sparky": "/audio/mascots/dcfeae8cf2a85792d14d1e6a39c51380.mp3",
-    "pinky": "/audio/mascots/3c74023656775e47a4a7d657cc6f58f3.mp3"
+    "pinky": "/audio/mascots/5b527d12f9d25f183270eca73dd1918c.mp3"
   },
   "b1-colaboracao-01": {
     "text": "Could you tell me where the office is?",
     "sparky": "/audio/mascots/5705f703fe271286b493d6bddb5d6a63.mp3",
-    "pinky": "/audio/mascots/2f50543084ce0e4eac961c60fab42897.mp3"
+    "pinky": "/audio/mascots/c17f9890b838875c80767384b031cadd.mp3"
   },
   "b1-colaboracao-02": {
     "text": "So, you mean the deadline is Friday?",
     "sparky": "/audio/mascots/c6f94a9923f3c972cdd4437951d69a4c.mp3",
-    "pinky": "/audio/mascots/fd434b019573d4ba53ba2bcd0eb9a8f7.mp3"
+    "pinky": "/audio/mascots/d3204c9a2010d3b82b0643fab006c7a5.mp3"
   },
   "b1-colaboracao-03": {
     "text": "Could we extend the deadline until Friday?",
     "sparky": "/audio/mascots/2b1d848daf63b4b65970fc53b1e28bef.mp3",
-    "pinky": "/audio/mascots/b04b1a0cfb219699fc959c39112c4fba.mp3"
+    "pinky": "/audio/mascots/cb92cb70823b81b6d3c27323edc34135.mp3"
   },
   "b1-colaboracao-04": {
     "text": "Could you show me how to upload this file?",
-    "pinky": "/audio/mascots/332074f32321331327c7ca8041140549.mp3",
+    "pinky": "/audio/mascots/47490ad29143f8d18a03015ee442b422.mp3",
     "sparky": "/audio/mascots/92331a10aa85f6037ba50d2114078f84.mp3"
   },
   "b1-colaboracao-05": {
     "text": "I ordered a blue bag, but I received a green one.",
     "sparky": "/audio/mascots/96a1d780fc8e28ea976bf2c67a65379e.mp3",
-    "pinky": "/audio/mascots/6f4fe34606638b262fa391a719c42743.mp3"
+    "pinky": "/audio/mascots/338309aa50fe30578a78fe301d7fb1aa.mp3"
   },
   "b1-colaboracao-06": {
     "text": "We agreed to send the proposal by Tuesday.",
     "sparky": "/audio/mascots/105bb2c2905a76fa0543268b9e0840f1.mp3",
-    "pinky": "/audio/mascots/b99da5bdec307cc2cfb55c1094d8c335.mp3"
+    "pinky": "/audio/mascots/3908291270b53ebe4c1048dc4c66918b.mp3"
   },
   "b1-leitura-01": {
     "text": "The article explains why the club changed its schedule.",
     "sparky": "/audio/mascots/b9a82ac5dcc499745669611166ad6e78.mp3",
-    "pinky": "/audio/mascots/e20213ae16b1345413832cd9ce0e3777.mp3"
+    "pinky": "/audio/mascots/ecfed45ce83a2097ac7e16406b4f0d13.mp3"
   },
   "b1-leitura-02": {
     "text": "She seems worried about the deadline.",
-    "pinky": "/audio/mascots/6846bb11b6ea0c56f42c8d5a7cadaec9.mp3",
+    "pinky": "/audio/mascots/26a4ddf37640657bdeed500a34484363.mp3",
     "sparky": "/audio/mascots/150f57857113b0e1051602ee52a0164b.mp3"
   },
   "b1-leitura-03": {
     "text": "The latest notice gives a different opening time.",
     "sparky": "/audio/mascots/733e359d06e681c345e0fbee1514775f.mp3",
-    "pinky": "/audio/mascots/c37be4db193ceeb500efa01417f108e0.mp3"
+    "pinky": "/audio/mascots/430d951baab30036533444fe0a8bebfe.mp3"
   },
   "b1-leitura-04": {
     "text": "I am writing to ask about your evening course.",
     "sparky": "/audio/mascots/9bd7e5a9a623565429d8fa1506151d12.mp3",
-    "pinky": "/audio/mascots/7e996198ceffba7cfd6bba2831875776.mp3"
+    "pinky": "/audio/mascots/6ef968d1a15a065424138e5b6ff746d5.mp3"
   },
   "b1-leitura-05": {
     "text": "Regular practice helps because it builds familiarity.",
-    "pinky": "/audio/mascots/34073004bc571556c1be94f2e783e86e.mp3",
+    "pinky": "/audio/mascots/8e9983e7ac37c4579ebbfb018cfc1f4d.mp3",
     "sparky": "/audio/mascots/04b09f366a89adbb65c1bdf8c57895c8.mp3"
   },
   "b1-leitura-06": {
     "text": "We chose the library because it is quiet and free.",
-    "pinky": "/audio/mascots/ee81e90f9c3ce6c71c9474b89404c1f4.mp3",
+    "pinky": "/audio/mascots/57e3d8703ab0455acc3320fc0cf217ac.mp3",
     "sparky": "/audio/mascots/a87153fad36a470bdbc8b99ada9c70e5.mp3"
   },
   "b2-argumentacao-01": {
     "text": "Although the trial was short, it provided useful evidence.",
     "sparky": "/audio/mascots/7bda8466630e2a41836b286fb2d323d3.mp3",
-    "pinky": "/audio/mascots/6695e0a6fd07dcba7b8b57f30b54e496.mp3"
+    "pinky": "/audio/mascots/ab9f2d562ee887f1f1053a52f72415c9.mp3"
   },
   "b2-argumentacao-02": {
     "text": "The new schedule may have contributed to the improvement.",
     "sparky": "/audio/mascots/b51126af6435d1ea14631886c97ed722.mp3",
-    "pinky": "/audio/mascots/c5818f6d6df9e6b874e4588f55eccbe0.mp3"
+    "pinky": "/audio/mascots/acee24a18fcdfd540fcc0028dadf5632.mp3"
   },
   "b2-argumentacao-03": {
     "text": "I see your point, but we need a more reliable estimate.",
-    "pinky": "/audio/mascots/9948d0d9892086e86d3f53a5d91c5233.mp3",
+    "pinky": "/audio/mascots/51090167c6dac245835b0823242a2456.mp3",
     "sparky": "/audio/mascots/a8f598434a7a51b5ae164edc213f5ebb.mp3"
   },
   "b2-argumentacao-04": {
     "text": "The first option is cheaper, whereas the second is easier to maintain.",
     "sparky": "/audio/mascots/f2569f8a9bc3ffb899824aa319bc0859.mp3",
-    "pinky": "/audio/mascots/2154daa0e21c06e4eb42e2b361f9e73e.mp3"
+    "pinky": "/audio/mascots/c8e35e05bdc1e28abc7d28ecbfbc61bd.mp3"
   },
   "b2-argumentacao-05": {
     "text": "We can extend the deadline provided that the scope stays the same.",
-    "pinky": "/audio/mascots/79da5f33e70e53224d246a2107777334.mp3",
+    "pinky": "/audio/mascots/a520c6747421a85a5ef90c6bc19656e7.mp3",
     "sparky": "/audio/mascots/6e003ce01841ae632bfd925a6dc9be16.mp3"
   },
   "b2-argumentacao-06": {
     "text": "This concern could be addressed by offering an offline option.",
     "sparky": "/audio/mascots/3fd7c71d5f89f9433013224862206133.mp3",
-    "pinky": "/audio/mascots/19fb605044e1db555e46df7def05f872.mp3"
+    "pinky": "/audio/mascots/5e5af1f96d868449fc4e4b93c620f6d3.mp3"
   },
   "b2-autonomia-01": {
     "text": "They agreed to review the proposal before making a decision.",
     "sparky": "/audio/mascots/fb70c1f631ceb666fbc5235a64c077e6.mp3",
-    "pinky": "/audio/mascots/fbad52578f76be2958aef91fff4449f8.mp3"
+    "pinky": "/audio/mascots/db2064d80661d3f350d967cfad630639.mp3"
   },
   "b2-autonomia-02": {
     "text": "In other words, the discount applies only to annual subscriptions.",
-    "pinky": "/audio/mascots/22869ac3f215c99aad231da903108d2d.mp3",
+    "pinky": "/audio/mascots/82c21b151a8f808642f1d21dfbeeda65.mp3",
     "sparky": "/audio/mascots/35fb07203159fff747320164ad332f55.mp3"
   },
   "b2-autonomia-03": {
     "text": "The replacement was supposed to arrive last week.",
     "sparky": "/audio/mascots/03d3c1c7cd66906d24fb635a542f319b.mp3",
-    "pinky": "/audio/mascots/8aa1b3c8725eade7e1a700e98a16be08.mp3"
+    "pinky": "/audio/mascots/6c0de0fa9c66f11ce996257afb291716.mp3"
   },
   "b2-autonomia-04": {
     "text": "Turning to the survey results, most respondents preferred evening classes.",
     "sparky": "/audio/mascots/8885c8b3a560bed230b390e8b6150a69.mp3",
-    "pinky": "/audio/mascots/5d9b275b0d3f4343033f0000012e4b7e.mp3"
+    "pinky": "/audio/mascots/9aec406aa28cd992fc026bd1b608b04a.mp3"
   },
   "b2-autonomia-05": {
     "text": "If we had checked the file, we would have noticed the missing page.",
     "sparky": "/audio/mascots/22280cf6807ed13404532ec846ad6685.mp3",
-    "pinky": "/audio/mascots/db47f4f6719f585cefb4685dbf087a2d.mp3"
+    "pinky": "/audio/mascots/44e840bd3bd244c3c63b3f7b6e5c9a9d.mp3"
   },
   "b2-autonomia-06": {
     "text": "We recommend a trial before committing to a permanent change.",
     "sparky": "/audio/mascots/3e64bc49d77af4d5d9cf37d43cd166b3.mp3",
-    "pinky": "/audio/mascots/332e586d5597418e2ecfc170262281db.mp3"
+    "pinky": "/audio/mascots/9f8c9858370330352ba99911bcdf72da.mp3"
   },
   "c1-sintese-01": {
     "text": "Both reports suggest that access matters, although they measure different outcomes.",
-    "pinky": "/audio/mascots/1c6f4bbe2992cb652b35518eb6c244cf.mp3",
+    "pinky": "/audio/mascots/fa26a9847949d3e600ccad8348c08279.mp3",
     "sparky": "/audio/mascots/34b6e7163383743856206bcd7c1bdf4e.mp3"
   },
   "c1-sintese-02": {
     "text": "The decline appears to reflect a change in reporting rather than demand.",
     "sparky": "/audio/mascots/ee34203570925b17aeda60f6e7d516bf.mp3",
-    "pinky": "/audio/mascots/3587979863cc98b12880edfb529e3d92.mp3"
+    "pinky": "/audio/mascots/d9528aa44fba0676405964537b892345.mp3"
   },
   "c1-sintese-03": {
     "text": "This discrepancy prompted the team to examine how the figures were collected.",
     "sparky": "/audio/mascots/47c318c49aebf19d1777813775d500d4.mp3",
-    "pinky": "/audio/mascots/4b66918f604cec6e6467c850e12ecbd2.mp3"
+    "pinky": "/audio/mascots/39b7900889f51df0a15854b36e608137.mp3"
   },
   "c1-sintese-04": {
     "text": "The authors caution that the findings may not apply to smaller organisations.",
     "sparky": "/audio/mascots/8767d4e68aba4987c65b48dff3722b77.mp3",
-    "pinky": "/audio/mascots/d57436753c815445be3e1a92654f08ca.mp3"
+    "pinky": "/audio/mascots/47eb0de0901c1612bdcd0d1680351622.mp3"
   },
   "c1-sintese-05": {
     "text": "The exception suggests that the claim needs to be narrowed.",
     "sparky": "/audio/mascots/4da083033ba7326a55ebebb0058c907f.mp3",
-    "pinky": "/audio/mascots/73ee49bc7af330fae71960f9a771ddde.mp3"
+    "pinky": "/audio/mascots/e8f03cff8df9a54d79aed5ab12abb3dc.mp3"
   },
   "c1-sintese-06": {
     "text": "On balance, a phased introduction would allow the policy to be evaluated.",
     "sparky": "/audio/mascots/df61f5e412df9b9cf8ed0a6f940dbc71.mp3",
-    "pinky": "/audio/mascots/2a24deb23815c1d148f02a992fe7498e.mp3"
+    "pinky": "/audio/mascots/d4d1f3b23ff512440489997fafa27339.mp3"
   },
   "c1-interacao-01": {
     "text": "We would appreciate receiving your comments by Thursday.",
     "sparky": "/audio/mascots/102b19c3b7636a6553e2b861cbdcf829.mp3",
-    "pinky": "/audio/mascots/71149a8f024df08876e206c9f4958f15.mp3"
+    "pinky": "/audio/mascots/38f881eb587cccc00c9fc45834d0e1b8.mp3"
   },
   "c1-interacao-02": {
     "text": "What both teams need is a predictable process for handling urgent requests.",
-    "pinky": "/audio/mascots/19ed35e06856d81a2429971f8302da32.mp3",
+    "pinky": "/audio/mascots/def276aac879974c477d6944dc183594.mp3",
     "sparky": "/audio/mascots/59a1a51ff1bd1c0c7f9251d5464f98a6.mp3"
   },
   "c1-interacao-03": {
     "text": "Is there any chance we could revisit the final paragraph?",
     "sparky": "/audio/mascots/584eba4cd874c48b577ba49e5cb1f5eb.mp3",
-    "pinky": "/audio/mascots/6495f0fd86ce1de368aae04782a8ce3e.mp3"
+    "pinky": "/audio/mascots/ef518cfa864ba9f9a223dac5aa9295d6.mp3"
   },
   "c1-interacao-04": {
     "text": "Only after the review did we understand the scale of the problem.",
     "sparky": "/audio/mascots/dae47ef5b4de4d896fd31e752d64d81c.mp3",
-    "pinky": "/audio/mascots/4ea9b9187bba345549c1233f74fc570c.mp3"
+    "pinky": "/audio/mascots/5862d9031bbada4e3cfe6f6e729c2983.mp3"
   },
   "c1-interacao-05": {
     "text": "Let me distinguish between the initial estimate and the approved budget.",
     "sparky": "/audio/mascots/8ea30f60ff3d7d215329b7b3702a85a7.mp3",
-    "pinky": "/audio/mascots/f8fb95a23d028978e75ebcbedb876a38.mp3"
+    "pinky": "/audio/mascots/a5d8a10f8347d85771aaaba1e6c9767c.mp3"
   },
   "c1-interacao-06": {
     "text": "The agreement remains subject to a successful accessibility review.",
     "sparky": "/audio/mascots/eec81cfe43950234dee4a727679e861b.mp3",
-    "pinky": "/audio/mascots/208c3f9261a2e72c5902d9ca3f7694ae.mp3"
+    "pinky": "/audio/mascots/8c52569492010ff6a84c6dfb9f07d570.mp3"
   },
   "c2-nuance-01": {
     "text": "To grant that the scheme is efficient is not to endorse its underlying assumptions.",
-    "pinky": "/audio/mascots/0796945f40a46f5afdb3ddb07e707b18.mp3",
+    "pinky": "/audio/mascots/cbd35b41ce58ff2adacbb4d5de0b6a84.mp3",
     "sparky": "/audio/mascots/f6b456d2a6ac05de039a3571521d4623.mp3"
   },
   "c2-nuance-02": {
     "text": "Calling the delay a triumph of efficiency was hardly an unqualified compliment.",
     "sparky": "/audio/mascots/9db12d4a65d7f41898e27692cf781036.mp3",
-    "pinky": "/audio/mascots/e4c877f42fea72f30a9b43a4e03d4be1.mp3"
+    "pinky": "/audio/mascots/2ebc673602cdb719660650a370971fb5.mp3"
   },
   "c2-nuance-03": {
     "text": "The question presupposes a failure that the report has not established.",
     "sparky": "/audio/mascots/357536cd9720195fabf82bc1cec0083a.mp3",
-    "pinky": "/audio/mascots/d511697951d32ad5bcc3d1dc804e84de.mp3"
+    "pinky": "/audio/mascots/d5331ae13079307e5fe130cfd51e676d.mp3"
   },
   "c2-nuance-04": {
     "text": "Not all applicants were excluded, but the criteria remained unclear.",
     "sparky": "/audio/mascots/de7a55493a90fe2fcf69ec3134a1e5ba.mp3",
-    "pinky": "/audio/mascots/f853fffb153dcaa2d2c6ee480c745659.mp3"
+    "pinky": "/audio/mascots/ee85da19d0a80c6225a443ca95c20121.mp3"
   },
   "c2-nuance-05": {
     "text": "The metaphor foregrounds speed while obscuring the need for ongoing support.",
     "sparky": "/audio/mascots/e4ba181ad3a7e472f333cfd11bd8bd9e.mp3",
-    "pinky": "/audio/mascots/7cd09bf4efb36742eb0c046cf25be88f.mp3"
+    "pinky": "/audio/mascots/d6722b7ebe7768c61fa6a3327778b35c.mp3"
   },
   "c2-nuance-06": {
     "text": "The passage permits two readings, but the final qualification favours the narrower one.",
     "sparky": "/audio/mascots/784760d6ea17a28286d00017ad11f07a.mp3",
-    "pinky": "/audio/mascots/e8096f0e989c25e120d88e67408ecb41.mp3"
+    "pinky": "/audio/mascots/ef525c66d9fd7008e6a718e35cc97ed2.mp3"
   },
   "c2-producao-01": {
     "text": "The revision removes repetition without sacrificing the argument's qualifications.",
     "sparky": "/audio/mascots/9b94b36b468fc0a0f52525ce315cb68c.mp3",
-    "pinky": "/audio/mascots/6433effebee1cdb5f7371f792bc85ba6.mp3"
+    "pinky": "/audio/mascots/f231be0bc9cbe528b8dbb485d3c0470b.mp3"
   },
   "c2-producao-02": {
     "text": "A simpler explanation need not imply a less accurate one.",
     "sparky": "/audio/mascots/51927acebd2da6ea27f1c4a5022895ce.mp3",
-    "pinky": "/audio/mascots/a02b6c593478875b1f387a0d44c0971c.mp3"
+    "pinky": "/audio/mascots/77ecdb7efea6119a531b1415d545316b.mp3"
   },
   "c2-producao-03": {
     "text": "The report attributes the criticism to residents without adopting every allegation.",
     "sparky": "/audio/mascots/75fcfe8bcc0a4de417d8b7eed66679fb.mp3",
-    "pinky": "/audio/mascots/3d4b5b5bdd44f55a680f5999ae7d0fc0.mp3"
+    "pinky": "/audio/mascots/b1fb9d1912f96e3a850c7ae903567583.mp3"
   },
   "c2-producao-04": {
     "text": "The objection is well founded, but it does not by itself settle the question.",
     "sparky": "/audio/mascots/b865d1311798723879e9198f646863c8.mp3",
-    "pinky": "/audio/mascots/6e95d98019d185cd29dfcaf304acd19b.mp3"
+    "pinky": "/audio/mascots/7866fc911689e3ed0fac6fc07626af66.mp3"
   },
   "c2-producao-05": {
     "text": "Describing the improvement as merely adequate introduces a judgement beyond the figures.",
     "sparky": "/audio/mascots/51c9fd52ddda16a295f6bf78787a3701.mp3",
-    "pinky": "/audio/mascots/a9084bfe254281b4df2e74fac47eb5da.mp3"
+    "pinky": "/audio/mascots/0678befd28b81af9f92580f62ddcfdd8.mp3"
   },
   "c2-producao-06": {
     "text": "A defensible conclusion must accommodate uncertainty without surrendering judgement.",
     "sparky": "/audio/mascots/b25b03d51eee1d9880c67097caa5db0a.mp3",
-    "pinky": "/audio/mascots/08fc10f0d97dfab8613cd504e262bea0.mp3"
+    "pinky": "/audio/mascots/2b42dd85defbab57bc6816d5594e269c.mp3"
+  },
+  "c1-evidencias-01": {
+    "text": "The study is relevant, but its narrow sample limits the reach of its conclusions.",
+    "sparky": "/audio/mascots/fa3369934c10563f01796adf23a15afb.mp3",
+    "pinky": "/audio/mascots/664457d8f4835e989b628d0b6d20a201.mp3"
+  },
+  "c1-evidencias-02": {
+    "text": "The figures suggest a short-term shift rather than a permanent change in behaviour.",
+    "sparky": "/audio/mascots/e548bd768397b2915140709d697f915d.mp3",
+    "pinky": "/audio/mascots/2b6a14234b2987e2a0aea9c67c879b39.mp3"
+  },
+  "c1-evidencias-03": {
+    "text": "The estimate is sufficiently precise for planning, though not for ranking small differences.",
+    "sparky": "/audio/mascots/05b0ee22ccb18b77debbf4fe6fd70264.mp3",
+    "pinky": "/audio/mascots/e1d697a03209705a6a39ad147dc84731.mp3"
+  },
+  "c1-evidencias-04": {
+    "text": "The rate doubled, but the increase represented only four additional cases.",
+    "sparky": "/audio/mascots/c497672fce4ba1efa8ca9fe2c0c0fb23.mp3",
+    "pinky": "/audio/mascots/31206f6e94b9088a36b6b70fdaec903a.mp3"
+  },
+  "c1-evidencias-05": {
+    "text": "The verified record shows a schedule change, not the cancellation described online.",
+    "sparky": "/audio/mascots/d6912a16771477a61f53724c84835d94.mp3",
+    "pinky": "/audio/mascots/af5cad0d50defab88fbc3d170ce82fce.mp3"
+  },
+  "c1-evidencias-06": {
+    "text": "On balance, a limited pilot is justified, provided that access and outcomes are independently reviewed.",
+    "sparky": "/audio/mascots/5c22d8a854d7dbca46506e132e161045.mp3",
+    "pinky": "/audio/mascots/75fa919b03ebaed8a7ac3fdacc5c15e4.mp3"
+  },
+  "c2-estilo-cultura-01": {
+    "text": "The headline echoes a familiar promise only to expose how little has changed.",
+    "sparky": "/audio/mascots/2120bc6824c904ddeea6c1123435b2ef.mp3",
+    "pinky": "/audio/mascots/a3cd5dcecb10645b6037b65c3d2204f3.mp3"
+  },
+  "c2-estilo-cultura-02": {
+    "text": "The narrator reproduces the committee's certainty without necessarily sharing it.",
+    "pinky": "/audio/mascots/3de5eb5ac758e333fb7293336a6ab8c8.mp3",
+    "sparky": "/audio/mascots/92f73ea5ed6d794736dd3a3bddaa0e71.mp3"
+  },
+  "c2-estilo-cultura-03": {
+    "text": "A literal translation preserved the words but misplaced the joke's target.",
+    "sparky": "/audio/mascots/54c2e248c759b76c9c000e7042db320b.mp3",
+    "pinky": "/audio/mascots/686615ce0a3e482e02dccae1de0b140d.mp3"
+  },
+  "c2-estilo-cultura-04": {
+    "text": "The two accounts describe the same transfer while assigning agency and benefit differently.",
+    "sparky": "/audio/mascots/09214a7eb1921b714531862257554ff0.mp3",
+    "pinky": "/audio/mascots/3a8aac6a63cdb75bd503db9bd957787c.mp3"
+  },
+  "c2-estilo-cultura-05": {
+    "text": "The revision clarifies the sequence, balances the clauses and reserves the final stress for the consequence.",
+    "sparky": "/audio/mascots/db957e6bfef6048493ea947302a1e1e8.mp3",
+    "pinky": "/audio/mascots/4430e075ccd5c1c0cf5ab8248c31e6f4.mp3"
+  },
+  "c2-estilo-cultura-06": {
+    "text": "The comparison is illuminating precisely where the texts pursue similar ends through incompatible rhetorical means.",
+    "sparky": "/audio/mascots/400ea92933577ad670cd9b6feeea8a38.mp3",
+    "pinky": "/audio/mascots/3948dffa954dce634c0c886eee1eadcf.mp3"
   }
 }
