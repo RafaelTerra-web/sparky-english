@@ -5,9 +5,10 @@ import { a1Modules } from '../src/lib/content/a1.ts';
 import { buildLesson } from '../src/lib/content/build.ts';
 import { lessonLedger, moduleLedger } from '../src/lib/content/ledger.ts';
 import { gradeAttempt, verifyCompletion, exerciseId, isExercise } from '../src/lib/study.ts';
-import { normalizeWorkspace, blankWorkspace } from '../src/lib/learning-local.ts';
+import { normalizeWorkspace, blankWorkspace, writingLimit } from '../src/lib/learning-local.ts';
 import { normalizeRewardState, publicRewardState, emptyRewardState, completeStudy } from '../src/lib/rewards.ts';
 import { seal } from '../src/lib/auth-session.ts';
+import { cosmeticCatalog, cosmeticSlots } from '../src/lib/rewards-shared.ts';
 
 test('published identities survive editorial reordering; ledger covers all lessons and modules', () => {
   const courseModule = a1Modules[0], draft = courseModule.lessons[0];
@@ -69,6 +70,17 @@ test('maximum published progress fits comfortably within a browser cookie', asyn
   process.env.SPARKY_SESSION_SECRET='test-only-secret-with-at-least-32-characters';
   let state=emptyRewardState();
   for(const lesson of lessons) state=completeStudy(state,lesson.id,false).state;
+  state.owned = cosmeticCatalog.map(item => item.id);
+  for (const mascot of ['sparky', 'pinky']) {
+    for (const slot of cosmeticSlots) {
+      const item = cosmeticCatalog.find(item => item.slot === slot && item.mascots.includes(mascot));
+      if (item) state.equipped[mascot][slot] = item.id;
+    }
+  }
+  state.coins = 999999;
+  state.reviewStages.fill(4);
+  state.reviewCount = 10;
+  state.reviewDay = 30000;
   const token=await seal({state},'rewards:fixture',365*86400);
   assert.ok(token.length + 160 < 4096, `cookie envelope: ${token.length}`);
 });
@@ -77,4 +89,11 @@ test('a curriculum update archives an unfinished draft instead of silently losin
   assert.equal(Object.keys(value.checkpoints).length,0);
   assert.equal(value.writings[0].text,'My unfinished text.');
   assert.equal(normalizeWorkspace(value).writings.length,1);
+});
+test('advanced essays survive notebook normalization beyond the old 4000 character limit', () => {
+  const text = 'Precise argument and supporting evidence. '.repeat(150);
+  const writing = { id:'essay', lessonId:'c2-producao-06', text, createdAt:'2026-09-06T12:00:00Z', contentVersion:'current' };
+  assert.ok(text.length > 4000 && text.length < writingLimit);
+  assert.equal(normalizeWorkspace({ ...blankWorkspace(), writings:[writing] }).writings[0].text, text);
+  assert.equal(normalizeWorkspace({ ...blankWorkspace(), writings:[{ ...writing, text:'x'.repeat(writingLimit + 1) }] }).writings.length, 0);
 });

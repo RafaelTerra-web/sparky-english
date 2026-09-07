@@ -1,151 +1,38 @@
 export type MascotVoice = "sparky" | "pinky";
-export type VoiceOption = {
-  id: string;
-  name: string;
-  locale: string;
-  local: boolean;
-};
 export type RecognitionCallbacks = {
-  onStart(): void;
-  onResult(text: string): void;
-  onError(code: string): void;
-  onEnd(): void;
+  onStart(): void; onResult(text: string, alternatives?: string[]): void;
+  onError(code: string): void; onEnd(): void;
 };
-export interface LiveSpeechProvider {
-  voices(): VoiceOption[];
-  canSpeak(): boolean;
-  canRecognize(): boolean;
-  speak(
-    text: string,
-    options: { voiceId: string; mascot: MascotVoice; slow: boolean },
-    onEnd: (error?: string) => void,
-  ): void;
-  recognize(locale: string, callbacks: RecognitionCallbacks): void;
-  stop(): void;
-}
-
-export const mascotVoiceProfiles = {
-  sparky: { pitch: 1.2, rate: 0.94, label: "Sparky · perfil masculino leve" },
-  pinky: { pitch: 1.4, rate: 0.96, label: "Pinky · perfil feminino leve" },
-} as const;
-
-type RecognitionResult = { isFinal: boolean; 0: { transcript: string } };
+type RecognitionResult = { isFinal: boolean; length?: number; [index: number]: { transcript: string } };
 type BrowserRecognition = {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  maxAlternatives: number;
+  lang: string; continuous: boolean; interimResults: boolean; maxAlternatives: number;
   onstart: (() => void) | null;
-  onresult:
-    | ((event: {
-        resultIndex: number;
-        results: ArrayLike<RecognitionResult>;
-      }) => void)
-    | null;
+  onresult: ((event: { results: ArrayLike<RecognitionResult> }) => void) | null;
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
-  start(): void;
-  abort(): void;
+  start(): void; abort(): void;
 };
 type SpeechWindow = Window & {
   SpeechRecognition?: new () => BrowserRecognition;
   webkitSpeechRecognition?: new () => BrowserRecognition;
 };
-
-/** Browser adapter: no recording files, server upload route, token or persisted transcript. */
-export class BrowserSpeechProvider implements LiveSpeechProvider {
+/** Recognition only; mascot playback uses published, pre-generated audio files. */
+export class BrowserSpeechProvider {
   private recognition: BrowserRecognition | null = null;
-  private utterance: SpeechSynthesisUtterance | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private generation = 0;
   private recognitionConstructor() {
     if (typeof window === "undefined") return undefined;
-    return (
-      (window as SpeechWindow).SpeechRecognition ??
-      (window as SpeechWindow).webkitSpeechRecognition
-    );
-  }
-  canSpeak() {
-    return (
-      typeof window !== "undefined" &&
-      "speechSynthesis" in window &&
-      "SpeechSynthesisUtterance" in window
-    );
+    return (window as SpeechWindow).SpeechRecognition ?? (window as SpeechWindow).webkitSpeechRecognition;
   }
   canRecognize() {
-    return (
-      typeof window !== "undefined" &&
-      window.isSecureContext &&
-      Boolean(this.recognitionConstructor())
-    );
-  }
-  voices() {
-    if (!this.canSpeak()) return [];
-    return window.speechSynthesis
-      .getVoices()
-      .filter((voice) => /^en(?:-|_)/i.test(voice.lang))
-      .map((voice) => ({
-        id: voice.voiceURI,
-        name: voice.name,
-        locale: voice.lang,
-        local: voice.localService,
-      }));
-  }
-  speak(
-    text: string,
-    options: { voiceId: string; mascot: MascotVoice; slow: boolean },
-    onEnd: (error?: string) => void,
-  ) {
-    this.stop();
-    if (!this.canSpeak()) {
-      onEnd("synthesis-unavailable");
-      return;
-    }
-    const voice = window.speechSynthesis
-      .getVoices()
-      .find(
-        (item) =>
-          item.voiceURI === options.voiceId && /^en(?:-|_)/i.test(item.lang),
-      );
-    if (!voice) {
-      onEnd("voice-unavailable");
-      return;
-    }
-    const generation = this.generation;
-    const utterance = new SpeechSynthesisUtterance(text.slice(0, 2000));
-    const profile = mascotVoiceProfiles[options.mascot];
-    utterance.voice = voice;
-    utterance.lang = voice.lang;
-    utterance.pitch = profile.pitch;
-    utterance.rate = options.slow ? 0.72 : profile.rate;
-    this.utterance = utterance;
-    const finish = (error?: string) => {
-      if (generation !== this.generation) return;
-      if (this.timer) clearTimeout(this.timer);
-      this.timer = null;
-      this.utterance = null;
-      onEnd(error);
-    };
-    utterance.onend = () => finish();
-    utterance.onerror = () => finish("synthesis-error");
-    this.timer = setTimeout(() => {
-      this.stop();
-      onEnd("synthesis-timeout");
-    }, 45000);
-    try {
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      this.stop();
-      onEnd("synthesis-error");
-    }
+    return typeof window !== "undefined" && window.isSecureContext && Boolean(this.recognitionConstructor());
   }
   recognize(locale: string, callbacks: RecognitionCallbacks) {
     this.stop();
     const Recognition = this.recognitionConstructor();
     if (!Recognition || !this.canRecognize()) {
-      callbacks.onError("not-supported");
-      callbacks.onEnd();
-      return;
+      callbacks.onError("not-supported"); callbacks.onEnd(); return;
     }
     const generation = this.generation;
     const recognition = new Recognition();
@@ -153,146 +40,120 @@ export class BrowserSpeechProvider implements LiveSpeechProvider {
     recognition.lang = locale;
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.onstart = () => {
-      if (generation === this.generation) callbacks.onStart();
-    };
-    recognition.onresult = (event) => {
+    recognition.maxAlternatives = 3;
+    recognition.onstart = () => { if (generation === this.generation) callbacks.onStart(); };
+    recognition.onresult = event => {
       if (generation !== this.generation) return;
-      const text = Array.from(event.results)
-        .filter((result) => result.isFinal)
-        .map((result) => result[0].transcript)
-        .join(" ")
-        .trim()
-        .slice(0, 2000);
-      if (text) {
-        this.stop();
-        callbacks.onResult(text);
-        callbacks.onEnd();
-      }
+      const finals = Array.from(event.results).filter(result => result.isFinal);
+      if (!finals.length) return;
+      const alternatives = Array.from({ length: Math.min(3, finals[0].length ?? 1) }, (_, rank) =>
+        finals.map(result => (result[rank] ?? result[0]).transcript).join(" ").trim());
+      const text = alternatives[0];
+      if (!text) return;
+      this.stop(); callbacks.onResult(text, alternatives); callbacks.onEnd();
     };
-    recognition.onerror = (event) => {
+    recognition.onerror = event => {
       if (generation !== this.generation) return;
-      this.stop();
-      callbacks.onError(event.error);
-      callbacks.onEnd();
+      this.stop(); callbacks.onError(event.error); callbacks.onEnd();
     };
     recognition.onend = () => {
       if (generation !== this.generation) return;
-      if (this.timer) clearTimeout(this.timer);
-      this.timer = null;
-      this.recognition = null;
-      callbacks.onEnd();
+      this.stop(); callbacks.onEnd();
     };
     this.timer = setTimeout(() => {
-      this.stop();
-      callbacks.onError("timeout");
-      callbacks.onEnd();
+      this.stop(); callbacks.onError("timeout"); callbacks.onEnd();
     }, 20000);
-    try {
-      recognition.start();
-    } catch {
-      this.stop();
-      callbacks.onError("start-failed");
-      callbacks.onEnd();
-    }
+    try { recognition.start(); }
+    catch { this.stop(); callbacks.onError("start-failed"); callbacks.onEnd(); }
   }
   stop() {
     this.generation++;
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
-    if (this.recognition) {
-      this.recognition.onstart = null;
-      this.recognition.onresult = null;
-      this.recognition.onerror = null;
-      this.recognition.onend = null;
-      this.recognition.abort();
-      this.recognition = null;
-    }
-    if (this.utterance) {
-      this.utterance.onend = null;
-      this.utterance.onerror = null;
-      this.utterance = null;
-      window.speechSynthesis.cancel();
+    const recognition = this.recognition;
+    this.recognition = null;
+    if (recognition) {
+      recognition.onstart = recognition.onresult = recognition.onerror = recognition.onend = null;
+      try { recognition.abort(); } catch { /* Already ended by the browser. */ }
     }
   }
 }
-
-// Text comparison only. This deliberately is not a phonetic/pronunciation score.
-export function normalizeSpeech(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[’‘]/g, "'")
-    .replace(/\b(can't)\b/g, "cannot")
-    .replace(/\bwon't\b/g, "will not")
-    .replace(/\b(i'm)\b/g, "i am")
-    .replace(/\b(you're)\b/g, "you are")
-    .replace(/\b(we're)\b/g, "we are")
-    .replace(/\b(they're)\b/g, "they are")
-    .replace(/\b(isn't)\b/g, "is not")
-    .replace(/\b(aren't)\b/g, "are not")
-    .replace(/\b(don't)\b/g, "do not")
-    .replace(/\b(doesn't)\b/g, "does not")
-    .replace(/\b(didn't)\b/g, "did not")
-    .replace(/[^a-z0-9'\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+const nameVariants = [
+  ["ana", "anna"], ["sara", "sarah"], ["sofia", "sophia"], ["john", "jon"],
+  ["luca", "luka"], ["clara", "klara"], ["catherine", "katherine", "katharine"],
+  ["steven", "stephen"], ["sean", "shawn", "shaun"], ["nora", "norah"], ["isabel", "isabelle"],
+] as const;
+const smallNumbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function spokenNumber(digits: string): string {
+  // Only ordinary cardinals. Leading-zero codes and large identifiers stay literal.
+  if (!/^(0|[1-9]\d{0,1})$/.test(digits)) return digits;
+  const value = Number(digits);
+  return smallNumbers[value] ?? [tens[Math.floor(value / 10)], value % 10 ? smallNumbers[value % 10] : ""].filter(Boolean).join(" ");
 }
+export function normalizeSpeech(text: string) {
+  return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[’‘]/g, "'")
+    .replace(/\bcan't\b/g, "cannot").replace(/\bcan not\b/g, "cannot")
+    .replace(/\bwon't\b/g, "will not").replace(/\bi'm\b/g, "i am")
+    .replace(/\b(you|we|they)'re\b/g, "$1 are")
+    .replace(/\b(i|you|we|they)'ve\b/g, "$1 have")
+    .replace(/\b(i|you|we|they|he|she|it)'ll\b/g, "$1 will")
+    // Expand 's only before clear nominal complements. Participles remain ambiguous (is/has).
+    .replace(/\b(what|where|how|who|that|there|it|he|she)'s(?=\s+(?:a|an|the|my|your|his|her|our|their)\b)/g, "$1 is")
+    .replace(/\b(is|are|was|were|do|does|did|has|have|had|could|would|should)n't\b/g, "$1 not")
+    .replace(/(?<!\w)[-−](?=\d)/g, "minus ")
+    .replace(/\b\d+\.\d+\b/g, number => {
+      const [whole, fraction] = number.split(".");
+      return spokenNumber(whole) + " point " + fraction.split("").map(digit => smallNumbers[Number(digit)]).join(" ");
+    })
+    .replace(/\b\d+\b/g, spokenNumber)
+    .replace(/[^a-z0-9'\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+/** Text alignment, not pronunciation grading. No fuzzy match of arbitrary words. */
 export function compareTranscript(target: string, heard: string) {
-  const expected = normalizeSpeech(target).split(" ").filter(Boolean);
-  const received = normalizeSpeech(heard).split(" ").filter(Boolean);
-  // Longest common subsequence respects order and repeated words.
-  const lengths = Array.from(
-    { length: expected.length + 1 },
-    () => Array(received.length + 1).fill(0) as number[],
-  );
+  const tooLong = target.length > 4000 || heard.length > 4000;
+  const rawExpected = normalizeSpeech(target.slice(0, 4000)).split(" ").filter(Boolean);
+  const rawReceived = normalizeSpeech(heard.slice(0, 4000)).split(" ").filter(Boolean);
+  const limited = tooLong || rawExpected.length > 160 || rawReceived.length > 160;
+  const names = new Set((target.slice(0, 4000).match(/\b[A-Z][a-z]+\b/g) ?? []).map(normalizeSpeech));
+  const groups = nameVariants.filter(group => group.some(name => names.has(name)));
+  const canonical = (word: string) => groups.find(group => (group as readonly string[]).includes(word))?.[0] ?? word;
+  const expected = rawExpected.slice(0, 160).map(canonical);
+  const received = rawReceived.slice(0, 160).map(canonical);
+  const lengths = Array.from({ length: expected.length + 1 }, () => Array(received.length + 1).fill(0) as number[]);
   for (let i = expected.length - 1; i >= 0; i--)
-    for (let j = received.length - 1; j >= 0; j--) {
-      lengths[i][j] =
-        expected[i] === received[j]
-          ? 1 + lengths[i + 1][j + 1]
-          : Math.max(lengths[i + 1][j], lengths[i][j + 1]);
-    }
-  const matched = new Set<number>();
-  let i = 0,
-    j = 0;
+    for (let j = received.length - 1; j >= 0; j--)
+      lengths[i][j] = expected[i] === received[j] ? 1 + lengths[i + 1][j + 1] : Math.max(lengths[i + 1][j], lengths[i][j + 1]);
+  const matched = new Set<number>(), heardMatches = new Set<number>();
+  let i = 0, j = 0;
   while (i < expected.length && j < received.length) {
-    if (expected[i] === received[j]) {
-      matched.add(i);
-      i++;
-      j++;
-    } else if (lengths[i + 1][j] >= lengths[i][j + 1]) i++;
+    if (expected[i] === received[j]) { matched.add(i++); heardMatches.add(j++); }
+    else if (lengths[i + 1][j] >= lengths[i][j + 1]) i++;
     else j++;
   }
   return {
-    exact: expected.length > 0 && expected.join(" ") === received.join(" "),
-    words: expected.map((word, index) => ({
-      word,
-      recognized: matched.has(index),
-    })),
+    exact: !limited && expected.length > 0 && expected.join(" ") === received.join(" "),
+    limited,
+    nameVariantAccepted: !limited && expected.join(" ") === received.join(" ") && rawExpected.join(" ") !== rawReceived.join(" "),
+    words: rawExpected.slice(0, 160).map((word, index) => ({ word, recognized: matched.has(index) })),
+    extraWords: rawReceived.slice(0, 160).filter((_, index) => !heardMatches.has(index)),
   };
 }
-
+export function chooseTranscript(target: string, alternatives: string[]) {
+  const candidates = alternatives.slice(0, 3);
+  return candidates.find(text => compareTranscript(target, text).exact) ?? candidates[0] ?? "";
+}
 export function recognitionMessage(code: string) {
   const messages: Record<string, string> = {
-    "not-allowed":
-      "O acesso ao microfone foi recusado. Você pode liberá-lo nas permissões do site e tentar novamente.",
-    "service-not-allowed":
-      "O serviço de reconhecimento não está autorizado neste navegador.",
-    "audio-capture":
-      "Nenhum microfone disponível. Confira a conexão e as configurações do dispositivo.",
-    "no-speech":
-      "Não foi detectada fala. Tente novamente em um ambiente mais silencioso.",
-    network:
-      "O serviço de reconhecimento não respondeu. Confira a internet e tente novamente.",
-    "not-supported":
-      "Este navegador não oferece reconhecimento de voz compatível. Você pode continuar os exercícios escritos.",
-    timeout:
-      "A escuta foi encerrada após 20 segundos. Toque novamente para outra tentativa.",
+    "not-allowed": "O acesso ao microfone foi recusado. Libere-o nas permissões do site para tentar novamente.",
+    "service-not-allowed": "O serviço de reconhecimento não está autorizado neste navegador.",
+    "audio-capture": "Nenhum microfone disponível. Confira a conexão e as configurações do dispositivo.",
+    "no-speech": "Não foi detectada fala. Tente novamente em um ambiente mais silencioso.",
+    network: "O serviço de reconhecimento não respondeu. Confira a internet e tente novamente.",
+    "not-supported": "Este navegador não oferece reconhecimento de voz compatível. Você pode continuar os exercícios escritos.",
+    timeout: "A escuta foi encerrada após 20 segundos. Toque novamente para outra tentativa.",
     aborted: "A escuta foi interrompida.",
   };
-  return (
-    messages[code] ??
-    "Não foi possível reconhecer a fala agora. Tente novamente ou continue por escrito."
-  );
+  return messages[code] ?? "Não foi possível reconhecer a fala agora. Tente novamente ou continue por escrito.";
 }

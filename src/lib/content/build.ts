@@ -1,12 +1,12 @@
 import type { Lesson, Level, Step } from "../curriculum";
 import type { LessonDraft, ModuleDraft } from "./types";
 
-export const contentVersion = "2026-09-06.1";
-export const sourceIdsForLevel = (level: Level) => [
+export const contentVersion = "2026-09-06.2";
+export const sourceIdsForLevel = (level: Level) => ["B2", "C1", "C2"].includes(level) ? ["cefr", "cefr-global", "cefr-spoken"] : [
   "cefr",
-  level === "B1" ? "bc-grammar-b1" : "bc-grammar-a1",
+  ["B1", "B2", "C1", "C2"].includes(level) ? "bc-grammar-b1" : "bc-grammar-a1",
   "bc-vocabulary",
-  level === "B1" ? "bc-reading-b1" : "bc-reading-a1",
+  ["B1", "B2", "C1", "C2"].includes(level) ? "bc-reading-b1" : "bc-reading-a1",
 ];
 
 function rotate(items: string[], shift: number) {
@@ -41,6 +41,7 @@ export function buildLesson(
       body: "Leia o texto completo. Na próxima etapa, você vai interpretar uma informação dele.",
       english: data.dialogue,
       translation: data.dialogueTranslation,
+      translationSummary: ["B2", "C1", "C2"].includes(module.level),
     },
     {
       kind: "choice",
@@ -48,6 +49,7 @@ export function buildLesson(
       body: data.question,
       english: data.dialogue,
       translation: data.dialogueTranslation,
+      translationSummary: ["B2", "C1", "C2"].includes(module.level),
       options: rotate(data.choices, position + 1),
       answer: data.choices[0],
       explanation: data.explanation,
@@ -73,6 +75,8 @@ export function buildLesson(
       kind: "production",
       title: "Produza com suas palavras",
       body: data.production,
+      checklist: data.productionChecklist,
+      speakingTask: data.speakingTask,
     },
     {
       kind: "summary",
@@ -87,7 +91,7 @@ export function buildLesson(
     title: data.title,
     englishTitle: data.example,
     level: module.level,
-    minutes: module.level === "B1" ? 9 : 7,
+    minutes: ["C1", "C2"].includes(module.level) ? 20 : module.level === "B2" ? 15 : module.level === "B1" ? 9 : 7,
     moduleId: module.id,
     sourceIds: sourceIdsForLevel(module.level),
     steps,
@@ -96,11 +100,23 @@ export function buildLesson(
 
 export const curriculumSources = [
   {
+    id: "cefr-global",
+    title: "Conselho da Europa — escala global A1–C2",
+    url: "https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale",
+    scope: "Objetivos comunicativos dos níveis avançados. As lições são autorais e não constituem cobertura integral ou certificação.",
+  },
+  {
+    id: "cefr-spoken",
+    title: "Conselho da Europa — aspectos qualitativos da fala",
+    url: "https://www.coe.int/en/web/common-european-framework-reference-languages/table-3-cefr-3.3-common-reference-levels-qualitative-aspects-of-spoken-language-use",
+    scope: "Referência para prática de precisão, fluidez, interação e coerência. O app não atribui nível de proficiência pela transcrição.",
+  },
+  {
     id: "cefr",
     title: "Conselho da Europa — descrições dos níveis CEFR",
     url: "https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions",
     scope:
-      "Referência de progressão comunicativa. Os rótulos A1–B1 deste curso são orientativos, não certificação.",
+      "Referência de progressão comunicativa. Os rótulos A1–C2 deste curso são orientativos, não certificação.",
   },
   {
     id: "bc-grammar-a1",

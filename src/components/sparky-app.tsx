@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
+import { levels, levelDescriptions } from "@/lib/levels";
 import {
   lessons,
   type Lesson,
@@ -81,7 +82,7 @@ function readProgress(userId: string): Progress {
     return {
       completed: clean(saved.completed, true),
       reviews: clean(saved.reviews),
-      level: ["A1", "A2", "B1"].includes(saved.level) ? saved.level : "A1",
+      level: levels.includes(saved.level) ? saved.level : "A1",
     } as Progress;
   } catch {
     return emptyProgress;
@@ -595,7 +596,7 @@ export default function SparkyApp() {
               <>
                 <section className="review-guidance" aria-label="Como usar a revisão">
                   <strong>{due ? `${due} ${due === 1 ? "revisão vence" : "revisões vencem"} hoje.` : "Nenhuma revisão vence hoje."}</strong>
-                  <p>Recupere a resposta antes de consultar exemplos ou explicações. Revelar o contexto marca a tentativa como apoiada.</p>
+                  <p>Leia o enunciado e tente responder antes de consultar explicações ou tradução. O texto da pergunta fica visível; consultar ajuda registra apoio.</p>
                 </section>
                 {dueLessons.length > 0 ? (
                   <section className="review-section" aria-labelledby="due-review-heading">
@@ -679,9 +680,7 @@ export default function SparkyApp() {
                       save({ ...progress, level: event.target.value as Level })
                     }
                   >
-                    <option value="A1">A1 · Iniciante</option>
-                    <option value="A2">A2 · Básico</option>
-                    <option value="B1">B1 · Intermediário</option>
+                    {levels.map(level => <option key={level} value={level}>{level} · {levelDescriptions[level]}</option>)}
                   </select>
                 </label>
                 <button
@@ -817,15 +816,9 @@ function LoginScreen() {
               />
             </div>
             <div className="login-levels">
-              <span>
-                <strong>A1</strong> Primeiras conversas
-              </span>
-              <span>
-                <strong>A2</strong> Situações do dia a dia
-              </span>
-              <span>
-                <strong>B1</strong> Ideias e opiniões
-              </span>
+              <span><strong>A1–A2</strong> Primeiras conversas</span>
+              <span><strong>B1–B2</strong> Comunicação independente</span>
+              <span><strong>C1–C2</strong> Precisão e nuance</span>
             </div>
           </section>
           <section className="login-island" aria-labelledby="login-heading">

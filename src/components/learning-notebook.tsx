@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { lessons, type Lesson } from "@/lib/curriculum";
 import { contentVersion } from "@/lib/content/build";
-import { blankWorkspace, updateWorkspace, type LearningWorkspace } from "@/lib/learning-local";
+import { blankWorkspace, updateWorkspace, writingLimit, type LearningWorkspace } from "@/lib/learning-local";
 
 export default function LearningNotebook({ userId, workspace, onOpen }: {
   userId: string; workspace: LearningWorkspace; onOpen: (lesson: Lesson, review?: boolean) => void;
@@ -58,7 +58,7 @@ export default function LearningNotebook({ userId, workspace, onOpen }: {
     <section className="profile-card notebook-section">
       <h2>Escrita e novas versões</h2><p>Seus textos permanecem neste dispositivo. Revise clareza, estrutura e vocabulário; a auto-revisão não atribui uma nota automática.</p>
       {!workspace.writings.length && <p>As produções escritas das lições aparecerão aqui.</p>}
-      {editing && <div className="production-workspace"><label htmlFor="writing-revision">Sua nova versão</label><textarea id="writing-revision" lang="en" rows={7} maxLength={4000} value={editing.text} onChange={e => setEditing({ ...editing, text: e.target.value })} />
+      {editing && <div className="production-workspace"><label htmlFor="writing-revision">Sua nova versão</label><textarea id="writing-revision" lang="en" rows={7} maxLength={writingLimit} value={editing.text} onChange={e => setEditing({ ...editing, text: e.target.value })} />
         <button className="primary-button" disabled={!editing.text.trim()} onClick={() => {
           const ok = updateWorkspace(userId, current => ({ ...current, writings: [...current.writings, { ...editing, id: crypto.randomUUID(), contentVersion, createdAt: new Date().toISOString() }].slice(-100) }));
           if (ok) { setEditing(null); setMessage("Nova versão salva; a anterior foi mantida."); } else setMessage("Não foi possível salvar. Copie seu texto antes de sair.");

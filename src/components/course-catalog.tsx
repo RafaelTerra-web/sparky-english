@@ -10,6 +10,7 @@ import {
   type Level,
 } from "@/lib/curriculum";
 import { curriculumSources } from "@/lib/content/build";
+import { levels, levelDescriptions } from "@/lib/levels";
 
 export function CourseCatalog({
   level,
@@ -61,7 +62,7 @@ export function CourseCatalog({
         role="group"
         aria-label="Filtrar por nível"
       >
-        {(["all", "A1", "A2", "B1"] as const).map((item) => (
+        {(["all", ...levels] as const).map((item) => (
           <button
             key={item}
             aria-pressed={selectedLevel === item}
@@ -69,13 +70,7 @@ export function CourseCatalog({
           >
             <strong>{item === "all" ? "Todos" : item}</strong>
             <span>
-              {item === "all"
-                ? "Trilha completa"
-                : item === "A1"
-                  ? "Fundamentos"
-                  : item === "A2"
-                    ? "Situações cotidianas"
-                    : "Ideias e autonomia"}
+              {item === "all" ? "Trilha A1–C2" : levelDescriptions[item]}
             </span>
             <small>
               {
@@ -211,7 +206,7 @@ export function CourseCatalog({
       <details className="curriculum-references">
         <summary>Sobre o conteúdo e as referências</summary>
         <p>
-          114 lições novas e 6 lições iniciais preservadas. Textos e exercícios
+          150 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
           próprios, com explicações em PT-BR. A produção escrita é uma atividade
           de auto-revisão, sem nota ou correção automática. A trilha atual não
           avalia compreensão oral nem pronúncia.

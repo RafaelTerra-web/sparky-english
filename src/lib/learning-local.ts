@@ -1,4 +1,5 @@
 import { contentVersion } from "./content/build.ts";
+export const writingLimit = 10000;
 
 export type Attempt = {
   id: string; lessonId: string; stepId: string; answer: string;
@@ -33,16 +34,15 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
       Number.isSafeInteger(p.index) && p.index >= 0 && p.index < 30 && string(p.answer) &&
       Array.isArray(p.tokens) && p.tokens.length <= 100 && p.tokens.every(t => Number.isSafeInteger(t) && t >= 0 && t < 100) &&
       typeof p.checked === "boolean" && typeof p.correct === "boolean" && typeof p.translation === "boolean" && typeof p.assisted === "boolean" &&
-      string(p.receipt) && string(p.draft) && p.draft.length <= 4000 && date(p.updatedAt))
+      string(p.receipt) && string(p.draft) && p.draft.length <= writingLimit && date(p.updatedAt))
     .map(([key, p]) => [key, {
       ...p,
-      // Checkpoints saved before retrieval-first reviews have no context field.
-      // Keep them resumable while defaulting to the safer hidden-context state.
+      // The disclosure state is independent of the question's visible context.
       contextVisible: typeof p.contextVisible === "boolean" ? p.contextVisible : false,
     }]));
-  const writings = Array.isArray(value.writings) ? value.writings.filter(w => w && string(w.id) && string(w.lessonId) && string(w.text) && w.text.length <= 4000 && date(w.createdAt)) : [];
+  const writings = Array.isArray(value.writings) ? value.writings.filter(w => w && string(w.id) && string(w.lessonId) && string(w.text) && w.text.length <= writingLimit && date(w.createdAt)) : [];
   for (const p of Object.values(value.checkpoints || {})) {
-    if (p && p.contentVersion !== contentVersion && string(p.lessonId) && string(p.draft) && p.draft.trim() && p.draft.length <= 4000 && date(p.updatedAt) &&
+    if (p && p.contentVersion !== contentVersion && string(p.lessonId) && string(p.draft) && p.draft.trim() && p.draft.length <= writingLimit && date(p.updatedAt) &&
       !writings.some(w => w.lessonId === p.lessonId && w.text === p.draft)) {
       writings.push({ id: `recovered:${p.lessonId}:${p.updatedAt}`, lessonId: p.lessonId, text: p.draft, createdAt: p.updatedAt, contentVersion: p.contentVersion });
     }

@@ -1,141 +1,74 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  BrowserSpeechProvider,
-  compareTranscript,
-  normalizeSpeech,
-  mascotVoiceProfiles,
-  recognitionMessage,
-} from "../src/lib/speech.ts";
+import { BrowserSpeechProvider, compareTranscript, normalizeSpeech, chooseTranscript, recognitionMessage } from "../src/lib/speech.ts";
 
-test("speech text comparison handles punctuation, contractions, word order and repeated words without a pronunciation score", () => {
+test("proper-name spelling variants are accepted without loosening the rest of the sentence", () => {
   assert.equal(normalizeSpeech("Hi, I’m Ana!"), "hi i am ana");
-  assert.equal(compareTranscript("Hi, I'm Ana.", "Hi I am Ana").exact, true);
-  assert.equal(
-    compareTranscript("I can do it.", "I cannot do it.").exact,
-    false,
-  );
-  const repeat = compareTranscript("I think I can.", "I think can");
-  assert.equal(repeat.words.filter((w) => w.recognized).length, 3);
-  assert.equal(compareTranscript("I like her.", "Her like I").exact, false);
-  assert.equal(compareTranscript("", "").exact, false);
-  assert.equal("score" in repeat, false);
-});
-test("unsupported environments have a safe fallback and mascot profiles stay within synthesis bounds", () => {
-  const p = new BrowserSpeechProvider();
-  assert.equal(p.canSpeak(), false);
-  assert.equal(p.canRecognize(), false);
-  assert.deepEqual(p.voices(), []);
-  for (const profile of Object.values(mascotVoiceProfiles)) {
-    assert.ok(profile.pitch >= 0 && profile.pitch <= 2);
-    assert.ok(profile.rate >= 0.1 && profile.rate <= 10);
+  for (const [target, heard] of [["Hi, I'm Ana.", "Hi I am Anna"], ["Sara knows John.", "Sarah knows Jon"], ["I'm Sofia.", "I am Sophia"]]) {
+    const result = compareTranscript(target, heard);
+    assert.equal(result.exact, true); assert.equal(result.nameVariantAccepted, true);
   }
-  assert.match(recognitionMessage("network"), /internet/);
-  assert.match(recognitionMessage("not-allowed"), /microfone/);
+  for (const [target, heard] of [
+    ["I can help Ana.", "I cannot help Anna"], ["Ana has two books.", "Anna has three books"],
+    ["I'm Ana.", "I am Anna and this is a joke"], ["Ana likes Sara.", "Sarah likes Anna"],
+    ["I think I can.", "I think can"], ["I'm Ana.", "I am Emma"], ["", ""],
+  ]) assert.equal(compareTranscript(target, heard).exact, false, target + " / " + heard);
+  assert.equal(compareTranscript("I can't do it.", "I can not do it").exact, true);
+  assert.equal(compareTranscript("We haven't finished.", "We have not finished").exact, true);
+  assert.equal(compareTranscript("What is your name?", "What's your name").exact, true);
+  assert.equal(compareTranscript("He's a teacher.", "He is a teacher").exact, true);
+  assert.equal(compareTranscript("Ana is twenty years old.", "Anna is 20 years old").exact, true);
+  assert.equal(compareTranscript("Ana is twenty years old.", "Anna is 21 years old").exact, false);
+  assert.equal(compareTranscript("It is 1.5 metres.", "It is one point five metres").exact, true);
+  assert.equal(compareTranscript("It is 1.5 metres.", "It is 1 5 metres").exact, false);
+  assert.equal(compareTranscript("It is -5 degrees.", "It is five degrees").exact, false);
+  assert.equal(compareTranscript("It is -5 degrees.", "It is minus five degrees").exact, true);
+  assert.equal(compareTranscript("He has finished.", "He is finished").exact, false);
+  assert.deepEqual(compareTranscript("I'm Ana.", "I am Anna hello").extraWords, ["hello"]);
+  assert.equal("score" in compareTranscript("Hello.", "Hello."), false);
 });
-test("browser adapter speaks selected English voice and aborts recognition on result, error, stop and timeout", (t) => {
-  let recognition,
-    utterance,
-    cancelled = 0;
+test("comparison is bounded and extra or repeated speech cannot create a match", () => {
+  const result = compareTranscript("Hello.", "Hello ".repeat(10000));
+  assert.equal(result.exact, false); assert.equal(result.limited, true);
+  assert.ok(result.extraWords.length <= 160);
+  assert.equal(compareTranscript("Ana likes tea.", "Anna likes tea tea").exact, false);
+  assert.equal(chooseTranscript("I'm Ana.", ["I am Emma", "I am Anna"]), "I am Anna");
+  assert.equal(chooseTranscript("I like tea.", ["I like", "like tea"]), "I like");
+});
+test("recognition lifecycle prevents duplicate and stale callbacks and always stops the microphone", t => {
+  const instances = [];
   class MockRecognition {
-    constructor() {
-      // eslint-disable-next-line @typescript-eslint/no-this-alias -- Expose the constructed test double to drive browser events.
-      recognition = this;
-    }
-    start() {
-      this.started = true;
-      this.onstart?.();
-    }
-    abort() {
-      this.aborted = true;
-    }
+    constructor() { instances.push(this); }
+    start() { this.onstart?.(); }
+    abort() { this.aborted = true; }
   }
-  class MockUtterance {
-    constructor(text) {
-      this.text = text;
-    }
-  }
-  const english = {
-    voiceURI: "en-test",
-    name: "Test English",
-    lang: "en-US",
-    localService: true,
-  };
-  globalThis.window = {
-    isSecureContext: true,
-    SpeechRecognition: MockRecognition,
-    SpeechSynthesisUtterance: MockUtterance,
-    speechSynthesis: {
-      getVoices: () => [english, { ...english, voiceURI: "pt", lang: "pt-BR" }],
-      speak: (value) => {
-        utterance = value;
-      },
-      cancel: () => cancelled++,
-    },
-  };
-  globalThis.SpeechSynthesisUtterance = MockUtterance;
   const provider = new BrowserSpeechProvider();
-  t.after(() => {
-    provider.stop();
-    delete globalThis.window;
-    delete globalThis.SpeechSynthesisUtterance;
-  });
+  assert.equal(provider.canRecognize(), false);
+  globalThis.window = { isSecureContext: true, SpeechRecognition: MockRecognition };
+  t.after(() => { provider.stop(); delete globalThis.window; });
   t.mock.timers.enable({ apis: ["setTimeout"] });
-  assert.equal(provider.voices().length, 1);
-  let playbackEnded = false;
-  provider.speak(
-    "I'm Ana.",
-    { voiceId: "en-test", mascot: "pinky", slow: true },
-    () => {
-      playbackEnded = true;
-    },
-  );
-  assert.equal(utterance.lang, "en-US");
-  assert.equal(utterance.pitch, 1.4);
-  assert.equal(utterance.rate, 0.72);
-  utterance.onend();
-  assert.equal(playbackEnded, true);
-  let heard = "",
-    ended = 0,
-    error = "";
-  const callbacks = {
-    onStart() {},
-    onResult: (value) => (heard = value),
-    onEnd: () => ended++,
-    onError: (value) => (error = value),
-  };
+  let heard = "", ends = 0, error = "";
+  const callbacks = { onStart() {}, onResult: value => { heard = value; }, onEnd: () => ends++, onError: value => { error = value; } };
   provider.recognize("en-US", callbacks);
+  let recognition = instances.at(-1);
+  assert.equal(recognition.maxAlternatives, 3);
   assert.equal(recognition.continuous, false);
-  assert.equal(recognition.lang, "en-US");
-  recognition.onresult({
-    results: [{ isFinal: true, 0: { transcript: "I am Ana" } }],
-  });
-  assert.equal(heard, "I am Ana");
-  assert.equal(recognition.aborted, true);
-  assert.equal(ended, 1);
+  const stale = recognition.onresult;
+  recognition.onresult({ results: [{ isFinal: true, length: 2, 0: { transcript: "I am Anna" }, 1: { transcript: "I am Ana" } }] });
+  assert.equal(heard, "I am Anna"); assert.equal(ends, 1); assert.equal(recognition.aborted, true);
+  stale({ results: [{ isFinal: true, 0: { transcript: "stale" } }] });
+  assert.equal(heard, "I am Anna");
   provider.recognize("en-US", callbacks);
+  recognition = instances.at(-1);
   recognition.onerror({ error: "not-allowed" });
-  assert.equal(error, "not-allowed");
-  assert.equal(recognition.aborted, true);
-  assert.equal(ended, 2);
+  assert.equal(error, "not-allowed"); assert.equal(ends, 2);
   provider.recognize("en-US", callbacks);
-  const lateResult = recognition.onresult;
-  provider.stop();
-  lateResult({
-    results: [{ isFinal: true, 0: { transcript: "must not be delivered" } }],
-  });
-  assert.equal(heard, "I am Ana");
-  assert.equal(recognition.aborted, true);
-  provider.recognize("en-US", callbacks);
+  recognition = instances.at(-1);
   t.mock.timers.tick(20001);
-  assert.equal(error, "timeout");
-  assert.equal(recognition.aborted, true);
-  assert.equal(ended, 3);
-  provider.speak(
-    "Hello.",
-    { voiceId: "en-test", mascot: "sparky", slow: false },
-    () => {},
-  );
-  provider.stop();
-  assert.equal(cancelled, 1);
+  assert.equal(error, "timeout"); assert.equal(ends, 3); assert.equal(recognition.aborted, true);
+  provider.recognize("en-US", callbacks);
+  recognition = instances.at(-1);
+  const lateEnd = recognition.onend;
+  provider.stop(); lateEnd(); assert.equal(ends, 3);
+  assert.match(recognitionMessage("network"), /internet/);
 });

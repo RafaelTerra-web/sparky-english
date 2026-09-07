@@ -22,7 +22,7 @@ export const a2CommunicationModules: ModuleDraft[] = [
         vocabulary:
           "go straight — siga em frente\nturn left — vire à esquerda\ncorner — esquina",
         pitfall:
-          "Em uma pergunta indireta, não inverta get e to: how to get to the library é a ordem esperada depois de tell me.",
+          "Depois de how to usamos o infinitivo: how to get. O segundo to, em get to the library, introduz o destino; não é parte de uma inversão verbal.",
         dialogue:
           "Ana: Excuse me, could you tell me how to get to the library?\nJo: Go straight for two blocks, then turn left at the bank.\nAna: So I turn left at the bank?\nJo: That's right. The library is on the corner.",
         dialogueTranslation:
@@ -49,9 +49,9 @@ export const a2CommunicationModules: ModuleDraft[] = [
         pitfall:
           "Go to mostra destino; get off indica onde sair. Dizer go off para descer mistura duas ações diferentes em uma situação de transporte.",
         dialogue:
-          "Luca: Excuse me, does this bus go to Central Station?\nDriver: Yes, but you need to get off at Market Street and change there.\nLuca: Thanks. Is Market Street the next stop?\nDriver: It is the second stop.",
+          "Luca: Excuse me, does this bus go to Central Station?\nDriver: Not directly. You need to get off at Market Street and change there.\nLuca: Thanks. Is Market Street the next stop?\nDriver: It is the second stop.",
         dialogueTranslation:
-          "Luca: Com licença, este ônibus vai para a Estação Central?\nMotorista: Vai, mas você precisa descer na Market Street e trocar lá.\nLuca: Obrigado. Market Street é a próxima parada?\nMotorista: É a segunda parada.",
+          "Luca: Com licença, este ônibus vai para a Estação Central?\nMotorista: Não diretamente. Você precisa descer na Market Street e trocar lá.\nLuca: Obrigado. Market Street é a próxima parada?\nMotorista: É a segunda parada.",
         question: "Onde Luca precisa trocar de linha?",
         choices: ["At Market Street.", "At Central Station.", "At the first stop."],
         explanation:
@@ -72,7 +72,7 @@ export const a2CommunicationModules: ModuleDraft[] = [
         vocabulary:
           "without — sem\norder — pedido\ncontains — contém",
         pitfall:
-          "Sem queijo é without cheese, não no cheese quando você descreve o item desejado. No cheese pode soar como uma resposta curta, não como pedido completo.",
+          "Without cheese encaixa a alteração na frase completa. No cheese, please também é um pedido curto natural; use a frase completa quando precisar deixar claro qual item será alterado.",
         dialogue:
           "Mia: Could I have the vegetable sandwich without onions, please?\nServer: Of course. It comes with salad and tomato.\nMia: Great. So it comes without onions?\nServer: Yes, I noted that on your order.",
         dialogueTranslation:

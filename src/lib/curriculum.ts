@@ -2,9 +2,13 @@ import { a1Modules } from "./content/a1.ts";
 import { a2Modules } from "./content/a2.ts";
 import { a2CommunicationModules } from "./content/a2-practice.ts";
 import { b1Modules } from "./content/b1.ts";
+import { b2Modules } from "./content/b2.ts";
+import { c1Modules } from "./content/c1.ts";
+import { c2Modules } from "./content/c2.ts";
 import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
 
-export type Level = "A1" | "A2" | "B1";
+import type { Level } from "./levels";
+export type { Level } from "./levels";
 export type Step = {
   kind:
     | "teach"
@@ -20,9 +24,12 @@ export type Step = {
   body: string;
   english?: string;
   translation?: string;
+  translationSummary?: boolean;
   options?: string[];
   answer?: string;
   explanation?: string;
+  checklist?: string[];
+  speakingTask?: string;
 };
 export type Lesson = {
   id: string;
@@ -276,7 +283,7 @@ const introductoryLessons: Lesson[] = [
   }),
 ];
 
-const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c2Modules];
 export const modules = drafts.map((module, index) => {
   const items = module.lessons.map((draft, position) =>
     buildLesson(draft, module, position),

@@ -1,3 +1,4 @@
+import type { Level } from "../levels";
 export type LessonDraft = {
   /** Published identity: independent of display order. Never reuse. */
   id: string;
@@ -17,11 +18,13 @@ export type LessonDraft = {
   fills: [string, string, string];
   gapExplanation: string;
   production: string;
+  productionChecklist?: string[];
+  speakingTask?: string;
 };
 export type ModuleDraft = {
   id: string;
   title: string;
-  level: "A1" | "A2" | "B1";
+  level: Level;
   description: string;
   legacyId?: string;
   /** Override the visual prerequisite when an optional extension precedes another level. */

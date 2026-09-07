@@ -65,13 +65,12 @@ export default function PrivacyPage() {
       </p>
       <h2>Ouvir a pronúncia</h2>
       <p>
-        A reprodução usa a síntese de voz do navegador e vozes disponibilizadas
-        pelo dispositivo. Algumas são locais; outras podem enviar o texto do
-        exemplo ao serviço de síntese do navegador. O seletor identifica a
-        informação de processamento local fornecida pelo navegador. Apenas a
-        frase do curso é enviada para reprodução, não seus rascunhos ou dados da
-        conta. Os perfis dos mascotes ajustam velocidade e altura; não clonam
-        vozes de pessoas reais.
+        As falas publicadas de Sparky e Pinky são geradas por IA a partir dos
+        exemplos fixos do curso, com o serviço de TTS da OpenAI, e armazenadas
+        como arquivos de áudio. Ouvir uma fala apenas carrega esse arquivo;
+        não envia seus dados, textos ou transcrições à OpenAI. As vozes são
+        predefinidas por mascote. Áudios ainda não publicados aparecem como
+        indisponíveis na lição.
       </p>
       <h2>Prática opcional com microfone</h2>
       <p>

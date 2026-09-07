@@ -5,7 +5,7 @@ import type { Lesson } from "@/lib/curriculum";
 import type { PublicRewardState } from "@/lib/rewards-shared";
 import { contentVersion } from "@/lib/content/build";
 import { isExercise, exerciseId } from "@/lib/study";
-import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey } from "@/lib/learning-local";
+import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey, writingLimit } from "@/lib/learning-local";
 import { SpeechPractice } from "./speech-practice";
 import { MascotFigure } from "./mascot-studio";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
@@ -41,7 +41,7 @@ export default function LessonPlayer({
   const [correct, setCorrect] = useState(Boolean(initial?.correct));
   const [translation, setTranslation] = useState(Boolean(initial?.translation));
   const [assisted, setAssisted] = useState(Boolean(initial?.assisted));
-  const [contextVisible, setContextVisible] = useState(!review || Boolean(initial?.contextVisible));
+  const [contextVisible, setContextVisible] = useState(Boolean(initial?.contextVisible));
   const [draft, setDraft] = useState(recovered?.draft || "");
   const [receipt, setReceipt] = useState(initial?.receipt || "");
   const [verifying, setVerifying] = useState(false);
@@ -50,7 +50,6 @@ export default function LessonPlayer({
   const [savedPhrase, setSavedPhrase] = useState(false);
   const step = steps[index];
   const retrievalExercise = review && isExercise(step);
-  const canSeeContext = !retrievalExercise || contextVisible;
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
@@ -94,7 +93,7 @@ export default function LessonPlayer({
         const result = await response.json();
         if (!response.ok) {
           if (["study-expired", "study-out-of-order"].includes(result.error)) {
-            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(!review);
+            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
             throw new Error("A validação desta prática expirou. Retome os exercícios desde o início; seu rascunho foi preservado.");
           }
           throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Tente novamente; sua resposta continua aqui.");
@@ -122,14 +121,14 @@ export default function LessonPlayer({
         });
       } catch (cause) {
         if (cause instanceof Error && cause.message === "study-incomplete") {
-          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(!review);
+          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false);
           setError("A validação da prática expirou. Retome os exercícios; seus textos foram preservados.");
         } else setError("Não foi possível salvar a conclusão. Verifique a conexão e tente Concluir novamente. Sua prática foi preservada.");
       }
       return;
     }
     setIndex(value => value + 1); setAnswer(""); setTokens([]); setChecked(false);
-    setCorrect(false); setTranslation(false); setAssisted(false); setContextVisible(!review); setSavedPhrase(false);
+    setCorrect(false); setTranslation(false); setAssisted(false); setContextVisible(false); setSavedPhrase(false);
   }
   return (
     <dialog
@@ -189,43 +188,33 @@ export default function LessonPlayer({
               id="lesson-draft"
               lang="en"
               rows={7}
-              maxLength={4000}
+              maxLength={writingLimit}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               placeholder="Escreva sua resposta em inglês…"
             />
+            <p>{draft.trim() ? draft.trim().split(/\s+/).length : 0} palavras · {draft.length}/{writingLimit} caracteres</p>
             <p>
               Seu rascunho é salvo neste dispositivo. Ao avançar ou fechar, uma versão vai para o Caderno. Não há correção automática ou nota.
             </p>
             <strong>Antes de continuar, confira:</strong>
             <ul>
-              <li>Respondi a todas as partes da proposta?</li>
-              <li>Usei a estrutura e o vocabulário estudados?</li>
-              <li>Sujeito, verbo e referência de tempo estão coerentes?</li>
-              <li>
-                Meu texto comunica a ideia sem depender de uma tradução palavra
-                por palavra?
-              </li>
+              {(step.checklist ?? ["Respondi a todas as partes da proposta?", "Usei a estrutura e o vocabulário estudados?", "Sujeito, verbo e referência de tempo estão coerentes?", "Meu texto comunica a ideia sem tradução palavra por palavra?"]).map(item => <li key={item}>{item}</li>)}
             </ul>
+            {step.speakingTask && <aside className="oral-challenge"><h3>Leve a ideia para a fala</h3><p>{step.speakingTask}</p><p>Prática livre, sem gravação ou nota automática. Se possível, peça feedback a um parceiro ou professor.</p></aside>}
           </div>
         )}
-        {retrievalExercise && !contextVisible && (
+        {retrievalExercise && (
           <aside className="review-retrieval-note" aria-label="Estratégia de revisão">
-            <strong>Recupere primeiro.</strong>
-            <p>Escolha com o que você lembra. Se precisar, revele o contexto; a tentativa será registrada com apoio.</p>
-            <button
-              className="secondary-button review-context-button"
-              onClick={() => { setContextVisible(true); setAssisted(true); }}
-            >
-              Ver contexto da lição
-            </button>
+            <strong>Leia o enunciado e tente responder.</strong>
+            <p>O texto e a frase com lacuna fazem parte da pergunta. Consultar explicações ou tradução antes de verificar registra apoio.</p>
           </aside>
         )}
         {isExercise(step) && (
-          <details className="lesson-notes" onToggle={(event) => {
+          <details key={index} open={contextVisible} className="lesson-notes" onToggle={(event) => {
+            setContextVisible(event.currentTarget.open);
             if (event.currentTarget.open) {
               setAssisted(true);
-              if (review) setContextVisible(true);
             }
           }}>
             <summary>Consultar explicação e vocabulário</summary>
@@ -241,12 +230,12 @@ export default function LessonPlayer({
               ))}
           </details>
         )}
-        {retrievalExercise && contextVisible && (
+        {retrievalExercise && assisted && !checked && (
           <p className="review-assistance-status" role="status">
-            Contexto exibido: esta tentativa será registrada com apoio.
+            Você consultou apoio nesta etapa. A tentativa será registrada com apoio.
           </p>
         )}
-        {step.english && canSeeContext && (
+        {step.english && (
           <div
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
             lang="en"
@@ -254,7 +243,7 @@ export default function LessonPlayer({
             {step.english}
           </div>
         )}
-        {step.translation && canSeeContext && (
+        {step.translation && (
           <div className="translation-block">
             <button
               className="text-button"
@@ -262,14 +251,14 @@ export default function LessonPlayer({
               aria-expanded={translation}
             >
               <Languages size={16} />
-              {translation ? "Ocultar tradução" : "Ver tradução"}
+              {step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução" : "Ver tradução"}
             </button>
             {translation && <p>{step.translation}</p>}
           </div>
         )}
         {step.english && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno"}</button>}
         {voiceEnabled && step.english && step.kind === "example" && (
-          <SpeechPractice key={`${lesson.id}-${index}`} text={step.english} initialMascot={mascot} />
+          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} />
         )}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
@@ -348,9 +337,9 @@ export default function LessonPlayer({
         <span>
           {review
             ? retrievalExercise
-              ? contextVisible
-                ? "Contexto consultado nesta prática"
-                : "Tente lembrar antes de consultar o contexto"
+              ? assisted
+                ? "Apoio consultado nesta etapa"
+                : "Tente responder antes de consultar explicações"
               : "Prática de revisão"
             : "Você pode consultar as explicações"}
         </span>
