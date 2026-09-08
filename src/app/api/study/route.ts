@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { readSession, SESSION_COOKIE, sameOrigin, seal, unseal } from "@/lib/auth-session";
 import { gradeAttempt, type StudyReceipt } from "@/lib/study";
+import { accountKey, loadOnboarding } from "@/lib/onboarding-store";
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ error: "origin" }, { status: 403 });
@@ -17,7 +18,8 @@ export async function POST(request: Request) {
       throw new Error("invalid-attempt");
     const previous = body.receipt ? await unseal(body.receipt, `study:${user.id}`) : null;
     if (body.receipt && !previous) throw new Error("study-expired");
-    const result = gradeAttempt({ ...body, previous: previous?.study as StudyReceipt | undefined });
+    const profile = body.lessonId === "a1-1-1" && process.env.SPARKY_ONBOARDING_ENABLED === "true" ? (await loadOnboarding(accountKey(user.id))).profile : null;
+    const result = gradeAttempt({ ...body, learnerName: profile?.name, previous: previous?.study as StudyReceipt | undefined });
     const receipt = await seal({ study: result.receipt }, `study:${user.id}`, 8 * 3600);
     return NextResponse.json({ ...result, receipt }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {

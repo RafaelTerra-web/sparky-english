@@ -178,9 +178,9 @@ export default function Onboarding({
     if (step === "finish" && audioState === "ready")
       segments = [
         { type: "audio", source: "/audio/onboarding/beforeName.wav" },
-        { type: "pause", durationMs: 350 },
+        { type: "pause", durationMs: 80 },
         { type: "audio", source: "/api/onboarding/audio" },
-        { type: "pause", durationMs: 250 },
+        { type: "pause", durationMs: 100 },
         { type: "audio", source: "/audio/onboarding/afterName.wav" },
       ];
     else
@@ -191,7 +191,9 @@ export default function Onboarding({
         },
       ];
     try {
-      await playTimeline(segments, AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]), setSpeaking);
+      await playTimeline(segments, AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]), active => {
+        if (audio.current === controller) setSpeaking(active);
+      });
     } catch {
       if (!controller.signal.aborted)
         setError("O áudio está indisponível. Você pode continuar pelo texto.");

@@ -8,6 +8,8 @@ import { lessonAudio } from "@/lib/voice-assets";
 export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPlayed }: { lessonId: string; text: string; initialMascot?: MascotVoice; onPlayed?: () => void }) {
   const provider = useRef<BrowserSpeechProvider | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
+  const personalAudio = useRef<string | null>(null);
+  const voiceRequest = useRef<AbortController | null>(null);
   const generation = useRef(0);
   const playbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const busyRef = useRef(false);
@@ -21,10 +23,12 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
   const id = useId();
   const mascotName = initialMascot === "sparky" ? "Sparky" : "Pinky";
   const source = lessonAudio(lessonId, text, initialMascot);
+  const personalized = !source && lessonId === "a1-1-1";
   const busy = state !== "idle";
   const comparison = transcript ? compareTranscript(text, transcript) : null;
 
   function release() {
+    voiceRequest.current?.abort();
     generation.current++;
     provider.current?.stop();
     if (playbackTimer.current) clearTimeout(playbackTimer.current);
@@ -52,6 +56,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
     window.addEventListener("pagehide", pagehide);
     return () => {
       clearTimeout(timer); release(); provider.current = null;
+      if (personalAudio.current) URL.revokeObjectURL(personalAudio.current);
       document.removeEventListener("visibilitychange", hide);
       window.removeEventListener("pagehide", pagehide);
     };
@@ -76,11 +81,29 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
     });
   }
   async function speak(rate: 0.75 | 1) {
-    if (!source || busyRef.current) return;
+    if ((!source && !personalized) || busyRef.current) return;
     release(); busyRef.current = true;
     const attempt = generation.current;
     setMessage(""); setState("loading");
-    const sound = new Audio(source);
+    let playbackSource = source;
+    if (personalized) {
+      try {
+        if (!personalAudio.current) {
+          const controller = new AbortController();
+          voiceRequest.current = controller;
+          const response = await fetch("/api/lesson-voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lessonId, text, mascot: initialMascot }), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(25000)]) });
+          if (!response.ok) throw new Error("voice");
+          const blob = await response.blob();
+          if (attempt !== generation.current) return;
+          personalAudio.current = URL.createObjectURL(blob);
+        }
+        playbackSource = personalAudio.current;
+      } catch {
+        if (attempt === generation.current) { release(); setState("idle"); setMessage("Não foi possível preparar a frase com seu nome. Tente novamente mais tarde."); }
+        return;
+      }
+    }
+    const sound = new Audio(playbackSource!);
     sound.playbackRate = rate;
     sound.preservesPitch = true;
     setPlaybackRate(rate);
@@ -104,15 +127,15 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
       </div>
       <p>Ouça a frase, perceba o ritmo e tente repeti-la. {mascotName} lê apenas o conteúdo da lição.</p>
       <div className="speech-buttons">
-        <button className="secondary-button" disabled={busy || !source} onClick={() => speak(1)}>
+        <button className="secondary-button" disabled={busy || (!source && !personalized)} onClick={() => speak(1)}>
           <Volume2 size={17} /> Ouvir natural
         </button>
-        <button className="secondary-button" disabled={busy || !source} onClick={() => speak(0.75)}>
+        <button className="secondary-button" disabled={busy || (!source && !personalized)} onClick={() => speak(0.75)}>
           <Volume2 size={17} /> Ouvir devagar
         </button>
         {busy && <button className="secondary-button" onClick={stop}><Square size={16} /> Parar</button>}
       </div>
-      {!source && <p className="speech-unavailable">O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.</p>}
+      {!source && !personalized && <p className="speech-unavailable">O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.</p>}
       <details className="speech-consent">
         <summary>Praticar com o microfone</summary>
         <p>O navegador pode enviar sua fala ao serviço de reconhecimento dele. O Sparky não guarda gravações nem transcrições. A escuta dura até 20 segundos; você pode parar quando quiser.</p>

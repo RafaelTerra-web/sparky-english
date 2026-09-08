@@ -1,5 +1,6 @@
 import { lessons, type Lesson, type Step } from "./curriculum.ts";
 import { contentVersion } from "./content/build.ts";
+import { personalizeLesson } from "./personalized-lesson.ts";
 
 export const evaluationVersion = "closed-exact-1";
 export const isExercise = (step: Step) =>
@@ -12,9 +13,10 @@ export type StudyReceipt = {
 };
 export function gradeAttempt(input: {
   lessonId: string; review: boolean; stepId: string; answer: string;
-  assisted: boolean; previous?: StudyReceipt | null;
+  assisted: boolean; learnerName?: string; previous?: StudyReceipt | null;
 }, now = Date.now()) {
-  const lesson = lessons.find((item) => item.id === input.lessonId);
+  const original = lessons.find((item) => item.id === input.lessonId);
+  const lesson = original ? personalizeLesson(original, input.learnerName) : undefined;
   if (!lesson) throw new Error("lesson-not-found");
   const exercises = lesson.steps.filter(isExercise);
   const index = exercises.findIndex((step) => exerciseId(lesson, step) === input.stepId);

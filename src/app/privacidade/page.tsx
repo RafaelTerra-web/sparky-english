@@ -81,8 +81,11 @@ export default function PrivacyPage() {
       <p>
         As falas publicadas de Sparky e Pinky são geradas por IA a partir dos
         exemplos fixos do curso, com o serviço de TTS da OpenAI, e armazenadas
-        como arquivos de áudio. Ouvir uma fala apenas carrega esse arquivo;
-        não envia seus dados, textos ou transcrições à OpenAI. As vozes são
+        como arquivos de áudio. Ouvir um exemplo fixo apenas carrega esse arquivo.
+        Ao ouvir uma apresentação personalizada, enviamos à OpenAI a frase do
+        curso com seu nome preferido para gerar a fala completa. Essa gravação
+        fica apenas na memória da lição aberta, sem armazenamento permanente
+        pelo Sparky. Transcrições do microfone não são enviadas por essa função. As vozes são
         predefinidas por mascote. Áudios ainda não publicados aparecem como
         indisponíveis na lição.
       </p>

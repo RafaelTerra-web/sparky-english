@@ -1,4 +1,5 @@
 "use client";
+import { personalizeLesson } from "@/lib/personalized-lesson";
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -402,7 +403,7 @@ export default function SparkyApp() {
   const recommendedReview = resume ? resume.review : Boolean(progress.completed[recommended.id]);
   const open = (lesson: Lesson, review = false) => {
     setNotice("");
-    setActive({ lesson, review });
+    setActive({ lesson: personalizeLesson(lesson, learnerProfile?.name), review });
   };
 
   return (
@@ -829,7 +830,7 @@ function LoginScreen() {
               <div className="sample-note">
                 <span>NA PRIMEIRA LIÇÃO</span>
                 <p lang="en">Hi, I’m Ana.</p>
-                <p>Oi, eu sou a Ana.</p>
+                <p>Oi, eu sou Ana.</p>
                 <div>
                   <span lang="en">I’m</span>
                   <ArrowRight size={13} />
