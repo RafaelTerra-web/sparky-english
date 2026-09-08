@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check, Search } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, Search } from "lucide-react";
 import {
   lessons,
   modules,
@@ -16,10 +16,12 @@ export function CourseCatalog({
   level,
   completed,
   onOpen,
+  onExams,
 }: {
   level: Level;
   completed: Record<string, string>;
   onOpen: (lesson: Lesson) => void;
+  onExams: () => void;
 }) {
   const [selectedLevel, setSelectedLevel] = useState<Level | "all">(level);
   const [query, setQuery] = useState("");
@@ -53,10 +55,13 @@ export function CourseCatalog({
         </span>
       </div>
       <p className="page-description">
-        Siga a ordem sugerida ou procure um assunto. Cada módulo reúne
-        explicação, vocabulário, leitura e prática. Os níveis são orientativos:
-        concluir a trilha não equivale a uma certificação.
+        Escolha seu nível e continue a trilha, ou busque um assunto para praticar.
       </p>
+      <button className="exam-entry secondary-button" onClick={onExams}>
+        <ClipboardCheck size={20} aria-hidden="true" />
+        <span>Simulados · Preparação para intercâmbio</span>
+        <ArrowRight size={17} aria-hidden="true" />
+      </button>
       <div
         className="catalog-levels"
         role="group"
@@ -96,7 +101,7 @@ export function CourseCatalog({
           />
         </label>
         <label>
-          Progresso nesta sessão
+          Seu progresso
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
@@ -205,6 +210,7 @@ export function CourseCatalog({
       </div>
       <details className="curriculum-references">
         <summary>Sobre o conteúdo e as referências</summary>
+        <p>Os níveis são orientativos: concluir a trilha não equivale a uma certificação.</p>
         <p>
           162 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
           próprios, com explicações em PT-BR. A produção escrita é uma atividade

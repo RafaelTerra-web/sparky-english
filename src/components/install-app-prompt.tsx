@@ -28,7 +28,7 @@ function detectPlatform(): { platform: InstallPlatform; safari: boolean } {
   return { platform: "other", safari: false };
 }
 
-export function InstallAppPrompt() {
+export function InstallAppPrompt({ dismissible = true }: { dismissible?: boolean }) {
   const hydrated = useSyncExternalStore(subscribeToHydration, clientSnapshot, serverSnapshot);
   const [promptEvent, setPromptEvent] = useState<InstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
@@ -86,13 +86,13 @@ export function InstallAppPrompt() {
   const platform = detected.platform;
   let dismissedInSession = false;
   if (hydrated) { try { dismissedInSession = sessionStorage.getItem("sparky-install-dismissed") === "1"; } catch { /* Optional preference only. */ } }
-  if (platform === "checking" || platform === "other" || installed || (hydrated && isStandalone()) || dismissed || dismissedInSession) return null;
+  if (platform === "checking" || platform === "other" || installed || (hydrated && isStandalone()) || (dismissible && (dismissed || dismissedInSession))) return null;
   const nativeInstall = platform === "android" && Boolean(promptEvent);
   const title = platform === "ios" ? (/iPhone|iPod/i.test(navigator.userAgent) ? "Instale no iPhone" : "Instale no iPad") : "Instale no Android";
 
   return (
-    <aside className="install-prompt" aria-label="Instalar Sparky English no celular">
-      <button className="install-dismiss" onClick={dismiss} aria-label="Fechar convite de instalação"><X size={17} /></button>
+    <aside className="install-prompt install-inline" aria-label="Instalar Sparky English no celular">
+      {dismissible && <button className="install-dismiss" onClick={dismiss} aria-label="Fechar convite de instalação"><X size={17} /></button>}
       <div className="install-heading">
         <Image src="/icons/sparky-192-v2.png" alt="" width={46} height={46} />
         <div>

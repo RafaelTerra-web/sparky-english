@@ -32,6 +32,7 @@ import {
   type Level,
 } from "@/lib/curriculum";
 import { GoogleLogin } from "./google-login";
+import { InstallAppPrompt } from "./install-app-prompt";
 import dynamic from "next/dynamic";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">Abrindo a lição…</p> });
@@ -115,6 +116,7 @@ export default function SparkyApp() {
   const [loading, setLoading] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
   const [view, setView] = useState<View>("today");
+  const lessonOpener = useRef<HTMLElement | null>(null);
   const lastView = useRef(view);
   useEffect(() => {
     if (lastView.current === view) return;
@@ -455,7 +457,9 @@ export default function SparkyApp() {
           {signingOut ? "Saindo…" : "Sair da conta"}
         </button>
       </aside>
-      <main className="workspace" id="conteudo" tabIndex={-1}>
+      <main className="workspace" id="conteudo" tabIndex={-1} onClickCapture={event => {
+        if (event.target instanceof Element) lessonOpener.current = event.target.closest('button');
+      }}>
         <header className="workspace-header">
           <div className="mobile-brand">
             <Brand />
@@ -491,7 +495,7 @@ export default function SparkyApp() {
           <>
             <div className="page-heading">
               <div>
-                <p className="eyebrow">Olá, {user.name}</p>
+                <p className="eyebrow">Olá, {learnerProfile?.name ?? user.name}</p>
                 <h1>Seu estudo de hoje</h1>
               </div>
               <span className="language-chip">
@@ -507,7 +511,7 @@ export default function SparkyApp() {
                   </span>
                   <h2>{recommended.title}</h2>
                   {!recommendedReview && <p className="english-title" lang="en">{recommended.englishTitle}</p>}
-                  <p className="lesson-description">{recommendedReview ? "Recupere o que aprendeu antes de consultar os exemplos." : recommended.steps[0].body}</p>
+                  <p className="lesson-description">{recommendedReview ? "Recupere o que aprendeu antes de consultar os exemplos." : `Na prática: ${recommended.experience.application}.`}</p>
                   <div className="lesson-meta">
                     <Clock3 size={15} />
                     {recommended.minutes} min<span>•</span>Explicação + prática
@@ -558,6 +562,7 @@ export default function SparkyApp() {
                 </button>
               </aside>
             </div>
+            <InstallAppPrompt />
             <section className="learning-note">
               <span className="note-icon">
                 <Languages size={22} />
@@ -604,11 +609,11 @@ export default function SparkyApp() {
         )}
         {view === "course" && (
           <>
-          <button className="exam-entry secondary-button" onClick={() => setView("exams")}><ClipboardCheck size={20} /> Simulados · Preparação para intercâmbio <ArrowRight size={17} /></button>
           <CourseCatalog
             level={progress.level}
             completed={progress.completed}
             onOpen={open}
+            onExams={() => setView("exams")}
           />
           </>
         )}
@@ -750,10 +755,11 @@ export default function SparkyApp() {
                 <h2>Sobre seu progresso</h2>
                 <p><strong>{reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador."}</strong></p>
                 <p>
-                  Conclusões, revisões, moedas e roupas ficam em um cookie
-                  criptografado ligado à sua conta neste navegador. Fechar a
-                  aba ou sair não apaga esses dados. Rascunhos, histórico e preferências ficam neste dispositivo, separados por conta, e podem ser exportados ou apagados no Caderno. A sincronização entre dispositivos depende da conexão do banco de dados.
+                  {reward.storage === "account"
+                    ? "Suas lições concluídas, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
+                    : "Suas conclusões, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento."}
                 </p>
+                <p>Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.</p>
                 <p>
                   {voiceEnabled
                     ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."
@@ -765,6 +771,7 @@ export default function SparkyApp() {
               </aside>
             </div>
             <button className="secondary-button" onClick={() => setView("shop")}><ShoppingBag size={18} /> Escolher mascote e abrir a loja</button>
+            <InstallAppPrompt dismissible={false} />
           </>
         )}
       </main>
@@ -772,9 +779,9 @@ export default function SparkyApp() {
         {navigation.filter(item => item.id !== "profile" && item.id !== "exams").map((item) => (
           <button
             key={item.id}
-            aria-current={view === item.id ? "page" : undefined}
-            className={view === item.id ? "active" : ""}
-            onClick={() => setView(item.id)}
+            aria-current={view === item.id || (view === "exams" && item.id === "course") ? "page" : undefined}
+            className={view === item.id || (view === "exams" && item.id === "course") ? "active" : ""}
+            onClick={() => { setView(item.id); setNotice(""); }}
           >
             <item.icon size={20} />
             <span>{item.label}</span>
@@ -790,6 +797,7 @@ export default function SparkyApp() {
           mascot={reward.mascot}
           equipped={reward.equipped}
           saving={rewardBusy}
+          openerRef={lessonOpener}
           onClose={() => setActive(null)}
           onFinish={finish}
         />

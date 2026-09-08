@@ -81,6 +81,4 @@
   .shop-v2 .wardrobe-filters { display: grid; grid-template-columns: 1fr 1fr; }
   .store-practice-dialog { padding: 20px; }
   .store-practice-dialog > header { top: -20px; }
-  .mobile-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .mobile-nav button { min-width: 0; padding-inline: 2px; font-size: 10px; }
 }

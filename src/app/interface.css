@@ -1,0 +1,128 @@
+/* Shared layout refinements, loaded after feature styles. Colors stay in the theme tokens. */
+html { scrollbar-gutter: stable; }
+html[data-palette] body { background-repeat: no-repeat; background-size: 100% 100vh; }
+.sidebar { overflow-y: auto; }
+.sidebar nav { margin-top: clamp(24px, 5vh, 62px); }
+.sidebar-course { flex-shrink: 0; }
+.workspace-header > *, .page-heading > *, .profile-person > div { min-width: 0; }
+.profile-person h2, .page-heading h1, .page-heading .eyebrow { overflow-wrap: anywhere; }
+.text-button { min-height: 44px; }
+button > svg { flex-shrink: 0; }
+html[data-palette] body :is(.lesson-card,.study-summary,.profile-card,.profile-note,.review-card,.shop-card,.mock-intro,.mock-report) {
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+html[data-palette] body :is(.recall-card,.writing-plan,.vocabulary-cards>div,.speech-studio,.lesson-identity-card,.conversation-tip,.conversation-listening,.shop-earning,.notebook-section) {
+  box-shadow: none;
+}
+html[data-palette] body .learning-note {
+  margin-block: 24px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-soft);
+  box-shadow: none;
+}
+.learning-note p, .lesson-description { font-size: 14px; }
+.lesson-meta { font-size: 12px; flex-wrap: wrap; }
+.next-lesson .cream-button { min-height: 48px; font-size: 14px; }
+.exam-entry { margin: 0 0 22px; gap: 12px; }
+.exam-entry > span { min-width: 0; }
+.catalog-levels { margin-top: 0; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 8px; }
+.catalog-levels button { padding: 14px 10px; gap: 6px; }
+.catalog-levels strong { font-size: 19px; }
+.catalog-levels span { line-height: 1.45; }
+.catalog-tools > label { min-width: 0; }
+.catalog-tools :is(input,select) { font-size: 16px; }
+.catalog-lesson-copy { min-width: 0; }
+.catalog-lesson-copy strong { line-height: 1.5; }
+.catalog-duration { white-space: nowrap; }
+.catalog-count { font-size: 13px; }
+
+/* Install help stays in document flow; it never covers study controls. */
+.install-prompt.install-inline {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  margin-block: 24px;
+  padding: 20px;
+}
+html[data-palette] body .install-inline { background: var(--surface-soft); box-shadow: none; }
+.install-inline .install-heading h2 { font: 600 18px/1.4 var(--font-geist-sans), sans-serif; }
+.install-inline .install-heading .eyebrow { display: none; }
+.install-inline .install-heading > img { width: 36px; height: 36px; flex-basis: 36px; }
+.install-inline .install-actions button { width: auto; }
+html[data-palette] .install-instructions { background: var(--surface); color: var(--foreground); }
+html[data-palette] .install-instructions p { color: var(--foreground); font-size: 14px; }
+html[data-palette] .install-dismiss { color: var(--muted); }
+html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
+.profile-card > .secondary-button { margin-right: 8px; }
+.profile-layout { grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); }
+.profile-layout > *, .theme-preference, .theme-preference fieldset, .theme-preference-heading > div { min-width: 0; }
+.theme-preference button { min-width: 0; }
+.profile-note a { min-height: 44px; font-size: 13px; }
+.profile-setting { flex-wrap: wrap; }
+.profile-setting select { max-width: 100%; }
+
+/* The illustration must fit its slot, without intrinsic grid sizing pushing the question down. */
+.lesson-illustration { display: block; position: relative; height: clamp(150px, 25vh, 230px); overflow: hidden; }
+.lesson-illustration img { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; }
+.lesson-dialog > header > div { min-width: 0; }
+.lesson-dialog > header p { font-size: 14px; line-height: 1.45; }
+.lesson-dialog > header > span { white-space: nowrap; font-size: 12px; }
+.lesson-body { scrollbar-gutter: stable; }
+.lesson-body h2 { line-height: 1.25; overflow-wrap: anywhere; }
+.lesson-body :is(.step-explanation,.answer-options button) { line-height: 1.7; }
+.lesson-footer-actions { flex-shrink: 0; }
+.lesson-back-button, .lesson-forward-button { min-height: 48px; }
+.answer-feedback { scroll-margin-block: 18px; }
+.notice { gap: 12px; }
+.notice button { flex: 0 0 44px; min-height: 44px; display: grid; place-items: center; }
+
+@media (max-width: 1050px) {
+  .catalog-levels { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .profile-layout { grid-template-columns: minmax(0,1fr); }
+  .shop-v2 .studio-main { grid-template-columns: minmax(0,1fr); }
+  .shop-v2 .studio-main > * { min-width: 0; }
+  .shop-grid { grid-template-columns: repeat(auto-fit,minmax(min(100%,220px),1fr)); }
+}
+@media (max-width: 700px) {
+  html { scrollbar-gutter: auto; }
+  .workspace { padding-inline: max(18px,env(safe-area-inset-left)) max(18px,env(safe-area-inset-right)); }
+  .page-heading { margin-top: 28px; margin-bottom: 22px; }
+  .page-heading h1 { font-size: clamp(28px,8vw,34px); line-height: 1.2; }
+  .page-description { margin-bottom: 20px; font-size: 14px; }
+  .next-lesson { padding: 22px; min-height: 0; }
+  .next-lesson h2 { font-size: 27px; }
+  .next-lesson .lesson-description { padding-right: 0; font-size: 14px; }
+  .next-lesson > .mascot-hero, .next-lesson > .mascot-pinky { width: 100px; height: 100px; margin: 12px auto 0; }
+  .next-lesson .hero-caption { font-size: 8px; letter-spacing: 1px; }
+  .next-lesson .cream-button { width: 100%; }
+  .learning-note { align-items: flex-start; }
+  .catalog-levels button { padding: 12px 9px; min-height: 70px; }
+  .catalog-levels span { display: none; }
+  .catalog-levels small { font-size: 11px; }
+  .catalog-lesson-copy strong { font-size: 15px; }
+  .catalog-lesson-copy > span { font-size: 12px; }
+  .catalog-duration { font-size: 12px; }
+  .catalog-tools { gap: 12px; }
+  .exam-entry { width: 100%; font-size: 13px; padding: 12px; }
+  .mobile-nav { grid-template-columns: repeat(5,minmax(0,1fr)); padding-inline: 8px; }
+  .mobile-nav button { min-height: 54px; font-size: 11px; }
+  .lesson-illustration { height: clamp(140px,23dvh,190px); margin-bottom: 20px; }
+  .lesson-body { padding-top: 20px; scrollbar-gutter: auto; }
+  .lesson-dialog > footer { padding-inline: 12px; }
+  .lesson-footer-actions { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.35fr); gap: 8px; }
+  .lesson-dialog > footer button { min-width: 0; padding-inline: 8px; font-size: 13px; gap: 6px; }
+  .lesson-dialog > footer button svg { width: 16px; }
+  .profile-card { padding: 20px; }
+  .theme-preference { padding: 14px; }
+  .theme-mode-selector button { flex-direction: column; font-size: 12px; padding-inline: 5px; }
+  html[data-palette] :is(input,textarea,select) { font-size: 16px; }
+}
+@media (max-height: 520px) {
+  .lesson-illustration { height: 110px; }
+  .lesson-dialog > header, .lesson-dialog > footer { padding-block: 8px; }
+}

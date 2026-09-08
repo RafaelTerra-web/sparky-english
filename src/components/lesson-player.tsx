@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check, Languages, X } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum";
@@ -22,6 +22,7 @@ export default function LessonPlayer({
   mascot,
   equipped,
   saving,
+  openerRef,
   onClose,
   onFinish,
 }: {
@@ -31,11 +32,14 @@ export default function LessonPlayer({
   mascot: PublicRewardState["mascot"];
   equipped: PublicRewardState["equipped"];
   saving: boolean;
+  openerRef?: RefObject<HTMLElement | null>;
   onClose: () => void;
   onFinish: (receipt: string) => Promise<boolean>;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const feedback = useRef<HTMLDivElement>(null);
   const [recovered] = useState(() => readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)]);
   const [initial] = useState(() => recovered && Date.now() - Date.parse(recovered.updatedAt) < 7 * 3600000 ? recovered : null);
   const steps = review ? lesson.steps.filter(step => isExercise(step) || step.kind === "summary") : lesson.steps;
@@ -63,14 +67,22 @@ export default function LessonPlayer({
   const retrievalExercise = review && isExercise(step);
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
   useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
+    // Safari does not focus buttons on touch; keep the explicit invoking control.
+    const opener = openerRef?.current ?? document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const current = dialog.current;
     current?.showModal();
-    return () => { current?.close(); document.body.style.overflow = previousOverflow; opener?.focus(); };
-  }, []);
-  useEffect(() => { heading.current?.focus(); }, [index]);
+    return () => { current?.close(); document.body.style.overflow = previousOverflow; if (opener?.isConnected) opener.focus({ preventScroll: true }); };
+  }, [openerRef]);
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+    body.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, [index]);
+  useEffect(() => {
+    if (checked) feedback.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    if (error) body.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, [checked, error]);
   useEffect(() => {
     history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
     const saved = saveCheckpoint(userId, { lessonId: lesson.id, review, index, answer, tokens, checked, correct,
@@ -205,7 +217,7 @@ export default function LessonPlayer({
           {index + 1}/{steps.length}
         </span>
       </header>
-      <div className="lesson-body">
+      <div className="lesson-body" ref={body}>
         {error && <p className="study-error" role="alert">{error}</p>}
         {storageError && <p className="study-error" role="alert">O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.</p>}
         {showIllustration && (
@@ -467,6 +479,7 @@ export default function LessonPlayer({
         {checked && (
           <div
             className={`answer-feedback ${correct ? "correct" : "retry"}`}
+            ref={feedback}
             role="status"
           >
             <strong>

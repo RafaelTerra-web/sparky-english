@@ -22,7 +22,7 @@ export function MascotFigure({ mascot, equipped, size = "large", decorative = fa
     {scene?.sceneAssets && <span aria-hidden="true" className="mascot-scenery" style={{ backgroundImage: `image-set(url("${scene.sceneAssets.small}") 1x, url("${scene.sceneAssets.large}") 2x)` }} />}
     <Image src={look?.assetPath ?? (mascot === "pinky" ? "/visuals/pinky-v2.png" : "/visuals/sparky-panda.png")}
       alt={decorative ? "" : `${name}${look ? ` com ${look.name}` : ""}${scene ? ` em ${scene.name}` : ""}`}
-      width={640} height={640} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
+      width={640} height={640} loading={size === "hero" ? "eager" : "lazy"} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
   </div>;
 }
 

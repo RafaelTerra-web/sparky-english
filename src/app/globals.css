@@ -1881,3 +1881,31 @@ html[data-palette="sunset"][data-theme="light"]{--accent:#903752}
 @media (max-width:720px){
   .lesson-illustration{height:clamp(180px,58vw,250px);margin-bottom:22px;border-radius:22px}
 }
+
+/* Text/background pairs for expanded lesson content and secondary states. */
+html[data-theme="light"]{--disabled-text:#58635c}
+html[data-palette="sparky"][data-theme="light"]{--muted:#52665d}
+html[data-palette="beatrice"][data-theme="light"]{--muted:#61536c}
+html[data-palette="ocean"][data-theme="light"]{--muted:#48616d}
+html[data-palette="sunset"][data-theme="light"]{--muted:#68504a}
+html[data-palette="graphite"][data-theme="light"]{--muted:#55606b}
+html[data-palette] :is(.speech-practice,.install-instructions){
+  background:var(--surface-soft);color:var(--foreground);border-color:var(--line);
+}
+html[data-palette] :is(.speech-practice h3,.speech-result>p[lang="en"],.review-guidance strong,.review-empty h2){color:var(--foreground)}
+html[data-palette] :is(.speech-practice p,.review-assistance-status,.review-section-heading>span,.install-instructions p){color:var(--muted)}
+html[data-palette] :is(.speech-consent,.speech-result,.install-browser-note){border-color:var(--line)}
+html[data-palette] :is(.speech-word-comparison .heard,.usage-contrast>div[data-tone="good"]){
+  background:var(--success-soft);color:var(--success);border-color:var(--success);
+}
+html[data-palette] :is(.speech-word-comparison .not-heard,.speech-studio .speech-unavailable,.usage-contrast>div[data-tone="warning"]){
+  background:var(--warning-soft);color:var(--warning);border-color:var(--warning);
+}
+html[data-palette] .usage-contrast>div[data-tone] span{color:inherit}
+html[data-palette] .word-answer button{background:var(--surface);color:var(--foreground);border-color:var(--line)}
+html[data-palette] .word-answer button:disabled{background:var(--disabled-surface);color:var(--disabled-text)}
+html[data-palette] .pronunciation-focus{background:var(--primary);color:var(--on-primary)}
+html[data-palette] .pronunciation-focus span{background:transparent;color:inherit;border:1px solid currentColor}
+html[data-palette] .install-dismiss{color:var(--muted)}
+html[data-palette] .install-dismiss:hover{background:var(--surface-strong);color:var(--foreground)}
+html[data-palette] .install-instructions li>span{background:var(--primary);color:var(--on-primary)}
