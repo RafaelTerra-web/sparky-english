@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generator": "OpenAI built-in GPT Image",
-  "generatedAt": "2026-09-08T19:15:17.320Z",
+  "generatedAt": "2026-09-08T19:46:02.728Z",
   "stylePrompt": "Premium 2D editorial cartoon for a mobile language-learning app. Clearly human characters with simplified proportions, expressive faces and readable gestures. Clean flowing outlines, broad flat colors and minimal cel shading; no photorealism or 3D. Isolated cutout with essential props and transparent alpha; no text, UI, logo or watermark.",
   "strategy": "A contextual illustration for each module, with lesson-specific overrides where available.",
   "assets": [
@@ -39,7 +39,7 @@
       "height": 640,
       "format": "png",
       "alpha": true,
-      "sha256": "b02f3c4e14f42cf24ef76f231fccd090491dbb34e6447e549d350477dabe7660"
+      "sha256": "84733e31e18a3ded9e41ffb079631d784bb844c87d7a078e2d1feee8330f4b61"
     },
     {
       "id": "a1-consumo",
