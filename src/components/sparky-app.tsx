@@ -39,6 +39,8 @@ import {
   type RewardAction,
 } from "./mascot-studio";
 import type { PublicRewardState } from "@/lib/rewards-shared";
+import type { LearnerProfile } from "@/lib/onboarding-shared";
+const Onboarding = dynamic(() => import('./onboarding'));
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
@@ -100,6 +102,9 @@ function clearPrivateStorage() {
 }
 
 export default function SparkyApp() {
+  const [onboardingEnabled, setOnboardingEnabled] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [learnerProfile, setLearnerProfile] = useState<LearnerProfile|null>(null);
   const [user, setUser] = useState<SparkyUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
@@ -154,6 +159,15 @@ export default function SparkyApp() {
           } catch {
             setRewardAvailable(false);
             setProgress(local);
+          }
+          const profileResponse = await fetch('/api/onboarding', {cache:'no-store', signal:controller.signal});
+          if (!profileResponse.ok) throw new Error('profile');
+          const onboarding = await profileResponse.json();
+          setOnboardingEnabled(onboarding.enabled);
+          if (onboarding.enabled) {
+            setLearnerProfile(onboarding.profile);
+            setNeedsOnboarding(!onboarding.profile?.onboardingCompleted || Boolean(onboarding.draft));
+            if (onboarding.profile) setProgress(current => ({...current, level:onboarding.profile.level}));
           }
         } else {
           try {
@@ -246,6 +260,8 @@ export default function SparkyApp() {
       }
       window.google?.accounts?.id?.disableAutoSelect();
       setUser(null);
+      setLearnerProfile(null);
+      setNeedsOnboarding(false);
       setProgress(emptyProgress);
       setReward(emptyRewards);
       setActive(null);
@@ -361,6 +377,10 @@ export default function SparkyApp() {
       </main>
     );
   if (!user) return <LoginScreen />;
+  if (needsOnboarding) return <Onboarding onCancel={() => void logout()} onComplete={profile => {
+    setLearnerProfile(profile); setProgress(current => ({...current,level:profile.level}));
+    setReward(current => ({...current,mascot:profile.mascot}));setNeedsOnboarding(false);
+  }} />;
 
   const completed = Object.keys(progress.completed).length;
   const next =
@@ -671,7 +691,7 @@ export default function SparkyApp() {
                     {user.name.charAt(0).toUpperCase()}
                   </span>
                   <div>
-                    <h2>{user.name}</h2>
+                    <h2>{learnerProfile?.name ?? user.name}</h2>
                     <p>{user.email}</p>
                     <span className="verified-label">
                       <Check size={13} />
@@ -687,7 +707,13 @@ export default function SparkyApp() {
                   <span>Idioma de estudo</span>
                   <strong>Inglês</strong>
                 </div>
-                <label className="profile-setting" htmlFor="study-level">
+                {onboardingEnabled && <button className="secondary-button" onClick={() => setNeedsOnboarding(true)}>Editar preferências · {learnerProfile?.level}</button>}
+                {onboardingEnabled && <button className="secondary-button" onClick={async () => {
+                  if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
+                  const response=await fetch('/api/onboarding',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refuse'})});
+                  if(response.ok){setLearnerProfile(null);setNeedsOnboarding(true);}else setNotice('Não foi possível apagar. Tente novamente.');
+                }}>Apagar personalização</button>}
+                {!onboardingEnabled && <label className="profile-setting" htmlFor="study-level">
                   <span>Nível para recomendar lições</span>
                   <select
                     id="study-level"
@@ -698,7 +724,7 @@ export default function SparkyApp() {
                   >
                     {levels.map(level => <option key={level} value={level}>{level} · {levelDescriptions[level]}</option>)}
                   </select>
-                </label>
+                </label>}
                 <button
                   className="secondary-button"
                   onClick={logout}

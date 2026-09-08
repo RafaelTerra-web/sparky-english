@@ -1,0 +1,5 @@
+.voice-qa
+.env*
+test-results
+playwright-report
+.git

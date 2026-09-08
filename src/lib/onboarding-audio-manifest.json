@@ -1,0 +1,162 @@
+[
+  {
+    "id": "welcome",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "17a30b46bb37a2e5524f0e4647dfb36638bd4bd6666fbe9c8f0a51549abf5da6",
+    "bytes": 528044
+  },
+  {
+    "id": "name",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "e4b0a093f827816b1a463b7d98b5f2e64af770eb93022da60919a377d912f4db",
+    "bytes": 234284
+  },
+  {
+    "id": "age",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "ab5d961763d3cc865139b8b27960eadfc07b7abb8a2111a2dd9517637d9e3b30",
+    "bytes": 236204
+  },
+  {
+    "id": "mascot",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "abbba3b653284dbf5a0819f809d9e84ebabf480d926128bc4c51136b959b47ba",
+    "bytes": 284204
+  },
+  {
+    "id": "level",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "d14bf514ee8a8541a167614804e3f41b7f9a607fcc1fc641037faa0b1c55a780",
+    "bytes": 445484
+  },
+  {
+    "id": "beforeName",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "13ea1a0f3916160813f2a272bd4222079293b5667dbc15f42189209cceb5f262",
+    "bytes": 132524
+  },
+  {
+    "id": "afterName",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "f1d3253d65984e41869db9a4bd7bd8617c2a4400afde10c410535b01f13f9296",
+    "bytes": 301484
+  },
+  {
+    "id": "fallback",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "53d67cd7a44e1e2c86638487faee9d66248cc7930d38c1443bb70b72879c6329",
+    "bytes": 236204
+  },
+  {
+    "id": "placement-v1-a1-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "07e17ab7da6b6496bc4e2c7939d51d9f733716769f24c9cbeb7f72a8aa19d9e5",
+    "bytes": 222764
+  },
+  {
+    "id": "placement-v1-a1-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "3feee0e2160892c1d71be56a72e1bbcaab9668eb71e88be512003b18e226d793",
+    "bytes": 263084
+  },
+  {
+    "id": "placement-v1-a2-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "3225ad0d18cb733004b608182098af3038fd0bf1d1d93c311d83ad35633f1a9b",
+    "bytes": 397484
+  },
+  {
+    "id": "placement-v1-a2-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "df99acfefd1acf4d5c81ae7a6ba742dfc70ed59cfa4c575fccf9560ec6630ab2",
+    "bytes": 422444
+  },
+  {
+    "id": "placement-v1-b1-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "0c24616fae8832684ed154ba6625a193f48414aa6cc9b10eeec4e1741a7baa85",
+    "bytes": 572204
+  },
+  {
+    "id": "placement-v1-b1-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "9bc59fb68640881dc25364f873dea96c7550eab478e05a09a5042fe9e81493a9",
+    "bytes": 522284
+  },
+  {
+    "id": "placement-v1-b2-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "e652e11a77c15e635d21812d2fc455bb229dcda840e22a599b831c2e8f92e8de",
+    "bytes": 691244
+  },
+  {
+    "id": "placement-v1-b2-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "0aa5239375f60de8d4a5e14922c51e58fae738770b2462d7df31812740dc6330",
+    "bytes": 625964
+  },
+  {
+    "id": "placement-v1-c1-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "0f895fd7f42924d1a217c1be7d871d425706ba401aae6b0bafee6471fc9821c8",
+    "bytes": 708524
+  },
+  {
+    "id": "placement-v1-c1-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "c10996b3b11dff3cd704fed846b685f996233176bab1a9be8ace58a8f521df59",
+    "bytes": 844844
+  },
+  {
+    "id": "placement-v1-c2-11",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "4a761d31e729222c625e7acc854777d605b9c487fdff7de8431175a161c05462",
+    "bytes": 794924
+  },
+  {
+    "id": "placement-v1-c2-12",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Achird",
+    "version": 1,
+    "sha256": "9cd135c26396fff7b2b55099644dc47df767375733f43cf2e169bdf300ab88bc",
+    "bytes": 631724
+  }
+]

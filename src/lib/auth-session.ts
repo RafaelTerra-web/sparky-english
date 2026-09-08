@@ -28,11 +28,11 @@ export function googleConfigured() {
   return Boolean(
     process.env.SPARKY_GOOGLE_CLIENT_ID &&
     (process.env.SPARKY_SESSION_SECRET?.length ?? 0) >= 32 &&
-    process.env.SPARKY_ALLOWED_EMAILS?.trim(),
+    (process.env.SPARKY_ALLOWED_EMAILS?.trim() || process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS?.trim()),
   );
 }
 export function emailAllowed(email: string) {
-  const allowed = (process.env.SPARKY_ALLOWED_EMAILS ?? "")
+  const allowed = [process.env.SPARKY_ALLOWED_EMAILS, process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS].filter(Boolean).join(",")
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);

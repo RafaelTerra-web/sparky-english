@@ -31,16 +31,30 @@ export default function PrivacyPage() {
         Contas diferentes usam estados separados.
       </p>
       <p>
-        Essa persistência ainda não é um banco de dados e não sincroniza entre
-        navegadores ou dispositivos. Limpar os cookies do site remove o
-        progresso, saldo e inventário daquele navegador. Alterações simultâneas
-        em abas diferentes podem sobrescrever a mudança mais recente; faça
-        compras em uma aba por vez. Respostas de autenticação e dados da conta
-        não são armazenados no cache offline. Quando a sincronização por conta
-        estiver habilitada pelo administrador, conclusões e recompensas serão
-        migradas para um banco com acesso restrito ao servidor, usando um
-        identificador derivado da conta Google. O Perfil informa o modo ativo.
+        Com a sincronização por conta ativa, conclusões, revisões, moedas e
+        inventário ficam no Supabase, sob um identificador derivado da conta
+        Google. O servidor verifica a sessão e controla os acessos. O Perfil
+        informa o modo ativo. Respostas de autenticação e dados privados não
+        entram no cache offline. Uma falha ao salvar é mostrada ao aluno.
       </p>
+      <h2>Personalização e diagnóstico</h2>
+      <p>Quando o onboarding estiver ativo, guardamos nome preferido, idade,
+        faixa etária, mascote, nível escolhido ou estimado, score interno e
+        evidência do diagnóstico. As etapas confirmadas e respostas do teste
+        permitem retomar em outro dispositivo. Rascunhos abandonados expiram
+        após 30 dias. O teste não constitui certificação oficial de proficiência.</p>
+      <p>Ao confirmar o nome, enviamos somente o nome validado ao Google Gemini
+        para sintetizar a voz Achird do Sparky. Isso ocorre antes da pergunta
+        sobre idade. Menores de 13 anos precisam posteriormente da confirmação
+        de um responsável para concluir; a recusa remove a personalização e
+        o áudio provisório do armazenamento do Sparky. Essa confirmação simples
+        não verifica documentalmente a identidade do responsável.</p>
+      <p>O áudio do nome fica em armazenamento privado, acessível somente à
+        conta autenticada. O áudio provisório deixa de ser acessível em 24 horas
+        e é removido na limpeza diária seguinte. Depois da conclusão, permanece
+        até a mudança do nome ou exclusão da personalização. As preferências
+        podem ser editadas no Perfil. A exclusão de dados nos sistemas do Google
+        segue as condições do fornecedor; o Sparky não controla essa retenção.</p>
       <h2>Caderno, tentativas e retomada</h2>
       <p>O armazenamento local deste navegador guarda sua etapa atual, respostas,
         consultas a explicações e traduções, rascunhos, versões dos textos,
