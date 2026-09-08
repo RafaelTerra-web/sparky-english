@@ -13,18 +13,18 @@ test('every published lesson has both current, nonempty mascot audio files', asy
     assert.equal(manifest[lesson.id].text,text);
     for (const [mascot,profile] of Object.entries(voiceProfiles)) {
       const hash = createHash('sha256').update(JSON.stringify({model:profile.model,text,voice:profile.voice,...('instructions' in profile ? {instructions:profile.instructions} : {})})).digest('hex').slice(0,32);
-      const path = '/audio/mascots/' + hash + '.mp3';
+      const path = '/audio/mascots/' + hash + '.wav';
       assert.equal(manifest[lesson.id][mascot],path,lesson.id + ' / ' + mascot);
       const bytes = await readFile(new URL('../public' + path,import.meta.url));
       assert.ok(bytes.length >= 256 && bytes.length < 4 * 1024 * 1024);
-      assert.ok(bytes.subarray(0,3).toString() === 'ID3' || (bytes[0] === 255 && (bytes[1] & 224) === 224),'MP3 header');
+      assert.equal(bytes.subarray(0,4).toString(), 'RIFF', 'WAV header');
     }
   }
 });
 
-test('Pinky uses the high-definition model while Sparky keeps his expressive profile', () => {
-  assert.equal(voiceProfiles.pinky.model, 'tts-1-hd');
-  assert.equal(voiceProfiles.pinky.voice, 'nova');
-  assert.equal('instructions' in voiceProfiles.pinky, false);
-  assert.equal(voiceProfiles.sparky.model, 'gpt-4o-mini-tts-2025-12-15');
+test('both mascots use Gemini 3.1 with their fixed voices', () => {
+  assert.equal(voiceProfiles.pinky.model, 'gemini-3.1-flash-tts-preview');
+  assert.equal(voiceProfiles.pinky.voice, 'Zephyr');
+  assert.equal(voiceProfiles.sparky.model, 'gemini-3.1-flash-tts-preview');
+  assert.equal(voiceProfiles.sparky.voice, 'Achird');
 });

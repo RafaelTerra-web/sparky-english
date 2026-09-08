@@ -18,7 +18,7 @@ export function ConversationTipCard({tip,mascot}:{tip:ConversationTip;mascot:'sp
   audio.onerror=()=>{setPlaying(false);setError('O áudio não carregou. A dica completa está disponível abaixo.');};
   try{
    if(!cached.current){
-    const response=await fetch(`/audio/tips/${tip.id}-${mascot}.mp3`,{signal:AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])});
+    const response=await fetch(`/audio/tips/${tip.id}-${mascot}.wav`,{signal:AbortSignal.any([controller.signal,AbortSignal.timeout(20000)])});
     if(!response.ok) throw new Error('audio');
     const blob=await response.blob();controller.signal.throwIfAborted();cached.current=URL.createObjectURL(blob);
    }

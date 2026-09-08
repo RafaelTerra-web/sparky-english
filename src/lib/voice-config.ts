@@ -1,5 +1,12 @@
 export const voiceProfiles = {
-  sparky: { model: "gpt-4o-mini-tts-2025-12-15", voice: "cedar", instructions: "Speak as Sparky, a calm, friendly adult English tutor. Natural conversational American English, clear articulation and warm confidence. No cartoon pitch or exaggerated acting. Read exactly the input, without commentary." },
-  // tts-1-hd does not support style instructions. Nova is fixed so Pinky stays consistent.
-  pinky: { model: "tts-1-hd", voice: "nova" },
+  sparky: {
+    model: "gemini-3.1-flash-tts-preview",
+    voice: "Achird",
+    instructions: "Warm, calm adult English tutor with a friendly medium-low register. Natural American English, clear articulation and quiet confidence. No cartoon pitch, theatrical acting, music or commentary.",
+  },
+  pinky: {
+    model: "gemini-3.1-flash-tts-preview",
+    voice: "Zephyr",
+    instructions: "Clear, warm adult English tutor with a curious medium-high register. Natural American English, lively but measured. No childish exaggeration, theatrical acting, music or commentary.",
+  },
 } as const;

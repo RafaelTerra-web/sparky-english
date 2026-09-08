@@ -5,5 +5,5 @@ export function lessonAudio(lessonId: string, text: string, mascot: MascotVoice)
   const item = (manifest as Record<string, VoiceAsset>)[lessonId];
   if (!item || item.text !== text) return null;
   const url = item[mascot];
-  return url && /^\/audio\/mascots\/[a-f0-9]{32}\.mp3$/.test(url) ? url : null;
+  return url && /^\/audio\/mascots\/[a-f0-9]{32}\.wav$/.test(url) ? url : null;
 }

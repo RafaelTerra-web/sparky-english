@@ -1,4 +1,4 @@
-// Offline MP3 decoding audit. No microphone and no paid API.
+// Offline WAV decoding audit. No microphone and no paid API.
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -12,7 +12,7 @@ try {
   await page.evaluate(() => { window.decoder = new AudioContext(); });
   for (const [lessonId,item] of Object.entries(manifest)) {
     for (const mascot of ['sparky','pinky']) {
-      assert.match(item[mascot],/^\/audio\/mascots\/[a-f0-9]{32}\.mp3$/);
+      assert.match(item[mascot],/^\/audio\/mascots\/[a-f0-9]{32}\.wav$/);
       const bytes = await readFile(new URL('public' + item[mascot],root));
       const signal = await page.evaluate(async base64 => {
         const bytes = Uint8Array.from(atob(base64),c => c.charCodeAt(0));

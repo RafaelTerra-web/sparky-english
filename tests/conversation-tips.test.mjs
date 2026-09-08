@@ -28,10 +28,11 @@ test('every tip has both published mascot recordings with matching hashes',async
  for(const tip of conversationTips)for(const mascot of ['sparky','pinky']){
   const asset=manifest.find(a=>a.id===tip.id&&a.mascot===mascot);
   assert.ok(asset);assert.equal(asset.model,voiceProfiles[mascot].model);
-  assert.equal(asset.scriptHash,createHash('sha256').update(JSON.stringify({script:tip.script,profile:voiceProfiles[mascot],version:1})).digest('hex'));
-  assert.equal(asset.url,`/audio/tips/${tip.id}-${mascot}.mp3`);
+  assert.equal(asset.scriptHash,createHash('sha256').update(JSON.stringify({script:tip.script,profile:voiceProfiles[mascot],version:2})).digest('hex'));
+  assert.equal(asset.url,`/audio/tips/${tip.id}-${mascot}.wav`);
   const bytes=await readFile(new URL('../public'+asset.url,import.meta.url));
   assert.equal(bytes.length,asset.bytes);assert.ok(bytes.length>1000);
   assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
+  assert.equal(bytes.subarray(0,4).toString(),'RIFF');
  }
 });

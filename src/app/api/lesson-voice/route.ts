@@ -4,7 +4,7 @@ import { accountKey, loadOnboarding, onboardingDB } from '@/lib/onboarding-store
 import { readBoundedJson } from '@/lib/bounded-json';
 import { lessons } from '@/lib/curriculum';
 import { personalizeLesson } from '@/lib/personalized-lesson';
-import { voiceProfiles } from '@/lib/voice-config';
+import { generateMascotAudio } from '@/lib/gemini-voice';
 export const maxDuration = 30;
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return new Response(null, { status: 403 });
@@ -20,14 +20,7 @@ export async function POST(request: NextRequest) {
     if (typeof body.text !== 'string' || !allowed.includes(body.text)) return new Response(null, { status: 400 });
     const slot = await onboardingDB().rpc('sparky_take_name_audio_slot', { p_account: key });
     if (slot.error || !slot.data) return new Response(null, { status: slot.error ? 503 : 429 });
-    if (!process.env.OPENAI_API_KEY) return new Response(null, { status: 503 });
-    const config = voiceProfiles[body.mascot as keyof typeof voiceProfiles];
-    const response = await fetch('https://api.openai.com/v1/audio/speech', {
-      method: 'POST', headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(20000),
-      body: JSON.stringify({ ...config, input: body.text, response_format: 'mp3' }),
-    });
-    if (!response.ok) return new Response(null, { status: 503 });
-    return new Response(await response.arrayBuffer(), { headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'private, no-store' } });
+    const audio = await generateMascotAudio(body.text, body.mascot as 'sparky' | 'pinky', 'en-US');
+    return new Response(new Uint8Array(audio), { headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'private, no-store' } });
   } catch { return new Response(null, { status: 503 }); }
 }

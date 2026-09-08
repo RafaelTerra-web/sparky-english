@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { conversationTips } from '@/lib/conversation-tips';
 import { voiceProfiles } from '@/lib/voice-config';
+import { generateMascotAudio } from '@/lib/gemini-voice';
 import { onboardingDB } from '@/lib/onboarding-store';
 export const maxDuration = 60;
 export async function POST(request: NextRequest) {
@@ -10,15 +11,12 @@ export async function POST(request: NextRequest) {
  if (!tip || (mascot !== 'sparky' && mascot !== 'pinky')) return new Response(null,{status:400});
  try {
   const profile = voiceProfiles[mascot], storage = onboardingDB().storage.from('sparky-personal-audio');
-  const hash = createHash('sha256').update(JSON.stringify({script:tip.script,profile,version:1})).digest('hex');
-  const path = `tips-v1/${tip.id}-${mascot}.wav`;
+  const hash = createHash('sha256').update(JSON.stringify({script:tip.script,profile,version:2})).digest('hex');
+  const path = `tips-v2/${tip.id}-${mascot}.wav`;
   const cached = await storage.download(path);
   let bytes = cached.data ? Buffer.from(await cached.data.arrayBuffer()) : null;
   if (!bytes) {
-   if (!process.env.OPENAI_API_KEY) throw new Error('unavailable');
-   const response = await fetch('https://api.openai.com/v1/audio/speech', {method:'POST',signal:AbortSignal.timeout(45000),headers:{'Content-Type':'application/json',Authorization:`Bearer ${process.env.OPENAI_API_KEY}`},body:JSON.stringify({...profile,input:tip.script,response_format:'wav'})});
-   if (!response.ok) throw new Error('unavailable');
-   bytes = Buffer.from(await response.arrayBuffer());
+   bytes = await generateMascotAudio(tip.script, mascot, 'pt-BR');
    if (bytes.length < 44 || bytes.length > 2000000 || bytes.toString('ascii',0,4) !== 'RIFF') throw new Error('invalid-audio');
    const upload = await storage.upload(path,bytes,{contentType:'audio/wav',upsert:false});
    if (upload.error) throw new Error('storage');

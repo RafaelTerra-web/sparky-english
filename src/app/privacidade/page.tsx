@@ -80,9 +80,9 @@ export default function PrivacyPage() {
       <h2>Ouvir a pronúncia</h2>
       <p>
         As falas publicadas de Sparky e Pinky são geradas por IA a partir dos
-        exemplos fixos do curso, com o serviço de TTS da OpenAI, e armazenadas
+        exemplos fixos do curso, com o Gemini 3.1 Flash TTS, e armazenadas
         como arquivos de áudio. Ouvir um exemplo fixo apenas carrega esse arquivo.
-        Ao ouvir uma apresentação personalizada, enviamos à OpenAI a frase do
+        Ao ouvir uma apresentação personalizada, enviamos ao Gemini a frase do
         curso com seu nome preferido para gerar a fala completa. Essa gravação
         fica apenas na memória da lição aberta, sem armazenamento permanente
         pelo Sparky. Transcrições do microfone não são enviadas por essa função. As vozes são

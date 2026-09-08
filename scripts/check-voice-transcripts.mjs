@@ -22,10 +22,10 @@ await Promise.all(Array.from({length:3}, async () => {
   while (!failure && next < pending.length) {
     const item = pending[next++];
     try {
-      if (!/^\/audio\/mascots\/[a-f0-9]{32}\.mp3$/.test(item.path)) throw new Error('Invalid audio path');
+      if (!/^\/audio\/mascots\/[a-f0-9]{32}\.wav$/.test(item.path)) throw new Error('Invalid audio path');
       const bytes = await readFile(new URL('public' + item.path, root));
       const form = new FormData();
-      form.set('file', new Blob([bytes], {type:'audio/mpeg'}), 'lesson.mp3');
+      form.set('file', new Blob([bytes], {type:'audio/wav'}), 'lesson.wav');
       form.set('model', model);
       form.set('language', 'en');
       // Deliberately omit a target-text prompt: it would bias this check toward the expected answer.

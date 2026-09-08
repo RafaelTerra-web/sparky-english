@@ -1,4 +1,4 @@
-// Removes only generated MP3 files that are no longer referenced by the current manifest.
+// Removes only generated lesson audio files that are no longer referenced by the current manifest.
 // Dry-run by default. Usage: node scripts/prune-voice-assets.mjs --apply
 import { readFile, readdir, realpath, unlink } from "node:fs/promises";
 import { basename, dirname, relative, resolve, sep } from "node:path";
@@ -14,7 +14,7 @@ if (!folderFromRoot || folderFromRoot.startsWith(".." + sep) || folderFromRoot =
 const manifest = JSON.parse(await readFile(new URL("../src/lib/content/voice-manifest.json", import.meta.url), "utf8"));
 const referenced = new Set(Object.values(manifest).flatMap(item => [item.sparky, item.pinky]).filter(Boolean).map(path => basename(path)));
 const files = (await readdir(folder, { withFileTypes: true }))
-  .filter(entry => entry.isFile() && /^[a-f0-9]{32}\.mp3$/.test(entry.name));
+  .filter(entry => entry.isFile() && /^[a-f0-9]{32}\.(?:mp3|wav)$/.test(entry.name));
 const stale = files.filter(entry => !referenced.has(entry.name));
 console.log(JSON.stringify({ folder, files: files.length, referenced: referenced.size, stale: stale.length, mode: process.argv.includes("--apply") ? "apply" : "dry-run" }));
 
