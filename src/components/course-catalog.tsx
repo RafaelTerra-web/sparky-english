@@ -213,9 +213,9 @@ export function CourseCatalog({
         <p>Os níveis são orientativos: concluir a trilha não equivale a uma certificação.</p>
         <p>
           162 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
-          próprios, com explicações em PT-BR. A produção escrita é uma atividade
-          de auto-revisão, sem nota ou correção automática. A trilha atual não
-          certifica compreensão oral nem pronúncia; os microtreinos oferecem prática e feedback textual.
+          próprios, com explicações em português brasileiro. Nas atividades de escrita,
+          você cria e revisa seu texto, sem nota ou correção automática. A trilha atual não
+          certifica compreensão oral nem pronúncia; os treinos oferecem prática e orientações por escrito.
         </p>
         <p>
           As fontes abaixo orientaram a organização e a consulta de estruturas.

@@ -26,7 +26,7 @@ export default function LearningNotebook({ userId, workspace, onOpen, themeId }:
   }
   const theme = notebookThemeCatalog.find(item => item.id === themeId);
   return <div className={`learning-notebook ${theme?.className ?? ""}`}>
-    <div className="page-heading"><div><p className="eyebrow">Aprender com evidências</p><h1>Seu caderno de inglês</h1></div></div>
+    <div className="page-heading"><div><p className="eyebrow">Acompanhe seu aprendizado</p><h1>Seu caderno de inglês</h1></div></div>
     {message && <p role="status" className="notice">{message}</p>}
     <section className="profile-card notebook-section">
       <h2>Seu plano de estudo</h2>
@@ -42,14 +42,14 @@ export default function LearningNotebook({ userId, workspace, onOpen, themeId }:
     </section>
     <section className="profile-card notebook-section">
       <h2>O que sua prática mostra</h2>
-      <p>{workspace.attempts.length} tentativas registradas neste dispositivo. Na tentativa mais recente de cada exercício: <strong>{independent} acertos sem ajuda</strong> e <strong>{practice.length} exercícios para recuperar sem apoio</strong>.</p>
-      <p>Consultar uma explicação faz parte de aprender. Acertar após consultar ou tentar de novo não demonstra, sozinho, retenção. Estes dados não são uma nota de proficiência, escrita ou pronúncia.</p>
-      <h3>Laboratório de erros e apoio</h3>
-      {!practice.length && <p>Quando você errar ou consultar apoio, o exercício aparecerá aqui para uma nova prática.</p>}
+      <p>{workspace.attempts.length} tentativas registradas neste dispositivo. Considerando a resposta mais recente de cada exercício: <strong>{independent} acertos sem ajuda</strong> e <strong>{practice.length} exercícios para praticar novamente</strong>.</p>
+      <p>Consultar uma explicação faz parte de aprender. Depois, tente responder sem ajuda para conferir o que lembra. Estes registros não avaliam seu nível de inglês, sua escrita ou sua pronúncia.</p>
+      <h3>Exercícios para rever</h3>
+      {!practice.length && <p>Os exercícios em que você errar ou consultar uma explicação aparecerão aqui para praticar novamente.</p>}
       <div className="notebook-list">{practice.slice(-20).reverse().map(attempt => {
         const lesson = lessons.find(l => l.id === attempt.lessonId);
         return lesson && <article key={attempt.stepId}>
-          <h4>{lesson.title}</h4><p>{attempt.correct ? "Acerto com apoio" : "Resposta para rever"} · {new Date(attempt.createdAt).toLocaleDateString("pt-BR")}</p>
+          <h4>{lesson.title}</h4><p>{attempt.correct ? "Acerto com ajuda" : "Resposta para rever"} · {new Date(attempt.createdAt).toLocaleDateString("pt-BR")}</p>
           <details><summary>Consultar sua resposta e a explicação</summary><p lang="en">{attempt.answer}</p><p>{lesson.steps.find(s => `${lesson.id}:${s.kind}` === attempt.stepId)?.explanation}</p></details>
           <button className="secondary-button" onClick={() => onOpen(lesson, true)}>Praticar novamente</button>
         </article>;
@@ -61,7 +61,7 @@ export default function LearningNotebook({ userId, workspace, onOpen, themeId }:
       <div className="notebook-list">{workspace.vocabulary.map(item => <article key={item.id}><p lang="en">{item.english}</p><details><summary>Ver significado</summary><p>{item.translation || "Sem tradução cadastrada."}</p></details></article>)}</div>
     </section>
     <section className="profile-card notebook-section">
-      <h2>Escrita e novas versões</h2><p>Seus textos permanecem neste dispositivo. Revise clareza, estrutura e vocabulário; a auto-revisão não atribui uma nota automática.</p>
+      <h2>Escrita e novas versões</h2><p>Seus textos ficam salvos neste dispositivo. Releia o que escreveu e revise a clareza, a estrutura e o vocabulário. Esta revisão não gera uma nota automática.</p>
       {!workspace.writings.length && <p>As produções escritas das lições aparecerão aqui.</p>}
       {editing && <div className="production-workspace"><label htmlFor="writing-revision">Sua nova versão</label><textarea id="writing-revision" lang="en" rows={7} maxLength={writingLimit} value={editing.text} onChange={e => setEditing({ ...editing, text: e.target.value })} />
         <button className="primary-button" disabled={!editing.text.trim()} onClick={() => {

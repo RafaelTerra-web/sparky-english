@@ -245,13 +245,13 @@ export default function LessonPlayer({
             : step.kind === "summary"
               ? "Resumo da lição"
               : step.kind === "production"
-                ? "Escrita e auto-revisão"
+                ? "Escrita e revisão"
                 : step.kind === "vocabulary"
                   ? "Palavras em contexto"
                   : step.kind === "pronunciation"
-                    ? "Microtreino · 20–90 segundos"
+                    ? "Treino de pronúncia · 20–90 segundos"
                     : step.kind === "error_analysis"
-                      ? "Erro como pista"
+                      ? "Aprenda com os erros"
                   : isExercise(step)
                     ? "Sua vez"
                     : "Observe o exemplo"}
@@ -273,8 +273,8 @@ export default function LessonPlayer({
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
             <p><b>Seu desafio:</b> {lesson.experience.challenge}</p>
-            <p>Aplicação real: {lesson.experience.application}.</p>
-            <details className="learning-disclosure"><summary>Uma pista para observar</summary><p>{lesson.experience.discovery}</p></details>
+            <p>Para usar no dia a dia: {lesson.experience.application}.</p>
+            <details className="learning-disclosure"><summary>Ver uma dica</summary><p>{lesson.experience.discovery}</p></details>
           </div>
         )}
         {step.kind === "hook" && lesson.experience.recall && (
@@ -283,9 +283,9 @@ export default function LessonPlayer({
             <p>{lesson.experience.memoryCue}</p>
             <blockquote>{lesson.experience.recall.prompt}</blockquote>
             <details key={index} className="learning-disclosure">
-              <summary>Conferir uma forma possível</summary>
+              <summary>Ver uma sugestão de resposta</summary>
               <p lang="en">{lesson.experience.recall.model}</p>
-              <p>Outras formulações também podem comunicar a ideia. Se o assunto for novo, use o modelo como aquecimento e tente repeti-lo sem olhar.</p>
+              <p>Há outras formas de dizer a mesma coisa. Se o assunto for novo para você, leia o exemplo e depois tente repeti-lo sem olhar.</p>
             </details>
           </aside>
         )}
@@ -304,7 +304,7 @@ export default function LessonPlayer({
             <ol className="repeat-ladder">
               {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{drillIndex + 1}</span><span lang="en">{item}</span></li>)}
             </ol>
-            <p className="microtrain-instruction"><strong>Shadowing:</strong> use o áudio abaixo, ouça em velocidade natural e comece a repetir um instante depois da voz. Copie batidas, ligações e entonação, não apenas as palavras.</p>
+            <p className="microtrain-instruction"><strong>Repita acompanhando a voz (shadowing):</strong> ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.</p>
             {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} />}
           </section>
         )}
@@ -349,7 +349,7 @@ export default function LessonPlayer({
             <ul>
               {(step.checklist ?? ["Respondi a todas as partes da proposta?", "Usei a estrutura e o vocabulário estudados?", "Sujeito, verbo e referência de tempo estão coerentes?", "Meu texto comunica a ideia sem tradução palavra por palavra?"]).map(item => <li key={item}>{item}</li>)}
             </ul>
-            {step.speakingTask && <aside className="oral-challenge"><h3>Leve a ideia para a fala</h3><p>{step.speakingTask}</p><p>Prática livre, sem gravação ou nota automática. Se possível, peça feedback a um parceiro ou professor.</p></aside>}
+            {step.speakingTask && <aside className="oral-challenge"><h3>Agora pratique em voz alta</h3><p>{step.speakingTask}</p><p>Prática livre, sem gravação ou nota automática. Se possível, peça a um colega ou professor que ouça sua resposta e dê sugestões.</p></aside>}
             {step.mediation && <aside className="oral-challenge"><h3>Mediação: leve a mensagem a outra pessoa</h3><p>{step.mediation}</p><p>Acrescente sua resposta ao rascunho sob o título “Mediação”. Preserve a intenção original e adapte a informação ao destinatário.</p></aside>}
           </div>
         )}
@@ -359,7 +359,7 @@ export default function LessonPlayer({
         {retrievalExercise && (
           <aside className="review-retrieval-note" aria-label="Estratégia de revisão">
             <strong>Leia o enunciado e tente responder.</strong>
-            <p>O texto e a frase com lacuna fazem parte da pergunta. Consultar explicações ou tradução antes de verificar registra apoio.</p>
+            <p>O texto e a frase com lacuna fazem parte da pergunta. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.</p>
           </aside>
         )}
         {isExercise(step) && (
@@ -384,7 +384,7 @@ export default function LessonPlayer({
         )}
         {retrievalExercise && assisted && !checked && (
           <p className="review-assistance-status" role="status">
-            Você consultou apoio nesta etapa. A tentativa será registrada com apoio.
+            Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.
           </p>
         )}
         {voiceEnabled && step.english && step.kind === "example" && (
@@ -392,7 +392,7 @@ export default function LessonPlayer({
         )}
         {voiceEnabled && step.kind === "example" && (
           <div className="listening-reveal">
-            <p>{listened ? "Você já ouviu. Agora confira sua hipótese." : "Tente ouvir pelo menos uma vez antes de revelar."}</p>
+            <p>{listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto."}</p>
             <button className="secondary-button" onClick={() => setRevealed(value => !value)} aria-expanded={revealed}>
               {revealed ? "Ocultar frase" : "Revelar frase"}
             </button>

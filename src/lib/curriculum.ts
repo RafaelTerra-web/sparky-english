@@ -140,9 +140,9 @@ function lesson(data: LessonInput): Lesson {
     experience: {
       personality: "Professor particular",
       mechanic: "Construção guiada",
-      mission: `Use “${data.title}” em uma situação real e perceba por que a forma natural funciona.`,
+      mission: `Pratique o tema “${data.title}” em uma situação do dia a dia e observe como as expressões são usadas.`,
       discovery: "Que pequena escolha faz a frase soar clara em inglês?",
-      challenge: `Crie uma resposta curta com “${data.title}” e altere pelo menos um detalhe do exemplo.`,
+      challenge: `Pratique o tema “${data.title}”: crie uma resposta curta e adapte pelo menos um detalhe do exemplo à sua realidade.`,
       application: "levar a estrutura para uma conversa curta",
     },
   };
@@ -166,9 +166,9 @@ function personalizeLegacyLesson(original: Lesson, module: ModuleDraft, position
   const experience = createLessonExperience(draft, module, position);
   const base: Record<string, Step> = Object.fromEntries(original.steps.map(step => [step.kind, step]));
   base.hook = { kind: "hook", title: experience.mechanic, body: experience.mission };
-  base.pronunciation = { kind: "pronunciation", title: "Pronúncia que destrava a frase", body: "Treine o movimento primeiro; depois copie o ritmo da frase inteira.", pronunciation: createPronunciationGuide(draft, original.level, position) };
-  base.error_analysis = { kind: "error_analysis", title: "Ajuste de naturalidade", body: teach.body, contrasts: usageContrasts(draft), explanation: gap.explanation };
-  base.production = { kind: "production", title: "Leve para a sua vida", body: `Crie uma resposta curta usando “${original.title}” em uma situação sua. Troque pelo menos um detalhe do exemplo.`, speakingTask: `Diga sua versão, escute o modelo novamente e repita copiando a palavra mais forte e as ligações.` };
+  base.pronunciation = { kind: "pronunciation", title: "Pratique a pronúncia", body: "Comece pela palavra, depois repita um trecho e, por fim, acompanhe o ritmo da frase inteira.", pronunciation: createPronunciationGuide(draft, original.level, position) };
+  base.error_analysis = { kind: "error_analysis", title: "Entenda o erro e como corrigir", body: teach.body, contrasts: usageContrasts(draft), explanation: gap.explanation };
+  base.production = { kind: "production", title: "Agora é com você", body: `Pratique o tema “${original.title}”: crie uma resposta curta e adapte pelo menos um detalhe do exemplo à sua realidade.`, speakingTask: `Diga sua versão em voz alta. Depois, ouça o modelo e repita, observando as palavras mais destacadas e como elas se ligam na fala.` };
   base.summary = { ...base.summary, body: `Você praticou como ${experience.application}. ${teach.body} Tente criar outro exemplo sem olhar.` };
   const order = authoredStepOrders[position % authoredStepOrders.length];
   return { ...original, minutes: 7, experience, steps: order.map(key => base[key]).filter(Boolean) };

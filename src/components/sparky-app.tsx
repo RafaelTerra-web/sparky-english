@@ -642,7 +642,7 @@ export default function SparkyApp() {
               <>
                 <section className="review-guidance" aria-label="Como usar a revisão">
                   <strong>{due ? `${due} ${due === 1 ? "revisão vence" : "revisões vencem"} hoje.` : "Nenhuma revisão vence hoje."}</strong>
-                  <p>Leia o enunciado e tente responder antes de consultar explicações ou tradução. O texto da pergunta fica visível; consultar ajuda registra apoio.</p>
+                  <p>Leia o enunciado e tente responder. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.</p>
                 </section>
                 {dueLessons.length > 0 ? (
                   <section className="review-section" aria-labelledby="due-review-heading">
@@ -881,7 +881,7 @@ function LoginScreen() {
             <div className="login-detail">
               <Languages size={18} />
               <p>
-                Orientações e feedback em português, exemplos e exercícios em
+                Orientações e comentários em português, exemplos e exercícios em
                 inglês.
               </p>
             </div>

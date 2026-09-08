@@ -26,30 +26,30 @@ export function buildLesson(
   const experience = createLessonExperience(data, module, position, previous);
   const base: Record<string, Step> = {
     hook: { kind: "hook", title: experience.mechanic, body: experience.mission },
-    error_preview: { kind: "discovery", title: "Tem algo para descobrir", body: `${experience.discovery} Ainda não procure a regra: formule uma hipótese e teste-a nas próximas etapas.` },
-    teach: { kind: "teach", title: "Organize a descoberta", body: data.rule },
+    error_preview: { kind: "discovery", title: "Observe antes de ver a explicação", body: `${experience.discovery} Pense em uma resposta e confira se ela funciona nos próximos exemplos.` },
+    teach: { kind: "teach", title: "Entenda como funciona", body: data.rule },
     example: {
       kind: "example",
-      title: "Ouça antes de revelar",
-      body: "Primeiro procure as palavras fortes e a intenção. Depois revele o texto e confira sua hipótese.",
+      title: "Ouça antes de ler",
+      body: "Primeiro, ouça e tente entender a mensagem. Preste atenção às palavras mais destacadas. Depois, revele o texto e confira o que entendeu.",
       english: data.example,
       translation: data.translation,
     },
     vocabulary: {
       kind: "vocabulary",
-      title: "Três peças que valem guardar",
+      title: "Palavras e expressões úteis",
       body: data.vocabulary,
     },
     pronunciation: {
       kind: "pronunciation",
-      title: "Pronúncia que destrava a frase",
-      body: "Faça o movimento devagar, suba pela escada de repetição e termine copiando o ritmo do áudio natural.",
+      title: "Pratique a pronúncia",
+      body: "Comece devagar. Siga a sequência abaixo: repita a palavra, depois um trecho e, por fim, a frase completa, acompanhando o ritmo do áudio.",
       pronunciation: createPronunciationGuide(data, module.level, position),
     },
     dialogue: {
       kind: "dialogue",
-      title: "A cena completa",
-      body: "Entre na situação e acompanhe a intenção de cada fala. A próxima decisão depende de uma pista do contexto.",
+      title: "Acompanhe a conversa",
+      body: "Observe o que cada pessoa diz e o que ela quer comunicar. Essas informações ajudam a entender a conversa e a responder às perguntas da lição.",
       english: data.dialogue,
       translation: data.dialogueTranslation,
       translationSummary: ["B2", "C1", "C2"].includes(module.level),
@@ -76,7 +76,7 @@ export function buildLesson(
     },
     error_analysis: {
       kind: "error_analysis",
-      title: "Por que a armadilha engana",
+      title: "Entenda o erro e como corrigir",
       body: data.pitfall,
       contrasts: usageContrasts(data),
       explanation: data.gapExplanation,
@@ -100,7 +100,7 @@ export function buildLesson(
     summary: {
       kind: "summary",
       title: "O que ficou mais fácil agora",
-      body: `Você praticou como ${experience.application}. Ideia central: ${firstSentence(data.rule)} Feche o modelo e tente criar outro exemplo. Se precisar de apoio, retome a explicação e tente novamente.`,
+      body: `Você praticou como ${experience.application}. Lembre-se: ${firstSentence(data.rule)} Tente criar outro exemplo sem consultar o modelo. Se precisar de ajuda, releia a explicação e tente novamente.`,
       english: data.example,
       translation: data.translation,
     },
