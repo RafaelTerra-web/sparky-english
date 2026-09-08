@@ -190,8 +190,7 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .speech-forms { grid-template-columns: 1fr; }
   .listening-reveal { align-items: stretch; flex-direction: column; }
   .listening-reveal button { justify-content: center; }
-  .install-prompt { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
-  .app-frame ~ .install-prompt { bottom: calc(88px + env(safe-area-inset-bottom)); max-height: calc(100dvh - 112px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .install-prompt { right: 16px; bottom: calc(104px + env(safe-area-inset-bottom)); max-height: calc(100dvh - 128px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
   .workspace { padding-top: max(22px, env(safe-area-inset-top)); padding-bottom: calc(108px + env(safe-area-inset-bottom)); padding-left: max(21px, env(safe-area-inset-left)); padding-right: max(21px, env(safe-area-inset-right)); }
   .login-shell { padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: max(20px, env(safe-area-inset-bottom)); }
 }

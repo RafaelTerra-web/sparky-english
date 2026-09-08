@@ -9,6 +9,7 @@ import {
   Check,
   ChevronRight,
   Clock3,
+  ClipboardCheck,
   Coins,
   Globe2,
   GraduationCap,
@@ -22,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
+import { ThemePreferenceControl, ThemeQuickToggle } from "./theme-preference";
 import { levels, levelDescriptions } from "@/lib/levels";
 import {
   lessons,
@@ -42,10 +44,11 @@ import {
 import type { PublicRewardState } from "@/lib/rewards-shared";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
 const Onboarding = dynamic(() => import('./onboarding'));
+const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.EltisSimulator));
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
-type View = "today" | "course" | "review" | "profile" | "notebook" | "shop";
+type View = "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -65,6 +68,7 @@ const navigation = [
   { id: "today" as View, label: "Hoje", icon: Home },
   { id: "course" as View, label: "Curso", icon: BookOpen },
   { id: "review" as View, label: "Revisão", icon: RotateCcw },
+  { id: "exams" as View, label: "Simulados", icon: ClipboardCheck },
   { id: "notebook" as View, label: "Caderno", icon: GraduationCap },
   { id: "shop" as View, label: "Loja", icon: ShoppingBag },
   { id: "profile" as View, label: "Perfil", icon: Settings2 },
@@ -470,6 +474,7 @@ export default function SparkyApp() {
             <span>{user.name}</span>
             <ChevronRight size={15} />
           </button>
+          <ThemeQuickToggle />
         </header>
         {notice && (
           <div className="notice" role="status">
@@ -673,6 +678,7 @@ export default function SparkyApp() {
           </>
         )}
         {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
+        {view === "exams" && <EltisSimulator userId={user.id} />}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">Suas conquistas</p><h1>Loja</h1></div></div>
           {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">Conecte-se novamente para carregar seu saldo e sua loja.</p>}
@@ -708,6 +714,7 @@ export default function SparkyApp() {
                   <span>Idioma de estudo</span>
                   <strong>Inglês</strong>
                 </div>
+                <ThemePreferenceControl />
                 {onboardingEnabled && <button className="secondary-button" onClick={() => setNeedsOnboarding(true)}>Editar preferências · {learnerProfile?.level}</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
                   if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
