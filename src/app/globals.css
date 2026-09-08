@@ -1674,3 +1674,6 @@ progress::-moz-progress-bar {
 .onboarding-status{min-height:1.5em;font-size:.9rem;color:#41604d}.onboarding-consent{display:flex;align-items:flex-start;gap:12px;line-height:1.5}.onboarding-consent input{min-width:24px;min-height:24px}.onboarding audio{max-width:100%;margin:auto}
 body:has(.onboarding) .install-prompt{display:none}
 @media(prefers-reduced-motion:reduce){.onboarding-mascot.is-speaking{animation:none}}
+.conversation-tip{margin-block:1.5rem;padding:clamp(1rem,3vw,1.6rem);border:1px solid var(--border,#d7ddd9);border-radius:20px;background:var(--surface,#fff);border-left:4px solid #38806a;overflow-wrap:anywhere}
+.conversation-tip-heading{display:flex;align-items:center;gap:1rem}.conversation-tip-heading h3{margin:0}.conversation-tip-heading .eyebrow{margin:0 0 .4rem}.conversation-tip blockquote{margin:1rem 0;padding:.8rem 1rem;border-left:3px solid #38806a;font-size:1.15rem}.conversation-tip details{margin-top:1rem}.conversation-tip summary{cursor:pointer;font-weight:600;padding:.4rem 0}.conversation-tip .tip-translation{color:var(--muted,#53645c)}
+@media(max-width:480px){.conversation-tip-heading{align-items:flex-start;gap:.5rem}.conversation-tip-heading .mascot-figure{max-width:72px}.conversation-tip .speech-buttons{flex-wrap:wrap}}

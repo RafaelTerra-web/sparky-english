@@ -10,6 +10,8 @@ import type { CheckpointStepState } from "@/lib/learning-local";
 import { SpeechPractice } from "./speech-practice";
 import { MascotFigure } from "./mascot-studio";
 import { ConversationListening } from "./conversation-listening";
+import { ConversationTipCard } from "./conversation-tip";
+import { tipForLesson } from "@/lib/conversation-tips";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
 export default function LessonPlayer({
@@ -290,6 +292,7 @@ export default function LessonPlayer({
             </details>
           </div>
         )}
+        {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
         {step.kind === "production" && (
           <div className="production-workspace">
             {step.productionSupport && <section className="writing-plan" aria-label="Planeje sua resposta"><h3>Um caminho para começar</h3><ol>{step.productionSupport.plan.map(item => <li key={item}>{item}</li>)}</ol></section>}
