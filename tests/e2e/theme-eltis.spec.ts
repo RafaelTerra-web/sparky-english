@@ -21,15 +21,14 @@ test("dark theme applies before the app renders and persists", async ({ page }, 
     const style = getComputedStyle(element);
     return { background: style.backgroundColor, foreground: style.color };
   });
-  expect(colors.background).toBe("rgb(16, 24, 23)");
-  expect(colors.foreground).toBe("rgb(232, 240, 236)");
+  expect(colors.background).toBe("rgb(11, 16, 14)");
+  expect(colors.foreground).toBe("rgb(243, 246, 244)");
   await page.screenshot({ path: testInfo.outputPath("dark-dashboard.png"), fullPage: true });
 
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
-
 test("ELTiS practice starts, keeps answers private and resumes", async ({ page }, testInfo) => {
   await mockAccount(page);
   let answerSubmitted = false;
@@ -46,7 +45,8 @@ test("ELTiS practice starts, keeps answers private and resumes", async ({ page }
   });
 
   await page.goto("/");
-  await page.getByRole("button", { name: "Simulados" }).click();
+  await page.getByRole("button", { name: "Curso", exact: true }).click();
+  await page.getByRole("button", { name: /Simulados ·/ }).click();
   const installDismiss = page.getByRole("button", { name: "Fechar convite de instalação" });
   if (await installDismiss.isVisible()) await installDismiss.click();
   await expect(page.getByRole("heading", { name: "Simulado ELTiS" })).toBeVisible();

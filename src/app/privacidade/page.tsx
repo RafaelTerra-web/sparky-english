@@ -38,6 +38,11 @@ export default function PrivacyPage() {
         entram no cache offline. Uma falha ao salvar é mostrada ao aluno.
       </p>
       <h2>Personalização e diagnóstico</h2>
+      <p>A paleta de cores e o modo claro, escuro ou do aparelho são salvos
+        no Supabase, ligados à sua conta, para acompanhar você em outros dispositivos.
+        Um cache local permite aplicar a aparência ao abrir o aplicativo e manter
+        sua escolha durante falhas de conexão. As alterações pendentes são sincronizadas
+        quando a conexão retorna.</p>
       <p>Quando o onboarding estiver ativo, guardamos nome preferido, idade,
         faixa etária, mascote, nível escolhido ou estimado, score interno e
         evidência do diagnóstico. As etapas confirmadas e respostas do teste

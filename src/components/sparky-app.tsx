@@ -19,11 +19,12 @@ import {
   LogOut,
   RotateCcw,
   Settings2,
+  Settings,
   ShoppingBag,
   X,
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
-import { ThemePreferenceControl, ThemeQuickToggle } from "./theme-preference";
+import { ThemePreferenceControl, ThemeQuickToggle, resetAppearanceSession } from "./theme-preference";
 import { levels, levelDescriptions } from "@/lib/levels";
 import {
   lessons,
@@ -264,6 +265,7 @@ export default function SparkyApp() {
         /* Cache availability must not prevent logout. */
       }
       window.google?.accounts?.id?.disableAutoSelect();
+      resetAppearanceSession();
       setUser(null);
       setLearnerProfile(null);
       setNeedsOnboarding(false);
@@ -466,15 +468,13 @@ export default function SparkyApp() {
             }).format(new Date())}
           </p>
           <button
-            className="account-chip"
+            className="account-chip profile-gear"
             onClick={() => setView("profile")}
             aria-label={`Abrir perfil de ${user.name}`}
           >
-            <span className="avatar">{user.name.charAt(0).toUpperCase()}</span>
-            <span>{user.name}</span>
-            <ChevronRight size={15} />
+            <Settings size={21} aria-hidden="true" />
           </button>
-          <ThemeQuickToggle />
+          <ThemeQuickToggle userId={user.id} />
         </header>
         {notice && (
           <div className="notice" role="status">
@@ -603,11 +603,14 @@ export default function SparkyApp() {
           </>
         )}
         {view === "course" && (
+          <>
+          <button className="exam-entry secondary-button" onClick={() => setView("exams")}><ClipboardCheck size={20} /> Simulados · Preparação para intercâmbio <ArrowRight size={17} /></button>
           <CourseCatalog
             level={progress.level}
             completed={progress.completed}
             onOpen={open}
           />
+          </>
         )}
         {view === "review" && (
           <>
@@ -678,7 +681,7 @@ export default function SparkyApp() {
           </>
         )}
         {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
-        {view === "exams" && <EltisSimulator userId={user.id} />}
+        {view === "exams" && <><button className="text-button" onClick={() => setView("course")}>← Voltar ao Curso</button><EltisSimulator userId={user.id} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">Suas conquistas</p><h1>Loja</h1></div></div>
           {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">Conecte-se novamente para carregar seu saldo e sua loja.</p>}
@@ -714,7 +717,7 @@ export default function SparkyApp() {
                   <span>Idioma de estudo</span>
                   <strong>Inglês</strong>
                 </div>
-                <ThemePreferenceControl />
+                <ThemePreferenceControl userId={user.id} />
                 {onboardingEnabled && <button className="secondary-button" onClick={() => setNeedsOnboarding(true)}>Editar preferências · {learnerProfile?.level}</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
                   if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
@@ -766,7 +769,7 @@ export default function SparkyApp() {
         )}
       </main>
       <nav className="mobile-nav" aria-label="Navegação no celular">
-        {navigation.map((item) => (
+        {navigation.filter(item => item.id !== "profile" && item.id !== "exams").map((item) => (
           <button
             key={item.id}
             aria-current={view === item.id ? "page" : undefined}

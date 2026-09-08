@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check, Languages, X } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum";
 import type { PublicRewardState } from "@/lib/rewards-shared";
@@ -57,6 +58,8 @@ export default function LessonPlayer({
   const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
   const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
   const step = steps[index];
+  const illustrationId = lesson.id === "a1-1-1" ? lesson.id : lesson.moduleId;
+  const showIllustration = Boolean(illustrationId) && ["hook", "choice", "listening_detail", "listening_inference"].includes(step.kind);
   const retrievalExercise = review && isExercise(step);
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
   useEffect(() => {
@@ -205,7 +208,19 @@ export default function LessonPlayer({
       <div className="lesson-body">
         {error && <p className="study-error" role="alert">{error}</p>}
         {storageError && <p className="study-error" role="alert">O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.</p>}
-        {(index === 0 || step.kind === "summary") && (
+        {showIllustration && (
+          <figure className="lesson-illustration" aria-hidden="true">
+            <Image
+              src={`/lesson-images/${illustrationId}.png`}
+              alt=""
+              width={960}
+              height={640}
+              sizes="(max-width: 720px) calc(100vw - 40px), 760px"
+              priority={index === 0}
+            />
+          </figure>
+        )}
+        {(step.kind === "summary" || (index === 0 && !showIllustration)) && (
           <MascotFigure mascot={mascot} equipped={equipped} size="small" decorative />
         )}
         <p className="eyebrow">

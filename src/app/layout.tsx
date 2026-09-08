@@ -42,7 +42,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#172f36",
+  themeColor: "#f6f3ed",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var p=localStorage.getItem('sparky-color-theme');var d=p==='dark'||(!p&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){}})()`,
+            __html: `(function(){try{var raw=localStorage.getItem('sparky-appearance-v1'),v=raw?JSON.parse(raw):null,old=localStorage.getItem('sparky-color-theme'),palettes=['sparky','beatrice','ocean','sunset','graphite'],modes=['system','light','dark'],p=v&&palettes.indexOf(v.palette)>-1?v.palette:'sparky',m=v&&modes.indexOf(v.mode)>-1?v.mode:(old==='light'||old==='dark'?old:'system'),d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.palette=p;document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){document.documentElement.dataset.palette='sparky';document.documentElement.dataset.theme='light'}})()`,
           }}
         />
       </head>

@@ -1,0 +1,1607 @@
+{
+  "schemaVersion": 1,
+  "generator": "OpenAI built-in GPT Image",
+  "generatedAt": "2026-09-08T19:15:17.320Z",
+  "stylePrompt": "Premium 2D editorial cartoon for a mobile language-learning app. Clearly human characters with simplified proportions, expressive faces and readable gestures. Clean flowing outlines, broad flat colors and minimal cel shading; no photorealism or 3D. Isolated cutout with essential props and transparent alpha; no text, UI, logo or watermark.",
+  "strategy": "A contextual illustration for each module, with lesson-specific overrides where available.",
+  "assets": [
+    {
+      "id": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "8a8c0c7651b25757175ca17b965475a42509ffc2c0bce01839dd4d7bdb5d1864"
+    },
+    {
+      "id": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "185cfccc45424944406ab2ade751b7bcd62e78f86a60c373d9e24b11cf061204"
+    },
+    {
+      "id": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "83aba8dfb1630d68e8fcbbfd0319f0fb0b4c56072ac5f6bb6c9a018507df1ea6"
+    },
+    {
+      "id": "a1-casa",
+      "path": "/lesson-images/a1-casa.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "b02f3c4e14f42cf24ef76f231fccd090491dbb34e6447e549d350477dabe7660"
+    },
+    {
+      "id": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "7db426a8ddaca111f0f6f3a786dc139a449cca0f6d938bc20d514a2f675fa086"
+    },
+    {
+      "id": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "fd8e0cabdea54f04c6ab28014283f11f4ad48cf9dd3c2a89445010319442eded"
+    },
+    {
+      "id": "a2-passado",
+      "path": "/lesson-images/a2-passado.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "d580ec8a20849c69de600d58319761dbc14592d55997a65460d7ef2385e3f7f9"
+    },
+    {
+      "id": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "78a5eba44d49954b726bbcde4cc67c9eb390234cac930fc23746168c64430a12"
+    },
+    {
+      "id": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "ed33bdae4c210d97d65c577422b767e201d654c6e88ff10fdd8f780d9c3140e4"
+    },
+    {
+      "id": "a2-planos",
+      "path": "/lesson-images/a2-planos.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "2db4aaf9b824e593358a74ef529304eb95651df051357eac5c6408ec45e32267"
+    },
+    {
+      "id": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "28bc1cd5da33dfb22afb3168605bdf0f7fa92979b87d26d96115f5854651c921"
+    },
+    {
+      "id": "a2-textos",
+      "path": "/lesson-images/a2-textos.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "738a8a698a87e424c8a222f42affdcd25c7655eb8c878a8cbbfc017b6f0706cd"
+    },
+    {
+      "id": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "c77fa0a7c880183f1af868fcf2c703f9d25805054a24184993c8ecaa36619922"
+    },
+    {
+      "id": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "f586c0d49d6223f1ae386f8ccfc59b621813aad2579da10d526b4d51914b2f86"
+    },
+    {
+      "id": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "0ce87099c4c25392ca551d05be9c47cf61d2a13f4e34694823fd70a4a3294dbb"
+    },
+    {
+      "id": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "944943ead5f0781c3e3bdc10e60be1f975ea5c65968482511dedfe4ca6a3f505"
+    },
+    {
+      "id": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "d08f1de9f9047cd1f81bb992df14b81dd9bd90884cefd7ef7f16e9f179d5b70c"
+    },
+    {
+      "id": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "ee36daef922ca5dbeede488372f4beb13acc7512dc51d6c484ec0cf9f50d8705"
+    },
+    {
+      "id": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "a2afaa67b5366d26a6c3bb7289b1e4e808de87e01182784a58ff7834f4a21fb8"
+    },
+    {
+      "id": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "a2be14fe273dc39ad92cee8a32e4bfe967e2c2ea96a25edf721e3c5972f4b1b1"
+    },
+    {
+      "id": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "299aa5e5979dbf6176a56ecc845a753ba9ea617efb082583daef3ff16f2c3669"
+    },
+    {
+      "id": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "02a30f114aa2d7371ebfecf751f5a0bef36d19e768e5e7bdaa25537aa408d382"
+    },
+    {
+      "id": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "e0d8873b73665bfc7eb143985b7226f907563301601f566e6adada652d856c6b"
+    },
+    {
+      "id": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "a85379f93f2a7760d7bbca88f2512567dfb072b8db08ec494456edaa714daf13"
+    },
+    {
+      "id": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "e2a7920b0bbfc96d6223df56c39439a1bcb8a39db3c9f531d524ead309ef1432"
+    },
+    {
+      "id": "c2-producao",
+      "path": "/lesson-images/c2-producao.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "a73d9ea67206322dd31088e68770580478f61c9b2b2a441a7189141e5a2d4eac"
+    },
+    {
+      "id": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "aa4a62cd233d8fce9d8a4e32e55486d356bdd8e8dc147564b4505a04f9aa3958"
+    },
+    {
+      "id": "a1-1-1",
+      "path": "/lesson-images/a1-1-1.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "8a8c0c7651b25757175ca17b965475a42509ffc2c0bce01839dd4d7bdb5d1864"
+    }
+  ],
+  "lessons": [
+    {
+      "lessonId": "a1-1-1",
+      "moduleId": "a1-identidade",
+      "title": "Apresentar-se",
+      "level": "A1",
+      "assetId": "a1-1-1",
+      "path": "/lesson-images/a1-1-1.png"
+    },
+    {
+      "lessonId": "a1-identidade-01",
+      "moduleId": "a1-identidade",
+      "title": "Perguntar o nome",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-identidade-02",
+      "moduleId": "a1-identidade",
+      "title": "Dizer de onde você é",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-identidade-03",
+      "moduleId": "a1-identidade",
+      "title": "Falar da idade",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-identidade-04",
+      "moduleId": "a1-identidade",
+      "title": "Apresentar outra pessoa",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-identidade-05",
+      "moduleId": "a1-identidade",
+      "title": "Negar e confirmar com be",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-identidade-06",
+      "moduleId": "a1-identidade",
+      "title": "Soletrar e confirmar dados",
+      "level": "A1",
+      "assetId": "a1-identidade",
+      "path": "/lesson-images/a1-identidade.png"
+    },
+    {
+      "lessonId": "a1-pessoas-01",
+      "moduleId": "a1-pessoas",
+      "title": "Escolher a ou an",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-pessoas-02",
+      "moduleId": "a1-pessoas",
+      "title": "Contar no plural",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-pessoas-03",
+      "moduleId": "a1-pessoas",
+      "title": "Falar da família",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-pessoas-04",
+      "moduleId": "a1-pessoas",
+      "title": "Indicar de quem é",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-pessoas-05",
+      "moduleId": "a1-pessoas",
+      "title": "Apontar perto e longe",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-pessoas-06",
+      "moduleId": "a1-pessoas",
+      "title": "Descrever sem mudar o adjetivo",
+      "level": "A1",
+      "assetId": "a1-pessoas",
+      "path": "/lesson-images/a1-pessoas.png"
+    },
+    {
+      "lessonId": "a1-2-1",
+      "moduleId": "a1-rotina",
+      "title": "Falar da rotina",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-01",
+      "moduleId": "a1-rotina",
+      "title": "Hábitos com he e she",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-02",
+      "moduleId": "a1-rotina",
+      "title": "Dizer o que você não faz",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-03",
+      "moduleId": "a1-rotina",
+      "title": "Perguntar sobre hábitos",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-04",
+      "moduleId": "a1-rotina",
+      "title": "Dizer com que frequência",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-05",
+      "moduleId": "a1-rotina",
+      "title": "Ler horas e agendas",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-rotina-06",
+      "moduleId": "a1-rotina",
+      "title": "Dias, meses e datas",
+      "level": "A1",
+      "assetId": "a1-rotina",
+      "path": "/lesson-images/a1-rotina.png"
+    },
+    {
+      "lessonId": "a1-casa-01",
+      "moduleId": "a1-casa",
+      "title": "Dizer o que há em um lugar",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-casa-02",
+      "moduleId": "a1-casa",
+      "title": "Localizar objetos",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-casa-03",
+      "moduleId": "a1-casa",
+      "title": "Descrever cômodos",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-casa-04",
+      "moduleId": "a1-casa",
+      "title": "Pedir e dar direções",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-casa-05",
+      "moduleId": "a1-casa",
+      "title": "Usar transporte público",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-casa-06",
+      "moduleId": "a1-casa",
+      "title": "Ler avisos de um lugar",
+      "level": "A1",
+      "assetId": "a1-casa",
+      "path": "/lesson-images/a1-casa.png"
+    },
+    {
+      "lessonId": "a1-consumo-01",
+      "moduleId": "a1-consumo",
+      "title": "Pedir comida com educação",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-consumo-02",
+      "moduleId": "a1-consumo",
+      "title": "Gostar e não gostar",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-consumo-03",
+      "moduleId": "a1-consumo",
+      "title": "Contáveis e não contáveis",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-consumo-04",
+      "moduleId": "a1-consumo",
+      "title": "Some e any na despensa",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-consumo-05",
+      "moduleId": "a1-consumo",
+      "title": "Perguntar preços e quantidades",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-consumo-06",
+      "moduleId": "a1-consumo",
+      "title": "Comprar o tamanho certo",
+      "level": "A1",
+      "assetId": "a1-consumo",
+      "path": "/lesson-images/a1-consumo.png"
+    },
+    {
+      "lessonId": "a1-interacao-01",
+      "moduleId": "a1-interacao",
+      "title": "Falar de habilidades com can",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a1-interacao-02",
+      "moduleId": "a1-interacao",
+      "title": "Pedir permissão",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a1-interacao-03",
+      "moduleId": "a1-interacao",
+      "title": "Descrever o que acontece agora",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a1-interacao-04",
+      "moduleId": "a1-interacao",
+      "title": "Perguntar sobre ações atuais",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a1-interacao-05",
+      "moduleId": "a1-interacao",
+      "title": "Clima e roupas",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a1-interacao-06",
+      "moduleId": "a1-interacao",
+      "title": "Entender uma mensagem curta",
+      "level": "A1",
+      "assetId": "a1-interacao",
+      "path": "/lesson-images/a1-interacao.png"
+    },
+    {
+      "lessonId": "a2-passado-01",
+      "moduleId": "a2-passado",
+      "title": "Was e were",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-passado-02",
+      "moduleId": "a2-passado",
+      "title": "Passado dos verbos regulares",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-passado-03",
+      "moduleId": "a2-passado",
+      "title": "Passados irregulares frequentes",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-4-1",
+      "moduleId": "a2-passado",
+      "title": "Contar o que aconteceu",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-passado-04",
+      "moduleId": "a2-passado",
+      "title": "Negar e perguntar com did",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-passado-05",
+      "moduleId": "a2-passado",
+      "title": "Organizar uma sequência",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-passado-06",
+      "moduleId": "a2-passado",
+      "title": "Uma ação em andamento no passado",
+      "level": "A2",
+      "assetId": "a2-passado",
+      "path": "/lesson-images/a2-passado.png"
+    },
+    {
+      "lessonId": "a2-escolhas-01",
+      "moduleId": "a2-escolhas",
+      "title": "Comparar duas opções",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-escolhas-02",
+      "moduleId": "a2-escolhas",
+      "title": "Destacar uma opção no grupo",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-escolhas-03",
+      "moduleId": "a2-escolhas",
+      "title": "Dizer que são tão bons quanto",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-escolhas-04",
+      "moduleId": "a2-escolhas",
+      "title": "Too e enough",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-escolhas-05",
+      "moduleId": "a2-escolhas",
+      "title": "Much, many e a lot of",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-escolhas-06",
+      "moduleId": "a2-escolhas",
+      "title": "A few e a little",
+      "level": "A2",
+      "assetId": "a2-escolhas",
+      "path": "/lesson-images/a2-escolhas.png"
+    },
+    {
+      "lessonId": "a2-experiencias-01",
+      "moduleId": "a2-experiencias",
+      "title": "Experiências sem data definida",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-experiencias-02",
+      "moduleId": "a2-experiencias",
+      "title": "Ever e never",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-experiencias-03",
+      "moduleId": "a2-experiencias",
+      "title": "Just, already e yet",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-experiencias-04",
+      "moduleId": "a2-experiencias",
+      "title": "For e since",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-experiencias-05",
+      "moduleId": "a2-experiencias",
+      "title": "Been e gone",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-experiencias-06",
+      "moduleId": "a2-experiencias",
+      "title": "Experiência ou passado encerrado?",
+      "level": "A2",
+      "assetId": "a2-experiencias",
+      "path": "/lesson-images/a2-experiencias.png"
+    },
+    {
+      "lessonId": "a2-3-1",
+      "moduleId": "a2-planos",
+      "title": "Combinar um encontro",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-01",
+      "moduleId": "a2-planos",
+      "title": "Intenções com going to",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-02",
+      "moduleId": "a2-planos",
+      "title": "Decisões e ofertas com will",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-03",
+      "moduleId": "a2-planos",
+      "title": "Compromissos já combinados",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-04",
+      "moduleId": "a2-planos",
+      "title": "Convidar, aceitar e recusar",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-05",
+      "moduleId": "a2-planos",
+      "title": "Condições possíveis no futuro",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-planos-06",
+      "moduleId": "a2-planos",
+      "title": "Regras gerais com if e when",
+      "level": "A2",
+      "assetId": "a2-planos",
+      "path": "/lesson-images/a2-planos.png"
+    },
+    {
+      "lessonId": "a2-servicos-01",
+      "moduleId": "a2-servicos",
+      "title": "Dar conselhos com should",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-servicos-02",
+      "moduleId": "a2-servicos",
+      "title": "Obrigações com have to",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-servicos-03",
+      "moduleId": "a2-servicos",
+      "title": "Proibido ou desnecessário?",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-servicos-04",
+      "moduleId": "a2-servicos",
+      "title": "Reservar um quarto",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-servicos-05",
+      "moduleId": "a2-servicos",
+      "title": "Relatar um problema numa compra",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-servicos-06",
+      "moduleId": "a2-servicos",
+      "title": "Marcar e alterar uma consulta",
+      "level": "A2",
+      "assetId": "a2-servicos",
+      "path": "/lesson-images/a2-servicos.png"
+    },
+    {
+      "lessonId": "a2-textos-01",
+      "moduleId": "a2-textos",
+      "title": "Retomar pessoas e coisas",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-textos-02",
+      "moduleId": "a2-textos",
+      "title": "Explicar causa e resultado",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-textos-03",
+      "moduleId": "a2-textos",
+      "title": "Ler um e-mail de confirmação",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-textos-04",
+      "moduleId": "a2-textos",
+      "title": "Interpretar uma avaliação",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-textos-05",
+      "moduleId": "a2-textos",
+      "title": "Escrever um pedido por e-mail",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-textos-06",
+      "moduleId": "a2-textos",
+      "title": "Entender regras de um evento",
+      "level": "A2",
+      "assetId": "a2-textos",
+      "path": "/lesson-images/a2-textos.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-01",
+      "moduleId": "a2-comunicacao",
+      "title": "Pedir e confirmar direções",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-02",
+      "moduleId": "a2-comunicacao",
+      "title": "Checar a rota no transporte",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-03",
+      "moduleId": "a2-comunicacao",
+      "title": "Fazer um pedido com uma alteração",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-04",
+      "moduleId": "a2-comunicacao",
+      "title": "Pedir para repetir uma informação",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-05",
+      "moduleId": "a2-comunicacao",
+      "title": "Pedir um favor com respeito",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "a2-comunicacao-06",
+      "moduleId": "a2-comunicacao",
+      "title": "Avisar atraso e negociar um horário",
+      "level": "A2",
+      "assetId": "a2-comunicacao",
+      "path": "/lesson-images/a2-comunicacao.png"
+    },
+    {
+      "lessonId": "b1-narrativas-01",
+      "moduleId": "b1-narrativas",
+      "title": "Hábitos antigos com used to",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-narrativas-02",
+      "moduleId": "b1-narrativas",
+      "title": "Anterior a outro momento passado",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-narrativas-03",
+      "moduleId": "b1-narrativas",
+      "title": "Construir o cenário de uma história",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-narrativas-04",
+      "moduleId": "b1-narrativas",
+      "title": "Descrever uma atividade que continua",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-narrativas-05",
+      "moduleId": "b1-narrativas",
+      "title": "Relatar o que alguém disse",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-narrativas-06",
+      "moduleId": "b1-narrativas",
+      "title": "Habilidade passada e sucesso específico",
+      "level": "B1",
+      "assetId": "b1-narrativas",
+      "path": "/lesson-images/b1-narrativas.png"
+    },
+    {
+      "lessonId": "b1-5-1",
+      "moduleId": "b1-argumentos",
+      "title": "Dar sua opinião",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-01",
+      "moduleId": "b1-argumentos",
+      "title": "Concordar parcialmente",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-02",
+      "moduleId": "b1-argumentos",
+      "title": "Contraste com although",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-03",
+      "moduleId": "b1-argumentos",
+      "title": "Dar exemplos que sustentam a ideia",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-04",
+      "moduleId": "b1-argumentos",
+      "title": "Ponderar vantagens e desvantagens",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-05",
+      "moduleId": "b1-argumentos",
+      "title": "Recomendar com um critério",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-argumentos-06",
+      "moduleId": "b1-argumentos",
+      "title": "Fato, opinião e grau de certeza",
+      "level": "B1",
+      "assetId": "b1-argumentos",
+      "path": "/lesson-images/b1-argumentos.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-01",
+      "moduleId": "b1-hipoteses",
+      "title": "Possibilidades com may e might",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-02",
+      "moduleId": "b1-hipoteses",
+      "title": "Deduzir a partir de indícios",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-03",
+      "moduleId": "b1-hipoteses",
+      "title": "Situações imaginárias com would",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-04",
+      "moduleId": "b1-hipoteses",
+      "title": "Possível ou imaginário?",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-05",
+      "moduleId": "b1-hipoteses",
+      "title": "Unless e condições negativas",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-hipoteses-06",
+      "moduleId": "b1-hipoteses",
+      "title": "Expressar preferência com would rather",
+      "level": "B1",
+      "assetId": "b1-hipoteses",
+      "path": "/lesson-images/b1-hipoteses.png"
+    },
+    {
+      "lessonId": "b1-precisao-01",
+      "moduleId": "b1-precisao",
+      "title": "Identificar pessoas e coisas",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-precisao-02",
+      "moduleId": "b1-precisao",
+      "title": "Dar foco ao que recebe a ação",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-precisao-03",
+      "moduleId": "b1-precisao",
+      "title": "Notícias na voz passiva",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-precisao-04",
+      "moduleId": "b1-precisao",
+      "title": "Verbos seguidos de -ing ou to",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-precisao-05",
+      "moduleId": "b1-precisao",
+      "title": "Verbos com partículas",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-precisao-06",
+      "moduleId": "b1-precisao",
+      "title": "Preposições depois de adjetivos",
+      "level": "B1",
+      "assetId": "b1-precisao",
+      "path": "/lesson-images/b1-precisao.png"
+    },
+    {
+      "lessonId": "b1-6-1",
+      "moduleId": "b1-colaboracao",
+      "title": "Pedir esclarecimento",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-01",
+      "moduleId": "b1-colaboracao",
+      "title": "Perguntas indiretas",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-02",
+      "moduleId": "b1-colaboracao",
+      "title": "Checar o entendimento",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-03",
+      "moduleId": "b1-colaboracao",
+      "title": "Negociar um prazo",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-04",
+      "moduleId": "b1-colaboracao",
+      "title": "Pedir ajuda com contexto",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-05",
+      "moduleId": "b1-colaboracao",
+      "title": "Reclamar sem perder a clareza",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-colaboracao-06",
+      "moduleId": "b1-colaboracao",
+      "title": "Resumir decisões de uma reunião",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-leitura-01",
+      "moduleId": "b1-leitura",
+      "title": "Encontrar a ideia principal",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b1-leitura-02",
+      "moduleId": "b1-leitura",
+      "title": "Inferir sem inventar",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b1-leitura-03",
+      "moduleId": "b1-leitura",
+      "title": "Comparar informações de duas fontes",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b1-leitura-04",
+      "moduleId": "b1-leitura",
+      "title": "Ajustar o registro da mensagem",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b1-leitura-05",
+      "moduleId": "b1-leitura",
+      "title": "Construir um parágrafo coeso",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b1-leitura-06",
+      "moduleId": "b1-leitura",
+      "title": "Projeto final: planejar e justificar",
+      "level": "B1",
+      "assetId": "b1-leitura",
+      "path": "/lesson-images/b1-leitura.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-01",
+      "moduleId": "b2-argumentacao",
+      "title": "Defender uma posição com ressalvas",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-02",
+      "moduleId": "b2-argumentacao",
+      "title": "Distinguir correlação de causa",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-03",
+      "moduleId": "b2-argumentacao",
+      "title": "Discordar sem encerrar o diálogo",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-04",
+      "moduleId": "b2-argumentacao",
+      "title": "Comparar alternativas por critérios",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-05",
+      "moduleId": "b2-argumentacao",
+      "title": "Negociar condições realistas",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-argumentacao-06",
+      "moduleId": "b2-argumentacao",
+      "title": "Responder a uma objeção forte",
+      "level": "B2",
+      "assetId": "b2-argumentacao",
+      "path": "/lesson-images/b2-argumentacao.png"
+    },
+    {
+      "lessonId": "b2-autonomia-01",
+      "moduleId": "b2-autonomia",
+      "title": "Relatar uma decisão com precisão",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-autonomia-02",
+      "moduleId": "b2-autonomia",
+      "title": "Reformular sem perder o sentido",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-autonomia-03",
+      "moduleId": "b2-autonomia",
+      "title": "Resolver uma reclamação objetiva",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-autonomia-04",
+      "moduleId": "b2-autonomia",
+      "title": "Conduzir uma apresentação clara",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-autonomia-05",
+      "moduleId": "b2-autonomia",
+      "title": "Explicar consequências hipotéticas",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-autonomia-06",
+      "moduleId": "b2-autonomia",
+      "title": "Projeto B2: recomendar uma mudança",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "c1-sintese-01",
+      "moduleId": "c1-sintese",
+      "title": "Sintetizar fontes em tensão",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-sintese-02",
+      "moduleId": "c1-sintese",
+      "title": "Calibrar o grau de certeza",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-sintese-03",
+      "moduleId": "c1-sintese",
+      "title": "Construir coesão sem excesso de conectores",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-sintese-04",
+      "moduleId": "c1-sintese",
+      "title": "Parafrasear com responsabilidade",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-sintese-05",
+      "moduleId": "c1-sintese",
+      "title": "Integrar contraexemplos ao argumento",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-sintese-06",
+      "moduleId": "c1-sintese",
+      "title": "Projeto C1: produzir um parecer",
+      "level": "C1",
+      "assetId": "c1-sintese",
+      "path": "/lesson-images/c1-sintese.png"
+    },
+    {
+      "lessonId": "c1-interacao-01",
+      "moduleId": "c1-interacao",
+      "title": "Adequar registro sem mudar a mensagem",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-interacao-02",
+      "moduleId": "c1-interacao",
+      "title": "Mediar posições incompatíveis",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-interacao-03",
+      "moduleId": "c1-interacao",
+      "title": "Interpretar pedidos implícitos",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-interacao-04",
+      "moduleId": "c1-interacao",
+      "title": "Usar ênfase e inversão com controle",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-interacao-05",
+      "moduleId": "c1-interacao",
+      "title": "Gerir perguntas difíceis",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-interacao-06",
+      "moduleId": "c1-interacao",
+      "title": "Projeto C1: negociar e registrar um acordo",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-evidencias-01",
+      "moduleId": "c1-evidencias",
+      "title": "Avaliar a força de uma fonte",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c1-evidencias-02",
+      "moduleId": "c1-evidencias",
+      "title": "Delimitar afirmações para públicos distintos",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c1-evidencias-03",
+      "moduleId": "c1-evidencias",
+      "title": "Explicar método e incerteza",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c1-evidencias-04",
+      "moduleId": "c1-evidencias",
+      "title": "Transformar dados em narrativa responsável",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c1-evidencias-05",
+      "moduleId": "c1-evidencias",
+      "title": "Responder à desinformação sem amplificá-la",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c1-evidencias-06",
+      "moduleId": "c1-evidencias",
+      "title": "Projeto C1: produzir um briefing baseado em evidências",
+      "level": "C1",
+      "assetId": "c1-evidencias",
+      "path": "/lesson-images/c1-evidencias.png"
+    },
+    {
+      "lessonId": "c2-nuance-01",
+      "moduleId": "c2-nuance",
+      "title": "Distinguir concessão de endosso",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-nuance-02",
+      "moduleId": "c2-nuance",
+      "title": "Interpretar ironia com evidência",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-nuance-03",
+      "moduleId": "c2-nuance",
+      "title": "Identificar pressupostos embutidos",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-nuance-04",
+      "moduleId": "c2-nuance",
+      "title": "Resolver ambiguidade de escopo",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-nuance-05",
+      "moduleId": "c2-nuance",
+      "title": "Avaliar metáforas que orientam decisões",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-nuance-06",
+      "moduleId": "c2-nuance",
+      "title": "Projeto C2: reconstruir um argumento ambíguo",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-producao-01",
+      "moduleId": "c2-producao",
+      "title": "Editar para precisão e economia",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-producao-02",
+      "moduleId": "c2-producao",
+      "title": "Reexpressar uma ideia para públicos distintos",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-producao-03",
+      "moduleId": "c2-producao",
+      "title": "Preservar perspectivas em discurso relatado",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-producao-04",
+      "moduleId": "c2-producao",
+      "title": "Responder à objeção mais forte",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-producao-05",
+      "moduleId": "c2-producao",
+      "title": "Controlar tom e implicatura na revisão",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-producao-06",
+      "moduleId": "c2-producao",
+      "title": "Projeto C2: síntese e defesa sob contestação",
+      "level": "C2",
+      "assetId": "c2-producao",
+      "path": "/lesson-images/c2-producao.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-01",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Ler alusões e ecos intertextuais",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-02",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Distinguir narrador, voz citada e autor",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-03",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Recriar humor, ironia e registro entre culturas",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-04",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Analisar enquadramento lexical no debate público",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-05",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Editar ritmo, paralelismo e ênfase",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "c2-estilo-cultura-06",
+      "moduleId": "c2-estilo-cultura",
+      "title": "Projeto C2: crítica comparativa e defesa oral",
+      "level": "C2",
+      "assetId": "c2-estilo-cultura",
+      "path": "/lesson-images/c2-estilo-cultura.png"
+    }
+  ]
+}

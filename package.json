@@ -10,6 +10,7 @@
     "test": "node --test tests/*.test.mjs",
     "audit:curriculum": "node scripts/audit-curriculum.mjs",
     "audit:experience": "node scripts/audit-learning-experience.mjs",
+    "images:manifest": "node scripts/build-lesson-illustration-manifest.mjs",
     "voice:generate": "node scripts/generate-voices.mjs",
     "voice:generate-tips": "node scripts/generate-tip-audio.mjs"
   },
