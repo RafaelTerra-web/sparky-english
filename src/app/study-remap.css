@@ -102,3 +102,16 @@ html[data-palette] .lesson-body:is([data-step-kind="choice"],[data-step-kind="co
   html[data-palette] .lesson-body > .step-explanation { font-size: 17px; }
   html[data-palette] .lesson-body:is([data-step-kind="choice"],[data-step-kind="complete_sentence"],[data-step-kind="order_words"],[data-step-kind="production"],[data-step-kind="listening_detail"],[data-step-kind="listening_inference"]) > .step-explanation { padding: 16px; font-size: 18px; }
 }
+
+/* Keep the actual task readable at arm's length, including on a narrow phone. */
+html[data-palette] .lesson-body:is([data-step-kind="choice"], [data-step-kind="complete_sentence"], [data-step-kind="order_words"], [data-step-kind="listening_detail"], [data-step-kind="listening_inference"]) > .step-explanation {
+  font-size: clamp(1.375rem, 2.8vw, 1.625rem);
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+html[data-palette] .lesson-body .answer-options > button {
+  font-size: clamp(1.125rem, 2.3vw, 1.3125rem);
+  line-height: 1.5;
+}

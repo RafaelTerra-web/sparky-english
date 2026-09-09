@@ -1,3 +1,4 @@
+import { fluentPracticeModules } from "./content/fluent-practice.ts";
 import { a1Modules } from "./content/a1.ts";
 import { a2Modules } from "./content/a2.ts";
 import { a2CommunicationModules } from "./content/a2-practice.ts";
@@ -334,7 +335,7 @@ const introductoryLessons: Lesson[] = [
   }),
 ];
 
-const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules, ...fluentPracticeModules];
 export const modules = drafts.map((module, index) => {
   const items = module.lessons.map((draft, position) => {
     return buildLesson(draft, module, position, module.lessons[position - 1]);

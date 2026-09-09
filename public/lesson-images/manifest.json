@@ -1,10 +1,19 @@
 {
   "schemaVersion": 1,
   "generator": "OpenAI built-in GPT Image",
-  "generatedAt": "2026-09-08T20:16:59.510Z",
+  "generatedAt": "2026-09-09T16:25:47.031Z",
   "stylePrompt": "Premium 2D editorial cartoon for a mobile language-learning app. Clearly human characters with simplified proportions, expressive faces and readable gestures. Clean flowing outlines, broad flat colors and minimal cel shading; no photorealism or 3D. Isolated cutout with essential props and transparent alpha; no text, UI, logo or watermark.",
-  "strategy": "A contextual illustration for each module, with lesson-specific overrides where available.",
+  "strategy": "A contextual illustration for each module, with lesson-specific overrides where available; compact practice modules reuse related scenes.",
   "assets": [
+    {
+      "id": "a1-1-1",
+      "path": "/lesson-images/a1-1-1.png",
+      "width": 960,
+      "height": 640,
+      "format": "png",
+      "alpha": true,
+      "sha256": "8a8c0c7651b25757175ca17b965475a42509ffc2c0bce01839dd4d7bdb5d1864"
+    },
     {
       "id": "a1-identidade",
       "path": "/lesson-images/a1-identidade.png",
@@ -247,15 +256,6 @@
       "format": "png",
       "alpha": true,
       "sha256": "aa4a62cd233d8fce9d8a4e32e55486d356bdd8e8dc147564b4505a04f9aa3958"
-    },
-    {
-      "id": "a1-1-1",
-      "path": "/lesson-images/a1-1-1.png",
-      "width": 960,
-      "height": 640,
-      "format": "png",
-      "alpha": true,
-      "sha256": "8a8c0c7651b25757175ca17b965475a42509ffc2c0bce01839dd4d7bdb5d1864"
     }
   ],
   "lessons": [
@@ -1602,6 +1602,70 @@
       "level": "C2",
       "assetId": "c2-estilo-cultura",
       "path": "/lesson-images/c2-estilo-cultura.png"
+    },
+    {
+      "lessonId": "b1-vida-em-movimento-01",
+      "moduleId": "b1-vida-em-movimento",
+      "title": "Explicar um atraso e combinar um plano",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b1-vida-em-movimento-02",
+      "moduleId": "b1-vida-em-movimento",
+      "title": "Descrever um defeito e pedir uma solução",
+      "level": "B1",
+      "assetId": "b1-colaboracao",
+      "path": "/lesson-images/b1-colaboracao.png"
+    },
+    {
+      "lessonId": "b2-acordos-cotidianos-01",
+      "moduleId": "b2-acordos-cotidianos",
+      "title": "Negociar regras de convivência",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "b2-acordos-cotidianos-02",
+      "moduleId": "b2-acordos-cotidianos",
+      "title": "Recomendar um roteiro com acessibilidade",
+      "level": "B2",
+      "assetId": "b2-autonomia",
+      "path": "/lesson-images/b2-autonomia.png"
+    },
+    {
+      "lessonId": "c1-intencoes-e-impacto-01",
+      "moduleId": "c1-intencoes-e-impacto",
+      "title": "Responder a um pedido que não foi explícito",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c1-intencoes-e-impacto-02",
+      "moduleId": "c1-intencoes-e-impacto",
+      "title": "Transformar feedback vago em orientação útil",
+      "level": "C1",
+      "assetId": "c1-interacao",
+      "path": "/lesson-images/c1-interacao.png"
+    },
+    {
+      "lessonId": "c2-significado-em-disputa-01",
+      "moduleId": "c2-significado-em-disputa",
+      "title": "Contestar a premissa de uma pergunta",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
+    },
+    {
+      "lessonId": "c2-significado-em-disputa-02",
+      "moduleId": "c2-significado-em-disputa",
+      "title": "Reparar um comentário irônico entre culturas",
+      "level": "C2",
+      "assetId": "c2-nuance",
+      "path": "/lesson-images/c2-nuance.png"
     }
   ]
 }

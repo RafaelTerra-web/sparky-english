@@ -168,6 +168,14 @@ export const lessonLedger = [
   "c2-estilo-cultura-04",
   "c2-estilo-cultura-05",
   "c2-estilo-cultura-06",
+  "b1-vida-em-movimento-01",
+  "b1-vida-em-movimento-02",
+  "b2-acordos-cotidianos-01",
+  "b2-acordos-cotidianos-02",
+  "c1-intencoes-e-impacto-01",
+  "c1-intencoes-e-impacto-02",
+  "c2-significado-em-disputa-01",
+  "c2-significado-em-disputa-02",
 ] as const;
 export const moduleLedger = [
   "a1-identidade",
@@ -197,4 +205,8 @@ export const moduleLedger = [
   "c2-producao",
   "c1-evidencias",
   "c2-estilo-cultura",
+  "b1-vida-em-movimento",
+  "b2-acordos-cotidianos",
+  "c1-intencoes-e-impacto",
+  "c2-significado-em-disputa",
 ] as const;

@@ -37,10 +37,10 @@ test("warmups use an actual earlier example within the same module", () => {
     assert.equal(recall.prompt, previous.steps.find(step => step.kind === "example").translation);
     count++;
   }
-  assert.equal(count, 135);
+  assert.equal(count, 139);
 });
 
-test("editorial writing scaffolds cover all six levels and long tasks allow drafting time", () => {
+test("editorial writing scaffolds cover all six levels while the lesson estimate excludes optional drafting", () => {
   const covered = new Set();
   assert.equal(Object.keys(productionSupport).length, 12);
   for (const id of Object.keys(productionSupport)) {
@@ -53,9 +53,7 @@ test("editorial writing scaffolds cover all six levels and long tasks allow draf
   }
   assert.equal(covered.size, 6);
   for (const lesson of lessons) {
-    const task = lesson.steps.find(step => step.kind === "production");
-    const words = task.body.match(/(\d+)(?:[–-](\d+))? palavras/);
-    if (words && Number(words[2] ?? words[1]) >= 180) assert.ok(lesson.minutes >= 30, lesson.id);
+    assert.ok(lesson.minutes >= 7 && lesson.minutes <= 20, lesson.id);
     const comparison = lesson.steps.find(step => step.kind === "error_analysis");
     assert.ok(comparison.explanation?.length > 20, `${lesson.id}: contrast needs a reason`);
   }

@@ -411,432 +411,472 @@
   },
   "b1-narrativas-01": {
     "text": "I used to walk to school every day.",
-    "sparky": "/audio/mascots/be3c6608358fa8ec605180d0efb888ba.wav",
-    "pinky": "/audio/mascots/ac354277297dfbdca4b2ad585c9cfb28.wav"
+    "sparky": "/audio/mascots/a14e845c5c6deb7477713c1359be7f2f.wav",
+    "pinky": "/audio/mascots/23b8c8f00084e1f2e7eac3cdc82236e7.wav"
   },
   "b1-narrativas-02": {
     "text": "The film had started before we arrived.",
-    "sparky": "/audio/mascots/9268d2654a9daf045ce057dfdc1f9273.wav",
-    "pinky": "/audio/mascots/efe83f0ffc5366763d2bc1e16e68b73c.wav"
+    "sparky": "/audio/mascots/b04b5a073aa9c14aaf1c9364edd641ca.wav",
+    "pinky": "/audio/mascots/4360ecc9d7a923b854313938f42bc9f0.wav"
   },
   "b1-narrativas-03": {
     "text": "While I was walking home, I noticed a wallet.",
-    "sparky": "/audio/mascots/d4e0e53a49803ce4288c6b61ef0dca72.wav",
-    "pinky": "/audio/mascots/13d013e95c533239e732ae49cf3ebe85.wav"
+    "sparky": "/audio/mascots/7cd58a105fda8725ba72fa21be508ec0.wav",
+    "pinky": "/audio/mascots/cf6fd0298a105301324af1ac331c5220.wav"
   },
   "b1-narrativas-04": {
     "text": "I have been studying for two hours.",
-    "sparky": "/audio/mascots/b68eeb58e5c72355b9abbc7b7fd187d0.wav",
-    "pinky": "/audio/mascots/aa8595170df9967f8d5ecb7c958f0e40.wav"
+    "sparky": "/audio/mascots/aeda27f76d568a0d33683f58b7fd7526.wav",
+    "pinky": "/audio/mascots/63b1b0f32bd1ab5dbd1419773682725d.wav"
   },
   "b1-narrativas-05": {
     "text": "She said she was tired.",
-    "sparky": "/audio/mascots/a291386993cef2bcbcb19b2f67bdf595.wav",
-    "pinky": "/audio/mascots/899482afbfe869f3d81a03d9faae6862.wav"
+    "sparky": "/audio/mascots/d67ef6e041ab6daad06c4747f65f8c13.wav",
+    "pinky": "/audio/mascots/5565a1bc97e17f4805b9a5ba6d6f573c.wav"
   },
   "b1-narrativas-06": {
     "text": "We managed to catch the last train.",
-    "sparky": "/audio/mascots/0d24e45cd6108e24e549dfe8a51c2948.wav",
-    "pinky": "/audio/mascots/38039e7496202eb3686b4bf8e24e8d18.wav"
+    "sparky": "/audio/mascots/ff9c65cd19fefad6c48188a90c367049.wav",
+    "pinky": "/audio/mascots/ca632f29e996fb7e5aafd103e13ec5ba.wav"
   },
   "b1-5-1": {
     "text": "I think this plan is better.",
-    "sparky": "/audio/mascots/7b8d2cab63b1fca01d0e05749cd3ddab.wav",
-    "pinky": "/audio/mascots/1868eea532e1ccaf5416052aa3d7bd5b.wav"
+    "sparky": "/audio/mascots/c453f57c2ff96574f4b6c4521cb53043.wav",
+    "pinky": "/audio/mascots/c6964ef76e24ed782f7dc85b77cae88c.wav"
   },
   "b1-argumentos-01": {
     "text": "I see your point, but the cost is high.",
-    "sparky": "/audio/mascots/ccf2878fa29edd5d50cc4d0eb1e4c6de.wav",
-    "pinky": "/audio/mascots/abc600bd15429c8d2751f516673bc477.wav"
+    "sparky": "/audio/mascots/b9c5587159c7c406adda444ecfe174d8.wav",
+    "pinky": "/audio/mascots/c8a782c9ad5e9bab72b7913b2bb42cf3.wav"
   },
   "b1-argumentos-02": {
     "text": "Although it was expensive, we chose the train.",
-    "sparky": "/audio/mascots/e240f83f8a6545a9277a5580bf2bab87.wav",
-    "pinky": "/audio/mascots/ea812bfe61b41db885d56a554019ab51.wav"
+    "sparky": "/audio/mascots/a0244ec444b6b33a740625213f37b0db.wav",
+    "pinky": "/audio/mascots/4c7a2604b9b3b496681b99b6cf41de39.wav"
   },
   "b1-argumentos-03": {
     "text": "I enjoy outdoor activities such as hiking.",
     "pinky": "/audio/mascots/ab6fde54601b7231fcf62b486860c160.wav",
-    "sparky": "/audio/mascots/5054edd3e8ee95d7b627d675276db163.wav"
+    "sparky": "/audio/mascots/9d0a8e9152ab1a248554d8a4e777386c.wav"
   },
   "b1-argumentos-04": {
     "text": "One advantage of cycling is the low cost.",
-    "sparky": "/audio/mascots/fd299a63e7dbdec08524a9fb4c18bf15.wav",
-    "pinky": "/audio/mascots/d431b0ef643e1514345ae62f72c33cd1.wav"
+    "sparky": "/audio/mascots/e6b582ff8acba9ef14ce849bd7c2593e.wav",
+    "pinky": "/audio/mascots/0d954d28676e63f5ceac86a4f1300044.wav"
   },
   "b1-argumentos-05": {
     "text": "I recommend booking your tickets early.",
-    "sparky": "/audio/mascots/4536e93f634f865104dee57ba4fd06a4.wav",
-    "pinky": "/audio/mascots/e747b13e7d658f0207334c534d25888a.wav"
+    "sparky": "/audio/mascots/95764a7dcc94f754dc8d1fdd65e077bf.wav",
+    "pinky": "/audio/mascots/93ecf089cd1488102a91e46c73436707.wav"
   },
   "b1-argumentos-06": {
     "text": "According to the timetable, the train leaves at nine.",
-    "sparky": "/audio/mascots/29b0865fbc02b66e12e377f1a4245c39.wav",
-    "pinky": "/audio/mascots/ec16ea69f3afd7cfcbd35064afd0bede.wav"
+    "sparky": "/audio/mascots/569fc6d40f3c995161777b0bc9c349e8.wav",
+    "pinky": "/audio/mascots/825e6cf55c775c15320c6a62c715c466.wav"
   },
   "b1-hipoteses-01": {
     "text": "We might change the date of the meeting.",
-    "sparky": "/audio/mascots/c6072d7cdcb062d9fa54b5b3552e1c48.wav",
-    "pinky": "/audio/mascots/14fa6e73cc00d12966b381db1f7c7075.wav"
+    "sparky": "/audio/mascots/a318388587108909b380a12d54ff4ee1.wav",
+    "pinky": "/audio/mascots/1e01f40f9f84eb6512e5a7ae9d3e4eaa.wav"
   },
   "b1-hipoteses-02": {
     "text": "He must be tired after that long journey.",
-    "sparky": "/audio/mascots/046e2af124a73a1831ddd001fc468fe7.wav",
-    "pinky": "/audio/mascots/2939a074730710a162c5cceffbc34283.wav"
+    "sparky": "/audio/mascots/7b432d2a2abfeb429ea0b0849fea5400.wav",
+    "pinky": "/audio/mascots/5ce4d016194b9e6a7e22b2db54d79ab9.wav"
   },
   "b1-hipoteses-03": {
     "text": "If I had more time, I would learn Italian.",
-    "sparky": "/audio/mascots/a9d1ee4836fa3284b66f0226a95a1afe.wav",
-    "pinky": "/audio/mascots/9a7013140eae69aee37a26d90b2aa487.wav"
+    "sparky": "/audio/mascots/83b42d900210801be2654b6f742e4c63.wav",
+    "pinky": "/audio/mascots/fcfb075f6f33a49910391c6db70be4a0.wav"
   },
   "b1-hipoteses-04": {
     "text": "If I finish early, I will call you.",
-    "sparky": "/audio/mascots/fdaab32c9a3465b5ec1f548e3c248bcb.wav",
-    "pinky": "/audio/mascots/585f4bd702c7cc2081749e963275ae72.wav"
+    "sparky": "/audio/mascots/1bb5f2038cf650034a161e2a59c44033.wav",
+    "pinky": "/audio/mascots/f8d0b5c3b446c51539d119b80decfb5b.wav"
   },
   "b1-hipoteses-05": {
     "text": "We will miss the bus unless we leave now.",
-    "sparky": "/audio/mascots/3f657fc99d6ed4e712db1f6cfeb18667.wav",
-    "pinky": "/audio/mascots/bd1484fe0da7ee86a2301eef0aa976db.wav"
+    "sparky": "/audio/mascots/4ad84707773c489efd75e57c913eb9f1.wav",
+    "pinky": "/audio/mascots/be6afe6e5fc11a2067dfddfb4306d74e.wav"
   },
   "b1-hipoteses-06": {
     "text": "I would rather walk than wait for a taxi.",
-    "sparky": "/audio/mascots/31a5d35c72556398e2061707cfacdfb9.wav",
-    "pinky": "/audio/mascots/5cac6873aaf45b13c85644066a1606a8.wav"
+    "sparky": "/audio/mascots/7501a5602bde67954ee5747dc086c295.wav",
+    "pinky": "/audio/mascots/9cfe1ce1d3bed533b3a53f2b12c48e06.wav"
   },
   "b1-precisao-01": {
     "text": "She is the colleague who helped me yesterday.",
-    "sparky": "/audio/mascots/d00867f96adc7055dd64a259423f6f09.wav",
-    "pinky": "/audio/mascots/bb7e63aae93c64fa05ada26eb784043a.wav"
+    "sparky": "/audio/mascots/192dd2d58dd5f5dc82698b4525a348df.wav",
+    "pinky": "/audio/mascots/7d32394e6ec657379c525714dcc75f1e.wav"
   },
   "b1-precisao-02": {
     "text": "The library is cleaned every morning.",
-    "sparky": "/audio/mascots/a2b048f7de29137b475ba53f34eb21ca.wav",
-    "pinky": "/audio/mascots/a22a73a29712e01f0a2bd17d3a98398c.wav"
+    "sparky": "/audio/mascots/b9ef37515c02b9c0e20a5c2e64e9e886.wav",
+    "pinky": "/audio/mascots/f62f6d549345c7ba98aaad20e7c1d197.wav"
   },
   "b1-precisao-03": {
     "text": "The bridge was opened last year.",
-    "sparky": "/audio/mascots/8417fbc48c1ac9a414aecc87039e4812.wav",
-    "pinky": "/audio/mascots/b53843898dbd9d7052506b4c443b518d.wav"
+    "sparky": "/audio/mascots/43bb3c45f63055231e62f392f12fb253.wav",
+    "pinky": "/audio/mascots/f14bb21f653518682b5849362029c6cb.wav"
   },
   "b1-precisao-04": {
     "text": "We decided to leave before lunch.",
-    "sparky": "/audio/mascots/e1be5ec256aaaba322bca777115a5437.wav",
-    "pinky": "/audio/mascots/82e73b978f7d1f7d0948c48282a00d8a.wav"
+    "sparky": "/audio/mascots/bffd0c3c7ddde89c26266fde72d7d53c.wav",
+    "pinky": "/audio/mascots/ac3c7f40227d26b0c63ed0df6a7f6bd7.wav"
   },
   "b1-precisao-05": {
     "text": "Please turn it off before you leave.",
-    "sparky": "/audio/mascots/8751713f481d96e1a42dcce03212a1a3.wav",
-    "pinky": "/audio/mascots/d4b1ba0409edeffcd3bf77a41987665c.wav"
+    "sparky": "/audio/mascots/3cc123fa7b3b7866f2731e81fabe148a.wav",
+    "pinky": "/audio/mascots/341576194a01f5a21d56c39a6bad9a79.wav"
   },
   "b1-precisao-06": {
     "text": "She is interested in learning photography.",
-    "sparky": "/audio/mascots/0d7435cc981f60977a461b1789e78eeb.wav",
-    "pinky": "/audio/mascots/bfc210e509d8b00147a65a8b77f8f169.wav"
+    "sparky": "/audio/mascots/cc531bca730825d6914b4ce1d29a4d97.wav",
+    "pinky": "/audio/mascots/7c1b08bb402d89dacad576b62881c2f1.wav"
   },
   "b1-6-1": {
     "text": "Could you explain that again?",
-    "sparky": "/audio/mascots/b63396b1d9dc85623b26f5aab000b599.wav",
-    "pinky": "/audio/mascots/8b5cbc9c35f85bb2ab597eaeb32979c5.wav"
+    "sparky": "/audio/mascots/49dc28808779a2011aac90e76a418039.wav",
+    "pinky": "/audio/mascots/33a68e893790cffc81795de58d6fa2d0.wav"
   },
   "b1-colaboracao-01": {
     "text": "Could you tell me where the office is?",
-    "sparky": "/audio/mascots/a9346b2256ea2564d73cac2cb69b617e.wav",
-    "pinky": "/audio/mascots/6024a73e0bb9ae121cb5aa7996c249d6.wav"
+    "sparky": "/audio/mascots/9e73f684a561e3f6b847ae1db057224c.wav",
+    "pinky": "/audio/mascots/cd0b728432fbca7a27361c857b01536c.wav"
   },
   "b1-colaboracao-02": {
     "text": "So, you mean the deadline is Friday?",
-    "sparky": "/audio/mascots/439c1ae9fd90909bd2bb6a9b5ca1773b.wav",
-    "pinky": "/audio/mascots/2e6ee4fb62c8cf0c26c775ac7824c65a.wav"
+    "sparky": "/audio/mascots/114b3c52cdc8c2ad5e56ec5925d49fb2.wav",
+    "pinky": "/audio/mascots/826a902d8d61e2dff449afa7f7c86daa.wav"
   },
   "b1-colaboracao-03": {
     "text": "Could we extend the deadline until Friday?",
-    "sparky": "/audio/mascots/8664f8847175a508c2f05ad718dcb96e.wav",
-    "pinky": "/audio/mascots/43ad2df98e48de1a5c05fc07d08bb25a.wav"
+    "sparky": "/audio/mascots/143aeac8e8ec9515bbce218aa08056c1.wav",
+    "pinky": "/audio/mascots/7e77ae240faaad9134e3b1fa6246a3df.wav"
   },
   "b1-colaboracao-04": {
     "text": "Could you show me how to upload this file?",
-    "pinky": "/audio/mascots/a9c789d14f156795193b0c46bfaec14e.wav",
-    "sparky": "/audio/mascots/d9aea98f9af560806dc3160560b4d481.wav"
+    "pinky": "/audio/mascots/5b7662d938d62d473b18a42437e09722.wav",
+    "sparky": "/audio/mascots/6f63488cce3bb97061550f91ae7418ea.wav"
   },
   "b1-colaboracao-05": {
     "text": "I ordered a blue bag, but I received a green one.",
-    "sparky": "/audio/mascots/7a01a2d6383a112330e7f73933a4976b.wav",
-    "pinky": "/audio/mascots/f7259ffd27e2f8171a6de43bb96bed96.wav"
+    "sparky": "/audio/mascots/894333d19042e77a0ab2cf53633eb5b3.wav",
+    "pinky": "/audio/mascots/1a03d9e9d32cf6a97990458cab515f5e.wav"
   },
   "b1-colaboracao-06": {
     "text": "We agreed to send the proposal by Tuesday.",
-    "sparky": "/audio/mascots/3c271254cd5b7f204a137b5499d00012.wav",
-    "pinky": "/audio/mascots/650ae73123d2c8c8ffd514c45da6d28c.wav"
+    "sparky": "/audio/mascots/e42292066a4ee98336b0bd181b822497.wav",
+    "pinky": "/audio/mascots/b53455288d19b47f1c9dcef41f6bae81.wav"
   },
   "b1-leitura-01": {
     "text": "The article explains why the club changed its schedule.",
-    "sparky": "/audio/mascots/4ae8c31d846cb6bae6a9931eb89fd632.wav",
-    "pinky": "/audio/mascots/dd57f0581c1f7297d38545da877e9d8d.wav"
+    "sparky": "/audio/mascots/744baa24fa5f04d76fb86e302a114f68.wav",
+    "pinky": "/audio/mascots/8bb7772c1cdf5de2d5baa819b82909d8.wav"
   },
   "b1-leitura-02": {
     "text": "She seems worried about the deadline.",
-    "pinky": "/audio/mascots/05c3a14c1d67da4b28a2bf9ff85f2cfd.wav",
-    "sparky": "/audio/mascots/0053f199ec4789b1c07571a8481293d8.wav"
+    "pinky": "/audio/mascots/ac24713911f0643d0fa377b91d31623f.wav",
+    "sparky": "/audio/mascots/6b057a3e7f4358fe10fe6925aabbcfc1.wav"
   },
   "b1-leitura-03": {
     "text": "The latest notice gives a different opening time.",
-    "sparky": "/audio/mascots/f323ff7416d0487bcc3da3aaab74e5d5.wav",
-    "pinky": "/audio/mascots/d6d70c2c4ba3d5b43e0d0269fd613804.wav"
+    "sparky": "/audio/mascots/9d8aa6965a6cf497c0ac604db73046ca.wav",
+    "pinky": "/audio/mascots/fba24fd26641c1889bf3d46dd2e77790.wav"
   },
   "b1-leitura-04": {
     "text": "I am writing to ask about your evening course.",
-    "sparky": "/audio/mascots/c23beddddce4c99c7d539fe61a384523.wav",
-    "pinky": "/audio/mascots/83c08b2de9423635b6cc60ee88246afa.wav"
+    "sparky": "/audio/mascots/c00176425c7a792e29db3a5344fe5eb3.wav",
+    "pinky": "/audio/mascots/95167d97a0a92e4c58b6f07fa3754390.wav"
   },
   "b1-leitura-05": {
     "text": "Regular practice helps because it builds familiarity.",
-    "pinky": "/audio/mascots/6f0b38b1cb87e8933623d8ffb60c6b0c.wav",
-    "sparky": "/audio/mascots/9232768d89769db73b56d24f5bb69b6c.wav"
+    "pinky": "/audio/mascots/513001042a46cbad528484c39e5696f2.wav",
+    "sparky": "/audio/mascots/195f167405494d32980677f6d8cb14cc.wav"
   },
   "b1-leitura-06": {
     "text": "We chose the library because it is quiet and free.",
-    "pinky": "/audio/mascots/fd2292bbd347997493d026125b81feb7.wav",
-    "sparky": "/audio/mascots/287c30e0d9f0a512732488f4c56e811a.wav"
+    "pinky": "/audio/mascots/20bbb9f242466a75d886fae2594ae870.wav",
+    "sparky": "/audio/mascots/ba62436ec17fb5a7b3b6a242c26537b6.wav"
   },
   "b2-argumentacao-01": {
     "text": "Although the trial was short, it provided useful evidence.",
-    "sparky": "/audio/mascots/de00641fbd2c50385cb25e245bf725a5.wav",
-    "pinky": "/audio/mascots/2572ff7600dd28ae26e73ac05d3fd763.wav"
+    "sparky": "/audio/mascots/f70554c37228b56f72bc67e419470af7.wav",
+    "pinky": "/audio/mascots/bf65f7b5d8f544248f34a0d5e0a038bf.wav"
   },
   "b2-argumentacao-02": {
     "text": "The new schedule may have contributed to the improvement.",
-    "sparky": "/audio/mascots/6344a14a5c5bb833ee54776175f51339.wav",
-    "pinky": "/audio/mascots/667b9d10cd9796a7bf38d82ac7053751.wav"
+    "sparky": "/audio/mascots/52606023ac2d09f5e5b468ed655fae35.wav",
+    "pinky": "/audio/mascots/7408f4fe3b49db85e07fae4f485971e2.wav"
   },
   "b2-argumentacao-03": {
     "text": "I see your point, but we need a more reliable estimate.",
-    "pinky": "/audio/mascots/11fd501684d98e0e3c53bb4cb784cc4b.wav",
-    "sparky": "/audio/mascots/62591ed5aa0d4564935ff8ce2fde2557.wav"
+    "pinky": "/audio/mascots/abb64f72801d566b51e2ebb366f08c46.wav",
+    "sparky": "/audio/mascots/b8484e6c8c9bc152c867d90dc34c9cf4.wav"
   },
   "b2-argumentacao-04": {
     "text": "The first option is cheaper, whereas the second is easier to maintain.",
-    "sparky": "/audio/mascots/59af177e95e608f45dc959a91163b8a8.wav",
-    "pinky": "/audio/mascots/bb71e672f1b8acd5f9dac03a8838a8d6.wav"
+    "sparky": "/audio/mascots/4c4d1966ddebc60e679b1e5d2407d9ff.wav",
+    "pinky": "/audio/mascots/73540a3aea254060b3e6fa206d3490b0.wav"
   },
   "b2-argumentacao-05": {
     "text": "We can extend the deadline provided that the scope stays the same.",
-    "pinky": "/audio/mascots/8fad347e343775d79e16a9e8cf2e48ae.wav",
-    "sparky": "/audio/mascots/12eb55dc6cc93f8cae31135e93c3fda6.wav"
+    "pinky": "/audio/mascots/e8cabd538b6e29b79501f8337e87c475.wav",
+    "sparky": "/audio/mascots/52ccd5d1225b3373a346b9e3dbca0227.wav"
   },
   "b2-argumentacao-06": {
     "text": "This concern could be addressed by offering an offline option.",
-    "sparky": "/audio/mascots/209ce8ecdbe459b0c02b5cd2b82ad060.wav",
-    "pinky": "/audio/mascots/6e1b94933d5d5e64ef53337bfb36c709.wav"
+    "sparky": "/audio/mascots/56dca4417ef229aad54d0a7f26097055.wav",
+    "pinky": "/audio/mascots/23b76cce0fdb87b8de4ca2229251746a.wav"
   },
   "b2-autonomia-01": {
     "text": "They agreed to review the proposal before making a decision.",
-    "sparky": "/audio/mascots/2df3eb49f702b011e4f4d41dbb6d3645.wav",
-    "pinky": "/audio/mascots/bf88633dbca3775336c8a10c9241ea39.wav"
+    "sparky": "/audio/mascots/422a627e2beb02f142fb05c5305cb41a.wav",
+    "pinky": "/audio/mascots/4d557d553a9692e91a01e63f2f7e79ea.wav"
   },
   "b2-autonomia-02": {
     "text": "In other words, the discount applies only to annual subscriptions.",
-    "pinky": "/audio/mascots/9d1532373e415a707daeb9483f940815.wav",
-    "sparky": "/audio/mascots/865a9e5bd27f1a55b3b2af73e2eb797b.wav"
+    "pinky": "/audio/mascots/943a1491f2f2e064b583a21c0fa820dc.wav",
+    "sparky": "/audio/mascots/a0daa67148ce1f9a97020e0f3bf43949.wav"
   },
   "b2-autonomia-03": {
     "text": "The replacement was supposed to arrive last week.",
-    "sparky": "/audio/mascots/36f200ed45e1aa7d75d057141c7d39c1.wav",
-    "pinky": "/audio/mascots/d71eb11bc88bde769e93e9bfe5f36faa.wav"
+    "sparky": "/audio/mascots/d8022cc5f98ba30166a4ada219717516.wav",
+    "pinky": "/audio/mascots/3d260975350aaa535d67ba0f054617cc.wav"
   },
   "b2-autonomia-04": {
     "text": "Turning to the survey results, most respondents preferred evening classes.",
-    "sparky": "/audio/mascots/948be8f403b07bbde3cd1146399a41c1.wav",
-    "pinky": "/audio/mascots/a0dec3ab194fc2b6084a209c71cb2d8a.wav"
+    "sparky": "/audio/mascots/23ebfb15b8641b4d53c49da03484a6df.wav",
+    "pinky": "/audio/mascots/e106db47c0722da733bf0ba9c1eab54d.wav"
   },
   "b2-autonomia-05": {
     "text": "If we had checked the file, we would have noticed the missing page.",
-    "sparky": "/audio/mascots/590242916703d1d290700067df3cf73b.wav",
-    "pinky": "/audio/mascots/76a9320bbbaa18144a803236e5025aa0.wav"
+    "sparky": "/audio/mascots/4b5c03afdfdc06399592ac6ba5d5ff3f.wav",
+    "pinky": "/audio/mascots/4a69ff9f10ad3eb4f04dcdf3a75d6eb5.wav"
   },
   "b2-autonomia-06": {
     "text": "We recommend a trial before committing to a permanent change.",
-    "sparky": "/audio/mascots/06a545edc7f86c65146e682e7eb6e433.wav",
-    "pinky": "/audio/mascots/dcccd758be1832b332f99b06a63caff5.wav"
+    "sparky": "/audio/mascots/51de26626e669b24cd0ffc1c47d859d4.wav",
+    "pinky": "/audio/mascots/442fc69047b6e509202ed645b3acac3b.wav"
   },
   "c1-sintese-01": {
     "text": "Both reports suggest that access matters, although they measure different outcomes.",
-    "pinky": "/audio/mascots/38f9faf71e25dd20e5d83e30b23fc79b.wav",
-    "sparky": "/audio/mascots/0619c13ee968462fa2501852107acb63.wav"
+    "pinky": "/audio/mascots/4ecc85cd4d89d7b3d7e8bdaa82e53edc.wav",
+    "sparky": "/audio/mascots/30e620a66e61b7d1f984a7b283771bb7.wav"
   },
   "c1-sintese-02": {
     "text": "The decline appears to reflect a change in reporting rather than demand.",
-    "sparky": "/audio/mascots/59decfcc3900f1e8f534cb8ffd536486.wav",
-    "pinky": "/audio/mascots/a77668b181b303a3e25f8d89ed995002.wav"
+    "sparky": "/audio/mascots/2163c3d24c3e08eb002c85ee7d8bb4a9.wav",
+    "pinky": "/audio/mascots/b27324c29734b2bd33bd584b24c9e345.wav"
   },
   "c1-sintese-03": {
     "text": "This discrepancy prompted the team to examine how the figures were collected.",
-    "sparky": "/audio/mascots/59007db93a5db296e573dbd93662eec3.wav",
-    "pinky": "/audio/mascots/32e2306a6fea0ca2adbe42529f403a71.wav"
+    "sparky": "/audio/mascots/752730053debe99e9f33cbd3fb0315ed.wav",
+    "pinky": "/audio/mascots/dad853e2571faaf290530b89ca2f5fa1.wav"
   },
   "c1-sintese-04": {
     "text": "The authors caution that the findings may not apply to smaller organisations.",
-    "sparky": "/audio/mascots/db4885731c33e16cc0d5207bc3734465.wav",
-    "pinky": "/audio/mascots/4a37e47cab957b5b185bfe2f0e9d2cc9.wav"
+    "sparky": "/audio/mascots/99d42c79465d421e69c1809061bc6f5e.wav",
+    "pinky": "/audio/mascots/92df23d8f1fb34ed3865da31c83ac7d6.wav"
   },
   "c1-sintese-05": {
     "text": "The exception suggests that the claim needs to be narrowed.",
-    "sparky": "/audio/mascots/88cb777110840b9e5b4fad7b6791dfe9.wav",
-    "pinky": "/audio/mascots/3d028e6dd0d4c5b4fe99a3ac311753e4.wav"
+    "sparky": "/audio/mascots/efee323c4e54b702f1500edd3599ecb9.wav",
+    "pinky": "/audio/mascots/2cc42630dce6c4aa3be22c5f9030a5a7.wav"
   },
   "c1-sintese-06": {
     "text": "On balance, a phased introduction would allow the policy to be evaluated.",
-    "sparky": "/audio/mascots/143fb9260e117f25a39ae28b4e6ad01b.wav",
-    "pinky": "/audio/mascots/7f901f9093fda59b50b0645c18dd7d53.wav"
+    "sparky": "/audio/mascots/507f1d2375b3f7e952aeb9ee8a991afe.wav",
+    "pinky": "/audio/mascots/a77f049a2cae5a3d6869c163463ea251.wav"
   },
   "c1-interacao-01": {
     "text": "We would appreciate receiving your comments by Thursday.",
-    "sparky": "/audio/mascots/8f2a023f252a51ab841e42423b9f6fb4.wav",
-    "pinky": "/audio/mascots/faa4f4a41d4ab3980ee60c60e77e1763.wav"
+    "sparky": "/audio/mascots/0c68701c7e1368abf132b15b5720799c.wav",
+    "pinky": "/audio/mascots/fbedd22896b4081a4795eea4a9392093.wav"
   },
   "c1-interacao-02": {
     "text": "What both teams need is a predictable process for handling urgent requests.",
-    "pinky": "/audio/mascots/32d016166246228e6c86c47cb6a2a9c9.wav",
-    "sparky": "/audio/mascots/ac316d404e49b65e4e79382e8e1459be.wav"
+    "pinky": "/audio/mascots/9c605f08bd6dea4c897de0239897d15a.wav",
+    "sparky": "/audio/mascots/478fc982b5af72caa83bc9d176e508c9.wav"
   },
   "c1-interacao-03": {
     "text": "Is there any chance we could revisit the final paragraph?",
-    "sparky": "/audio/mascots/7860f6cc91b8b0c42e2d54f71972e91f.wav",
-    "pinky": "/audio/mascots/9b82eb85d937fa147cdf60bd9aa2bee3.wav"
+    "sparky": "/audio/mascots/8d4f17e24e3ac3b3c1aa3123aa9b0ebe.wav",
+    "pinky": "/audio/mascots/c0846418848528e8de481ad61b8bc38b.wav"
   },
   "c1-interacao-04": {
     "text": "Only after the review did we understand the scale of the problem.",
-    "sparky": "/audio/mascots/a7b740910412ad93e8d4ba0b3ff9bc60.wav",
-    "pinky": "/audio/mascots/a979ea1bb15b1dc5de14fa39e6e2c368.wav"
+    "sparky": "/audio/mascots/1ce8933faaa85e8cac1a78d67ba6ab88.wav",
+    "pinky": "/audio/mascots/088e4f87b3dd8afb74065e6a695da07d.wav"
   },
   "c1-interacao-05": {
     "text": "Let me distinguish between the initial estimate and the approved budget.",
-    "sparky": "/audio/mascots/1303490a850183c2314059149abf44ec.wav",
-    "pinky": "/audio/mascots/a922492086b373b20c8bdeea33eedc6b.wav"
+    "sparky": "/audio/mascots/17cf1042997a3acc1dc46c6ccbc959c9.wav",
+    "pinky": "/audio/mascots/52a2a43fdd5568289480465081adde96.wav"
   },
   "c1-interacao-06": {
     "text": "The agreement remains subject to a successful accessibility review.",
-    "sparky": "/audio/mascots/da79a18b92bceefc36d6d5c5618415b0.wav",
-    "pinky": "/audio/mascots/10775c24e6edf5c0178a410e7758671e.wav"
+    "sparky": "/audio/mascots/cd097dcf1fb57c060ef6434bfe9f442e.wav",
+    "pinky": "/audio/mascots/34963511ffadf6f405f615ccccfb0680.wav"
   },
   "c2-nuance-01": {
     "text": "To grant that the scheme is efficient is not to endorse its underlying assumptions.",
-    "pinky": "/audio/mascots/c2d7f92e8e17a2e7a77438c41dbddc6b.wav",
-    "sparky": "/audio/mascots/bb95112abe6dbcdf5c11b8d495a377e2.wav"
+    "pinky": "/audio/mascots/4322498f79aa91092b11a94875d80b2a.wav",
+    "sparky": "/audio/mascots/0e5d14042172ea09ea48563577cfd6bd.wav"
   },
   "c2-nuance-02": {
     "text": "Calling the delay a triumph of efficiency was hardly an unqualified compliment.",
-    "sparky": "/audio/mascots/ad6beec6c9ff543962bcc58c3776f8a1.wav",
-    "pinky": "/audio/mascots/efaf0417c5eff8a81c915e617036f32a.wav"
+    "sparky": "/audio/mascots/ef81560f1916d35fefb7037bf66a10ef.wav",
+    "pinky": "/audio/mascots/885f744e53cead59ba6b4ce10bfd49ae.wav"
   },
   "c2-nuance-03": {
     "text": "The question presupposes a failure that the report has not established.",
-    "sparky": "/audio/mascots/753ae61968060e3e35cb703f32191839.wav",
-    "pinky": "/audio/mascots/ef498c5c56f6c36e175812312382e8ec.wav"
+    "sparky": "/audio/mascots/7bf8376d1c74e296b4c8c2edda26f69b.wav",
+    "pinky": "/audio/mascots/53c6a14427e6f3a01ea72e2ea78eab6f.wav"
   },
   "c2-nuance-04": {
     "text": "Not all applicants were excluded, but the criteria remained unclear.",
-    "sparky": "/audio/mascots/6fc034bb3ef84840fb5a5e8324d40596.wav",
-    "pinky": "/audio/mascots/2f62578899ffc6d17f8b9fb02e8fc7e5.wav"
+    "sparky": "/audio/mascots/2549e1b75ec790658d34cdfbac0cacc2.wav",
+    "pinky": "/audio/mascots/c7ed9b6ab54862bc5d844dfbb5951b8b.wav"
   },
   "c2-nuance-05": {
     "text": "The metaphor foregrounds speed while obscuring the need for ongoing support.",
-    "sparky": "/audio/mascots/837d4a248cf38a499e386042e2a06ea4.wav",
-    "pinky": "/audio/mascots/870ba7fe87f7cdc227b7c678e449977d.wav"
+    "sparky": "/audio/mascots/e43ffef002eafcb833614be741418b52.wav",
+    "pinky": "/audio/mascots/01947c87abd5650cfc7f1c0608e8f33e.wav"
   },
   "c2-nuance-06": {
     "text": "The passage permits two readings, but the final qualification favours the narrower one.",
-    "sparky": "/audio/mascots/8f046dd08e0c57d59e7b3280db0671bd.wav",
-    "pinky": "/audio/mascots/e75129b05943670b70bc75c8f5a948e1.wav"
+    "sparky": "/audio/mascots/5a076a7d6626c76ef3b7393dd36a3cc2.wav",
+    "pinky": "/audio/mascots/038fec5077b3ecd2077648fafe503799.wav"
   },
   "c2-producao-01": {
     "text": "The revision removes repetition without sacrificing the argument's qualifications.",
-    "sparky": "/audio/mascots/9d21afb4cc3d64de100d9ffd478971e3.wav",
-    "pinky": "/audio/mascots/1dd3ba89301a47a7d0d3682852e9d19a.wav"
+    "sparky": "/audio/mascots/b5caf9bb3c55de3acfa357e47bdf5f29.wav",
+    "pinky": "/audio/mascots/819973bcb8c797c8fc28caeac27dbfa9.wav"
   },
   "c2-producao-02": {
     "text": "A simpler explanation need not imply a less accurate one.",
-    "sparky": "/audio/mascots/c8f3bb503f331d3abd312bd665b425d3.wav",
-    "pinky": "/audio/mascots/7ddf32d294c315659b2e73eaffddc8ec.wav"
+    "sparky": "/audio/mascots/fbb62c109bc509e3f4be6241ad79e236.wav",
+    "pinky": "/audio/mascots/972004c250a06065878a0be8769443cf.wav"
   },
   "c2-producao-03": {
     "text": "The report attributes the criticism to residents without adopting every allegation.",
-    "sparky": "/audio/mascots/58b3e9bc7369f2e970b84b4aeeb524ea.wav",
-    "pinky": "/audio/mascots/0c350c465e40900161cf4cd102f21682.wav"
+    "sparky": "/audio/mascots/289ebb1ecfcace6038f3007df4a3d40f.wav",
+    "pinky": "/audio/mascots/7d18ab4d8d3cdb644b1bfeda6dde00a5.wav"
   },
   "c2-producao-04": {
     "text": "The objection is well founded, but it does not by itself settle the question.",
-    "sparky": "/audio/mascots/548112fa142c613f367fe2886d6eb672.wav",
-    "pinky": "/audio/mascots/5a955cbb6c07a24ddb79edafd77c59f1.wav"
+    "sparky": "/audio/mascots/b6ccb986c659ba944497c1c3302e1179.wav",
+    "pinky": "/audio/mascots/c1b1d278cc39d6d13ea5869830e93a6f.wav"
   },
   "c2-producao-05": {
     "text": "Describing the improvement as merely adequate introduces a judgement beyond the figures.",
-    "sparky": "/audio/mascots/1098fa21420c98228cc723534d880818.wav",
-    "pinky": "/audio/mascots/30b8f11dbbe64559be5825bf4927bcbd.wav"
+    "sparky": "/audio/mascots/c1f0b05415062b3012f5a40bbc5dcd50.wav",
+    "pinky": "/audio/mascots/791c2e0c2398f864d0fecf1f4ceb0d9d.wav"
   },
   "c2-producao-06": {
     "text": "A defensible conclusion must accommodate uncertainty without surrendering judgement.",
-    "sparky": "/audio/mascots/04e38074c229893f05bec0be43bdc5c1.wav",
-    "pinky": "/audio/mascots/1eae6bf85c0942ba265c0dd20be6a7a9.wav"
+    "sparky": "/audio/mascots/e0295ed3bfa8869c448fcbaaa94bfc51.wav",
+    "pinky": "/audio/mascots/60f95dfd19d50336fa4066ee1eaaab6f.wav"
   },
   "c1-evidencias-01": {
     "text": "The study is relevant, but its narrow sample limits the reach of its conclusions.",
-    "sparky": "/audio/mascots/d2153e4c189f119607c5790b53b4636f.wav",
-    "pinky": "/audio/mascots/6dd9575729f583bea9c9dbd4c36c6543.wav"
+    "sparky": "/audio/mascots/71867cfaba7ec3f7365aa8cb4718ba83.wav",
+    "pinky": "/audio/mascots/fa0d46ea2a3ff48d6b39537327ff691b.wav"
   },
   "c1-evidencias-02": {
     "text": "The figures suggest a short-term shift rather than a permanent change in behaviour.",
-    "sparky": "/audio/mascots/f3de1a510576544691225703a418583a.wav",
-    "pinky": "/audio/mascots/56302348475301b2cbf4858bacaa19cd.wav"
+    "sparky": "/audio/mascots/7f1ee7eafe671affe6152671a3c97b4c.wav",
+    "pinky": "/audio/mascots/6b0108821a02187080fc20b8c8ee2fd0.wav"
   },
   "c1-evidencias-03": {
     "text": "The estimate is sufficiently precise for planning, though not for ranking small differences.",
-    "sparky": "/audio/mascots/1ba2109b284555cb31011ed579087ddd.wav",
-    "pinky": "/audio/mascots/0a496ee24eabbd1902fb39fd10820c8e.wav"
+    "sparky": "/audio/mascots/3638fa467b5f121d467a2bd6eb51f1dc.wav",
+    "pinky": "/audio/mascots/b6fa59cf64710904016a7106d71ec1aa.wav"
   },
   "c1-evidencias-04": {
     "text": "The rate doubled, but the increase represented only four additional cases.",
-    "sparky": "/audio/mascots/03022e76df00555ade168ddac34d38aa.wav",
-    "pinky": "/audio/mascots/d9a5ba24c24c093d5fdd7e1594d6b091.wav"
+    "sparky": "/audio/mascots/563a199b126d6e9264a80fa99821e515.wav",
+    "pinky": "/audio/mascots/f71597788984301809d1dbe5b67ae260.wav"
   },
   "c1-evidencias-05": {
     "text": "The verified record shows a schedule change, not the cancellation described online.",
-    "sparky": "/audio/mascots/68b81e460342c3fe04c3e2c69bd7385c.wav",
-    "pinky": "/audio/mascots/9b7ab653e266e7f5142a97ef6f3d7197.wav"
+    "sparky": "/audio/mascots/cee9cb2414ed88c0082bf511b2bae926.wav",
+    "pinky": "/audio/mascots/fb1dd55c2c198a40fdb46dbbb298e653.wav"
   },
   "c1-evidencias-06": {
     "text": "On balance, a limited pilot is justified, provided that access and outcomes are independently reviewed.",
-    "sparky": "/audio/mascots/ae53b37237ade63b8a7865d99b8f0464.wav",
-    "pinky": "/audio/mascots/09e16afb7a0c1dededed3b2c225dda26.wav"
+    "sparky": "/audio/mascots/eef62e7640731a481227a71d55c69a0a.wav",
+    "pinky": "/audio/mascots/63c9a746ed8aaea11c014d8be0398cdd.wav"
   },
   "c2-estilo-cultura-01": {
     "text": "The headline echoes a familiar promise only to expose how little has changed.",
-    "sparky": "/audio/mascots/4f08a879298c43cb9d34d529e94bf5a8.wav",
-    "pinky": "/audio/mascots/818d3f16bdf65706e1f6f38a2acadf23.wav"
+    "sparky": "/audio/mascots/d824eb691ee2378c4266aa22b592920e.wav",
+    "pinky": "/audio/mascots/e5a8863fb01279c00cdf5b8949c5138b.wav"
   },
   "c2-estilo-cultura-02": {
     "text": "The narrator reproduces the committee's certainty without necessarily sharing it.",
-    "pinky": "/audio/mascots/8978e6a9d68c3b939eda4f618738f642.wav",
-    "sparky": "/audio/mascots/5503dfe9f2e0448b3e2ceb6e099177e7.wav"
+    "pinky": "/audio/mascots/bceedb7f83dbd7af30e7d490a6c71f9d.wav",
+    "sparky": "/audio/mascots/4256796c9684328a5457ef4f12cb6a7d.wav"
   },
   "c2-estilo-cultura-03": {
     "text": "A literal translation preserved the words but misplaced the joke's target.",
-    "sparky": "/audio/mascots/9f7dca3986a06fbdc5c93e357e5db5dd.wav",
-    "pinky": "/audio/mascots/248a0822ee85bd7b095b47060e862c63.wav"
+    "sparky": "/audio/mascots/1a2b097bd71f84128079cebe662d2eff.wav",
+    "pinky": "/audio/mascots/c2288f2ae416c90b2a62354962c9a91c.wav"
   },
   "c2-estilo-cultura-04": {
     "text": "The two accounts describe the same transfer while assigning agency and benefit differently.",
-    "sparky": "/audio/mascots/49a8434601f19f418b78f522cd0aba65.wav",
-    "pinky": "/audio/mascots/70b08b090390dbf7f93b1afff488c3eb.wav"
+    "sparky": "/audio/mascots/5b53c137df6e259e79e2e9dfc3623533.wav",
+    "pinky": "/audio/mascots/e9dde7ad7975af7562009f218c0fd457.wav"
   },
   "c2-estilo-cultura-05": {
     "text": "The revision clarifies the sequence, balances the clauses and reserves the final stress for the consequence.",
-    "sparky": "/audio/mascots/5a42fc3a6d40878c11fad542ecaf84e6.wav",
-    "pinky": "/audio/mascots/d1acb5084b352d4153be843a854db5f4.wav"
+    "sparky": "/audio/mascots/a4e665ae920da5a24ead6ecd25c4e0e5.wav",
+    "pinky": "/audio/mascots/7199afb8b71fd280c8c192682233c144.wav"
   },
   "c2-estilo-cultura-06": {
     "text": "The comparison is illuminating precisely where the texts pursue similar ends through incompatible rhetorical means.",
-    "sparky": "/audio/mascots/473483fecdb87bf951e7cf22b2d7ba8d.wav",
-    "pinky": "/audio/mascots/03e99aa8e44547c5a6db30c451b48c2d.wav"
+    "sparky": "/audio/mascots/635909336fe988a12a0fdad14bf0930d.wav",
+    "pinky": "/audio/mascots/30a648b305d0a214228f2d0f1231e4e1.wav"
+  },
+  "b1-vida-em-movimento-01": {
+    "text": "I'm going to be late, so I'll meet you at the entrance.",
+    "sparky": "/audio/mascots/e7f388cc608bb8ec195e042c56544570.wav",
+    "pinky": "/audio/mascots/06055f3fc1d82e0251f1bac4f4ac041b.wav"
+  },
+  "b1-vida-em-movimento-02": {
+    "text": "It keeps switching off, even when the battery is full.",
+    "sparky": "/audio/mascots/251cc1a445fe458be46a00160613e8ec.wav",
+    "pinky": "/audio/mascots/38ef820f70f7791c62d32121f13700f0.wav"
+  },
+  "b2-acordos-cotidianos-01": {
+    "text": "Let's try the new schedule for two weeks and then discuss how it went.",
+    "pinky": "/audio/mascots/5a35f9ace01e5f3986b6d7dbb3f94963.wav",
+    "sparky": "/audio/mascots/cb41d53caa9ac3c259653db88920d255.wav"
+  },
+  "b2-acordos-cotidianos-02": {
+    "text": "The museum sounds promising, as long as we can confirm the access.",
+    "sparky": "/audio/mascots/cb074ed3b44e1e29dd5165d98dd818bd.wav",
+    "pinky": "/audio/mascots/bbf5acce3294dca068e654cb8ea80924.wav"
+  },
+  "c1-intencoes-e-impacto-01": {
+    "text": "If you're asking me to take this on, we'd need to revisit the deadline.",
+    "sparky": "/audio/mascots/12a4ac2efd1036653f0e5961332b7f40.wav",
+    "pinky": "/audio/mascots/68f81fc10023b4d9723961ae7dd664ce.wav"
+  },
+  "c1-intencoes-e-impacto-02": {
+    "text": "Would it help if I led with the finding and explained the caveat afterwards?",
+    "sparky": "/audio/mascots/2231e5953e99687c7a1c5a6cad5cf4bb.wav",
+    "pinky": "/audio/mascots/9d2453ed02af796acd2ce490c3bcb608.wav"
+  },
+  "c2-significado-em-disputa-01": {
+    "text": "That question assumes the decision was final, which is precisely what's disputed.",
+    "sparky": "/audio/mascots/af613eb475b19eaac098502bec198a4b.wav",
+    "pinky": "/audio/mascots/a35bb8b1245482338689d3104bc5cbdc.wav"
+  },
+  "c2-significado-em-disputa-02": {
+    "text": "Calling the delay a triumph of efficiency was hardly an unqualified compliment.",
+    "sparky": "/audio/mascots/ef81560f1916d35fefb7037bf66a10ef.wav",
+    "pinky": "/audio/mascots/885f744e53cead59ba6b4ce10bfd49ae.wav"
   }
 }

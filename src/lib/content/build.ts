@@ -24,6 +24,7 @@ export function buildLesson(
 ): Lesson {
   const words = data.example.split(" ");
   const experience = createLessonExperience(data, module, position, previous);
+  if (data.exampleFrom) experience.discovery = `Retome o modelo em uma situação diferente: ${data.question} Compare intenção, interpretação e efeito antes de consultar a explicação.`;
   const base: Record<string, Step> = {
     hook: { kind: "hook", title: experience.mechanic, body: experience.mission },
     error_preview: { kind: "discovery", title: "Observe antes de ver a explicação", body: `${experience.discovery} Pense em uma resposta e confira se ela funciona nos próximos exemplos.` },
@@ -31,7 +32,9 @@ export function buildLesson(
     example: {
       kind: "example",
       title: "Ouça antes de ler",
-      body: "Primeiro, ouça e tente entender a mensagem. Preste atenção às palavras mais destacadas. Depois, revele o texto e confira o que entendeu.",
+      body: data.exampleFrom
+        ? "Retome um modelo já estudado: que efeito a ironia produz em quem ouve? Nesta lição, você vai além da interpretação e pratica como reparar o mal-entendido. Ouça antes de revelar a frase."
+        : "Primeiro, ouça e tente entender a mensagem. Preste atenção às palavras mais destacadas. Depois, revele o texto e confira o que entendeu.",
       english: data.example,
       translation: data.translation,
     },
@@ -128,7 +131,7 @@ export function buildLesson(
     title: data.title,
     englishTitle: data.example,
     level: module.level,
-    minutes: estimateLessonMinutes(data.production, module.level),
+    minutes: estimateLessonMinutes("", module.level),
     moduleId: module.id,
     sourceIds: sourceIdsForLevel(module.level),
     steps,

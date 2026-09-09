@@ -12,6 +12,7 @@ export type CheckpointStepState = {
   revealed: boolean; listened: boolean;
 };
 export type Checkpoint = {
+  flowVersion?: number;
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
   checked: boolean; correct: boolean; translation: boolean; assisted: boolean;
   contextVisible: boolean;

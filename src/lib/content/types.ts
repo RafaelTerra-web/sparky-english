@@ -6,6 +6,8 @@ export type LessonDraft = {
   title: string;
   rule: string;
   example: string;
+  /** Explicit retrieval of an earlier model in a new communicative context. */
+  exampleFrom?: string;
   translation: string;
   vocabulary: string;
   pitfall: string;
