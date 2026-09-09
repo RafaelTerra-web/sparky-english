@@ -2,19 +2,20 @@
 import { t, localizeAttribute } from "@/lib/interface-language";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
+import { lessonIllustrationId } from "@/lib/lesson-illustrations";
 import { ArrowLeft, ArrowRight, Check, Languages, X } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum";
 import type { PublicRewardState } from "@/lib/rewards-shared";
 import { contentVersion } from "@/lib/content/build";
-import { isExercise, exerciseId, studyExercises } from "@/lib/study";
-import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey, writingLimit } from "@/lib/learning-local";
+import { isExercise, exerciseId } from "@/lib/study";
+import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey } from "@/lib/learning-local";
 import type { CheckpointStepState } from "@/lib/learning-local";
 import { SpeechPractice } from "./speech-practice";
 import { MascotFigure } from "./mascot-studio";
 import { ConversationListening } from "./conversation-listening";
 import { ConversationTipCard } from "./conversation-tip";
 import { tipForLesson } from "@/lib/conversation-tips";
-import { PersonalSparkyMessage } from "./personal-sparky-message";
+import { lessonSteps, migrateLessonCheckpoint, lessonFlowVersion } from "@/lib/lesson-flow";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
@@ -45,9 +46,9 @@ export default function LessonPlayer({
   const heading = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const feedback = useRef<HTMLDivElement>(null);
-  const [recovered] = useState(() => readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)]);
+  const [recovered] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
   const [initial] = useState(() => recovered && (!review || recovered.reviewFormat === 2) && Date.now() - Date.parse(recovered.updatedAt) < 7 * 3600000 ? recovered : null);
-  const steps = review ? [...studyExercises(lesson, true), ...lesson.steps.filter(step => step.kind === "summary")] : lesson.steps;
+  const steps = lessonSteps(lesson, review);
   const [index, setIndex] = useState(initial && initial.index < steps.length ? initial.index : 0);
   const [answer, setAnswer] = useState(initial?.answer || "");
   const [tokens, setTokens] = useState<number[]>(initial?.tokens || []);
@@ -58,7 +59,7 @@ export default function LessonPlayer({
   const [contextVisible, setContextVisible] = useState(Boolean(initial?.contextVisible));
   const [revealed, setRevealed] = useState(Boolean(initial?.revealed));
   const [listened, setListened] = useState(Boolean(initial?.listened));
-  const [draft, setDraft] = useState(recovered?.draft || "");
+  const [draft] = useState(recovered?.draft || "");
   const [receipt, setReceipt] = useState(initial?.receipt || "");
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
@@ -67,7 +68,7 @@ export default function LessonPlayer({
   const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
   const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
   const step = steps[index];
-  const illustrationId = lesson.id === "a1-1-1" ? lesson.id : lesson.moduleId;
+  const illustrationId = lessonIllustrationId(lesson);
   const showIllustration = Boolean(illustrationId) && ["hook", "choice", "listening_detail", "listening_inference"].includes(step.kind);
   const retrievalExercise = review && isExercise(step);
   const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
@@ -92,7 +93,7 @@ export default function LessonPlayer({
     history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
     const saved = saveCheckpoint(userId, { reviewFormat: 2, lessonId: lesson.id, review, index, answer, tokens, checked, correct,
       translation, assisted, contextVisible, revealed, listened, receipt, draft, furthestIndex: furthestIndex.current,
-      history: history.current, updatedAt: new Date().toISOString(), contentVersion });
+      history: history.current, updatedAt: new Date().toISOString(), contentVersion, flowVersion: lessonFlowVersion });
     if (!saved) queueMicrotask(() => setStorageError(true));
   }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened, receipt, draft]);
   function tokensForAnswer(target: number) {
@@ -175,6 +176,7 @@ export default function LessonPlayer({
     }
     if (step.kind === "production") saveWriting();
     if (index === steps.length - 1) {
+      saveWriting();
       try {
         const finished = await onFinish(receipt);
         if (finished) updateWorkspace(userId, current => {
@@ -274,7 +276,7 @@ export default function LessonPlayer({
               </div>;
             })}
           </dl>
-        ) : <p className="step-explanation">{t(step.body)}</p>}
+        ) : <p className="step-explanation">{t(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
             <p><b>{t("Seu desafio:")}</b> {t(lesson.experience.challenge)}</p>
@@ -313,39 +315,14 @@ export default function LessonPlayer({
             </details>
           </div>
         )}
-        {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
-        {step.kind === "production" && (
-          <div className="production-workspace">
-            {learnerProfile && voiceEnabled && <PersonalSparkyMessage profile={learnerProfile} occasion="practice" />}
-            {step.productionSupport && <section className="writing-plan" aria-label={localizeAttribute("Planeje sua resposta")}><h3>{t("Um caminho para começar")}</h3><ol>{step.productionSupport.plan.map(item => <li key={item}>{t(item)}</li>)}</ol></section>}
-            <label htmlFor="lesson-draft">{t("Seu rascunho (opcional)")}</label>
-            <textarea
-              id="lesson-draft"
-              lang="en"
-              rows={7}
-              maxLength={writingLimit}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder={localizeAttribute("Escreva sua resposta em inglês…")}
-            />
-            <p>{t(draft.trim() ? draft.trim().split(/\s+/).length : 0)}{t(" palavras ·")}{t(draft.length)}/{t(writingLimit)}{t(" caracteres")}</p>
-            <p>{t("Seu rascunho é salvo neste dispositivo. Ao avançar ou fechar, uma versão vai para o Caderno. Não há correção automática ou nota.")}</p>
-            {step.productionSupport && <details key={index} className="learning-disclosure writing-model">
-              <summary>{t("Consultar exemplo comentado")}</summary>
-              <p>{t("Tente primeiro. Este modelo mostra uma possibilidade de organização.")}</p>
-              <blockquote lang="en">{t(step.productionSupport.model)}</blockquote>
-              <p><strong>{t("Observe:")}</strong> {t(step.productionSupport.notice)}</p>
-              <p><strong>{t("Agora adapte:")}</strong> {t(step.productionSupport.transfer)}</p>
-            </details>}
-            <p>{t("O tempo estimado da lição inclui rascunho e revisão. Você pode sair e continuar depois.")}</p>
-            <strong>{t("Antes de continuar, confira:")}</strong>
-            <ul>
-              {(step.checklist ?? ["Respondi a todas as partes da proposta?", "Usei a estrutura e o vocabulário estudados?", "Sujeito, verbo e referência de tempo estão coerentes?", "Meu texto comunica a ideia sem tradução palavra por palavra?"]).map(item => <li key={item}>{t(item)}</li>)}
-            </ul>
-            {step.speakingTask && <aside className="oral-challenge"><h3>{t("Agora pratique em voz alta")}</h3><p>{t(step.speakingTask)}</p><p>{t("Prática livre, sem gravação ou nota automática. Se possível, peça a um colega ou professor que ouça sua resposta e dê sugestões.")}</p></aside>}
-            {step.mediation && <aside className="oral-challenge"><h3>{t("Mediação: leve a mensagem a outra pessoa")}</h3><p>{t(step.mediation)}</p><p>{t("Acrescente sua resposta ao rascunho sob o título “Mediação”. Preserve a intenção original e adapte a informação ao destinatário.")}</p></aside>}
-          </div>
+        {!review && step.kind === "pronunciation" && lesson.steps.find(item => item.kind === "production")?.speakingTask && (
+          <details className="learning-disclosure">
+            <summary>{t("Experimente uma resposta sua")}</summary>
+            <p>{t(lesson.steps.find(item => item.kind === "production")!.speakingTask)}</p>
+            <p>{t("Prática opcional em voz alta, sem precisar escrever ou gravar.")}</p>
+          </details>
         )}
+        {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
         {step.listening && <ConversationListening key={`${lesson.id}:${index}`} conversation={step.listening}
           attempted={checked || step.kind !== "choice" || readWorkspace(userId).attempts.some(attempt => attempt.lessonId === lesson.id && attempt.stepId === exerciseId(lesson, step) && attempt.review === review && attempt.contentVersion === contentVersion)}
           onAssisted={() => setAssisted(true)} />}
@@ -354,29 +331,6 @@ export default function LessonPlayer({
             <strong>{t("Leia o enunciado e tente responder.")}</strong>
             <p>{t("O texto e a frase com lacuna fazem parte da pergunta. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.")}</p>
           </aside>
-        )}
-        {isExercise(step) && (
-          <details key={index} open={contextVisible} className="lesson-notes" onToggle={(event) => {
-            setContextVisible(event.currentTarget.open);
-            if (event.currentTarget.open) {
-              setAssisted(true);
-            }
-          }}>
-            <summary>{t("Consultar explicação e vocabulário")}</summary>
-            {lesson.steps
-              .filter(
-                (item) => item.kind === "teach" || item.kind === "vocabulary",
-              )
-              .map((item, noteIndex) => (
-                <section key={noteIndex}>
-                  <h3>{t(item.title)}</h3>
-                  <p>{t(item.body)}</p>
-                </section>
-              ))}
-          </details>
-        )}
-        {retrievalExercise && assisted && !checked && (
-          <p className="review-assistance-status" role="status">{t("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
         )}
         {voiceEnabled && step.english && step.kind === "example" && (
           <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />
@@ -410,7 +364,7 @@ export default function LessonPlayer({
             {translation && <p>{t(step.translation)}</p>}
           </div>
         )}
-        {step.english && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{t(savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno")}</button>}
+        {step.english && step.kind !== "summary" && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{t(savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno")}</button>}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
             <div className="word-answer" aria-label={localizeAttribute("Frase montada")}>
@@ -466,6 +420,29 @@ export default function LessonPlayer({
               ))}
             </div>
           )
+        )}
+        {isExercise(step) && (
+          <details key={index} open={contextVisible} className="lesson-notes" onToggle={(event) => {
+            setContextVisible(event.currentTarget.open);
+            if (event.currentTarget.open) {
+              setAssisted(true);
+            }
+          }}>
+            <summary>{t("Consultar explicação e vocabulário")}</summary>
+            {lesson.steps
+              .filter(
+                (item) => item.kind === "teach" || item.kind === "vocabulary",
+              )
+              .map((item, noteIndex) => (
+                <section key={noteIndex}>
+                  <h3>{t(item.title)}</h3>
+                  <p>{t(item.body)}</p>
+                </section>
+              ))}
+          </details>
+        )}
+        {retrievalExercise && assisted && !checked && (
+          <p className="review-assistance-status" role="status">{t("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
         )}
         {checked && (
           <div

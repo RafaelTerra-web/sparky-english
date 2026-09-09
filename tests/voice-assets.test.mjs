@@ -1,3 +1,4 @@
+import { lessonVoiceIdentity } from "../src/lib/lesson-voice-config.ts";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -11,8 +12,8 @@ test('every published lesson has both current, nonempty mascot audio files', asy
   for (const lesson of lessons) {
     const text = lesson.steps.find(step => step.kind === 'example').english;
     assert.equal(manifest[lesson.id].text,text);
-    for (const [mascot,profile] of Object.entries(voiceProfiles)) {
-      const hash = createHash('sha256').update(JSON.stringify({model:profile.model,text,voice:profile.voice,...('instructions' in profile ? {instructions:profile.instructions} : {})})).digest('hex').slice(0,32);
+    for (const mascot of Object.keys(voiceProfiles)) {
+      const hash = createHash('sha256').update(JSON.stringify(lessonVoiceIdentity(text,mascot,lesson.level))).digest('hex').slice(0,32);
       const path = '/audio/mascots/' + hash + '.wav';
       assert.equal(manifest[lesson.id][mascot],path,lesson.id + ' / ' + mascot);
       const bytes = await readFile(new URL('../public' + path,import.meta.url));

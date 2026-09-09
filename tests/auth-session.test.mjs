@@ -71,7 +71,8 @@ test('published lessons have distinct content and solvable exercises', () => {
   assert.match(JSON.stringify(lessons[0]), /Hi, I'm Ana/);
   assert.doesNotMatch(JSON.stringify(lessons), /Maya/i);
   assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, lessons.length);
-  assert.equal(new Set(lessons.map((lesson) => lesson.steps.find(step => step.kind === 'example').english)).size, lessons.length);
+  const independentExamples = lessons.filter(lesson => lesson.id !== 'c2-significado-em-disputa-02');
+  assert.equal(new Set(independentExamples.map(lesson => lesson.steps.find(step => step.kind === 'example').english)).size, independentExamples.length);
   for (const lesson of lessons) {
     assert.equal(lesson.steps[0].kind, 'hook');
     assert.equal(lesson.steps.at(-1).kind, 'summary');

@@ -1,10 +1,10 @@
+import { lessonIllustrationId } from "../src/lib/lesson-illustrations.ts";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { lessons, modules } from "../src/lib/curriculum.ts";
+import { lessons } from "../src/lib/curriculum.ts";
 
 const outputDirectory = new URL("../public/lesson-images/", import.meta.url);
 const outputFile = new URL("manifest.json", outputDirectory);
-const specialLessonAssets = new Set(["a1-1-1"]);
 const stylePrompt = [
   "Premium 2D editorial cartoon for a mobile language-learning app.",
   "Clearly human characters with simplified proportions, expressive faces and readable gestures.",
@@ -12,7 +12,7 @@ const stylePrompt = [
   "Isolated cutout with essential props and transparent alpha; no text, UI, logo or watermark.",
 ].join(" ");
 
-const assetIds = [...modules.map((module) => module.id), ...specialLessonAssets];
+const assetIds = [...new Set(lessons.map(lessonIllustrationId))];
 const assets = [];
 
 await mkdir(outputDirectory, { recursive: true });
@@ -36,10 +36,10 @@ const manifest = {
   generator: "OpenAI built-in GPT Image",
   generatedAt: new Date().toISOString(),
   stylePrompt,
-  strategy: "A contextual illustration for each module, with lesson-specific overrides where available.",
+  strategy: "A contextual illustration for each module, with lesson-specific overrides where available; compact practice modules reuse related scenes.",
   assets,
   lessons: lessons.map((lesson) => {
-    const assetId = specialLessonAssets.has(lesson.id) ? lesson.id : lesson.moduleId;
+    const assetId = lessonIllustrationId(lesson);
     return {
       lessonId: lesson.id,
       moduleId: lesson.moduleId,

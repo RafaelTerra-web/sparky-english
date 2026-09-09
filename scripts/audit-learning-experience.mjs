@@ -44,7 +44,7 @@ for (const lesson of lessons) {
 
 for (const courseModule of modules) {
   const moduleSequences = new Set(courseModule.lessons.map(lesson => lesson.steps.map(step => step.kind).join(">")));
-  assert.ok(moduleSequences.size >= 6, `${courseModule.id}: locally repetitive sequence`);
+  assert.ok(moduleSequences.size >= Math.min(6, courseModule.lessons.length), `${courseModule.id}: locally repetitive sequence`);
 }
 assert.ok(sequences.size >= 6, "Course must retain several learning rhythms");
 assert.ok(pronunciationFocuses.size >= 8, "Pronunciation must cover segmental and connected-speech skills");

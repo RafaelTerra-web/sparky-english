@@ -2,6 +2,10 @@ import type { Level } from "../levels";
 import type { LessonDraft, LessonExperience, ModuleDraft, PronunciationGuide, UsageContrast } from "./types";
 
 const themes: Record<string, { personality: string; setting: string; application: string }> = {
+  "b1-vida-em-movimento": { personality: "Imprevistos do dia a dia", setting: "um plano que precisa mudar", application: "explicar um imprevisto e confirmar uma solução com outra pessoa" },
+  "b2-acordos-cotidianos": { personality: "Acordos que funcionam", setting: "uma decisão com necessidades diferentes", application: "negociar condições e verificar informações antes de decidir" },
+  "c1-intencoes-e-impacto": { personality: "Intenção e efeito", setting: "uma conversa em que o pedido não está totalmente explícito", application: "esclarecer intenções e transformar comentários vagos em ações úteis" },
+  "c2-significado-em-disputa": { personality: "Precisão nas entrelinhas", setting: "uma interpretação que precisa ser discutida com cuidado", application: "questionar pressupostos e reparar ambiguidades sem apagar a preocupação do outro" },
   "a1-identidade": { personality: "Primeiras conversas", setting: "um primeiro encontro", application: "se apresentar sem traduzir palavra por palavra" },
   "a1-pessoas": { personality: "Retrato falado", setting: "uma conversa sobre pessoas próximas", application: "descrever alguém de forma clara e gentil" },
   "a1-rotina": { personality: "Relógio do cotidiano", setting: "um dia comum que precisa ser organizado", application: "contar sua rotina e entender horários reais" },
