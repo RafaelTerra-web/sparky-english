@@ -1,6 +1,10 @@
 "use client";
 import { t, localizeAttribute } from "@/lib/interface-language";
 
+import { examRecommendations } from "@/lib/course-guide";
+import { skills } from "@/lib/course-metadata";
+import { updateWorkspace } from "@/lib/learning-local";
+import type { Lesson, Level } from "@/lib/curriculum";
 import { Headphones, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { EltisReport, EltisSkill, PublicEltisItem } from "@/lib/eltis-shared";
@@ -8,7 +12,7 @@ import type { EltisReport, EltisSkill, PublicEltisItem } from "@/lib/eltis-share
 type Snapshot = { token: string; question?: PublicEltisItem; index?: number; total?: number; finished?: boolean; report?: EltisReport };
 const skillNames: Record<EltisSkill, string> = { listening: "Listening", reading: "Leitura", vocabulary: "Vocabulário", grammar: "Gramática" };
 
-export function EltisSimulator({ userId, mascot = "sparky" }: { userId: string; mascot?: "sparky" | "pinky" }) {
+export function EltisSimulator({ userId, mascot = "sparky", level = "B1", completed = {}, onOpen }: { userId: string; mascot?: "sparky" | "pinky"; level?: Level; completed?: Record<string,string>; onOpen?: (lesson:Lesson)=>void }) {
   const key = `sparky-mock-eltis:${userId}`;
   const audio = useRef<HTMLAudioElement | null>(null);
   const sending = useRef(false);
@@ -60,6 +64,7 @@ export function EltisSimulator({ userId, mascot = "sparky" }: { userId: string; 
       throw new Error(data.error || "Não foi possível continuar.");
     }
     if (data.token) localStorage.setItem(key, data.token);
+    if (data.report) updateWorkspace(userId,current=>({...current,examFocus:{completedAt:data.report.completedAt,skills:Object.fromEntries(Object.entries(data.report.skills as EltisReport["skills"]).map(([skill,score])=>[skill,score.percent]))}}));
     setSnapshot(data);
     return data as Snapshot;
   }
@@ -165,6 +170,7 @@ export function EltisSimulator({ userId, mascot = "sparky" }: { userId: string; 
         ))}
       </div>
       <section className="mock-recommendations"><h2>{t("Próximos focos")}</h2><ul>{snapshot.report.recommendations.map((item) => <li key={item}>{t(item)}</li>)}</ul></section>
+      {onOpen&&<section className="exam-lesson-recommendations"><h2>{t('Pratique estas duas lições')}</h2><p>{t('Escolhidas pela habilidade com menor resultado, em contexto escolar, próximas do seu nível recomendado.')}</p>{examRecommendations({completedAt:snapshot.report.completedAt,skills:Object.fromEntries(Object.entries(snapshot.report.skills).map(([skill,score])=>[skill,score.percent]))},level,completed).map(({lesson,skill})=><article key={lesson.id}><p>{t(skills[skill])} · {lesson.level} · {t('Escola e intercâmbio')}</p><button className="secondary-button" onClick={()=>onOpen(lesson)}>{t(lesson.title)}</button></article>)}</section>}
       <div className="mock-actions"><button className="secondary-button" onClick={restart}><RotateCcw size={17} />{t(" Fazer novamente")}</button><a className="primary-button" href="https://www.eltistest.com/practicetest/eltistest_02_welcome.php" target="_blank" rel="noreferrer">{t("Abrir prática oficial")}</a></div>
     </section>
   );

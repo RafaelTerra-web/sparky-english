@@ -1,3 +1,5 @@
+import type { Discipline } from "./course-metadata.ts";
+import type { ExamFocus } from "./course-guide.ts";
 import { contentVersion } from "./content/build.ts";
 export const writingLimit = 10000;
 
@@ -24,11 +26,12 @@ export type Checkpoint = {
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
 export type Notebook = { id: string; english: string; translation: string; lessonId: string };
 export type LearningWorkspace = {
+  discipline: Discipline | "all"; examFocus?: ExamFocus;
   studyDay: string; newLessonsToday: number; recommendation: "balanced" | "new";
   version: 1; checkpoints: Record<string, Checkpoint>; attempts: Attempt[];
   writings: Writing[]; vocabulary: Notebook[]; goal: string; minutes: number;
 };
-export const blankWorkspace = (): LearningWorkspace => ({ studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
+export const blankWorkspace = (): LearningWorkspace => ({ discipline: "all", studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
 export const workspaceKey = (userId: string) => `sparky-learning:${userId}`;
 export const checkpointKey = (lessonId: string, review: boolean) => `${lessonId}:${review ? "review" : "lesson"}`;
 export function normalizeWorkspace(raw: unknown): LearningWorkspace {
@@ -68,6 +71,8 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
     }
   }
   return { ...blank, checkpoints,
+    discipline: ["everyday","work","travel","school","technology","science","culture","exchange"].includes(value.discipline) ? value.discipline : "all",
+    examFocus: value.examFocus && date(value.examFocus.completedAt) && value.examFocus.skills && typeof value.examFocus.skills === "object" ? {completedAt:value.examFocus.completedAt,skills:Object.fromEntries(Object.entries(value.examFocus.skills).filter(([k,v]) => ["listening","reading","vocabulary","grammar"].includes(k) && typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 100))} : undefined,
     studyDay: typeof value.studyDay === "string" ? value.studyDay : "",
     newLessonsToday: Number.isSafeInteger(value.newLessonsToday) && value.newLessonsToday >= 0 ? Math.min(500, value.newLessonsToday) : 0,
     recommendation: value.recommendation === "new" ? "new" : "balanced",

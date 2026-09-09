@@ -1,0 +1,366 @@
+{
+  "lessonCount": 176,
+  "moduleCount": 31,
+  "paths": 6,
+  "errors": [],
+  "byLevel": {
+    "A1": {
+      "listening": 38,
+      "speaking": 38,
+      "reading": 38,
+      "writing": 38,
+      "vocabulary": 36,
+      "grammar": 38,
+      "pronunciation": 38
+    },
+    "A2": {
+      "listening": 44,
+      "speaking": 44,
+      "reading": 44,
+      "writing": 44,
+      "vocabulary": 42,
+      "grammar": 44,
+      "pronunciation": 44
+    },
+    "B1": {
+      "listening": 40,
+      "speaking": 40,
+      "reading": 40,
+      "writing": 40,
+      "vocabulary": 38,
+      "grammar": 40,
+      "pronunciation": 40
+    },
+    "B2": {
+      "listening": 14,
+      "speaking": 14,
+      "reading": 14,
+      "writing": 14,
+      "vocabulary": 14,
+      "grammar": 14,
+      "pronunciation": 14
+    },
+    "C1": {
+      "listening": 20,
+      "speaking": 20,
+      "reading": 20,
+      "writing": 20,
+      "vocabulary": 20,
+      "grammar": 20,
+      "pronunciation": 20
+    },
+    "C2": {
+      "listening": 20,
+      "speaking": 20,
+      "reading": 20,
+      "writing": 20,
+      "vocabulary": 20,
+      "grammar": 20,
+      "pronunciation": 20
+    }
+  },
+  "focusByLevel": {
+    "A1": {
+      "listening": 12,
+      "speaking": 14,
+      "reading": 12,
+      "writing": 6,
+      "vocabulary": 12,
+      "grammar": 12,
+      "pronunciation": 6
+    },
+    "A2": {
+      "listening": 14,
+      "speaking": 15,
+      "reading": 14,
+      "writing": 7,
+      "vocabulary": 14,
+      "grammar": 15,
+      "pronunciation": 7
+    },
+    "B1": {
+      "listening": 12,
+      "speaking": 15,
+      "reading": 13,
+      "writing": 6,
+      "vocabulary": 13,
+      "grammar": 13,
+      "pronunciation": 6
+    },
+    "B2": {
+      "listening": 6,
+      "speaking": 5,
+      "reading": 5,
+      "writing": 2,
+      "vocabulary": 5,
+      "grammar": 4,
+      "pronunciation": 2
+    },
+    "C1": {
+      "listening": 6,
+      "speaking": 7,
+      "reading": 7,
+      "writing": 3,
+      "vocabulary": 7,
+      "grammar": 7,
+      "pronunciation": 3
+    },
+    "C2": {
+      "listening": 6,
+      "speaking": 7,
+      "reading": 7,
+      "writing": 3,
+      "vocabulary": 7,
+      "grammar": 7,
+      "pronunciation": 3
+    }
+  },
+  "byDiscipline": {
+    "everyday": {
+      "lessons": 123,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "grammar",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
+    },
+    "work": {
+      "lessons": 70,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "grammar",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ]
+    },
+    "travel": {
+      "lessons": 44,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "vocabulary",
+        "grammar"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ]
+    },
+    "school": {
+      "lessons": 71,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "grammar",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ]
+    },
+    "technology": {
+      "lessons": 6,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "vocabulary",
+        "grammar"
+      ],
+      "levels": [
+        "B1",
+        "B2"
+      ]
+    },
+    "science": {
+      "lessons": 13,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "vocabulary",
+        "grammar"
+      ],
+      "levels": [
+        "B2",
+        "C1"
+      ]
+    },
+    "culture": {
+      "lessons": 27,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "vocabulary",
+        "grammar"
+      ],
+      "levels": [
+        "A2",
+        "B1",
+        "C2"
+      ]
+    },
+    "exchange": {
+      "lessons": 37,
+      "skills": [
+        "reading",
+        "listening",
+        "writing",
+        "speaking",
+        "pronunciation",
+        "grammar",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C2"
+      ]
+    }
+  },
+  "topicCoverage": {
+    "conditionals": [
+      "a2-3-1",
+      "a2-planos-05",
+      "a2-planos-06",
+      "b1-hipoteses-03",
+      "b1-hipoteses-04",
+      "b1-hipoteses-05",
+      "b2-argumentacao-05",
+      "b2-autonomia-05",
+      "c1-interacao-06",
+      "b2-acordos-cotidianos-01",
+      "b2-acordos-cotidianos-02"
+    ],
+    "reported": [
+      "b1-narrativas-05",
+      "b1-colaboracao-06",
+      "b2-autonomia-01",
+      "c1-sintese-04",
+      "c2-producao-01",
+      "c2-producao-02",
+      "c2-producao-03",
+      "c2-producao-04",
+      "c2-producao-05",
+      "c2-producao-06"
+    ],
+    "evidence": [
+      "b1-5-1",
+      "b1-argumentos-06",
+      "b1-leitura-03",
+      "b2-argumentacao-02",
+      "b2-autonomia-06",
+      "c1-sintese-01",
+      "c1-sintese-02",
+      "c1-sintese-06",
+      "c1-evidencias-01",
+      "c1-evidencias-02",
+      "c1-evidencias-03",
+      "c1-evidencias-04",
+      "c1-evidencias-05",
+      "c1-evidencias-06"
+    ],
+    "inference": [
+      "b1-leitura-01",
+      "b1-leitura-02",
+      "c1-interacao-03",
+      "c2-nuance-01",
+      "c2-nuance-02",
+      "c2-nuance-03",
+      "c2-nuance-04",
+      "c2-nuance-05",
+      "c2-nuance-06",
+      "c2-estilo-cultura-01",
+      "c2-estilo-cultura-02",
+      "c2-estilo-cultura-03",
+      "c2-estilo-cultura-04",
+      "c2-estilo-cultura-05",
+      "c2-estilo-cultura-06",
+      "c1-intencoes-e-impacto-01",
+      "c1-intencoes-e-impacto-02",
+      "c2-significado-em-disputa-01",
+      "c2-significado-em-disputa-02"
+    ],
+    "register": [
+      "a2-textos-03",
+      "b1-6-1",
+      "b1-colaboracao-02",
+      "b1-colaboracao-04",
+      "b1-colaboracao-05",
+      "b1-leitura-04",
+      "b2-argumentacao-03",
+      "b2-autonomia-02",
+      "b2-autonomia-03",
+      "c1-interacao-01",
+      "c1-interacao-02",
+      "c1-interacao-05",
+      "c2-producao-01",
+      "c2-producao-02",
+      "c2-producao-03",
+      "c2-producao-04",
+      "c2-producao-05",
+      "c2-producao-06",
+      "c2-estilo-cultura-01",
+      "c2-estilo-cultura-02",
+      "c2-estilo-cultura-03",
+      "c2-estilo-cultura-04",
+      "c2-estilo-cultura-05",
+      "c2-estilo-cultura-06",
+      "b2-acordos-cotidianos-01",
+      "b2-acordos-cotidianos-02",
+      "c1-intencoes-e-impacto-01",
+      "c1-intencoes-e-impacto-02",
+      "c2-significado-em-disputa-01",
+      "c2-significado-em-disputa-02"
+    ]
+  },
+  "notes": [
+    "Skill coverage includes optional oral, pronunciation and written applications. Completion is not a certification of mastery.",
+    "Domain transfer tasks are explicit in competency paths; they do not change the original lesson context.",
+    "Exam suggestions and draft/attempt history are stored per account on this device."
+  ]
+}

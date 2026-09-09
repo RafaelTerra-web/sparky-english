@@ -1,4 +1,5 @@
 "use client";
+import { lessonMetadata, pathsForLesson } from "@/lib/course-guide";
 import { t, localizeAttribute } from "@/lib/interface-language";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
@@ -30,7 +31,11 @@ export default function LessonPlayer({
   learnerProfile,
   onClose,
   onFinish,
+  studyMode = "guided",
+  nextLesson,
 }: {
+  studyMode?: "guided"|"practice";
+  nextLesson?: Lesson;
   userId: string;
   lesson: Lesson;
   review: boolean;
@@ -277,6 +282,8 @@ export default function LessonPlayer({
             })}
           </dl>
         ) : <p className="step-explanation">{t(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
+        {index===0&&!review&&studyMode==='practice'&&<p className="practice-context">{t('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{t('Próxima na trilha:')}{t(nextLesson.title)}</>}</p>}
+        {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p>{t(lessonMetadata[lesson.id].outcome)}.</p><p>{t('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p><strong>{t('Depois de concluir, próxima na trilha:')}</strong>{t(nextLesson.title)}</p>:<p>{t('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
             <p><b>{t("Seu desafio:")}</b> {t(lesson.experience.challenge)}</p>

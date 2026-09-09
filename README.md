@@ -74,3 +74,7 @@ Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado
 O contrato de banco inicial está em `supabase/migrations/20260903000100_sparky_english.sql`; a sincronização só fica ativa após aplicar também `20260905000100_durable_google_progress.sql` e configurar a flag descrita acima.
 
 A [atualização de 9 de setembro](docs/release-2026-09-09.md) acrescenta nivelamento direto pelo Perfil, preferência de idioma English e seis aulas narradas em inglês pelo Sparky, com visuais próprios e correção da voz da Pinky nos simulados.
+
+## Curso guiado
+
+A trilha, os filtros por disciplina e as recomendações estão documentados em [docs/course-guide.md](docs/course-guide.md). Execute `npm run audit:coverage` para atualizar o mapa de cobertura e verificar as referências pedagógicas.
