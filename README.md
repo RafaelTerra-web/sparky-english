@@ -12,6 +12,8 @@ npm run dev
 
 Configure `SPARKY_GOOGLE_CLIENT_ID`, `SPARKY_SESSION_SECRET` (pelo menos 32 bytes aleatórios), `SPARKY_ALLOWED_EMAILS` (e-mails autorizados separados por vírgula) e `NEXT_PUBLIC_SITE_URL`. A lista vazia bloqueia o acesso. O antigo código compartilhado não autentica mais usuários.
 
+`SPARKY_ADDITIONAL_ALLOWED_EMAILS` e `SPARKY_INVITED_EMAILS` acrescentam endereços à lista principal. Use a lista de convites para novas liberações quando as listas antigas estiverem armazenadas como segredos não recuperáveis. Todas as listas usam correspondência exata, ignorando espaços nas extremidades e diferenças entre maiúsculas e minúsculas.
+
 No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em “Origens JavaScript autorizadas”. Para o ambiente local, autorize `http://localhost` e `http://localhost:3200`. O login usa Google Identity Services com nonce e validação do ID token no servidor; não precisa de client secret nem de acesso a Gmail, Drive ou contatos. O cookie de sessão usa criptografia autenticada, HttpOnly, SameSite=Lax, Secure em produção e duração de 7 dias. Remover um e-mail da lista revoga o acesso na próxima validação de sessão.
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.

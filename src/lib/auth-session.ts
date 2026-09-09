@@ -24,19 +24,19 @@ function key() {
     throw new Error("Session secret is not configured");
   return createHash("sha256").update(secret).digest();
 }
+function invitedEmails() {
+  return [process.env.SPARKY_ALLOWED_EMAILS, process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS, process.env.SPARKY_INVITED_EMAILS]
+    .filter(Boolean).join(",").split(",").map(item => item.trim().toLowerCase()).filter(Boolean);
+}
 export function googleConfigured() {
   return Boolean(
     process.env.SPARKY_GOOGLE_CLIENT_ID &&
     (process.env.SPARKY_SESSION_SECRET?.length ?? 0) >= 32 &&
-    (process.env.SPARKY_ALLOWED_EMAILS?.trim() || process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS?.trim()),
+    invitedEmails().length,
   );
 }
 export function emailAllowed(email: string) {
-  const allowed = [process.env.SPARKY_ALLOWED_EMAILS, process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS].filter(Boolean).join(",")
-    .split(",")
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
-  return allowed.includes(email.trim().toLowerCase());
+  return invitedEmails().includes(email.trim().toLowerCase());
 }
 export async function seal(
   payload: Record<string, unknown>,

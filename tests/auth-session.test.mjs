@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { seal, unseal, readSession, emailAllowed, sameValue, sameOrigin } from '../src/lib/auth-session.ts';
+import { seal, unseal, readSession, emailAllowed, googleConfigured, sameValue, sameOrigin } from '../src/lib/auth-session.ts';
 import { lessons } from '../src/lib/curriculum.ts';
 
 process.env.SPARKY_SESSION_SECRET = randomBytes(32).toString('hex');
@@ -35,6 +35,30 @@ test('nonce comparison rejects mismatches, malformed values and unequal UTF-8 le
   assert.equal(sameValue(nonce, randomBytes(32).toString('base64url')), false);
   assert.equal(sameValue(undefined, nonce), false);
   assert.equal(sameValue('é'.repeat(30), 'a'.repeat(30)), false);
+});
+
+test('new invitations preserve existing lists and never authorize similar addresses', () => {
+  const keys = ['SPARKY_ALLOWED_EMAILS', 'SPARKY_ADDITIONAL_ALLOWED_EMAILS', 'SPARKY_INVITED_EMAILS', 'SPARKY_GOOGLE_CLIENT_ID'];
+  const saved = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+  try {
+    process.env.SPARKY_GOOGLE_CLIENT_ID = 'test-client';
+    process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS = 'previous@example.com';
+    process.env.SPARKY_INVITED_EMAILS = ' New.Student@example.com , ';
+    assert.equal(emailAllowed('invited@example.com'), true);
+    assert.equal(emailAllowed('previous@example.com'), true);
+    assert.equal(emailAllowed(' NEW.STUDENT@example.com '), true);
+    assert.equal(emailAllowed('new.student@example.com.attacker.test'), false);
+    assert.equal(emailAllowed('other@example.com'), false);
+    assert.equal(googleConfigured(), true);
+    process.env.SPARKY_ALLOWED_EMAILS = '';
+    process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS = '';
+    assert.equal(googleConfigured(), true);
+    process.env.SPARKY_INVITED_EMAILS = ', ,';
+    assert.equal(googleConfigured(), false);
+    assert.equal(emailAllowed('new.student@example.com'), false);
+  } finally {
+    for (const key of keys) if (saved[key] === undefined) delete process.env[key]; else process.env[key] = saved[key];
+  }
 });
 
 test('mutating requests reject absent or foreign origins', () => {
