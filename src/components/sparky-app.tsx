@@ -1,4 +1,8 @@
 "use client";
+import { getInterfaceLocale, t, localizeAttribute } from "@/lib/interface-language";
+import { useInterfaceLanguage, setInterfaceLanguage } from "@/lib/interface-language";
+import { planReviews, studyDay } from "@/lib/review-plan";
+import { updateWorkspace } from "@/lib/learning-local";
 import { personalizeLesson } from "@/lib/personalized-lesson";
 
 import Image from "next/image";
@@ -36,7 +40,7 @@ import { InstallAppPrompt } from "./install-app-prompt";
 import { PersonalSparkyMessage } from "./personal-sparky-message";
 import dynamic from "next/dynamic";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
-const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">Abrindo a lição…</p> });
+const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">{t("Abrindo a lição…")}</p> });
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog));
 const LearningNotebook = dynamic(() => import("./learning-notebook"));
 import {
@@ -51,7 +55,8 @@ const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.Elt
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
-type View = "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
+const EnglishClassroom = dynamic(() => import("./english-classroom"));
+type View = "classroom" | "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -114,6 +119,7 @@ export default function SparkyApp() {
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [learnerProfile, setLearnerProfile] = useState<LearnerProfile|null>(null);
   const [user, setUser] = useState<SparkyUser | null>(null);
+  const interfaceLanguage = useInterfaceLanguage(user?.id);
   const [loading, setLoading] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
   const [view, setView] = useState<View>("today");
@@ -138,11 +144,12 @@ export default function SparkyApp() {
   const [workspace, setWorkspace] = useState(blankWorkspace);
   useEffect(() => {
     if (!user) return;
-    const refresh = () => setWorkspace(readWorkspace(user.id));
+    const refresh = () => { if (!active) setWorkspace(readWorkspace(user.id)); };
     refresh(); window.addEventListener("storage", refresh); window.addEventListener("sparky-workspace", refresh);
     return () => { window.removeEventListener("storage", refresh); window.removeEventListener("sparky-workspace", refresh); };
-  }, [user]);
+  }, [user, active]);
   const [today, setToday] = useState(() => new Date());
+  useEffect(() => { const tick = setInterval(() => setToday(new Date()), 60000); return () => clearInterval(tick); }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -349,6 +356,7 @@ export default function SparkyApp() {
       receipt,
     });
     if (result) {
+      if (!active.review && !progress.completed[active.lesson.id]) updateWorkspace(user!.id, current => ({...current,studyDay:studyDay(now),newLessonsToday:(current.studyDay===studyDay(now)?current.newLessonsToday:0)+1}));
       const earned = result.earned ?? 0;
       setNotice(
         active.review
@@ -369,25 +377,23 @@ export default function SparkyApp() {
     return (
       <main className="loading-page">
         <Brand />
-        <p role="status">Abrindo seu espaço de estudo…</p>
+        <p role="status">{t("Abrindo seu espaço de estudo…")}</p>
       </main>
     );
   if (connectionError)
     return (
       <main className="loading-page">
         <Brand />
-        <h1>Sem conexão no momento</h1>
-        <p>Conecte-se à internet para validar sua sessão.</p>
+        <h1>{t("Sem conexão no momento")}</h1>
+        <p>{t("Conecte-se à internet para validar sua sessão.")}</p>
         <button
           className="primary-button"
           onClick={() => window.location.reload()}
-        >
-          Tentar novamente
-        </button>
+        >{t("Tentar novamente")}</button>
       </main>
     );
   if (!user) return <LoginScreen />;
-  if (needsOnboarding) return <Onboarding onCancel={() => void logout()} onComplete={profile => {
+  if (needsOnboarding) return <Onboarding editing={Boolean(learnerProfile?.onboardingCompleted)} onCancel={() => { if (!learnerProfile?.onboardingCompleted) { void logout(); return; } void fetch("/api/onboarding", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"cancel-edit"})}).then(r=>{if(r.ok)setNeedsOnboarding(false);else setNotice("Não foi possível fechar o ajuste.");}); }} onComplete={profile => {
     setLearnerProfile(profile); setProgress(current => ({...current,level:profile.level}));
     setReward(current => ({...current,mascot:profile.mascot}));setNeedsOnboarding(false);
   }} />;
@@ -403,20 +409,25 @@ export default function SparkyApp() {
   const studied = lessons
     .filter((lesson) => progress.completed[lesson.id])
     .sort((a, b) => Date.parse(progress.reviews[a.id] || "9999-01-01") - Date.parse(progress.reviews[b.id] || "9999-01-01"));
-  const dueLessons = studied.filter((lesson) => Date.parse(progress.reviews[lesson.id]) <= today.getTime());
-  const earlyLessons = studied.filter((lesson) => !dueLessons.some((item) => item.id === lesson.id));
+  const dailyDone = reward.dailyReviews?.day === studyDay(today) ? reward.dailyReviews.count : 0;
+  const reviewPlan = planReviews(studied, progress.reviews, progress.level, dailyDone, today);
+  const dueLessons = reviewPlan.due;
+  const earlyLessons: Lesson[] = [];
   const due = dueLessons.length;
   const dueLabel = `${due} para hoje`;
-  const resume = Object.values(workspace.checkpoints).filter(p => lessons.some(l => l.id === p.lessonId)).sort((a,b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-  const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : studied.find(l => Date.parse(progress.reviews[l.id]) <= today.getTime()) || next;
+  const resume = Object.values(workspace.checkpoints).filter(p => (!p.review || dueLessons.some(l=>l.id===p.lessonId)) && lessons.some(l => l.id === p.lessonId)).sort((a,b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  const newLessonsToday = workspace.studyDay === studyDay(today) ? workspace.newLessonsToday : 0;
+  const interleaved = newLessonsToday > dailyDone && workspace.recommendation !== "new";
+  const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : (interleaved ? dueLessons[0] : undefined) || next;
   const recommendedReview = resume ? resume.review : Boolean(progress.completed[recommended.id]);
   const open = (lesson: Lesson, review = false) => {
     setNotice("");
+    if (review && (dailyDone >= 3 || !dueLessons.some(item => item.id === lesson.id))) { setNotice("Você já concluiu as três revisões de hoje. Continue com uma lição nova."); return; }
     setActive({ lesson: personalizeLesson(lesson, learnerProfile?.name), review });
   };
-  async function editNamePronunciation() {
+  async function editNamePronunciation(action = "pronunciation-start") {
     try {
-      const response = await fetch("/api/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "pronunciation-start" }) });
+      const response = await fetch("/api/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Não foi possível abrir o ajuste.");
       setNeedsOnboarding(true);
@@ -425,12 +436,10 @@ export default function SparkyApp() {
 
   return (
     <div className="app-frame">
-      <a href="#conteudo" className="skip-link">
-        Pular para o conteúdo
-      </a>
+      <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <aside className="sidebar">
         <Brand />
-        <nav aria-label="Navegação principal">
+        <nav aria-label={localizeAttribute("Navegação principal")}>
           {navigation.map((item) => (
             <button
               key={item.id}
@@ -442,28 +451,24 @@ export default function SparkyApp() {
               }}
             >
               <item.icon size={19} />
-              {item.label}
+              {t(item.label)}
               {item.id === "review" && due > 0 && (
-                <span className="nav-count">{due}</span>
+                <span className="nav-count">{t(due)}</span>
               )}
             </button>
           ))}
         </nav>
         <div className="sidebar-course">
           <Languages size={22} />
-          <p>
-            Seu idioma: <strong>Português</strong>
+          <p>{t("Seu idioma: ")}<strong>{t(interfaceLanguage === "en" ? "English" : "Português")}</strong>
           </p>
-          <p>
-            Você está estudando <strong>Inglês</strong>
+          <p>{t("Você está estudando ")}<strong>{t("Inglês")}</strong>
           </p>
-          <span>
-            PT-BR <ArrowRight size={13} /> EN
-          </span>
+          <span>{t("PT-BR ")}<ArrowRight size={13} />{t(" EN")}</span>
         </div>
         <button className="logout-link" onClick={logout} disabled={signingOut}>
           <LogOut size={16} />
-          {signingOut ? "Saindo…" : "Sair da conta"}
+          {t(signingOut ? "Saindo…" : "Sair da conta")}
         </button>
       </aside>
       <main className="workspace" id="conteudo" tabIndex={-1} onClickCapture={event => {
@@ -474,16 +479,16 @@ export default function SparkyApp() {
             <Brand />
           </div>
           <p className="date-label">
-            {new Intl.DateTimeFormat("pt-BR", {
+            {t(new Intl.DateTimeFormat(getInterfaceLocale(), {
               weekday: "long",
               day: "numeric",
               month: "long",
-            }).format(new Date())}
+            }).format(new Date()))}
           </p>
           <button
             className="account-chip profile-gear"
             onClick={() => setView("profile")}
-            aria-label={`Abrir perfil de ${user.name}`}
+            aria-label={localizeAttribute(`Abrir perfil de ${user.name}`)}
           >
             <Settings size={21} aria-hidden="true" />
           </button>
@@ -491,9 +496,9 @@ export default function SparkyApp() {
         </header>
         {notice && (
           <div className="notice" role="status">
-            {notice}
+            {t(notice)}
             <button
-              aria-label="Dispensar mensagem"
+              aria-label={localizeAttribute("Dispensar mensagem")}
               onClick={() => setNotice("")}
             >
               <X size={16} />
@@ -504,29 +509,26 @@ export default function SparkyApp() {
           <div className="today-overview">
             <div className="page-heading">
               <div>
-                <p className="eyebrow">Olá, {learnerProfile?.name ?? user.name}</p>
-                <h1>Seu estudo <span>de hoje</span></h1>
+                <p className="eyebrow">{t("Olá,")}{learnerProfile?.name ?? user.name}</p>
+                <h1>{t("Seu estudo")}<span>{t("de hoje")}</span></h1>
               </div>
               <span className="language-chip">
-                <Languages size={15} />
-                Português <ArrowRight size={12} /> Inglês
-              </span>
+                <Languages size={15} />{t("Português ")}<ArrowRight size={12} />{t(" Inglês")}</span>
             </div>
             <div className="today-layout">
               <section className="next-lesson">
                 <div className="lesson-copy">
                   <span className="lesson-label">
-                    {resume ? "RETOMAR PRÁTICA" : recommendedReview ? "REVISÃO PARA HOJE" : "PRÓXIMA LIÇÃO"} <span>{recommended.level}</span>
+                    {t(resume ? "RETOMAR PRÁTICA" : recommendedReview ? "REVISÃO PARA HOJE" : "PRÓXIMA LIÇÃO")} <span>{t(recommended.level)}</span>
                   </span>
-                  <h2>{recommended.title}</h2>
-                  {!recommendedReview && <p className="english-title" lang="en">{recommended.englishTitle}</p>}
-                  <p className="lesson-description">{recommendedReview ? "Recupere o que aprendeu antes de consultar os exemplos." : `Na prática: ${recommended.experience.application}.`}</p>
+                  <h2>{t(recommended.title)}</h2>
+                  {!recommendedReview && <p className="english-title" lang="en">{t(recommended.englishTitle)}</p>}
+                  <p className="lesson-description">{t(recommendedReview ? "Recupere o que aprendeu antes de consultar os exemplos." : `Na prática: ${recommended.experience.application}.`)}</p>
                   <div className="lesson-meta">
                     <Clock3 size={15} />
-                    {recommended.minutes} min<span>•</span>Explicação + prática
-                  </div>
+                    {t(recommended.minutes)}{t(" min")}<span>•</span>{t("Explicação + prática")}</div>
                   <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
-                    {resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar a lição"}
+                    {t(resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar a lição")}
                     <ArrowRight size={17} />
                   </button>
                 </div>
@@ -536,44 +538,42 @@ export default function SparkyApp() {
                   size="hero"
                 />
                 <div className="hero-caption">
-                  {reward.mascot === "pinky" ? "PINKY" : "SPARKY"} / SEU GUIA DE ESTUDO
-                </div>
+                  {t(reward.mascot === "pinky" ? "PINKY" : "SPARKY")}{t(" / SEU GUIA DE ESTUDO")}</div>
               </section>
               <aside className="study-summary">
-                <p className="eyebrow">Seu progresso no curso</p>
+                <p className="eyebrow">{t("Seu progresso no curso")}</p>
                 <div className="summary-progress">
                 <div className="progress-number">
-                  {completed}
-                  <span>/{lessons.length}</span>
+                  {t(completed)}
+                  <span>/{t(lessons.length)}</span>
                 </div>
                 <div className="summary-meter">
-                <p>lições concluídas</p>
+                <p>{t("lições concluídas")}</p>
                 <progress
                   value={completed}
                   max={lessons.length}
-                  aria-label="Lições concluídas"
+                  aria-label={localizeAttribute("Lições concluídas")}
                 />
                 </div>
                 </div>
                 <div className="summary-stats">
                 <div className="stat-row">
-                  <span>Tentativas registradas</span>
-                  <strong>{workspace.attempts.length}</strong>
+                  <span>{t("Tentativas registradas")}</span>
+                  <strong>{t(workspace.attempts.length)}</strong>
                 </div>
                 <div className="stat-row">
-                  <span>Revisões para hoje</span>
-                  <strong>{due}</strong>
+                  <span>{t("Revisões para hoje")}</span>
+                  <strong>{t(due)}</strong>
                 </div>
                 <div className="stat-row coin-stat">
-                  <span>Moedas</span>
-                  <strong><Coins size={16} /> {reward.coins}</strong>
+                  <span>{t("Moedas")}</span>
+                  <strong><Coins size={16} /> {t(reward.coins)}</strong>
                 </div>
                 </div>
                 <button
                   className="text-button"
                   onClick={() => setView("review")}
-                >
-                  Abrir revisão <ArrowRight size={15} />
+                >{t("Abrir revisão ")}<ArrowRight size={15} />
                 </button>
               </aside>
             </div>
@@ -584,20 +584,16 @@ export default function SparkyApp() {
                 <Languages size={22} />
               </span>
               <div>
-                <h2>Explicações em português. Prática em inglês.</h2>
-                <p>
-                  Ouça, tente entender e revele a frase para conferir. Depois
-                  use a ideia em uma resposta sua. Nas revisões, tente lembrar antes de consultar.
-                </p>
+                <h2>{t("Explicações em português. Prática em inglês.")}</h2>
+                <p>{t("Ouça, tente entender e revele a frase para conferir. Depois use a ideia em uma resposta sua. Nas revisões, tente lembrar antes de consultar.")}</p>
               </div>
             </section>
             <div className="section-heading">
               <div>
-                <p className="eyebrow">Explore o curso</p>
-                <h2>Outros assuntos</h2>
+                <p className="eyebrow">{t("Explore o curso")}</p>
+                <h2>{t("Outros assuntos")}</h2>
               </div>
-              <button className="text-button" onClick={() => setView("course")}>
-                Ver módulos <ArrowRight size={15} />
+              <button className="text-button" onClick={() => setView("course")}>{t("Ver módulos ")}<ArrowRight size={15} />
               </button>
             </div>
             <div className="lesson-cards">
@@ -623,6 +619,7 @@ export default function SparkyApp() {
             </div>
           </div>
         )}
+        {(view === "course" || view === "today") && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>setView("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "course" && (
           <>
           <CourseCatalog
@@ -637,37 +634,33 @@ export default function SparkyApp() {
           <>
             <div className="page-heading">
               <div>
-                <p className="eyebrow">Vocabulário e expressões</p>
-                <h1>Revisão</h1>
+                <p className="eyebrow">{t("Vocabulário e expressões")}</p>
+                <h1>{t("Revisão")}</h1>
               </div>
-              <span className="language-chip">{dueLabel}</span>
+              <span className="language-chip">{t(dueLabel)}</span>
             </div>
             {studied.length === 0 ? (
               <section className="empty-state">
                 <RotateCcw size={32} />
-                <h2>Sua revisão começa depois da primeira lição</h2>
-                <p>
-                  As expressões que você estudar aparecerão aqui para praticar
-                  novamente.
-                </p>
-                <button className="primary-button" onClick={() => open(next)}>
-                  Começar uma lição <ArrowRight size={16} />
+                <h2>{t("Sua revisão começa depois da primeira lição")}</h2>
+                <p>{t("As expressões que você estudar aparecerão aqui para praticar novamente.")}</p>
+                <button className="primary-button" onClick={() => open(next)}>{t("Começar uma lição ")}<ArrowRight size={16} />
                 </button>
               </section>
             ) : (
               <>
-                <section className="review-guidance" aria-label="Como usar a revisão">
-                  <strong>{due ? `${due} ${due === 1 ? "revisão vence" : "revisões vencem"} hoje.` : "Nenhuma revisão vence hoje."}</strong>
-                  <p>Leia o enunciado e tente responder. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.</p>
+                <section className="review-guidance" aria-label={localizeAttribute("Como usar a revisão")}>
+                  <strong>{t(due ? `${due} ${due === 1 ? "revisão vence" : "revisões vencem"} hoje.` : "Nenhuma revisão vence hoje.")}</strong>
+                  <p>{t("Leia o enunciado e tente responder. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.")}</p>
                 </section>
                 {dueLessons.length > 0 ? (
                   <section className="review-section" aria-labelledby="due-review-heading">
                     <div className="review-section-heading">
                       <div>
-                        <p className="eyebrow">Prioridade de hoje</p>
-                        <h2 id="due-review-heading">Revisar agora</h2>
+                        <p className="eyebrow">{t("Prioridade de hoje")}</p>
+                        <h2 id="due-review-heading">{t("Revisar agora")}</h2>
                       </div>
-                      <span>{due} {due === 1 ? "lição" : "lições"}</span>
+                      <span>{t(due)} {t(due === 1 ? "lição" : "lições")}</span>
                     </div>
                     <div className="review-list">
                       {dueLessons.map((lesson) => (
@@ -677,18 +670,18 @@ export default function SparkyApp() {
                   </section>
                 ) : (
                   <section className="review-empty" aria-labelledby="available-review-heading">
-                    <h2 id="available-review-heading">Prática antecipada disponível</h2>
-                    <p>Você pode praticar uma lição antes da próxima data sem alterar a ordem do curso.</p>
+                    <h2 id="available-review-heading">{t("Nenhuma revisão pendente agora")}</h2>
+                    <p>{t("Continue com uma lição nova. As próximas revisões aparecerão aqui.")}</p>
                   </section>
                 )}
                 {earlyLessons.length > 0 && (
                   <section className="review-section" aria-labelledby="early-review-heading">
                     <div className="review-section-heading">
                       <div>
-                        <p className="eyebrow">Opcional</p>
-                        <h2 id="early-review-heading">{due ? "Praticar antes da data" : "Revisões disponíveis"}</h2>
+                        <p className="eyebrow">{t("Opcional")}</p>
+                        <h2 id="early-review-heading">{t(due ? "Praticar antes da data" : "Revisões disponíveis")}</h2>
                       </div>
-                      <span>{earlyLessons.length} {earlyLessons.length === 1 ? "lição" : "lições"}</span>
+                      <span>{t(earlyLessons.length)} {t(earlyLessons.length === 1 ? "lição" : "lições")}</span>
                     </div>
                     <div className="review-list">
                       {earlyLessons.map((lesson) => (
@@ -701,53 +694,54 @@ export default function SparkyApp() {
             )}
           </>
         )}
+        {view === "classroom" && <EnglishClassroom level={progress.level} />}
         {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
-        {view === "exams" && <><button className="text-button" onClick={() => setView("course")}>← Voltar ao Curso</button><EltisSimulator userId={user.id} /></>}
+        {view === "exams" && <><button className="text-button" onClick={() => setView("course")}>{t("← Voltar ao Curso")}</button><EltisSimulator userId={user.id} mascot={reward.mascot} /></>}
         {view === "shop" && <>
-          <div className="page-heading"><div><p className="eyebrow">Suas conquistas</p><h1>Loja</h1></div></div>
-          {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">Conecte-se novamente para carregar seu saldo e sua loja.</p>}
+          <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
+          {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">{t("Conecte-se novamente para carregar seu saldo e sua loja.")}</p>}
         </>}
         {view === "profile" && (
           <>
             <div className="page-heading">
               <div>
-                <p className="eyebrow">Sua conta</p>
-                <h1>Perfil e preferências</h1>
+                <p className="eyebrow">{t("Sua conta")}</p>
+                <h1>{t("Perfil e preferências")}</h1>
               </div>
             </div>
             <div className="profile-layout">
               <section className="profile-card">
                 <div className="profile-person">
                   <span className="avatar large">
-                    {user.name.charAt(0).toUpperCase()}
+                    {t(user.name.charAt(0).toUpperCase())}
                   </span>
                   <div>
                     <h2>{learnerProfile?.name ?? user.name}</h2>
                     <p>{user.email}</p>
                     <span className="verified-label">
-                      <Check size={13} />
-                      Conta Google conectada
-                    </span>
+                      <Check size={13} />{t("Conta Google conectada")}</span>
                   </div>
                 </div>
                 <div className="profile-setting">
-                  <span>Idioma das explicações</span>
-                  <strong>Português (Brasil)</strong>
+                  <label htmlFor="interface-language">{t("Idioma do aplicativo")}</label>
+                  <select id="interface-language" value={interfaceLanguage} onChange={e=>void setInterfaceLanguage(e.target.value as "pt-BR"|"en",user.id).catch(()=>setNotice("Não foi possível carregar o inglês. Tente novamente."))}><option value="pt-BR">{t("Português (Brasil)")}</option><option value="en">{t("English")}</option></select>
                 </div>
                 <div className="profile-setting">
-                  <span>Idioma de estudo</span>
-                  <strong>Inglês</strong>
+                  <span>{t("Idioma de estudo")}</span>
+                  <strong>{t("Inglês")}</strong>
                 </div>
+                {onboardingEnabled && <><button className="secondary-button" onClick={() => void editNamePronunciation("placement-start")}>{t("Fazer nivelamento")}</button><button className="secondary-button" onClick={() => void editNamePronunciation("preferences-start")}>{t("Nível das lições recomendadas ·")}{t(learnerProfile?.level)}</button></>}
+                <label className="profile-setting">{t("Recomendação de estudo")}<select value={workspace.recommendation} onChange={e=>updateWorkspace(user.id,current=>({...current,recommendation:e.target.value as "balanced"|"new"}))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
+                <label className="profile-setting">{t("Tempo de estudo por dia")}<select value={workspace.minutes} onChange={e=>updateWorkspace(user.id,current=>({...current,minutes:Number(e.target.value)}))}>{[5,10,15,20].map(n=><option key={n} value={n}>{t(n)}{t(" min")}</option>)}</select></label>
                 <ThemePreferenceControl userId={user.id} />
-                {onboardingEnabled && <button className="secondary-button" onClick={() => setNeedsOnboarding(true)}>Editar preferências · {learnerProfile?.level}</button>}
-                {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>Corrigir pronúncia do meu nome</button>}
+                {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
                   if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
                   const response=await fetch('/api/onboarding',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refuse'})});
                   if(response.ok){setLearnerProfile(null);setNeedsOnboarding(true);}else setNotice('Não foi possível apagar. Tente novamente.');
-                }}>Apagar personalização</button>}
+                }}>{t("Apagar personalização")}</button>}
                 {!onboardingEnabled && <label className="profile-setting" htmlFor="study-level">
-                  <span>Nível para recomendar lições</span>
+                  <span>{t("Nível para recomendar lições")}</span>
                   <select
                     id="study-level"
                     value={progress.level}
@@ -755,7 +749,7 @@ export default function SparkyApp() {
                       save({ ...progress, level: event.target.value as Level })
                     }
                   >
-                    {levels.map(level => <option key={level} value={level}>{level} · {levelDescriptions[level]}</option>)}
+                    {levels.map(level => <option key={level} value={level}>{t(level)} · {t(levelDescriptions[level])}</option>)}
                   </select>
                 </label>}
                 <button
@@ -764,35 +758,34 @@ export default function SparkyApp() {
                   disabled={signingOut}
                 >
                   <LogOut size={16} />
-                  {signingOut ? "Saindo…" : "Sair da conta"}
+                  {t(signingOut ? "Saindo…" : "Sair da conta")}
                 </button>
               </section>
               <aside className="profile-note">
                 <Globe2 size={24} />
-                <h2>Sobre seu progresso</h2>
-                <p><strong>{reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador."}</strong></p>
+                <h2>{t("Sobre seu progresso")}</h2>
+                <p><strong>{t(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
                 <p>
-                  {reward.storage === "account"
+                  {t(reward.storage === "account"
                     ? "Suas lições concluídas, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
-                    : "Suas conclusões, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento."}
+                    : "Suas conclusões, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
                 </p>
-                <p>Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.</p>
+                <p>{t("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.")}</p>
                 <p>
-                  {voiceEnabled
+                  {t(voiceEnabled
                     ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."
-                    : "Os recursos de voz estão desativados nesta versão."}
+                    : "Os recursos de voz estão desativados nesta versão.")}
                 </p>
-                <a href="/privacidade">
-                  Como seus dados são usados <ArrowRight size={14} />
+                <a href="/privacidade">{t("Como seus dados são usados ")}<ArrowRight size={14} />
                 </a>
               </aside>
             </div>
-            <button className="secondary-button" onClick={() => setView("shop")}><ShoppingBag size={18} /> Escolher mascote e abrir a loja</button>
+            <button className="secondary-button" onClick={() => setView("shop")}><ShoppingBag size={18} />{t(" Escolher mascote e abrir a loja")}</button>
             <InstallAppPrompt dismissible={false} />
           </>
         )}
       </main>
-      <nav className="mobile-nav" aria-label="Navegação no celular">
+      <nav className="mobile-nav" aria-label={localizeAttribute("Navegação no celular")}>
         {navigation.filter(item => item.id !== "profile" && item.id !== "exams").map((item) => (
           <button
             key={item.id}
@@ -801,7 +794,7 @@ export default function SparkyApp() {
             onClick={() => { setView(item.id); setNotice(""); }}
           >
             <item.icon size={20} />
-            <span>{item.label}</span>
+            <span>{t(item.label)}</span>
           </button>
         ))}
       </nav>
@@ -828,10 +821,9 @@ function Brand() {
   return (
     <div className="brand">
       <span className="brand-mark">
-        <Image src="/icons/sparky-192-v2.png" alt="" width={44} height={44} />
+        <Image src="/icons/sparky-192-v2.png" alt={localizeAttribute("")} width={44} height={44} />
       </span>
-      <span>
-        Sparky<span className="brand-english">English</span>
+      <span>{t("Sparky")}<span className="brand-english">{t("English")}</span>
       </span>
     </div>
   );
@@ -844,77 +836,61 @@ function LoginScreen() {
         <header>
           <Brand />
           <span className="private-label">
-            <LockKeyhole size={14} />
-            Acesso por convite
-          </span>
+            <LockKeyhole size={14} />{t("Acesso por convite")}</span>
         </header>
         <div className="login-layout">
           <section className="login-intro">
-            <span className="language-chip">
-              PT-BR <ArrowRight size={14} /> EN
-            </span>
-            <h1>
-              Inglês para quem
-              <br />
-              fala português.
-            </h1>
-            <p className="login-description">
-              Entenda a estrutura das frases, pratique conversas e revise o que
-              aprendeu.
-            </p>
+            <span className="language-chip">{t("PT-BR ")}<ArrowRight size={14} />{t(" EN")}</span>
+            <h1>{t("Inglês para quem")}<br />{t("fala português.")}</h1>
+            <p className="login-description">{t("Entenda a estrutura das frases, pratique conversas e revise o que aprendeu.")}</p>
             <div className="sample-scene">
               <div className="sample-note">
-                <span>NA PRIMEIRA LIÇÃO</span>
-                <p lang="en">Hi, I’m Ana.</p>
-                <p>Oi, eu sou Ana.</p>
+                <span>{t("NA PRIMEIRA LIÇÃO")}</span>
+                <p lang="en">{t("Hi, I’m Ana.")}</p>
+                <p>{t("Oi, eu sou Ana.")}</p>
                 <div>
-                  <span lang="en">I’m</span>
+                  <span lang="en">{t("I’m")}</span>
                   <ArrowRight size={13} />
-                  <span lang="en">I am</span>
-                  <span>eu sou</span>
+                  <span lang="en">{t("I am")}</span>
+                  <span>{t("eu sou")}</span>
                 </div>
               </div>
               <Image
                 src="/visuals/sparky-panda.png"
-                alt="Sparky, seu guia nas lições"
+                alt={localizeAttribute("Sparky, seu guia nas lições")}
                 width={280}
                 height={280}
                 priority
               />
             </div>
             <div className="login-levels">
-              <span><strong>A1–A2</strong> Primeiras conversas</span>
-              <span><strong>B1–B2</strong> Comunicação independente</span>
-              <span><strong>C1–C2</strong> Precisão e nuance</span>
+              <span><strong>{t("A1–A2")}</strong>{t(" Primeiras conversas")}</span>
+              <span><strong>{t("B1–B2")}</strong>{t(" Comunicação independente")}</span>
+              <span><strong>{t("C1–C2")}</strong>{t(" Precisão e nuance")}</span>
             </div>
           </section>
           <section className="login-island" aria-labelledby="login-heading">
             <span className="login-icon">
               <GraduationCap size={26} />
             </span>
-            <h2 id="login-heading">Entre para estudar</h2>
-            <p>Use a conta Google do e-mail que recebeu acesso ao Sparky.</p>
+            <h2 id="login-heading">{t("Entre para estudar")}</h2>
+            <p>{t("Use a conta Google do e-mail que recebeu acesso ao Sparky.")}</p>
             <GoogleLogin />
             <div className="login-separator" />
             <div className="login-detail">
               <Languages size={18} />
-              <p>
-                Orientações e comentários em português, exemplos e exercícios em
-                inglês.
-              </p>
+              <p>{t("Orientações e comentários em português, exemplos e exercícios em inglês.")}</p>
             </div>
             <div className="login-detail">
               <LockKeyhole size={18} />
-              <p>Somente contas autorizadas podem entrar.</p>
+              <p>{t("Somente contas autorizadas podem entrar.")}</p>
             </div>
-            <a href="/privacidade" className="privacy-link">
-              Como seus dados são usados
-            </a>
+            <a href="/privacidade" className="privacy-link">{t("Como seus dados são usados")}</a>
           </section>
         </div>
         <footer>
-          <span>Sparky English</span>
-          <span>Português (Brasil)</span>
+          <span>{t("Sparky English")}</span>
+          <span>{t("Português (Brasil)")}</span>
         </footer>
       </div>
     </main>
@@ -934,7 +910,7 @@ function ReviewCard({
 }) {
   const reviewDate = Date.parse(reviewAt || "");
   const schedule = Number.isFinite(reviewDate)
-    ? new Intl.DateTimeFormat("pt-BR", {
+    ? new Intl.DateTimeFormat(getInterfaceLocale(), {
         day: "numeric",
         month: "short",
       }).format(new Date(reviewDate))
@@ -943,17 +919,16 @@ function ReviewCard({
     <section className="review-card" data-priority={due ? "due" : "early"}>
       <div>
         <span className="eyebrow">
-          {lesson.level} · {lesson.title}
+          {t(lesson.level)} · {t(lesson.title)}
         </span>
-        <p>Pratique a recuperação antes de consultar o modelo.</p>
-        <span>{due ? "Venceu: " : "Próxima revisão: "}{schedule}</span>
+        <p>{t("Pratique a recuperação antes de consultar o modelo.")}</p>
+        <span>{t(due ? "Venceu: " : "Próxima revisão: ")}{t(schedule)}</span>
       </div>
       <button
         className="secondary-button"
         onClick={onOpen}
-        aria-label={`Praticar revisão de ${lesson.title}`}
-      >
-        Praticar <ArrowRight size={16} />
+        aria-label={localizeAttribute(`Praticar revisão de ${lesson.title}`)}
+      >{t("Praticar ")}<ArrowRight size={16} />
       </button>
     </section>
   );
@@ -977,11 +952,11 @@ function LessonCard({
       </span>
       <span className="card-copy">
         <span className="card-meta">
-          {lesson.level} <span>·</span> {lesson.minutes} min{" "}
-          {done && "· Concluída"}
+          {t(lesson.level)} <span>·</span> {t(lesson.minutes)}{t(" min")}{t(" ")}
+          {t(done && "· Concluída")}
         </span>
-        <strong>{lesson.title}</strong>
-        <span lang="en">{lesson.englishTitle}</span>
+        <strong>{t(lesson.title)}</strong>
+        <span lang="en">{t(lesson.englishTitle)}</span>
       </span>
       <ChevronRight size={18} />
     </button>

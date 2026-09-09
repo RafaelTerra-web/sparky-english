@@ -12,6 +12,7 @@ export type CosmeticItem = {
 export type EquippedItems = Record<MascotId, Partial<Record<CosmeticSlot, string>>>;
 export type PublicRewardState = {
   storage?: "browser" | "account";
+  dailyReviews?: { day: string; count: number };
   coins: number; completed: Record<string, string>; reviews: Record<string, string>;
   owned: string[]; mascot: MascotId; equipped: EquippedItems;
   wardrobeRefund?: number;

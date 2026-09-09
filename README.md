@@ -1,6 +1,6 @@
 # Sparky English
 
-PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback são em PT-BR; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
+PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback podem ser usados em PT-BR ou inglês, selecionados no Perfil; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
 
 ## Local development
 
@@ -24,7 +24,7 @@ Cada rascunho editorial tem um ID publicado explícito e as posições de progre
 
 Conclusões, revisões, moedas e roupas ficam em um cookie HttpOnly criptografado por até um ano no navegador atual. O Caderno mantém neste dispositivo a retomada da lição, tentativas, frases salvas, textos e preferências, separados pela conta. Ele permite exportar ou apagar esses dados locais. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação ou recompensas.
 
-O aluno precisa concluir os exercícios fechados na ordem para receber a recompensa. As respostas são validadas pelo servidor e um comprovante criptografado de até oito horas é vinculado à conta, à lição e ao modo de prática. Isso protege o fluxo normal do app, mas não transforma conteúdo público em uma avaliação certificada. Revisões independentes usam os intervalos de 1, 3, 7, 14 e 30 dias; uma tentativa com erro ou ajuda volta para um dia.
+O aluno precisa concluir os exercícios fechados na ordem para receber a recompensa. As respostas são validadas pelo servidor e um comprovante criptografado de até oito horas é vinculado à conta, à lição e ao modo de prática. Isso protege o fluxo normal do app, mas não transforma conteúdo público em uma avaliação certificada. Revisões independentes usam os intervalos de 3, 7, 14, 30 e 60 dias; uma tentativa com erro ou ajuda volta para três dias. A fila tem no máximo três revisões curtas por dia, intercaladas com lições novas.
 
 Para sincronizar conclusões, revisões, moedas e roupas entre dispositivos, aplique as migrações em `supabase/migrations/`, configure `NEXT_PUBLIC_SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` apenas no servidor e só então defina `SPARKY_DURABLE_PROGRESS=true`. A migração de setembro revoga o acesso direto de clientes a essa tabela. Teste a migração em ambiente isolado antes de habilitá-la em produção. Textos, tentativas e frases continuam locais nesta entrega.
 
@@ -44,7 +44,7 @@ O manifesto publica ícones próprios do Sparky em 192 e 512 px, uma versão mas
 
 ## Moedas e mascotes
 
-A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até dez vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
+A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até três vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
 
 Sparky e Pinky são gratuitos. A Pinky usa uma arte original criada para o projeto com o GPT Image, sem antenas e com fundo transparente. A implementação e as limitações da primeira versão estão registradas em [docs/mascots-and-rewards-plan.md](docs/mascots-and-rewards-plan.md).
 
@@ -72,3 +72,5 @@ Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado
 `node scripts/smoke-pwa-install.mjs` simula Safari no iPhone e Chrome no Android. Ele verifica as instruções do iOS, o prompt nativo do Android, a ocultação quando o app já está instalado, manifesto standalone, ícones e cabeçalhos do service worker.
 
 O contrato de banco inicial está em `supabase/migrations/20260903000100_sparky_english.sql`; a sincronização só fica ativa após aplicar também `20260905000100_durable_google_progress.sql` e configurar a flag descrita acima.
+
+A [atualização de 9 de setembro](docs/release-2026-09-09.md) acrescenta nivelamento direto pelo Perfil, preferência de idioma English e seis aulas narradas em inglês pelo Sparky, com visuais próprios e correção da voz da Pinky nos simulados.

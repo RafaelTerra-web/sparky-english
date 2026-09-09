@@ -12,6 +12,7 @@ export type CheckpointStepState = {
   revealed: boolean; listened: boolean;
 };
 export type Checkpoint = {
+  reviewFormat?: number;
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
   checked: boolean; correct: boolean; translation: boolean; assisted: boolean;
   contextVisible: boolean;
@@ -22,10 +23,11 @@ export type Checkpoint = {
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
 export type Notebook = { id: string; english: string; translation: string; lessonId: string };
 export type LearningWorkspace = {
+  studyDay: string; newLessonsToday: number; recommendation: "balanced" | "new";
   version: 1; checkpoints: Record<string, Checkpoint>; attempts: Attempt[];
   writings: Writing[]; vocabulary: Notebook[]; goal: string; minutes: number;
 };
-export const blankWorkspace = (): LearningWorkspace => ({ version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
+export const blankWorkspace = (): LearningWorkspace => ({ studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
 export const workspaceKey = (userId: string) => `sparky-learning:${userId}`;
 export const checkpointKey = (lessonId: string, review: boolean) => `${lessonId}:${review ? "review" : "lesson"}`;
 export function normalizeWorkspace(raw: unknown): LearningWorkspace {
@@ -65,6 +67,9 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
     }
   }
   return { ...blank, checkpoints,
+    studyDay: typeof value.studyDay === "string" ? value.studyDay : "",
+    newLessonsToday: Number.isSafeInteger(value.newLessonsToday) && value.newLessonsToday >= 0 ? Math.min(500, value.newLessonsToday) : 0,
+    recommendation: value.recommendation === "new" ? "new" : "balanced",
     attempts: Array.isArray(value.attempts) ? value.attempts.filter(a => a && string(a.id) && string(a.lessonId) && string(a.stepId) && string(a.answer) && typeof a.correct === "boolean" && date(a.createdAt)).slice(-600) : [],
     writings: writings.slice(-100),
     vocabulary: Array.isArray(value.vocabulary) ? value.vocabulary.filter(w => w && string(w.id) && string(w.lessonId) && string(w.english) && string(w.translation)).slice(-200) : [],
