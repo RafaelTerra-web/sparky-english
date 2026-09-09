@@ -10,6 +10,8 @@ const skillNames: Record<EltisSkill, string> = { listening: "Listening", reading
 export function EltisSimulator({ userId }: { userId: string }) {
   const key = `sparky-mock-eltis:${userId}`;
   const audio = useRef<HTMLAudioElement | null>(null);
+  const sending = useRef(false);
+  const heading = useRef<HTMLLegendElement>(null);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -17,6 +19,12 @@ export function EltisSimulator({ userId }: { userId: string }) {
   const [error, setError] = useState("");
   const [playing, setPlaying] = useState(false);
   const [playCount, setPlayCount] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+    heading.current?.scrollIntoView({ block: "center", behavior: "instant" });
+  }, [snapshot?.question?.id]);
 
   useEffect(() => {
     let active = true;
@@ -63,30 +71,39 @@ export function EltisSimulator({ userId }: { userId: string }) {
   }
 
   async function answer() {
-    if (!snapshot?.token || !selected || submitting) return;
+    if (!snapshot?.token || !selected || sending.current) return;
+    sending.current = true;
     stopAudio();
     setSubmitting(true);
     try {
       const next = await request({ action: "answer", token: snapshot.token, answer: selected });
       setSelected("");
       setPlayCount(0);
+      setPaused(false);
+      audio.current = null;
       if (next.finished) localStorage.removeItem(key);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Não foi possível enviar a resposta.");
-    } finally { setSubmitting(false); }
+    } finally { sending.current = false; setSubmitting(false); }
   }
 
   function stopAudio() {
     audio.current?.pause();
+    setPaused(Boolean(audio.current && !audio.current.ended && audio.current.currentTime > 0));
     setPlaying(false);
   }
 
   async function playAudio() {
     const question = snapshot?.question;
+    if (paused && audio.current) {
+      try { await audio.current.play(); setPlaying(true); setPaused(false); }
+      catch { setError("Não foi possível retomar o áudio. Tente novamente."); }
+      return;
+    }
     if (!question?.audioId || playing || playCount >= (question.maxPlays ?? 1)) return;
     const sound = new Audio(`/audio/eltis/${question.audioId}.wav`);
     audio.current = sound;
-    sound.onended = () => setPlaying(false);
+    sound.onended = () => { setPlaying(false); setPaused(false); };
     sound.onerror = () => { setPlaying(false); setError("O áudio não carregou. Verifique a conexão antes de responder."); };
     try {
       await sound.play();
@@ -103,6 +120,8 @@ export function EltisSimulator({ userId }: { userId: string }) {
     setSnapshot(null);
     setSelected("");
     setPlayCount(0);
+    setPaused(false);
+    audio.current = null;
     setError("");
   }
 
@@ -161,15 +180,16 @@ export function EltisSimulator({ userId }: { userId: string }) {
       {question.audioId && <div className="mock-audio">
         <Headphones size={24} />
         <div><strong>Ouça antes de responder</strong><p>{playCount}/{allowedPlays} reproduções usadas</p></div>
-        {playing ? <button className="secondary-button" onClick={stopAudio}><Pause size={17} /> Pausar</button> : <button className="primary-button" disabled={playCount >= allowedPlays} onClick={playAudio}><Play size={17} /> {playCount ? "Ouvir novamente" : "Ouvir"}</button>}
+        {playing ? <button className="secondary-button" onClick={stopAudio}><Pause size={17} /> Pausar</button> : <button className="primary-button" disabled={submitting || (!paused && playCount >= allowedPlays)} onClick={playAudio}><Play size={17} /> {paused ? "Retomar áudio" : playCount ? "Ouvir novamente" : "Ouvir"}</button>}
       </div>}
       {question.passage && <article className="mock-passage" lang="en">{question.passage}</article>}
-      <fieldset className="mock-question">
-        <legend id="mock-question-heading" lang="en">{question.prompt}</legend>
+      <fieldset className="mock-question" disabled={submitting} aria-describedby="mock-confirmation-hint">
+        <legend id="mock-question-heading" ref={heading} tabIndex={-1} lang="en">{question.prompt}</legend>
         {question.options.map((option, index) => <label key={option} className={selected === option ? "selected" : ""}><input type="radio" name="eltis-answer" value={option} checked={selected === option} onChange={() => setSelected(option)} /><span>{String.fromCharCode(65 + index)}</span><span lang="en">{option}</span></label>)}
       </fieldset>
+      <p id="mock-confirmation-hint" className="mock-confirmation-hint" role="status">{selected ? "Resposta selecionada. Você pode trocar de alternativa antes de confirmar." : "Selecione uma alternativa e confirme sua resposta para avançar."}</p>
       {error && <p className="study-error" role="alert">{error}</p>}
-      <footer><button className="text-button" onClick={restart}>Sair do simulado</button><button className="primary-button" disabled={!selected || submitting} onClick={answer}>{submitting ? "Salvando…" : (snapshot.index ?? 0) + 1 === snapshot.total ? "Ver resultado" : "Confirmar e continuar"}</button></footer>
+      <footer><button className="text-button" disabled={submitting} onClick={restart}>Encerrar tentativa</button><button className="primary-button" disabled={!selected || submitting} onClick={answer}>{submitting ? "Salvando…" : (snapshot.index ?? 0) + 1 === snapshot.total ? "Confirmar e ver resultado" : "Confirmar e continuar"}</button></footer>
     </section>
   );
 }

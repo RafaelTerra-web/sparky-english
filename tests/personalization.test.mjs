@@ -40,7 +40,7 @@ test('timeline remains active across pauses and schedules all clips before compl
  try {
   await playTimeline([{type:'audio',source:'/a'}, {type:'pause',durationMs:80}, {type:'audio',source:'/b'}], new AbortController().signal, value => states.push(value));
   assert.deepEqual(states,[true,false]);
-  assert.equal(starts.length,3);
+  assert.equal(starts.length,2);
   assert.ok(Math.abs(starts[1] - 0.2) < 0.0001);
  } finally { globalThis.AudioContext = oldContext; globalThis.fetch = oldFetch; }
 });

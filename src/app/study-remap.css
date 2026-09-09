@@ -1,0 +1,104 @@
+/* Today's study hierarchy. Scoped so catalog, shop and profile keep their layouts. */
+.sparky-checkin { margin-block: 20px; padding: 18px 20px; border-inline-start: 3px solid var(--accent); background: var(--surface-soft); border-radius: 0 14px 14px 0; }
+html[data-palette] .sparky-checkin > p:not(.eyebrow) { color: var(--foreground); font-size: 15px; line-height: 1.7; margin-top: 8px; }
+.sparky-checkin .text-button { gap: 8px; margin-top: 8px; text-align: left; }
+.name-pronunciation { display: grid; gap: 14px; }
+.name-pronunciation form { display: grid; gap: 10px; }
+html[data-palette] .sparky-name-question { color: var(--foreground); font-size: 21px; font-weight: 600; line-height: 1.6; }
+html[data-palette] .onboarding-answers button[aria-pressed="true"] { background: var(--accent-soft); color: var(--foreground); border: 2px solid var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+.today-overview .page-heading { align-items: flex-start; flex-direction: column; gap: 18px; }
+html[data-palette] .today-overview :is(h1,h2) { font-family: var(--font-geist-sans),sans-serif; font-weight: 650; }
+html[data-palette] .today-overview h1 > span { color: var(--accent); }
+.today-overview .language-chip { display: inline-flex; width: fit-content; margin: 0; padding: 10px 14px; border-radius: 12px; }
+.today-overview .today-layout { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.today-overview .next-lesson { padding: 30px; min-height: 310px; }
+html[data-palette] .today-overview .next-lesson { box-shadow: none; }
+.today-overview .lesson-copy { width: 65%; max-width: 570px; }
+.today-overview .next-lesson h2 { font-size: clamp(27px, 3.4vw, 36px); line-height: 1.2; }
+.today-overview .lesson-description { padding: 0; max-width: 48ch; }
+.today-overview .next-lesson > .mascot-figure { position: absolute; inset: auto 16px 16px auto; width: 28%; height: auto; aspect-ratio: 1; margin: 0; }
+.today-overview .hero-caption { display: none; }
+.today-overview .next-lesson .cream-button { width: fit-content; max-width: 100%; min-height: 48px; }
+html[data-palette] .today-overview .study-summary { display: block; padding: 24px; box-shadow: none; }
+.today-overview .summary-progress { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; align-items: center; margin: 16px 0 22px; }
+.today-overview .progress-number { grid-row: auto; margin: 0; font-size: 54px; font-variant-numeric: tabular-nums; }
+html[data-palette] .today-overview .progress-number,
+html[data-palette] .today-overview .progress-number span { color: var(--accent); }
+.today-overview .summary-meter { min-width: 0; }
+.today-overview .summary-meter p { color: var(--foreground); font-size: 13px; line-height: 1.5; }
+.today-overview .summary-meter progress { display: block; width: 100%; margin: 10px 0 0; }
+.today-overview .summary-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.today-overview .stat-row { margin: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; line-height: 1.5; }
+.today-overview .stat-row strong { font-size: 14px; }
+.today-overview .study-summary > .text-button { width: 100%; justify-content: flex-start; border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; border-radius: 0; }
+html[data-palette] body .today-overview .learning-note { background: transparent; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 12px 0 26px; margin: 26px 0 0; }
+.today-overview .learning-note h2 { font-weight: 650; line-height: 1.5; }
+.today-overview .section-heading { align-items: center; }
+.today-overview .section-heading .text-button { flex-shrink: 0; }
+.today-overview .lesson-cards { grid-template-columns: minmax(0,1fr); gap: 10px; }
+.today-overview .lesson-card { padding: 18px; }
+.today-overview .card-number { width: 44px; height: 48px; }
+.today-overview .card-copy strong { font-size: 15px; }
+.today-overview .card-copy > span { font-size: 12px; }
+
+/* Instructions use the main text token; evaluated prompts get a distinct block. */
+html[data-palette] .lesson-body h2 { font-family: var(--font-geist-sans),sans-serif; font-weight: 750; letter-spacing: -.035em; }
+html[data-palette] :is(.placement-command,.mock-question legend) {
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--foreground);
+  background: var(--surface-soft);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: 4px 14px 14px 4px;
+  padding: 18px 20px;
+  margin-block: 18px 24px;
+  font-family: var(--font-geist-sans),sans-serif;
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 700;
+  line-height: 1.55;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+html[data-palette] .mock-question label { min-height: 64px; border-width: 2px; line-height: 1.6; }
+html[data-palette] .mock-question label.selected { background: var(--accent-soft); border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+html[data-palette] .mock-question label > span:first-of-type { background: var(--surface-strong); color: var(--foreground); border-radius: 10px; width: 34px; height: 36px; }
+.mock-question label:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+html[data-palette] .mock-confirmation-hint { color: var(--foreground); font-size: 15px; line-height: 1.6; }
+html[data-palette] .mock-session > header h1 { font-family: var(--font-geist-sans),sans-serif; font-size: clamp(25px,4vw,32px); font-weight: 650; line-height: 1.25; }
+.onboarding-answers button { min-height: 56px; }
+.onboarding-answers button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.name-pronunciation input { width: 100%; min-width: 0; font-size: 16px; }
+html[data-palette] .lesson-body > .step-explanation { color: var(--foreground); font-size: 18px; font-weight: 500; line-height: 1.65; opacity: 1; }
+html[data-palette] .lesson-body:is([data-step-kind="choice"],[data-step-kind="complete_sentence"],[data-step-kind="order_words"],[data-step-kind="production"],[data-step-kind="listening_detail"],[data-step-kind="listening_inference"]) > .step-explanation {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: 4px 14px 14px 4px;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.6;
+  margin-block: 18px 24px;
+}
+@media (max-width: 700px) {
+  .today-overview .page-heading { gap: 16px; }
+  .today-overview .page-heading h1 { font-size: clamp(29px,7.5vw,36px); }
+  .today-overview .next-lesson { padding: 22px; min-height: 300px; }
+  .today-overview .lesson-copy { width: 70%; max-width: none; }
+  .today-overview .next-lesson h2 { font-size: 26px; }
+  .today-overview .next-lesson > .mascot-figure { width: 28%; right: 5px; bottom: 18px; }
+  .today-overview .lesson-meta { gap: 5px; font-size: 11px; }
+  .today-overview .next-lesson .cream-button { font-size: 13px; padding-inline: 12px; }
+  html[data-palette] .today-overview .study-summary { padding: 20px; }
+  .today-overview .summary-progress { gap: 12px; }
+  .today-overview .progress-number { font-size: 48px; }
+  .today-overview .summary-stats { gap: 10px; }
+  .today-overview .stat-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; font-size: 11px; }
+  .today-overview .learning-note { gap: 12px; }
+  .today-overview .section-heading { gap: 8px; }
+  .today-overview .section-heading .text-button { font-size: 12px; gap: 5px; }
+  .today-overview .section-heading h2 { font-size: 21px; }
+  html[data-palette] .lesson-body > .step-explanation { font-size: 17px; }
+  html[data-palette] .lesson-body:is([data-step-kind="choice"],[data-step-kind="complete_sentence"],[data-step-kind="order_words"],[data-step-kind="production"],[data-step-kind="listening_detail"],[data-step-kind="listening_inference"]) > .step-explanation { padding: 16px; font-size: 18px; }
+}

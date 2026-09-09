@@ -3,10 +3,12 @@ import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import type { LearnerProfile, OnboardingStep } from "./onboarding-shared";
 import type { PlacementState } from "./placement";
+import { personalVoiceIdentity } from "./personal-voice";
 export type OnboardingDraft = Partial<LearnerProfile> & {
   step: OnboardingStep;
   placement?: PlacementState;
   consentVersion?: string;
+  pronunciationOnly?: boolean;
 };
 export function onboardingDB() {
   if (
@@ -22,10 +24,7 @@ export function onboardingDB() {
 }
 export const accountKey = (id: string) =>
   createHash("sha256").update(`google:${id}`).digest("hex");
-export const nameHash = (name: string) =>
-  createHash("sha256")
-    .update(`gemini-3.1-flash-tts-preview:Achird:v1:${name}`)
-    .digest("hex");
+export const nameHash = (name: string, namePronunciation?: string, namePronunciationRevision?: number) => personalVoiceIdentity({ name, namePronunciation, namePronunciationRevision }, "confirmation").hash;
 export async function loadOnboarding(key: string) {
   const db = onboardingDB();
   const [profile, session] = await Promise.all([

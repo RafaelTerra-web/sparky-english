@@ -42,7 +42,7 @@ test("complete and resume onboarding with a voice failure, preserving the accoun
       },
     }),
   );
-  await page.route("**/api/onboarding/audio", (r) =>
+  await page.route("**/api/onboarding/audio**", (r) =>
     r.fulfill({ status: 503, json: { error: "unavailable" } }),
   );
   await page.route('**/audio/onboarding/**', r=>r.fulfill({status:503,body:''}));
@@ -57,8 +57,9 @@ test("complete and resume onboarding with a voice failure, preserving the accoun
         Object.assign(state.draft, {
           age: b.age,
           guardianConsent: b.guardianConsent,
-          step: "mascot",
+          step: "pronunciation",
         });
+      if (b.action === "confirm-pronunciation") Object.assign(state.draft, { namePronunciationStatus: b.status, step: "mascot" });
       if (b.action === "mascot")
         Object.assign(state.draft, { mascot: b.mascot, step: "level" });
       if (b.action === "level")
@@ -87,6 +88,7 @@ test("complete and resume onboarding with a voice failure, preserving the accoun
   await page.getByLabel("Sua idade").fill("12");
   await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Continuar", exact: true }).click();
+  await page.getByRole("button", { name: "Ajustar depois e continuar sem o nome falado", exact: true }).click();
   await page.getByRole("button", { name: "Pinky", exact: true }).click();
   await page
     .getByRole("button", { name: "B2 Intermediário avançado", exact: true })
@@ -101,7 +103,7 @@ test("complete and resume onboarding with a voice failure, preserving the accoun
   await page.screenshot({path:testInfo.outputPath('onboarding-finish.png'),fullPage:true});
   await page.getByRole("button", { name: "Entrar no meu espaço" }).click();
   await expect(
-    page.getByRole("button", { name: "Perfil", exact: true }).first(),
+    page.getByRole("button", { name: "Abrir perfil de Google Name", exact: true }),
   ).toBeVisible();
   expect(state.profile?.level).toBe("B2");
   expect(state.profile?.mascot).toBe("pinky");

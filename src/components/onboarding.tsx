@@ -9,11 +9,12 @@ import {
   type OnboardingStep,
 } from "@/lib/onboarding-shared";
 import { playTimeline, type AudioTimelineSegment } from "@/lib/audio-timeline";
+import { preparePersonalAudio } from "@/lib/prepare-personal-audio";
 type Snapshot = {
   enabled: boolean;
   profile: LearnerProfile | null;
   revision: number | null;
-  draft: (Partial<LearnerProfile> & { step: OnboardingStep }) | null;
+  draft: (Partial<LearnerProfile> & { step: OnboardingStep; pronunciationOnly?: boolean }) | null;
   placement: {
     count: number;
     complete: boolean;
@@ -32,9 +33,10 @@ const copy: Record<OnboardingStep, string> = {
     "Oi! Eu sou o Sparky. Vamos praticar inglês juntos, um passo de cada vez. Primeiro, quero conhecer você para preparar seu espaço de estudo.",
   name: "Como você gostaria de ser chamado?",
   age: "Enquanto preparo nossa conversa, me conta: quantos anos você tem?",
+  pronunciation: "Só mais uma coisa antes de seguir…",
   mascot: "Quem você quer ao seu lado nas lições?",
   level: "Por onde vamos começar sua jornada no inglês?",
-  test: "Vamos descobrir seu ponto de partida. Leia com calma e escolha a melhor resposta.",
+  test: "Escolha uma resposta e confirme quando estiver pronto.",
   finish: "Seu espaço está quase pronto. Vamos aprender muita coisa juntos!",
 };
 export default function Onboarding({
@@ -56,12 +58,19 @@ export default function Onboarding({
     >("idle"),
     [offline, setOffline] = useState(false),
     [refused, setRefused] = useState(false);
+  const [pronunciation, setPronunciation] = useState("");
+  const [heardPronunciation, setHeardPronunciation] = useState(false);
+  const [adjustingPronunciation, setAdjustingPronunciation] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<{ id: string; answer: number } | null>(null);
   const audio = useRef<AbortController | null>(null),
-    generating = useRef(false),
+    generating = useRef<AbortController | null>(null),
+    submitting = useRef(false),
     heading = useRef<HTMLHeadingElement>(null);
   const draft = snapshot?.draft,
     step = draft?.step ?? "welcome";
   async function request(action: string, values: Record<string, unknown> = {}) {
+    if (submitting.current) return null;
+    submitting.current = true;
     setBusy(true);
     setError("");
     audio.current?.abort();
@@ -92,6 +101,7 @@ export default function Onboarding({
       );
       return null;
     } finally {
+      submitting.current = false;
       setBusy(false);
     }
   }
@@ -117,11 +127,15 @@ export default function Onboarding({
           setName(data.draft?.name ?? "");
           setAge(data.draft?.age?.toString() ?? "");
           setConsent(data.draft?.guardianConsent ?? false);
-          if (data.draft?.name) {
+          setPronunciation(data.draft?.namePronunciation ?? data.draft?.name ?? "");
+          if (data.draft?.name && data.draft?.namePronunciationStatus !== 'text-only') {
             setAudioState('loading');
-            void fetch('/api/onboarding/audio', {method:'POST', signal:AbortSignal.timeout(20000)})
-              .then(r => r.json()).then(result => {if(active)setAudioState(result.ready?'ready':'failed');})
-              .catch(() => {if(active)setAudioState('failed');});
+            const controller = new AbortController();
+            generating.current = controller;
+            void preparePersonalAudio('/api/onboarding/audio?occasion=confirmation', AbortSignal.any([controller.signal, AbortSignal.timeout(70000)]))
+              .then(() => {if(active && !controller.signal.aborted)setAudioState('ready');})
+              .catch(() => {if(active && !controller.signal.aborted)setAudioState('failed');})
+              .finally(() => {if(generating.current === controller)generating.current = null;});
           }
         }
       })
@@ -138,35 +152,27 @@ export default function Onboarding({
     return () => {
       active = false;
       audio.current?.abort();
+      generating.current?.abort();
       window.removeEventListener("online", online);
       window.removeEventListener("offline", online);
     };
   }, []);
   useEffect(() => {
     heading.current?.focus();
-  }, [step]);
+  }, [step, snapshot?.placement?.item?.id]);
   async function generateName() {
-    if (generating.current) return;
-    generating.current = true;
+    generating.current?.abort();
+    const controller = new AbortController();
+    generating.current = controller;
+    setHeardPronunciation(false);
     setAudioState("loading");
     try {
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const response = await fetch("/api/onboarding/audio", {
-          method: "POST",
-          signal: AbortSignal.timeout(20000),
-        });
-        const data = await response.json();
-        if (data.ready) {
-          setAudioState("ready");
-          return;
-        }
-        if (response.status === 429 || response.status === 202) break;
-      }
-      setAudioState("failed");
+      await preparePersonalAudio("/api/onboarding/audio?occasion=confirmation", AbortSignal.any([controller.signal, AbortSignal.timeout(70000)]));
+      if (!controller.signal.aborted) setAudioState("ready");
     } catch {
-      setAudioState("failed");
+      if (!controller.signal.aborted) setAudioState("failed");
     } finally {
-      generating.current = false;
+      if (generating.current === controller) generating.current = null;
     }
   }
   async function listen() {
@@ -175,14 +181,7 @@ export default function Onboarding({
     audio.current = controller;
     setError("");
     let segments: AudioTimelineSegment[];
-    if (step === "finish" && audioState === "ready")
-      segments = [
-        { type: "audio", source: "/audio/onboarding/beforeName.wav" },
-        { type: "pause", durationMs: 80 },
-        { type: "audio", source: "/api/onboarding/audio" },
-        { type: "pause", durationMs: 100 },
-        { type: "audio", source: "/audio/onboarding/afterName.wav" },
-      ];
+    if (step === "pronunciation") segments = [{ type: "audio", source: "/api/onboarding/audio?occasion=confirmation" }];
     else
       segments = [
         {
@@ -194,6 +193,7 @@ export default function Onboarding({
       await playTimeline(segments, AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]), active => {
         if (audio.current === controller) setSpeaking(active);
       });
+      if (step === "pronunciation" && !controller.signal.aborted) setHeardPronunciation(true);
     } catch {
       if (!controller.signal.aborted)
         setError("O áudio está indisponível. Você pode continuar pelo texto.");
@@ -218,11 +218,11 @@ export default function Onboarding({
       </div>
       <p className="eyebrow">
         Seu começo com o Sparky ·{" "}
-        {Math.min(onboardingSteps.indexOf(step) + 1, 7)} de 7
+        {Math.min(onboardingSteps.indexOf(step) + 1, onboardingSteps.length)} de {onboardingSteps.length}
       </p>
       <progress
         aria-label="Progresso da personalização"
-        max={7}
+        max={onboardingSteps.length}
         value={onboardingSteps.indexOf(step) + 1}
       />
       <h1 ref={heading} tabIndex={-1}>
@@ -244,7 +244,7 @@ export default function Onboarding({
               : ""}
       </p>
       {error && <><p role="alert">{error}</p><button className="secondary-button" onClick={() => window.location.reload()}>Recarregar dados salvos</button></>}
-      {step !== "test" && (
+      {step !== "test" && step !== "pronunciation" && (
         <button
           className="secondary-button"
           onClick={speaking ? () => audio.current?.abort() : listen}
@@ -279,7 +279,8 @@ export default function Onboarding({
                   setError((e as Error).message);
                   return;
                 }
-                if (await request("name", { name })) void generateName();
+                const next = await request("name", { name });
+                if (next) { setPronunciation(next.draft?.namePronunciation ?? name); void generateName(); }
               }}
             >
               <label htmlFor="preferred-name">Meu nome ou apelido</label>
@@ -350,6 +351,39 @@ export default function Onboarding({
               </button>
             </form>
           )}
+          {step === "pronunciation" && (
+            <section className="name-pronunciation" aria-label="Confirmar a pronúncia do nome">
+              <p className="sparky-name-question">Que bom conhecer você, <strong>{draft?.name}</strong>! Me conta: falei seu nome do jeito certo?</p>
+              <button className="secondary-button" disabled={busy || offline || audioState !== "ready" || pronunciation !== (draft?.namePronunciation ?? draft?.name)} onClick={speaking ? () => audio.current?.abort() : listen}>
+                {speaking ? "Parar áudio" : heardPronunciation ? "Ouvir de novo" : "Ouvir Sparky"}
+              </button>
+              {audioState !== "ready" && <button className="secondary-button" disabled={busy || offline || audioState === "loading"} onClick={() => void generateName()}>{audioState === "loading" ? "Preparando pronúncia…" : "Tentar preparar a pronúncia"}</button>}
+              {adjustingPronunciation && <><p>Vamos acertar juntos. O Sparky vai usar a pronúncia brasileira. Escreva como seu nome soa: pode usar acentos ou separar as sílabas, como “An sél mo”. Essa escrita serve só para orientar a voz; seu nome no perfil continua igual.</p>
+              <form onSubmit={async event => {
+                event.preventDefault();
+                try { validateName(pronunciation); } catch (e) { setError((e as Error).message); return; }
+                audio.current?.abort(); generating.current?.abort(); setHeardPronunciation(false);
+                if (await request("pronunciation", { pronunciation })) void generateName();
+              }}>
+                <label htmlFor="name-pronunciation">Como se pronuncia seu nome?</label>
+                <input id="name-pronunciation" value={pronunciation} maxLength={100} autoComplete="off" onChange={e => { setPronunciation(e.target.value); setHeardPronunciation(false); audio.current?.abort(); }} required />
+                <button className="secondary-button" disabled={busy || offline || audioState === "loading"}>Salvar ajuste e gerar novamente</button>
+              </form>
+              </>}
+              {!heardPronunciation && <p>Ouça a fala do Sparky para conferir.</p>}
+              <button className="primary-button" disabled={busy || offline || !heardPronunciation || audioState !== "ready" || pronunciation !== (draft?.namePronunciation ?? draft?.name)} onClick={async () => {
+                const result = await request("confirm-pronunciation", { status: "confirmed" });
+                if (result?.profile?.onboardingCompleted && !result.draft) onComplete(result.profile);
+              }}>Sim, falou certinho!</button>
+              {!adjustingPronunciation && <button className="secondary-button" disabled={busy || offline} onClick={() => { audio.current?.abort(); setHeardPronunciation(false); setAdjustingPronunciation(true); }}>Não, vamos ajustar</button>}
+              <button className="text-button" disabled={busy || offline} onClick={async () => {
+                generating.current?.abort();
+                const result = await request("confirm-pronunciation", { status: "text-only" });
+                if (result) setAudioState("idle");
+                if (result?.profile?.onboardingCompleted && !result.draft) onComplete(result.profile);
+              }}>Ajustar depois e continuar sem o nome falado</button>
+            </section>
+          )}
           {step === "mascot" && (
             <div className="onboarding-choices">
               {(["sparky", "pinky"] as const).map((m) => (
@@ -417,7 +451,7 @@ export default function Onboarding({
                 {snapshot.placement.count} de até 28 respostas · Você pode
                 fechar e retomar depois.
               </p>
-              <h2>{snapshot.placement.item.prompt}</h2>
+              <h2 className="placement-command">{snapshot.placement.item.prompt}</h2>
               {snapshot.placement.item.audio && (
                 <audio
                   controls
@@ -430,23 +464,24 @@ export default function Onboarding({
                   }
                 />
               )}
-              <div className="onboarding-answers">
+              <div className="onboarding-answers" role="group" aria-label="Alternativas da questão">
                 {snapshot.placement.item.options.map((option, index) => (
                   <button
                     key={index}
                     disabled={busy || offline}
-                    onClick={() =>
-                      void request("answer", {
-                        id: snapshot.placement!.item!.id,
-                        answer: index,
-                      })
-                    }
+                    aria-pressed={selectedAnswer?.id === snapshot.placement!.item!.id && selectedAnswer.answer === index}
+                    onClick={() => setSelectedAnswer({ id: snapshot.placement!.item!.id, answer: index })}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              <p>As respostas confirmadas não podem ser alteradas.</p>
+              <p>Você pode trocar de alternativa antes de confirmar. Depois do envio, a resposta não pode ser alterada.</p>
+              <button className="primary-button" disabled={busy || offline || selectedAnswer?.id !== snapshot.placement.item.id} onClick={async () => {
+                if (!selectedAnswer || selectedAnswer.id !== snapshot.placement?.item?.id) return;
+                const result = await request("answer", { id: selectedAnswer.id, answer: selectedAnswer.answer });
+                if (result) setSelectedAnswer(null);
+              }}>{busy ? "Enviando resposta…" : "Confirmar resposta"}</button>
             </>
           )}
           {step === "finish" && (
@@ -468,7 +503,7 @@ export default function Onboarding({
                 O progresso e as compras que você já tinha continuam na sua
                 conta.
               </p>
-              {audioState !== "ready" && (
+              {audioState !== "ready" && draft?.namePronunciationStatus !== "text-only" && (
                 <button
                   className="secondary-button"
                   disabled={audioState === "loading"}
@@ -493,7 +528,7 @@ export default function Onboarding({
               </button>
             </>
           )}
-          {step !== "welcome" && (
+          {step !== "welcome" && !draft?.pronunciationOnly && (
             <button
               className="secondary-button"
               disabled={busy || offline}

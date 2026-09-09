@@ -16,6 +16,8 @@ import {
   onboardingLevels,
   onboardingSteps,
   type LearnerProfile,
+  namePronunciationVersion,
+  pronunciationConfirmed,
 } from "@/lib/onboarding-shared";
 import {
   startPlacement,
@@ -88,6 +90,13 @@ export async function POST(request: NextRequest) {
       await ensureDraft(key, loaded.profile);
       return NextResponse.json(await snapshot(key), { headers });
     }
+    if (body.action === "pronunciation-start") {
+      if (!loaded.profile?.onboardingCompleted) throw new Error("Conclua primeiro seu perfil.");
+      if (loaded.session) throw new Error("Retome a personalização já iniciada.");
+      const draft = await ensureDraft(key, loaded.profile);
+      await saveDraft(key, { ...draft.data, step: "pronunciation", pronunciationOnly: true, namePronunciationStatus: undefined }, draft.revision);
+      return NextResponse.json(await snapshot(key), { headers });
+    }
     if (body.action === "refuse") {
       // Delete the session first so an in-flight generation cannot publish into it.
       const removed = await db
@@ -109,9 +118,9 @@ export async function POST(request: NextRequest) {
     const draft = { ...session.data };
     if (body.action === "name") {
       const valid = validateName(body.name);
-      Object.assign(draft, valid, { step: "age" });
+      Object.assign(draft, valid, { step: "age", namePronunciation: valid.name, namePronunciationStatus: undefined, namePronunciationVersion, namePronunciationRevision: (draft.namePronunciationRevision ?? 0) + 1 });
       await saveDraft(key, draft, session.revision);
-      await deleteNameAudio(key, nameHash(valid.name));
+      await deleteNameAudio(key, nameHash(valid.name, draft.namePronunciation, draft.namePronunciationRevision));
       return NextResponse.json(await snapshot(key), { headers });
     } else if (body.action === "age") {
       Object.assign(draft, validateAge(body.age));
@@ -120,8 +129,30 @@ export async function POST(request: NextRequest) {
       Object.assign(draft, {
         guardianConsent: body.guardianConsent === true,
         consentVersion: "onboarding-v1",
-        step: "mascot",
+        step: "pronunciation",
       });
+    } else if (body.action === "pronunciation") {
+      if (draft.step !== "pronunciation") throw new Error("Abra a etapa de pronúncia.");
+      const pronunciation = validateName(body.pronunciation).name;
+      Object.assign(draft, { namePronunciation: pronunciation, namePronunciationStatus: undefined, namePronunciationVersion, namePronunciationRevision: (draft.namePronunciationRevision ?? 0) + 1 });
+      await saveDraft(key, draft, session.revision);
+      await deleteNameAudio(key, nameHash(draft.name!, pronunciation, draft.namePronunciationRevision));
+      return NextResponse.json(await snapshot(key), { headers });
+    } else if (body.action === "confirm-pronunciation") {
+      if (draft.step !== "pronunciation" || !["confirmed", "text-only"].includes(String(body.status))) throw new Error("Escolha como deseja usar a voz.");
+      if (body.status === "confirmed") {
+        const ready = await db.from("sparky_name_audio").select("status,expires_at").eq("account_key", key).eq("hash", nameHash(draft.name!, draft.namePronunciation, draft.namePronunciationRevision)).maybeSingle();
+        if (ready.error || ready.data?.status !== "ready" || (ready.data.expires_at && Date.parse(ready.data.expires_at) <= Date.now())) throw new Error("Ouça a nova pronúncia antes de confirmar.");
+      }
+      Object.assign(draft, { namePronunciationStatus: body.status, namePronunciationVersion, step: "mascot" });
+      if (draft.pronunciationOnly && loaded.profile?.onboardingCompleted) {
+        const profile = { ...loaded.profile, namePronunciation: draft.namePronunciation, namePronunciationStatus: draft.namePronunciationStatus, namePronunciationVersion, namePronunciationRevision: draft.namePronunciationRevision };
+        const saved = await db.rpc("sparky_finish_onboarding", { p_account: key, p_revision: session.revision, p_profile: profile, p_hash: nameHash(profile.name, profile.namePronunciation, profile.namePronunciationRevision) });
+        if (saved.error) throw new Error("Não foi possível salvar a pronúncia.");
+        if (!saved.data) throw new Error("conflict");
+        if (body.status === "text-only") await deleteNameAudio(key);
+        return NextResponse.json(await snapshot(key), { headers });
+      }
     } else if (body.action === "mascot") {
       if (!["sparky", "pinky"].some(mascot=>mascot===body.mascot))
         throw new Error("Escolha um mascote.");
@@ -159,6 +190,11 @@ export async function POST(request: NextRequest) {
     } else if (body.action === "next" && draft.step === "welcome") {
       draft.step = "name";
     } else if (body.action === "finish") {
+      if (!pronunciationConfirmed(draft) && draft.namePronunciationStatus !== "text-only") {
+        draft.step = "pronunciation";
+        await saveDraft(key, draft, session.revision);
+        return NextResponse.json(await snapshot(key), { headers });
+      }
       const valid = validateName(draft.name),
         age = validateAge(draft.age);
       if (
@@ -184,6 +220,10 @@ export async function POST(request: NextRequest) {
         confidence: draft.confidence ?? null,
         onboardingCompleted: true,
         guardianConsent: !!draft.guardianConsent,
+        namePronunciation: validateName(draft.namePronunciation || valid.name).name,
+        namePronunciationStatus: draft.namePronunciationStatus,
+        namePronunciationVersion,
+        namePronunciationRevision: draft.namePronunciationRevision,
       };
       const saved = await db.rpc("sparky_finish_onboarding", {
         p_account: key,
@@ -195,7 +235,7 @@ export async function POST(request: NextRequest) {
           placementVersion:
             draft.levelMethod === "placement" ? "placement-v1" : null,
         },
-        p_hash: nameHash(valid.name),
+        p_hash: nameHash(valid.name, profile.namePronunciation, profile.namePronunciationRevision),
       });
       if (saved.error)
         throw new Error(
@@ -205,6 +245,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(await snapshot(key), { headers });
     } else throw new Error("Ação inválida.");
     await saveDraft(key, draft, session.revision);
+    if (body.action === "confirm-pronunciation" && body.status === "text-only") await deleteNameAudio(key);
     return NextResponse.json(await snapshot(key), { headers });
   } catch (error) {
     const message =

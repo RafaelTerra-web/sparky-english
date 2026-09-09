@@ -13,6 +13,8 @@ import { MascotFigure } from "./mascot-studio";
 import { ConversationListening } from "./conversation-listening";
 import { ConversationTipCard } from "./conversation-tip";
 import { tipForLesson } from "@/lib/conversation-tips";
+import { PersonalSparkyMessage } from "./personal-sparky-message";
+import type { LearnerProfile } from "@/lib/onboarding-shared";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
 export default function LessonPlayer({
@@ -23,6 +25,7 @@ export default function LessonPlayer({
   equipped,
   saving,
   openerRef,
+  learnerProfile,
   onClose,
   onFinish,
 }: {
@@ -33,6 +36,7 @@ export default function LessonPlayer({
   equipped: PublicRewardState["equipped"];
   saving: boolean;
   openerRef?: RefObject<HTMLElement | null>;
+  learnerProfile?: LearnerProfile | null;
   onClose: () => void;
   onFinish: (receipt: string) => Promise<boolean>;
 }) {
@@ -217,7 +221,7 @@ export default function LessonPlayer({
           {index + 1}/{steps.length}
         </span>
       </header>
-      <div className="lesson-body" ref={body}>
+      <div className="lesson-body" ref={body} data-step-kind={step.kind}>
         {error && <p className="study-error" role="alert">{error}</p>}
         {storageError && <p className="study-error" role="alert">O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.</p>}
         {showIllustration && (
@@ -305,7 +309,7 @@ export default function LessonPlayer({
               {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{drillIndex + 1}</span><span lang="en">{item}</span></li>)}
             </ol>
             <p className="microtrain-instruction"><strong>Repita acompanhando a voz (shadowing):</strong> ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.</p>
-            {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} />}
+            {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />}
           </section>
         )}
         {step.kind === "error_analysis" && step.contrasts && (
@@ -322,6 +326,7 @@ export default function LessonPlayer({
         {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
         {step.kind === "production" && (
           <div className="production-workspace">
+            {learnerProfile && voiceEnabled && <PersonalSparkyMessage profile={learnerProfile} occasion="practice" />}
             {step.productionSupport && <section className="writing-plan" aria-label="Planeje sua resposta"><h3>Um caminho para começar</h3><ol>{step.productionSupport.plan.map(item => <li key={item}>{item}</li>)}</ol></section>}
             <label htmlFor="lesson-draft">Seu rascunho (opcional)</label>
             <textarea
@@ -388,7 +393,7 @@ export default function LessonPlayer({
           </p>
         )}
         {voiceEnabled && step.english && step.kind === "example" && (
-          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} />
+          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />
         )}
         {voiceEnabled && step.kind === "example" && (
           <div className="listening-reveal">

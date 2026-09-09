@@ -4,12 +4,21 @@ import {
   accountKey,
   onboardingDB,
   loadOnboarding,
-  nameHash,
 } from "@/lib/onboarding-store";
-import { validateName } from "@/lib/onboarding-shared";
-import { generateSparkyAudio } from "@/lib/gemini-voice";
-export const maxDuration = 40;
+import { pronunciationConfirmed } from "@/lib/onboarding-shared";
+import { personalVoiceIdentity, personalVoiceOccasions, type PersonalVoiceOccasion } from "@/lib/personal-voice";
+import { generateMascotAudio } from "@/lib/gemini-voice";
+export const maxDuration = 90;
 const headers = { "Cache-Control": "private, no-store" };
+function personalRequest(request: NextRequest, loaded: Awaited<ReturnType<typeof loadOnboarding>>) {
+  const occasion = new URL(request.url).searchParams.get("occasion") ?? "name";
+  if (!personalVoiceOccasions.includes(occasion as PersonalVoiceOccasion)) throw new Error("invalid-occasion");
+  const preview = occasion === "name" || occasion === "confirmation";
+  const profile = preview ? loaded.session?.data ?? loaded.profile : loaded.profile;
+  if (!profile || profile.namePronunciationStatus === "text-only") throw new Error("voice-disabled");
+  if (!preview && (!profile.onboardingCompleted || !pronunciationConfirmed(profile) || loaded.session)) throw new Error("confirm-pronunciation");
+  return { ...personalVoiceIdentity(profile, occasion as PersonalVoiceOccasion), occasion };
+}
 async function identity(request: NextRequest) {
   const user = await readSession(request.cookies.get(SESSION_COOKIE)?.value);
   return user ? accountKey(user.id) : null;
@@ -18,11 +27,9 @@ export async function GET(request: NextRequest) {
   const key = await identity(request);
   if (!key) return new Response(null, { status: 401, headers });
   try {
-    const { profile, session } = await loadOnboarding(key);
-    const name = session?.data.name ?? profile?.name;
-    if (!name) return new Response(null, { status: 404, headers });
+    const { hash } = personalRequest(request, await loadOnboarding(key));
     const db = onboardingDB(),
-      hash = nameHash(name);
+      storage = db.storage.from("sparky-personal-audio");
     const row = await db
       .from("sparky_name_audio")
       .select("*")
@@ -35,9 +42,7 @@ export async function GET(request: NextRequest) {
       (row.data.expires_at && Date.parse(row.data.expires_at) < Date.now())
     )
       return new Response(null, { status: 404, headers });
-    const file = await db.storage
-      .from("sparky-personal-audio")
-      .download(row.data.path);
+    const file = await storage.download(row.data.path);
     if (file.error) throw file.error;
     return new Response(file.data, {
       headers: {
@@ -59,11 +64,8 @@ export async function POST(request: NextRequest) {
   try {
     const db = onboardingDB(),
       loaded = await loadOnboarding(key);
-    const name = validateName(
-      loaded.session?.data.name ?? loaded.profile?.name,
-    ).name;
-    const hash = nameHash(name),
-      path = `${key}/${hash}.wav`;
+    const { hash, text, occasion, name, pronunciation } = personalRequest(request, loaded);
+    const path = `${key}/${hash}.wav`;
     let row = (
       await db
         .from("sparky_name_audio")
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ready: true }, { headers });
     if (
       row?.status === "generating" &&
-      Date.now() - Date.parse(row.updated_at) < 45000
+      Date.now() - Date.parse(row.updated_at) < 90000
     )
       return NextResponse.json({ pending: true }, { status: 202, headers });
     if (row && row.attempts >= 2)
@@ -120,18 +122,20 @@ export async function POST(request: NextRequest) {
       if (claim.error)
         return NextResponse.json({ pending: true }, { status: 202, headers });
     }
+    let uploadedAudio = false;
     try {
-      const audio = await generateSparkyAudio(name, true);
+      const audio = await generateMascotAudio(text, "sparky", "pt-BR", occasion === "name", { name, pronunciation });
       const current = await loadOnboarding(key);
-      if ((current.session?.data.name ?? current.profile?.name) !== name)
+      if (personalRequest(request, current).hash !== hash)
         throw new Error("Nome alterado.");
       const uploaded = await db.storage
         .from("sparky-personal-audio")
         .upload(path, audio, { contentType: "audio/wav", upsert: true });
       if (uploaded.error) throw uploaded.error;
+      uploadedAudio = true;
       const stillCurrent = await loadOnboarding(key);
       if (
-        (stillCurrent.session?.data.name ?? stillCurrent.profile?.name) !== name
+        personalRequest(request, stillCurrent).hash !== hash
       ) {
         await db.storage.from("sparky-personal-audio").remove([path]);
         throw new Error("Nome alterado.");
@@ -154,6 +158,7 @@ export async function POST(request: NextRequest) {
       }
       return NextResponse.json({ ready: true }, { headers });
     } catch {
+      if (uploadedAudio) await db.storage.from("sparky-personal-audio").remove([path]);
       await db
         .from("sparky_name_audio")
         .update({ status: "failed" })

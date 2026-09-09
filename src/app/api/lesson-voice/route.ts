@@ -5,7 +5,8 @@ import { readBoundedJson } from '@/lib/bounded-json';
 import { lessons } from '@/lib/curriculum';
 import { personalizeLesson } from '@/lib/personalized-lesson';
 import { generateMascotAudio } from '@/lib/gemini-voice';
-export const maxDuration = 30;
+import { pronunciationConfirmed, validateName } from '@/lib/onboarding-shared';
+export const maxDuration = 90;
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return new Response(null, { status: 403 });
   const user = await readSession(request.cookies.get(SESSION_COOKIE)?.value);
@@ -18,9 +19,11 @@ export async function POST(request: NextRequest) {
     const lesson = personalizeLesson(lessons.find(item => item.id === body.lessonId)!, profile.name);
     const allowed = lesson.steps.flatMap(step => [step.kind === 'example' ? step.english : undefined, step.pronunciation?.drill[2]]).filter(Boolean);
     if (typeof body.text !== 'string' || !allowed.includes(body.text)) return new Response(null, { status: 400 });
+    if (profile.namePronunciationStatus === 'text-only') return new Response(null, { status: 409 });
     const slot = await onboardingDB().rpc('sparky_take_name_audio_slot', { p_account: key });
     if (slot.error || !slot.data) return new Response(null, { status: slot.error ? 503 : 429 });
-    const audio = await generateMascotAudio(body.text, body.mascot as 'sparky' | 'pinky', 'en-US');
+    const pronunciation = { name: validateName(profile.name).name, pronunciation: validateName(profile.namePronunciation || profile.name).name };
+    const audio = await generateMascotAudio(body.text, body.mascot as 'sparky' | 'pinky', 'en-US', false, pronunciationConfirmed(profile) ? pronunciation : { ...pronunciation, pronunciation: pronunciation.name });
     return new Response(new Uint8Array(audio), { headers: { 'Content-Type': 'audio/wav', 'Cache-Control': 'private, no-store' } });
   } catch { return new Response(null, { status: 503 }); }
 }

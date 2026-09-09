@@ -48,16 +48,17 @@ export default function PrivacyPage() {
         evidência do diagnóstico. As etapas confirmadas e respostas do teste
         permitem retomar em outro dispositivo. Rascunhos abandonados expiram
         após 30 dias. O teste não constitui certificação oficial de proficiência.</p>
-      <p>Ao confirmar o nome, enviamos somente o nome validado ao Google Gemini
+      <p>Ao confirmar o nome, enviamos o nome validado em uma saudação curta ao Google Gemini
         para sintetizar a voz Achird do Sparky. Isso ocorre antes da pergunta
         sobre idade. Menores de 13 anos precisam posteriormente da confirmação
         de um responsável para concluir; a recusa remove a personalização e
         o áudio provisório do armazenamento do Sparky. Essa confirmação simples
         não verifica documentalmente a identidade do responsável.</p>
-      <p>O áudio do nome fica em armazenamento privado, acessível somente à
+      <p>Você pode ouvir a saudação e confirmar a pronúncia ou fornecer uma forma escrita de pronunciá-la em português brasileiro. Esse ajuste também é enviado ao Gemini e não altera o nome exibido. Depois de sua confirmação, o Sparky pode usar o nome em recados de boas-vindas e prática, gerados somente quando você pede para ouvir. Você pode continuar sem o nome falado e mudar essa escolha no Perfil.</p>
+      <p>Os áudios do nome e dos recados personalizados ficam em armazenamento privado, acessível somente à
         conta autenticada. O áudio provisório deixa de ser acessível em 24 horas
         e é removido na limpeza diária seguinte. Depois da conclusão, permanece
-        até a mudança do nome ou exclusão da personalização. As preferências
+        até a mudança do nome, ajuste de pronúncia, escolha de continuar sem o nome falado ou exclusão da personalização. As preferências
         podem ser editadas no Perfil. A exclusão de dados nos sistemas do Google
         segue as condições do fornecedor; o Sparky não controla essa retenção.</p>
       <h2>Caderno, tentativas e retomada</h2>

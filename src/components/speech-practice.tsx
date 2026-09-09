@@ -5,7 +5,7 @@ import { Mic, Square, Volume2 } from "lucide-react";
 import { BrowserSpeechProvider, chooseTranscript, compareTranscript, recognitionMessage, type MascotVoice } from "@/lib/speech";
 import { lessonAudio } from "@/lib/voice-assets";
 
-export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPlayed }: { lessonId: string; text: string; initialMascot?: MascotVoice; onPlayed?: () => void }) {
+export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPlayed, personalVoiceDisabled = false }: { lessonId: string; text: string; initialMascot?: MascotVoice; onPlayed?: () => void; personalVoiceDisabled?: boolean }) {
   const provider = useRef<BrowserSpeechProvider | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
   const personalAudio = useRef<string | null>(null);
@@ -22,8 +22,9 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
   const hasResult = useRef(false);
   const id = useId();
   const mascotName = initialMascot === "sparky" ? "Sparky" : "Pinky";
-  const source = lessonAudio(lessonId, text, initialMascot);
-  const personalized = !source && lessonId === "a1-1-1";
+  const nameVoiceOff = personalVoiceDisabled && lessonId === "a1-1-1";
+  const source = nameVoiceOff ? null : lessonAudio(lessonId, text, initialMascot);
+  const personalized = !nameVoiceOff && !source && lessonId === "a1-1-1";
   const busy = state !== "idle";
   const comparison = transcript ? compareTranscript(text, transcript) : null;
 
@@ -91,7 +92,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
         if (!personalAudio.current) {
           const controller = new AbortController();
           voiceRequest.current = controller;
-          const response = await fetch("/api/lesson-voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lessonId, text, mascot: initialMascot }), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(25000)]) });
+          const response = await fetch("/api/lesson-voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lessonId, text, mascot: initialMascot }), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(70000)]) });
           if (!response.ok) throw new Error("voice");
           const blob = await response.blob();
           if (attempt !== generation.current) return;
@@ -135,7 +136,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
         </button>
         {busy && <button className="secondary-button" onClick={stop}><Square size={16} /> Parar</button>}
       </div>
-      {!source && !personalized && <p className="speech-unavailable">O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.</p>}
+      {nameVoiceOff ? <p className="speech-unavailable">Você escolheu continuar sem o nome falado. Para ativar este áudio, ajuste a pronúncia do nome no Perfil. Você pode praticar a frase com o microfone.</p> : !source && !personalized && <p className="speech-unavailable">O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.</p>}
       <details className="speech-consent">
         <summary>Praticar com o microfone</summary>
         <p>O navegador pode enviar sua fala ao serviço de reconhecimento dele. O Sparky não guarda gravações nem transcrições. A escuta dura até 20 segundos; você pode parar quando quiser.</p>

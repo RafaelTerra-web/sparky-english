@@ -4,6 +4,7 @@ export const onboardingSteps = [
   "welcome",
   "name",
   "age",
+  "pronunciation",
   "mascot",
   "level",
   "test",
@@ -22,7 +23,15 @@ export type LearnerProfile = {
   confidence: string | null;
   onboardingCompleted: boolean;
   guardianConsent: boolean;
+  namePronunciation?: string;
+  namePronunciationStatus?: "confirmed" | "text-only";
+  namePronunciationVersion?: number;
+  namePronunciationRevision?: number;
 };
+export const namePronunciationVersion = 2;
+export function pronunciationConfirmed(profile: Partial<LearnerProfile> | null | undefined) {
+  return profile?.namePronunciationStatus === "confirmed" && profile.namePronunciationVersion === namePronunciationVersion;
+}
 export function validateName(input: unknown) {
   if (
     typeof input !== "string" ||

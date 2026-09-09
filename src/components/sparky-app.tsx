@@ -33,6 +33,7 @@ import {
 } from "@/lib/curriculum";
 import { GoogleLogin } from "./google-login";
 import { InstallAppPrompt } from "./install-app-prompt";
+import { PersonalSparkyMessage } from "./personal-sparky-message";
 import dynamic from "next/dynamic";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">Abrindo a lição…</p> });
@@ -413,6 +414,14 @@ export default function SparkyApp() {
     setNotice("");
     setActive({ lesson: personalizeLesson(lesson, learnerProfile?.name), review });
   };
+  async function editNamePronunciation() {
+    try {
+      const response = await fetch("/api/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "pronunciation-start" }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível abrir o ajuste.");
+      setNeedsOnboarding(true);
+    } catch (error) { setNotice(error instanceof Error ? error.message : "Tente novamente."); }
+  }
 
   return (
     <div className="app-frame">
@@ -492,11 +501,11 @@ export default function SparkyApp() {
           </div>
         )}
         {view === "today" && (
-          <>
+          <div className="today-overview">
             <div className="page-heading">
               <div>
                 <p className="eyebrow">Olá, {learnerProfile?.name ?? user.name}</p>
-                <h1>Seu estudo de hoje</h1>
+                <h1>Seu estudo <span>de hoje</span></h1>
               </div>
               <span className="language-chip">
                 <Languages size={15} />
@@ -531,17 +540,22 @@ export default function SparkyApp() {
                 </div>
               </section>
               <aside className="study-summary">
-                <p className="eyebrow">Seu percurso</p>
+                <p className="eyebrow">Seu progresso no curso</p>
+                <div className="summary-progress">
                 <div className="progress-number">
                   {completed}
                   <span>/{lessons.length}</span>
                 </div>
+                <div className="summary-meter">
                 <p>lições concluídas</p>
                 <progress
                   value={completed}
                   max={lessons.length}
                   aria-label="Lições concluídas"
                 />
+                </div>
+                </div>
+                <div className="summary-stats">
                 <div className="stat-row">
                   <span>Tentativas registradas</span>
                   <strong>{workspace.attempts.length}</strong>
@@ -554,6 +568,7 @@ export default function SparkyApp() {
                   <span>Moedas</span>
                   <strong><Coins size={16} /> {reward.coins}</strong>
                 </div>
+                </div>
                 <button
                   className="text-button"
                   onClick={() => setView("review")}
@@ -562,6 +577,7 @@ export default function SparkyApp() {
                 </button>
               </aside>
             </div>
+            {learnerProfile && voiceEnabled && !active && <PersonalSparkyMessage key={`${learnerProfile.name}-${learnerProfile.namePronunciation}`} profile={learnerProfile} occasion="welcome" onPronunciation={() => void editNamePronunciation()} />}
             <InstallAppPrompt />
             <section className="learning-note">
               <span className="note-icon">
@@ -605,7 +621,7 @@ export default function SparkyApp() {
                   />
                 ))}
             </div>
-          </>
+          </div>
         )}
         {view === "course" && (
           <>
@@ -724,6 +740,7 @@ export default function SparkyApp() {
                 </div>
                 <ThemePreferenceControl userId={user.id} />
                 {onboardingEnabled && <button className="secondary-button" onClick={() => setNeedsOnboarding(true)}>Editar preferências · {learnerProfile?.level}</button>}
+                {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>Corrigir pronúncia do meu nome</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
                   if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
                   const response=await fetch('/api/onboarding',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refuse'})});
@@ -797,6 +814,7 @@ export default function SparkyApp() {
           mascot={reward.mascot}
           equipped={reward.equipped}
           saving={rewardBusy}
+          learnerProfile={learnerProfile}
           openerRef={lessonOpener}
           onClose={() => setActive(null)}
           onFinish={finish}
