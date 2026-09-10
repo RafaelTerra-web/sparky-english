@@ -1,16 +1,17 @@
 # Expansão avançada — registro de implementação
 
-Atualizado em 9 de setembro de 2026. Especificação: 36 lições B2–C2, 48 conversas multilocutor, loja ampliada e avaliações internas verificáveis. Este documento registra trabalho efetivo, não uma declaração de lançamento concluído.
+Atualizado em 10 de setembro de 2026. Especificação: 36 lições B2–C2, 48 conversas multilocutor, loja ampliada e avaliações internas verificáveis. Este documento registra trabalho efetivo, não uma declaração de lançamento concluído.
 
 ## Conteúdo e listening
 
 - Escritas as 36 lições em seis módulos de seis: vida prática sob pressão, narrativas e mídia, mediação, escuta longa, nuance intercultural e intervenção precisa.
 - Cada candidata inclui diálogo Sparky/Pinky, tradução, compreensão global/detalhe/inferência, cinco exercícios objetivos, escrita, fala livre e mediação. Scripts com extensão progressiva e IDs distintos.
-- Currículo publicado: 168 lições, 27 módulos, 504 exercícios. Candidatas: 36 lições e 180 exercícios. Depois da aceitação: 204 lições, 33 módulos, 684 exercícios; B2 24, C1 30, C2 30.
+- Currículo publicado: 176 lições, 31 módulos, 528 exercícios. Candidatas: 36 lições e 180 exercícios. Depois da aceitação: 212 lições, 37 módulos, 708 exercícios. A meta original de 204 precede as oito lições publicadas em paralelo.
 - Candidatas fora do currículo ativo e do ledger de conclusões. Texto sem áudio não é contabilizado como listening publicado.
 - Player de conversas preparado com reprodução natural/0,75, transcrição após tentativa e alternativa acessível que registra uso de apoio. Manifesto vazio: **0 de 36 áudios de lições aprovados**; 12 diálogos extras da loja também pendentes.
 - Primeiro WAV do AI Studio: conversa esperada segundo triagem por transcrição local, mas duração de 52,32 segundos, abaixo dos 75–120 segundos previstos para B2. Não aprovado nem incluído no app. Triagem automática não substitui audição humana.
-- Controle do Opera/AI Studio deixou de responder. O usuário já ativou downloads automáticos; não solicitar essa alteração novamente. Retomar geração quando o Computer Use voltar, mantendo exatamente gemini-3.1-flash-tts-preview, Achird/Sparky e Zephyr/Pinky.
+- Os 36 roteiros estão exportáveis para o Composer do AI Studio, mantendo exatamente gemini-3.1-flash-tts-preview, Achird/Sparky e Zephyr/Pinky. O usuário já ativou downloads automáticos; não solicitar essa alteração novamente. A importação valida RIFF, PCM, silêncio e duração, grava hashes e mantém revisão pendente. Conferir o modelo no painel: um WAV não comprova sua origem. Consulte `docs/listening-audio-workflow.md`.
+- O WAV antigo de Downloads tem cabeçalho inconsistente: PCM16 mono a 24 kHz, mas byteRate declarado de 96000 em vez de 48000. Foi rejeitado sem alteração do original. Nova geração e audição continuam necessárias.
 - Dois professores e um especialista em avaliação ainda não revisaram o material. Não alegar validação pedagógica externa ou acreditação.
 
 ## Loja e interface implementadas localmente
@@ -50,4 +51,4 @@ Atualizado em 9 de setembro de 2026. Especificação: 36 lições B2–C2, 48 co
 4. Continuar acompanhando sincronização e conflitos em contas de teste controladas após a publicação.
 5. Revisão editorial/docente, testes de listening e avaliações nos três formatos de tela, auditoria de bundle e publicação beta após os critérios aplicáveis.
 
-Ao implantar v3, preservar cópia dos dados antes de qualquer rollback: a versão antiga não entende o novo bitset de propriedade.
+Antes de qualquer rollback do estado v4, preservar cópia dos dados: versões antigas não entendem todos os campos de migração e equipamentos.
