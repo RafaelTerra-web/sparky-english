@@ -2,6 +2,18 @@
 
 ## Objetivo pedagógico
 
+## Faixa escolhida pelo usuário
+
+- **Do I Wanna Know? — Arctic Monkeys**, prioridade para a primeira experiência com música comercial.
+- Vídeo oficial confirmado: https://www.youtube.com/watch?v=bpOSxM0rNPM (canal Official Arctic Monkeys).
+- Integração prevista: player oficial incorporado, iniciado por clique, com link para abrir no YouTube caso a incorporação não esteja disponível. Não baixar nem hospedar o MP3.
+- Atividades autorais: compreensão da intenção, contraste entre pergunta direta e hesitação e prática da redução informal `want to` → `wanna`, com exemplos criados para o aplicativo.
+- Faixa pedagógica provisória: B1–B2, sujeita a revisão editorial; não representa uma classificação oficial da música.
+- Legendas disponíveis pelo player oficial permanecem sob controle do provedor. Letra completa, tradução e legendas próprias sincronizadas só serão incluídas mediante licença; não presumir que o vídeo oficial concede esses direitos.
+- Status: selecionada no plano; ainda não publicada no aplicativo.
+
+## Objetivo pedagógico do módulo
+
 Adicionar uma experiência de escuta com texto sincronizado para desenvolver percepção de fala conectada, vocabulário em contexto, ritmo, pronúncia e compreensão global. O recurso será complementar à trilha A1–C2 e não concederá conclusão de nível apenas por reprodução.
 
 Cada música terá uma sequência curta:
