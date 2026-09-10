@@ -1,6 +1,10 @@
 /* Shared layout refinements, loaded after feature styles. Colors stay in the theme tokens. */
 html { scrollbar-gutter: stable; }
 html[data-palette] body { background-repeat: no-repeat; background-size: 100% 100vh; }
+html[data-palette] body {
+  background-color: var(--surface-canvas);
+  color: var(--text-primary);
+}
 .sidebar { overflow-y: auto; }
 .sidebar nav { margin-top: clamp(24px, 5vh, 62px); }
 .sidebar-course { flex-shrink: 0; }
@@ -81,6 +85,30 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
 .notice { gap: 12px; }
 .notice button { flex: 0 0 44px; min-height: 44px; display: grid; place-items: center; }
 
+/* Reusable interaction states derive from the active palette. */
+html[data-palette] :is(button,a,input,textarea,select,summary) { transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease; }
+html[data-palette] :is(button,a,input,textarea,select,summary):focus-visible { outline-color: var(--focus-ring); }
+html[data-palette] :is(.lesson-identity-card,.review-retrieval-note,.practice-context,.learning-note) { color: var(--text-primary); }
+html[data-palette] :is(.lesson-identity-card,.review-retrieval-note,.practice-context) p { color: var(--text-primary); }
+html[data-palette] :is(.lesson-identity-card,.review-retrieval-note,.practice-context) summary { color: var(--accent); }
+html[data-palette] progress,
+html[data-palette] progress::-webkit-progress-bar { background: var(--surface-interactive); }
+html[data-palette] progress::-webkit-progress-value { background: var(--accent); }
+html[data-palette] progress::-moz-progress-bar { background: var(--accent); }
+.daily-goal { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 16px; color: var(--hero-muted); font-size: 12px; }
+.daily-goal > span { opacity: .72; }
+.daily-plan-list { display: grid; gap: 5px; }
+.daily-plan-list strong { color: var(--hero-text); font-weight: 650; }
+.next-lesson { isolation: isolate; }
+.next-lesson::before { content: ""; position: absolute; width: 260px; height: 260px; right: -80px; top: -100px; border-radius: 50%; background: color-mix(in srgb,var(--accent) 17%,transparent); pointer-events: none; }
+.next-lesson > .mascot-figure { transition: transform 220ms ease; }
+.next-lesson:hover > .mascot-figure { transform: translateY(-4px); }
+.profile-gear { position: relative; }
+.profile-gear::after { content: ""; position: absolute; inset: -5px; border: 1px solid transparent; border-radius: inherit; }
+.mobile-nav button { position: relative; }
+.mobile-nav button::before { content: ""; position: absolute; top: 3px; width: 20px; height: 3px; border-radius: 99px; background: transparent; }
+html[data-palette] .mobile-nav button.active::before { background: var(--accent); }
+
 @media (max-width: 1050px) {
   .catalog-levels { grid-template-columns: repeat(4,minmax(0,1fr)); }
   .profile-layout { grid-template-columns: minmax(0,1fr); }
@@ -90,6 +118,9 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
 }
 @media (max-width: 700px) {
   html { scrollbar-gutter: auto; }
+  .workspace-header { justify-content: flex-start; }
+  .workspace-header .account-chip { margin-left: auto; }
+  .profile-gear > svg { display: block !important; }
   .workspace { padding-inline: max(18px,env(safe-area-inset-left)) max(18px,env(safe-area-inset-right)); }
   .page-heading { margin-top: 28px; margin-bottom: 22px; }
   .page-heading h1 { font-size: clamp(28px,8vw,34px); line-height: 1.2; }
@@ -109,11 +140,15 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
   .catalog-duration { font-size: 12px; }
   .catalog-tools { gap: 12px; }
   .exam-entry { width: 100%; font-size: 13px; padding: 12px; }
-  .mobile-nav { grid-template-columns: repeat(5,minmax(0,1fr)); padding-inline: 8px; }
-  .mobile-nav button { min-height: 54px; font-size: 11px; }
+  .mobile-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); grid-template-rows: auto; align-items: stretch; justify-content: initial; gap: 3px; padding-inline: max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-right)); }
+  .mobile-nav button { min-width: 0; width: 100%; min-height: 54px; padding: 7px 2px; font-size: 11px; }
+  .mobile-nav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .lesson-illustration { height: clamp(140px,23dvh,190px); margin-bottom: 20px; }
   .lesson-body { padding-top: 20px; scrollbar-gutter: auto; }
   .lesson-dialog > footer { padding-inline: 12px; }
+  .lesson-dialog > footer > span { display: none; }
+  .lesson-dialog > footer { justify-content: stretch; }
+  .lesson-footer-actions { width: 100%; }
   .lesson-footer-actions { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.35fr); gap: 8px; }
   .lesson-dialog > footer button { min-width: 0; padding-inline: 8px; font-size: 13px; gap: 6px; }
   .lesson-dialog > footer button svg { width: 16px; }
@@ -132,3 +167,8 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
 .english-classroom{max-width:850px;margin:auto;display:grid;gap:20px}.english-classroom select{padding:10px;max-width:100%;border:1px solid var(--border);border-radius:10px}.english-classroom audio{width:100%}.english-classroom fieldset{border:0;padding:0}.english-classroom legend{font-weight:700;margin-bottom:12px}.class-option{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;margin:8px 0}.class-focus{display:flex;gap:10px;flex-wrap:wrap}.class-focus span{padding:10px;background:var(--surface);border-radius:12px}.english-classroom details p{line-height:1.8}
 
 .english-classroom{min-width:0;width:100%;padding-bottom:24px}.english-classroom>*{min-width:0;max-width:100%}.english-classroom select{width:100%;min-width:0}.english-classroom audio{min-width:0;display:block}.english-classroom h1{overflow-wrap:anywhere}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-palette] :is(button,a,input,textarea,select,summary), .next-lesson > .mascot-figure { transition: none; }
+  .next-lesson:hover > .mascot-figure { transform: none; }
+}

@@ -287,7 +287,7 @@ export default function LessonPlayer({
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
             <p><b>{t("Seu desafio:")}</b> {t(lesson.experience.challenge)}</p>
-            <p>{t("Para usar no dia a dia:")}{t(lesson.experience.application)}.</p>
+            <p><b>{t("Para usar no dia a dia:")}</b> {t(lesson.experience.application)}.</p>
             <details className="learning-disclosure"><summary>{t("Ver uma dica")}</summary><p>{t(lesson.experience.discovery)}</p></details>
           </div>
         )}

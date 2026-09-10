@@ -24,7 +24,7 @@ async function audit(page) {
 }
 test('palettes, lesson readability and compact navigation',async({page},info)=>{
  test.setTimeout(120000);await account(page);await page.goto('/');await page.addStyleTag({content:'nextjs-portal{display:none}*,*::before,*::after{transition:none!important;animation:none!important}'});
- await expect(page.getByRole('button',{name:/Começar a lição|Continuar de onde parei/,exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:/Começar meu plano|Continuar de onde parei/,exact:true})).toBeVisible();
  if(info.project.name!=='desktop'){
   const nav=page.getByRole('navigation',{name:'Navegação no celular'});await expect(nav.getByRole('button')).toHaveCount(5);
   const tops=await nav.getByRole('button').evaluateAll(xs=>xs.map(x=>x.getBoundingClientRect().top));expect(new Set(tops).size).toBe(1);
@@ -34,7 +34,7 @@ test('palettes, lesson readability and compact navigation',async({page},info)=>{
   await page.evaluate(({palette,mode})=>{localStorage.setItem('sparky-appearance-v1',JSON.stringify({palette,mode,pending:false}));dispatchEvent(new StorageEvent('storage',{key:'sparky-appearance-v1'}));},{palette,mode});
   await expect(page.locator('html')).toHaveAttribute('data-palette',palette);
   failures.push(...(await audit(page)).map(x=>({palette,mode,screen:'home',...x})));
-  await page.getByRole('button',{name:/Começar a lição|Continuar de onde parei/,exact:true}).click();
+  await page.getByRole('button',{name:/Começar meu plano|Continuar de onde parei/,exact:true}).click();
   await expect(page.locator('.lesson-dialog')).toBeVisible();
   const illustration=page.locator('.lesson-illustration img');
   await expect(illustration).toBeVisible();
@@ -47,7 +47,7 @@ test('palettes, lesson readability and compact navigation',async({page},info)=>{
     await page.locator('.lesson-dialog > header button').click();
   for(const screen of ['Curso','Caderno','Loja']){
    await page.getByRole('button',{name:screen,exact:true}).filter({visible:true}).click();
-   await page.locator(screen==='Curso'?'.catalog-levels':screen==='Caderno'?'.learning-notebook':'.shop-v2').waitFor({state:'visible'});
+   await page.locator(screen==='Curso'?'.course-trail':screen==='Caderno'?'.learning-notebook':'.shop-v2').waitFor({state:'visible'});
    failures.push(...(await audit(page)).map(x=>({palette,mode,screen,...x})));
   }
   await page.getByRole('button',{name:'Abrir perfil de Ana'}).click();

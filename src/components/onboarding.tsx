@@ -10,6 +10,7 @@ import {
   type OnboardingStep,
 } from "@/lib/onboarding-shared";
 import { playTimeline, type AudioTimelineSegment } from "@/lib/audio-timeline";
+import { claimAudioPlayback, releaseAudioPlayback } from "@/lib/audio-playback";
 import { preparePersonalAudio } from "@/lib/prepare-personal-audio";
 type Snapshot = {
   enabled: boolean;
@@ -431,11 +432,14 @@ export default function Onboarding({
                   controls
                   preload="none"
                   src={snapshot.placement.item.audio}
-                  onError={() =>
+                  onPlay={(event) => claimAudioPlayback(event.currentTarget)}
+                  onEnded={(event) => releaseAudioPlayback(event.currentTarget)}
+                  onError={(event) => {
+                    releaseAudioPlayback(event.currentTarget);
                     setError(
                       "Este listening está indisponível. Volte para escolher seu nível ou retome quando o áudio estiver disponível.",
-                    )
-                  }
+                    );
+                  }}
                 />
               )}
               <div className="onboarding-answers" role="group" aria-label={localizeAttribute("Alternativas da questão")}>

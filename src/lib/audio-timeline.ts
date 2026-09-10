@@ -8,6 +8,7 @@ export function createPlaybackContext(): AudioContext | undefined {
 async function playMediaTimeline(segments: AudioTimelineSegment[], signal: AbortSignal, onSpeaking: (active: boolean) => void) {
   const audio = new Audio();
   const stop = () => { audio.pause(); audio.removeAttribute('src'); audio.load(); };
+  claimAudioPlayback(audio);
   signal.addEventListener('abort', stop, { once: true });
   onSpeaking(true);
   try {
@@ -26,7 +27,7 @@ async function playMediaTimeline(segments: AudioTimelineSegment[], signal: Abort
         void audio.play().catch(finish);
       });
     }
-  } finally { signal.removeEventListener('abort', stop); stop(); onSpeaking(false); }
+  } finally { signal.removeEventListener('abort', stop); releaseAudioPlayback(audio); stop(); onSpeaking(false); }
 }
 export function speechBounds(channels: Float32Array[], sampleRate: number) {
   const length = channels[0]?.length ?? 0;
@@ -44,7 +45,12 @@ export async function playTimeline(segments: AudioTimelineSegment[], signal: Abo
   signal.throwIfAborted();
   const context = preparedContext ?? createPlaybackContext();
   if (!context) return playMediaTimeline(segments, signal, onSpeaking);
-  const stop = () => { if (context.state !== 'closed') void context.close(); };
+  let interruptPlayback: (() => void) | null = null;
+  const stop = () => {
+    interruptPlayback?.();
+    if (context.state !== 'closed') void context.close();
+  };
+  claimAudioSession(context, stop);
   signal.addEventListener('abort', stop, { once: true });
   onSpeaking(true);
   try {
@@ -58,8 +64,9 @@ export async function playTimeline(segments: AudioTimelineSegment[], signal: Abo
     signal.throwIfAborted();
     await new Promise<void>((resolve, reject) => {
       const abort = () => reject(new DOMException('Aborted', 'AbortError'));
+      interruptPlayback = abort;
       signal.addEventListener('abort', abort, { once: true });
-      const complete = () => { signal.removeEventListener('abort', abort); resolve(); };
+      const complete = () => { interruptPlayback = null; signal.removeEventListener('abort', abort); resolve(); };
       let cursor = context.currentTime + 0.02;
       segments.forEach((segment, index) => {
         if (segment.type === 'pause') { cursor += segment.durationMs / 1000; return; }
@@ -86,8 +93,11 @@ export async function playTimeline(segments: AudioTimelineSegment[], signal: Abo
       }
     });
   } finally {
+    interruptPlayback = null;
     signal.removeEventListener('abort', stop);
+    releaseAudioSession(context);
     if (context.state !== 'closed') await context.close();
     onSpeaking(false);
   }
 }
+import { claimAudioPlayback, claimAudioSession, releaseAudioPlayback, releaseAudioSession } from './audio-playback.ts';

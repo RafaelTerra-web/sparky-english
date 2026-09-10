@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Mic, Square, Volume2 } from "lucide-react";
 import { BrowserSpeechProvider, chooseTranscript, compareTranscript, recognitionMessage, type MascotVoice } from "@/lib/speech";
 import { lessonAudio } from "@/lib/voice-assets";
+import { claimAudioPlayback, releaseAudioPlayback } from "@/lib/audio-playback";
 
 export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPlayed, personalVoiceDisabled = false }: { lessonId: string; text: string; initialMascot?: MascotVoice; onPlayed?: () => void; personalVoiceDisabled?: boolean }) {
   const provider = useRef<BrowserSpeechProvider | null>(null);
@@ -36,7 +37,8 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
     if (playbackTimer.current) clearTimeout(playbackTimer.current);
     playbackTimer.current = null;
     if (audio.current) {
-      audio.current.onended = audio.current.onerror = audio.current.onplaying = null;
+      releaseAudioPlayback(audio.current);
+      audio.current.onended = audio.current.onerror = audio.current.onplaying = audio.current.onpause = null;
       audio.current.pause();
       audio.current.removeAttribute("src");
       audio.current.load();
@@ -110,12 +112,14 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
     sound.preservesPitch = true;
     setPlaybackRate(rate);
     audio.current = sound;
+    claimAudioPlayback(sound);
     const finish = (error = "") => {
       if (attempt !== generation.current) return;
       release(); setState("idle"); setMessage(error);
     };
     sound.onplaying = () => { if (attempt === generation.current) { setState("speaking"); onPlayed?.(); } };
     sound.onended = () => finish();
+    sound.onpause = () => finish();
     sound.onerror = () => finish("Não foi possível carregar o áudio. Confira a conexão e tente novamente.");
     playbackTimer.current = setTimeout(() => finish("O áudio demorou demais. Tente novamente."), 60000);
     try { await sound.play(); }

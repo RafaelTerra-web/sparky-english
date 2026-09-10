@@ -32,6 +32,23 @@
   --hero-muted: #c4d6c9;
   --shadow-color: #173e3620;
   --ambient: #dce9df;
+  /* Semantic aliases keep every palette and mode on the same contrast contract. */
+  --surface-canvas: var(--background);
+  --surface-card: var(--surface);
+  --surface-raised: var(--surface-soft);
+  --surface-interactive: var(--surface-strong);
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted);
+  --border-default: var(--line);
+  --border: var(--line);
+  --border-interactive: var(--primary);
+  --focus-ring: var(--focus);
+  --feedback-success-bg: var(--success-soft);
+  --feedback-success-text: var(--success);
+  --feedback-warning-bg: var(--warning-soft);
+  --feedback-warning-text: var(--warning);
+  --feedback-error-bg: var(--danger-soft);
+  --feedback-error-text: var(--danger);
 }
 @theme inline {
   --color-background: var(--background);

@@ -8,6 +8,7 @@ import type { Lesson, Level } from "@/lib/curriculum";
 import { Headphones, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { EltisReport, EltisSkill, PublicEltisItem } from "@/lib/eltis-shared";
+import { claimAudioPlayback, releaseAudioPlayback } from "@/lib/audio-playback";
 
 type Snapshot = { token: string; question?: PublicEltisItem; index?: number; total?: number; finished?: boolean; report?: EltisReport };
 const skillNames: Record<EltisSkill, string> = { listening: "Listening", reading: "Leitura", vocabulary: "Vocabulário", grammar: "Gramática" };
@@ -95,6 +96,7 @@ export function EltisSimulator({ userId, mascot = "sparky", level = "B1", comple
 
   function stopAudio() {
     audio.current?.pause();
+    if (audio.current) releaseAudioPlayback(audio.current);
     setPaused(Boolean(audio.current && !audio.current.ended && audio.current.currentTime > 0));
     setPlaying(false);
   }
@@ -102,20 +104,24 @@ export function EltisSimulator({ userId, mascot = "sparky", level = "B1", comple
   async function playAudio() {
     const question = snapshot?.question;
     if (paused && audio.current) {
+      claimAudioPlayback(audio.current);
       try { await audio.current.play(); setPlaying(true); setPaused(false); }
-      catch { setError("Não foi possível retomar o áudio. Tente novamente."); }
+      catch { releaseAudioPlayback(audio.current); setError("Não foi possível retomar o áudio. Tente novamente."); }
       return;
     }
     if (!question?.audioId || playing || playCount >= (question.maxPlays ?? 1)) return;
     const sound = new Audio(`/audio/exams/v2/${question.audioId}-${mascot}.mp3`);
     audio.current = sound;
-    sound.onended = () => { setPlaying(false); setPaused(false); };
-    sound.onerror = () => { setPlaying(false); setError("O áudio não carregou. Verifique a conexão antes de responder."); };
+    claimAudioPlayback(sound);
+    sound.onended = () => { releaseAudioPlayback(sound); setPlaying(false); setPaused(false); };
+    sound.onpause = () => { setPlaying(false); setPaused(!sound.ended && sound.currentTime > 0); };
+    sound.onerror = () => { releaseAudioPlayback(sound); setPlaying(false); setError("O áudio não carregou. Verifique a conexão antes de responder."); };
     try {
       await sound.play();
       setPlayCount((count) => count + 1);
       setPlaying(true);
     } catch {
+      releaseAudioPlayback(sound);
       setError("Não foi possível tocar o áudio neste navegador.");
     }
   }

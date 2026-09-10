@@ -5,6 +5,7 @@ import "./course.css";
 import "./learning.css";
 import "./shop.css";
 import "./interface.css";
+import "./performance.css";
 import "./study-remap.css";
 
 const geistSans = Geist({

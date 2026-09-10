@@ -6,7 +6,7 @@ async function account(page: Page) {
   await page.route('**/api/onboarding', r => r.fulfill({ json: { enabled: false } }));
   await page.route('**/api/appearance', r => r.fulfill({ json: { preference: { palette: 'sparky', mode: 'light' }, storage: 'account' } }));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Começar a lição', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Começar meu plano|Continuar de onde parei/, exact: true })).toBeVisible();
   await page.addStyleTag({ content: 'nextjs-portal{display:none}' });
 }
 
@@ -27,13 +27,14 @@ test('installation does not obstruct study and remains available in profile', as
     await page.getByRole('button', { name: 'Ocultar instruções' }).click();
   }
   await page.getByRole('button', { name: 'Curso', exact: true }).filter({visible:true}).click();
-  await expect(page.locator('.catalog-levels')).toBeVisible();
+  await expect(page.locator('.course-trail')).toBeVisible();
   await expect(prompt).toHaveCount(0);
-  await page.getByLabel('Buscar no curso').fill('palavra-inexistente-xyz');
-  await expect(page.getByRole('heading', {name:'Nenhuma lição neste filtro'})).toBeVisible();
-  await page.getByRole('button', { name: 'Limpar filtros' }).click();
-  await expect(page.getByLabel('Buscar no curso')).toHaveValue('');
-  await page.getByRole('button', { name: /Simulados ·/ }).click();
+  await page.getByRole('button', { name: 'Treinar por disciplina', exact: true }).click();
+  await page.getByLabel('Buscar assunto ou expressão').fill('palavra-inexistente-xyz');
+  await expect(page.getByRole('heading', {name:'Nenhuma lição combina com esses filtros'})).toBeVisible();
+  await page.getByRole('region', { name: 'Filtrar lições' }).getByRole('button', { name: 'Limpar filtros' }).click();
+  await expect(page.getByLabel('Buscar assunto ou expressão')).toHaveValue('');
+  await page.locator('#conteudo').getByRole('button', { name: 'Simulados', exact: true }).click();
   if (info.project.name !== 'desktop') {
     await expect(page.getByRole('navigation', { name:'Navegação no celular' }).getByRole('button', { name:'Curso', exact:true })).toHaveAttribute('aria-current','page');
   }
@@ -45,14 +46,16 @@ test('layout fits narrow screens and lesson transitions start at the top', async
     await page.setViewportSize({width,height:800});
     for (const screen of ['Hoje','Curso','Caderno','Loja']) {
       await page.getByRole('button',{name:screen,exact:true}).filter({visible:true}).click();
-      await page.locator(screen==='Curso'?'.catalog-levels':screen==='Caderno'?'.learning-notebook':screen==='Loja'?'.shop-v2':'.next-lesson').waitFor();
+      await page.locator(screen==='Curso'?'.course-trail':screen==='Caderno'?'.learning-notebook':screen==='Loja'?'.shop-v2':'.next-lesson').waitFor();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${screen} at ${width}px`).toBe(true);
       if(width===390 || width===1440) await page.screenshot({path:info.outputPath(`${screen}-${width}.png`)});
       if(width<=700) {
         const nav=page.getByRole('navigation',{name:'Navegação no celular'});
+        await expect(nav.getByRole('button')).toHaveCount(5);
         expect(await nav.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(5);
         const boxes=await nav.getByRole('button').evaluateAll(items=>items.map(el=>el.getBoundingClientRect().top));
         expect(new Set(boxes).size).toBe(1);
+        await expect(page.getByRole('button',{name:'Abrir perfil de Ana'}).locator('svg')).toBeVisible();
       }
     }
     await page.getByRole('button',{name:'Abrir perfil de Ana'}).click();
@@ -60,7 +63,7 @@ test('layout fits narrow screens and lesson transitions start at the top', async
   }
   await page.setViewportSize({width:info.project.name==='desktop'?1280:390,height:800});
   await page.getByRole('button',{name:'Hoje',exact:true}).filter({visible:true}).click();
-  await page.getByRole('button',{name:'Começar a lição',exact:true}).click();
+  await page.getByRole('button',{name:/Começar meu plano|Continuar de onde parei/,exact:true}).click();
   const body=page.locator('.lesson-body');
   const illustration=page.locator('.lesson-illustration');
   await expect(illustration).toBeVisible();

@@ -41,10 +41,11 @@ import { GoogleLogin } from "./google-login";
 import { InstallAppPrompt } from "./install-app-prompt";
 import { PersonalSparkyMessage } from "./personal-sparky-message";
 import dynamic from "next/dynamic";
+import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
-const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <p role="status">{t("Abrindo a lição…")}</p> });
-const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog));
-const LearningNotebook = dynamic(() => import("./learning-notebook"));
+const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <SectionLoading label="Abrindo a lição…" /> });
+const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
+const LearningNotebook = dynamic(() => import("./learning-notebook"), { loading: () => <SectionLoading /> });
 import {
   MascotFigure,
   MascotStudio,
@@ -52,12 +53,12 @@ import {
 } from "./mascot-studio";
 import type { PublicRewardState } from "@/lib/rewards-shared";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
-const Onboarding = dynamic(() => import('./onboarding'));
-const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.EltisSimulator));
+const Onboarding = dynamic(() => import('./onboarding'), { loading: () => <SectionLoading /> });
+const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.EltisSimulator), { loading: () => <SectionLoading label="Preparando o simulado…" /> });
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
-const EnglishClassroom = dynamic(() => import("./english-classroom"));
+const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
 type View = "classroom" | "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
 type Progress = {
   completed: Record<string, string>;
@@ -516,8 +517,8 @@ export default function SparkyApp() {
           <div className="today-overview">
             <div className="page-heading">
               <div>
-                <p className="eyebrow">{t("Olá,")}{learnerProfile?.name ?? user.name}</p>
-                <h1>{t("Seu estudo")}<span>{t("de hoje")}</span></h1>
+                <p className="eyebrow">{t("Olá,")} {learnerProfile?.name ?? user.name}</p>
+                <h1>{t("Seu estudo")} <span>{t("de hoje")}</span></h1>
               </div>
               <span className="language-chip">
                 <Languages size={15} />{t("Português ")}<ArrowRight size={12} />{t(" Inglês")}</span>
@@ -531,14 +532,14 @@ export default function SparkyApp() {
                   <h2>{t(recommended.title)}</h2>
                   {!recommendedReview && <p className="english-title" lang="en">{t(recommended.englishTitle)}</p>}
                   <p className="lesson-description">{t(!trailNext && !resume && !recommendedReview ? "Você concluiu a trilha do nível recomendado. Esta é uma prática opcional." : recommendationReason(Boolean(resume),recommendedReview))}</p>
-                  <p>{t('Meta diária:')}{t(workspace.minutes)}{t('min')} · {t('Lições novas hoje:')}{newLessonsToday}</p>
-                  <ol className="daily-plan-list"><li>{t(recommendedReview?'Revisão curta:':'Lição:')}{t(recommended.title)}</li>{plannedReview&&!recommendedReview&&<li>{t('Depois, uma revisão curta:')}{t(plannedReview.title)}</li>}{recommendedReview&&trailNext&&<li>{t('Depois, continue a trilha:')}{t(trailNext.title)}</li>}</ol>
+                  <p className="daily-goal">{t("Meta diária:")} {t(workspace.minutes)} {t("min")} <span>·</span> {t("Lições novas hoje:")} {t(newLessonsToday)}</p>
+                  <ol className="daily-plan-list"><li><strong>{t(recommendedReview?'Revisão curta:':'Lição:')}</strong> {t(recommended.title)}</li>{plannedReview&&!recommendedReview&&<li><strong>{t('Depois, uma revisão curta:')}</strong> {t(plannedReview.title)}</li>}{recommendedReview&&trailNext&&<li><strong>{t('Depois, continue a trilha:')}</strong> {t(trailNext.title)}</li>}</ol>
                   {planMinutes>workspace.minutes&&<p>{t('A lição pode passar da sua meta de tempo. Você pode pausar e retomar de onde parou.')}</p>}
                   <div className="lesson-meta">
                     <Clock3 size={15} />
                     {t(planMinutes)}{t(" min estimados")}<span>•</span>{t("Explicação + prática")}</div>
                   <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
-                    {t("Começar meu plano")}
+                    {t(resume ? "Continuar de onde parei" : "Começar meu plano")}
                     <ArrowRight size={17} />
                   </button>
                 </div>
