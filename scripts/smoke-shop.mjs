@@ -9,7 +9,12 @@ const browser = await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_
 const page = await browser.newPage({viewport:{width:1280,height:950},serviceWorkers:'block'});
 const errors=[]; page.on('pageerror',error=>errors.push(error.message));
 const output=new URL('../.next/ui-checks/',import.meta.url); await mkdir(output,{recursive:true});
-const nav=async name=>page.locator(`${page.viewportSize().width<700?'.mobile-nav':'.sidebar'} button`).filter({hasText:new RegExp('^'+name+'$')}).click();
+const navigationLabels={Loja:/^(Loja|Shop)$/,Caderno:/^(Caderno|Notebook)$/};
+const nav=async name=>{
+ const button=page.getByRole('button',{name:navigationLabels[name]??new RegExp(`^${name}$`)}).filter({visible:true}).first();
+ await button.waitFor({state:'visible'});
+ await button.click();
+};
 const reward=()=>page.evaluate(async()=> (await fetch('/api/rewards')).json());
 const card=id=>page.locator(`[data-item="${id}"]`);
 async function buy(id) {

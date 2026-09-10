@@ -1,4 +1,5 @@
 "use client";
+import { t, localizeAttribute } from "@/lib/interface-language";
 
 import { Check, Monitor, Moon, Palette, Sun } from "lucide-react";
 import { useEffect, useSyncExternalStore } from "react";
@@ -229,28 +230,28 @@ export function ThemePreferenceControl({ userId }: { userId: string }) {
     <section className="theme-preference" aria-labelledby="appearance-title">
       <div className="theme-preference-heading">
         <span className="theme-preference-icon"><Palette size={18} /></span>
-        <div><h3 id="appearance-title">Aparência do aplicativo</h3><p>Escolha uma paleta e como ela responde à iluminação do aparelho.</p></div>
+        <div><h3 id="appearance-title">{t("Aparência do aplicativo")}</h3><p>{t("Escolha uma paleta e como ela responde à iluminação do aparelho.")}</p></div>
       </div>
       <fieldset className="theme-mode-selector">
-        <legend>Modo</legend>
+        <legend>{t("Modo")}</legend>
         <div>
-          {modes.map((option) => <button key={option.id} type="button" aria-pressed={preference.mode === option.id} onClick={() => chooseAppearance({ ...preference, mode: option.id })}><option.icon size={17} /> {option.label}</button>)}
+          {modes.map((option) => <button key={option.id} type="button" aria-pressed={preference.mode === option.id} onClick={() => chooseAppearance({ ...preference, mode: option.id })}><option.icon size={17} /> {t(option.label)}</button>)}
         </div>
       </fieldset>
       <fieldset className="theme-palette-selector">
-        <legend>Paleta</legend>
+        <legend>{t("Paleta")}</legend>
         <div className="theme-palette-grid">
           {paletteOptions.map((option) => (
             <button key={option.id} type="button" className="theme-palette-card" aria-pressed={preference.palette === option.id} onClick={() => chooseAppearance({ ...preference, palette: option.id })}>
               <span className="theme-swatches" aria-hidden="true">{option.swatches.map((color) => <i key={color} style={{ background: color }} />)}</span>
-              <span className="theme-palette-copy"><strong>{option.name}</strong><small>{option.description}</small></span>
+              <span className="theme-palette-copy"><strong>{t(option.name)}</strong><small>{t(option.description)}</small></span>
               {preference.palette === option.id && <Check size={17} aria-hidden="true" />}
             </button>
           ))}
         </div>
       </fieldset>
       <p className="theme-save-status" role="status">
-        {status === "saving" ? "Salvando na sua conta…" : status === "local" ? "Escolha salva neste aparelho; sincronização pendente." : status === "saved" ? "Aparência sincronizada na sua conta." : "As cinco paletas são gratuitas."}
+        {t(status === "saving" ? "Salvando na sua conta…" : status === "local" ? "Escolha salva neste aparelho; sincronização pendente." : status === "saved" ? "Aparência sincronizada na sua conta." : "As cinco paletas são gratuitas.")}
       </p>
     </section>
   );
@@ -260,7 +261,7 @@ export function ThemeQuickToggle({ userId }: { userId: string }) {
   const preference = useAppearance(userId);
   const dark = useSyncExternalStore(subscribeResolvedMode, () => document.documentElement.dataset.theme === "dark", () => false);
   return (
-    <button type="button" className="theme-quick-toggle" onClick={() => chooseAppearance({ ...preference, mode: resolvedMode(preference.mode) === "dark" ? "light" : "dark" })} aria-label={dark ? "Usar tema claro" : "Usar tema escuro"} title={dark ? "Tema claro" : "Tema escuro"}>
+    <button type="button" className="theme-quick-toggle" onClick={() => chooseAppearance({ ...preference, mode: resolvedMode(preference.mode) === "dark" ? "light" : "dark" })} aria-label={localizeAttribute(dark ? "Usar tema claro" : "Usar tema escuro")} title={localizeAttribute(dark ? "Tema claro" : "Tema escuro")}>
       {dark ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   );

@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { eltisAudioScripts } from "@/lib/eltis-bank";
-import { generateSparkyAudio } from "@/lib/gemini-voice";
+import { generateMascotAudio } from "@/lib/gemini-voice";
 import { onboardingDB } from "@/lib/onboarding-store";
 
 export const maxDuration = 60;
@@ -12,12 +12,13 @@ export async function POST(request: NextRequest) {
   if (!Object.hasOwn(eltisAudioScripts, id)) return new Response(null, { status: 400 });
   try {
     const script = eltisAudioScripts[id as keyof typeof eltisAudioScripts];
-    const path = `eltis-v1/${id}.wav`;
+    const mascot = request.nextUrl.searchParams.get("mascot") === "pinky" ? "pinky" : "sparky";
+    const path = `eltis-v2/${id}-${mascot}.wav`;
     const storage = onboardingDB().storage.from("sparky-personal-audio");
     const cached = await storage.download(path);
     let data = cached.data ? Buffer.from(await cached.data.arrayBuffer()) : null;
     if (!data) {
-      data = await generateSparkyAudio(script, false, "en-US");
+      data = await generateMascotAudio(script, mascot, "en-US");
       const upload = await storage.upload(path, data, { contentType: "audio/wav", upsert: false });
       if (upload.error) throw upload.error;
     }

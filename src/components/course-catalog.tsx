@@ -1,238 +1,65 @@
 "use client";
+import { useMemo, useState } from 'react';
+import { ArrowRight, Check, Search } from 'lucide-react';
+import { t, localizeAttribute } from '@/lib/interface-language';
+import type { Lesson, Level } from '@/lib/curriculum';
+import type { LearningWorkspace } from '@/lib/learning-local';
+import { levels } from '@/lib/levels';
+import { disciplines, skills, functions, languageTopics, stages, competencyPaths } from '@/lib/course-metadata';
+import { courseModules, emptyFilters, filterCourse, lessonById, lessonMetadata, moduleObjective, nextInTrail, prerequisiteFor, statusNames, type CourseFilters } from '@/lib/course-guide';
 
-import { useState } from "react";
-import { ArrowRight, Check, ClipboardCheck, Search } from "lucide-react";
-import {
-  lessons,
-  modules,
-  searchModules,
-  type Lesson,
-  type Level,
-} from "@/lib/curriculum";
-import { curriculumSources } from "@/lib/content/build";
-import { levels, levelDescriptions } from "@/lib/levels";
-
-export function CourseCatalog({
-  level,
-  completed,
-  onOpen,
-  onExams,
-}: {
-  level: Level;
-  completed: Record<string, string>;
-  onOpen: (lesson: Lesson) => void;
-  onExams: () => void;
-}) {
-  const [selectedLevel, setSelectedLevel] = useState<Level | "all">(level);
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const results = searchModules(selectedLevel, query)
-    .map((module) => ({
-      ...module,
-      lessons: module.lessons.filter(
-        (lesson) =>
-          status === "all" ||
-          (status === "done"
-            ? Boolean(completed[lesson.id])
-            : !completed[lesson.id]),
-      ),
-    }))
-    .filter((module) => module.lessons.length);
-  const found = results.reduce(
-    (total, module) => total + module.lessons.length,
-    0,
-  );
-
-  return (
-    <>
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">Inglês para falantes de português</p>
-          <h1>Seu curso</h1>
-        </div>
-        <span className="language-chip">
-          {lessons.length} lições · {modules.length} módulos
-        </span>
-      </div>
-      <p className="page-description">
-        Escolha seu nível e continue a trilha, ou busque um assunto para praticar.
-      </p>
-      <button className="exam-entry secondary-button" onClick={onExams}>
-        <ClipboardCheck size={20} aria-hidden="true" />
-        <span>Simulados · Preparação para intercâmbio</span>
-        <ArrowRight size={17} aria-hidden="true" />
-      </button>
-      <div
-        className="catalog-levels"
-        role="group"
-        aria-label="Filtrar por nível"
-      >
-        {(["all", ...levels] as const).map((item) => (
-          <button
-            key={item}
-            aria-pressed={selectedLevel === item}
-            onClick={() => setSelectedLevel(item)}
-          >
-            <strong>{item === "all" ? "Todos" : item}</strong>
-            <span>
-              {item === "all" ? "Trilha A1–C2" : levelDescriptions[item]}
-            </span>
-            <small>
-              {
-                lessons.filter(
-                  (lesson) => item === "all" || lesson.level === item,
-                ).length
-              }{" "}
-              lições
-            </small>
-          </button>
-        ))}
-      </div>
-      <div className="catalog-tools">
-        <label className="catalog-search">
-          <span>
-            <Search size={16} /> Buscar no curso
-          </span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Assunto, regra ou palavra em inglês"
-          />
-        </label>
-        <label>
-          Seu progresso
-          <select
-            value={status}
-            onChange={(event) => setStatus(event.target.value)}
-          >
-            <option value="all">Todas as lições</option>
-            <option value="remaining">Ainda não concluídas</option>
-            <option value="done">Concluídas</option>
-          </select>
-        </label>
-      </div>
-      <p className="catalog-count" role="status">
-        {found} {found === 1 ? "lição encontrada" : "lições encontradas"} em{" "}
-        {results.length} {results.length === 1 ? "módulo" : "módulos"}
-      </p>
-      {!results.length && (
-        <section className="empty-state">
-          <h2>Nenhuma lição neste filtro</h2>
-          <p>Tente outro termo ou amplie o nível selecionado.</p>
-          <button
-            className="secondary-button"
-            onClick={() => {
-              setQuery("");
-              setStatus("all");
-              setSelectedLevel("all");
-            }}
-          >
-            Limpar filtros
-          </button>
-        </section>
-      )}
-      <div className="catalog-modules">
-        {results.map((module, index) => {
-          const original = modules.find((item) => item.id === module.id)!;
-          const done = original.lessons.filter(
-            (lesson) => completed[lesson.id],
-          ).length;
-          const prerequisite = modules.find(
-            (item) => item.id === module.prerequisiteId,
-          );
-          return (
-            <details
-              className="catalog-module"
-              key={module.id}
-              open={Boolean(query.trim()) || index === 0}
-            >
-              <summary>
-                <span className="module-number">
-                  {String(module.order).padStart(2, "0")}
-                </span>
-                <span className="catalog-module-title">
-                  <span className="eyebrow">
-                    {module.level} · {original.lessons.length} lições
-                  </span>
-                  <span className="catalog-module-name">{module.title}</span>
-                  <span>{module.description}</span>
-                </span>
-                <span className="catalog-module-progress">
-                  {done}/{original.lessons.length}
-                  <progress
-                    max={original.lessons.length}
-                    value={done}
-                    aria-label={`Progresso em ${module.title}`}
-                  />
-                </span>
-              </summary>
-              <div className="catalog-module-body">
-                <p className="catalog-prerequisite">
-                  {prerequisite
-                    ? `Antes deste módulo, recomendamos: ${prerequisite.title}.`
-                    : "Comece por aqui. Nenhum conhecimento prévio é necessário."}{" "}
-                  Você também pode abrir as lições fora da ordem.
-                </p>
-                {module.lessons.map((lesson) => (
-                  <button
-                    className="catalog-lesson"
-                    key={lesson.id}
-                    onClick={() => onOpen(lesson)}
-                  >
-                    <span
-                      className={`catalog-lesson-number ${completed[lesson.id] ? "done" : ""}`}
-                    >
-                      {completed[lesson.id] ? (
-                        <Check size={17} aria-label="Concluída" />
-                      ) : (
-                        String(
-                          original.lessons.findIndex(
-                            (item) => item.id === lesson.id,
-                          ) + 1,
-                        ).padStart(2, "0")
-                      )}
-                    </span>
-                    <span className="catalog-lesson-copy">
-                      <strong>{lesson.title}</strong>
-                      <span>{lesson.experience.personality} · {lesson.experience.mechanic}</span>
-                    </span>
-                    <span className="catalog-duration">
-                      {lesson.minutes} min
-                    </span>
-                    <ArrowRight size={16} />
-                  </button>
-                ))}
-              </div>
-            </details>
-          );
-        })}
-      </div>
-      <details className="curriculum-references">
-        <summary>Sobre o conteúdo e as referências</summary>
-        <p>Os níveis são orientativos: concluir a trilha não equivale a uma certificação.</p>
-        <p>
-          162 lições autorais e 6 lições iniciais preservadas. Textos e exercícios
-          próprios, com explicações em português brasileiro. Nas atividades de escrita,
-          você cria e revisa seu texto, sem nota ou correção automática. A trilha atual não
-          certifica compreensão oral nem pronúncia; os treinos oferecem prática e orientações por escrito.
-        </p>
-        <p>
-          As fontes abaixo orientaram a organização e a consulta de estruturas.
-          Não há afiliação, certificação ou reprodução dos cursos dessas
-          instituições.
-        </p>
-        <ul>
-          {curriculumSources.map((source) => (
-            <li key={source.id}>
-              <a href={source.url} target="_blank" rel="noreferrer">
-                {source.title}
-              </a>
-              <p>{source.scope}</p>
-            </li>
-          ))}
-        </ul>
-      </details>
-    </>
-  );
+type Mode='guided'|'practice';
+export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOpen,onExams}:{level:Level;completed:Record<string,string>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
+ const [filters,setFilters]=useState<CourseFilters>({...emptyFilters,level});
+ const next=nextInTrail(level,completed);
+ const inProgress=useMemo(()=>new Set(Object.values(workspace.checkpoints).filter(p=>!p.review).map(p=>p.lessonId)),[workspace.checkpoints]);
+ const due=useMemo(()=>new Set(dueIds),[dueIds]);
+ const results=useMemo(()=>filterCourse(filters,completed,inProgress,due),[filters,completed,inProgress,due]);
+ const setFilter=<K extends keyof CourseFilters>(key:K,value:CourseFilters[K])=>setFilters(f=>({...f,[key]:value}));
+ const currentModule=courseModules.find(m=>m.id===next?.moduleId);
+ const remainingModules=courseModules.filter(m=>levels.indexOf(m.level)>=levels.indexOf(level));
+ const filterOptions=[['discipline','Disciplina',disciplines],['skill','Habilidade',skills],['function','Quero aprender a',functions],['language','Conteúdo de língua',languageTopics],['status','Status',statusNames]] as const;
+ return <div className="guided-course">
+  <div className="page-heading"><div><p className="eyebrow">{t('Seu caminho no inglês')}</p><h1>{t('Curso')}</h1></div><button className="secondary-button" onClick={onExams}>{t('Simulados')}</button></div>
+  <div className="course-modes" role="group" aria-label={localizeAttribute('Como você quer estudar?')}>
+   <button aria-pressed={mode==='guided'} className={mode==='guided'?'primary-button':'secondary-button'} onClick={()=>onMode('guided')}>{t('Seguir meu curso')}</button>
+   <button aria-pressed={mode==='practice'} className={mode==='practice'?'primary-button':'secondary-button'} onClick={()=>onMode('practice')}>{t('Treinar por disciplina')}</button>
+  </div>
+  {mode==='guided'?<>
+   <section className="trail-current" aria-labelledby="trail-heading"><p className="eyebrow">{t('Você está aqui')} · {t(level)}</p><h2 id="trail-heading">{t(currentModule?.title??'Trilha concluída')}</h2>
+    {currentModule&&<p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(currentModule.id))}.</p>}
+    {next?<><p><strong>{t('Próxima lição:')}</strong>{t(next.title)}</p><p>{t('Seguimos a sequência do seu nível recomendado e aproveitamos as conclusões já registradas.')}</p><button className="primary-button" onClick={()=>onOpen(next,false,'guided')}>{t(inProgress.has(next.id)?'Retomar lição':'Continuar meu curso')}<ArrowRight size={17}/></button></>:<p>{t('Você concluiu a sequência a partir do nível recomendado. Explore outra disciplina ou pratique uma revisão disponível.')}</p>}
+   </section>
+   <div className="section-heading"><h2>{t('Sua trilha')}</h2><span>{t('Pré-requisitos orientam; todas as lições continuam abertas.')}</span></div>
+   <ol className="course-trail">{remainingModules.map(m=>{
+    const done=m.lessons.filter(l=>completed[l.id]).length,pre=prerequisiteFor(m.id),isCurrent=m.id===currentModule?.id;
+    return <li key={m.id} className={isCurrent?'is-current':''}><details open={isCurrent}>
+     <summary><span>{t(m.level)} · {t(m.title)}{isCurrent&&<b>{t('Você está aqui')}</b>}</span><span>{done===m.lessons.length?<Check size={18}/>:null}{done}/{m.lessons.length}</span></summary>
+     <div className="trail-module-body"><p><strong>{t('Ao terminar este módulo, você conseguirá:')}</strong>{t(moduleObjective(m.id))}.</p>
+      <p>{t(done===m.lessons.length?'Módulo concluído. A consolidação continua nas revisões.':isCurrent?'Em desenvolvimento':'Competência que vem depois')}</p>
+      {pre&&<p className="prerequisite-note">{t('Base recomendada:')}<button className="text-button" onClick={()=>onOpen(pre.lessons.find(l=>!completed[l.id])??pre.lessons[0],false,'practice')}>{t(pre.title)}</button></p>}
+      <div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,false,'guided')}/>)}</div>
+     </div></details></li>;
+   })}</ol>
+   <section className="competency-paths"><h2>{t('Competências que crescem com você')}</h2><p>{t('Retome a base ou avance para uma aplicação mais exigente. As etapas conectam níveis diferentes.')}</p>
+    {competencyPaths.map(p=><details key={p.id}><summary>{t(p.title)}<span>{p.steps.filter(s=>completed[s.lessonId]).length}/{p.steps.length}</span></summary><ol>{p.steps.map(s=>{const l=lessonById.get(s.lessonId)!;return <li key={s.lessonId}><span className="eyebrow">{t(stages[s.stage])} · {l.level}</span><button className="text-button" onClick={()=>onOpen(l,false,'practice')}>{completed[l.id]&&<Check size={15}/>} {t(l.title)}<ArrowRight size={15}/></button><p lang="en">{s.task}</p></li>;})}</ol></details>)}
+   </section>
+  </>:<>
+   <section className="practice-context"><h2>{t('Treino complementar')}</h2><p>{t('Explore um assunto livremente. As conclusões contam no curso; sua próxima lição principal continua indicada abaixo.')}</p>{next&&<p><strong>{t('Próxima na trilha:')}</strong><button className="text-button" onClick={()=>onOpen(next,false,'guided')}>{t(next.title)}<ArrowRight size={15}/></button></p>}</section>
+   <section className="course-filters" aria-label={localizeAttribute('Filtrar lições')}>
+    <label className="catalog-search"><Search size={18}/><input value={filters.query} onChange={e=>setFilter('query',e.target.value)} placeholder={localizeAttribute('Buscar assunto ou expressão')} aria-label={localizeAttribute('Buscar assunto ou expressão')}/></label>
+    <div className="filter-grid"><label>{t('Nível')}<select aria-label={localizeAttribute("Nível")} value={filters.level} onChange={e=>setFilter('level',e.target.value as CourseFilters['level'])}><option value="all">{t('Todos os níveis')}</option>{levels.map(l=><option key={l}>{l}</option>)}</select></label>
+     {filterOptions.map(([key,label,options])=><label key={key}>{t(label)}<select aria-label={localizeAttribute(label)} value={filters[key]} onChange={e=>setFilter(key,e.target.value as never)}><option value="">{t('Todos')}</option>{Object.entries(options).map(([value,name])=><option key={value} value={value}>{t(name)}</option>)}</select></label>)}
+    </div>
+    <div className="filter-chips" aria-label={localizeAttribute('Filtros ativos')}>{filters.level!=='all'&&<button onClick={()=>setFilter('level','all')}>{filters.level} ×</button>}{filterOptions.map(([key,label,options])=>filters[key]&&<button key={key} onClick={()=>setFilter(key,'')}>{t(label)}: {t((options as Record<string,string>)[filters[key]])} ×</button>)}{filters.query&&<button onClick={()=>setFilter('query','')}>{filters.query} ×</button>}<button className="text-button" onClick={()=>setFilters({...emptyFilters})}>{t('Limpar filtros')}</button></div>
+    <p role="status">{results.reduce((n,m)=>n+m.lessons.length,0)} {t(results.reduce((n,m)=>n+m.lessons.length,0)===1?'lição encontrada':'lições encontradas')}</p>
+   </section>
+   {!results.length&&<section className="empty-state"><h2>{t('Nenhuma lição combina com esses filtros')}</h2><p>{t('Remova um filtro para ampliar a busca.')}</p><button className="secondary-button" onClick={()=>setFilters({...emptyFilters})}>{t('Limpar filtros')}</button></section>}
+   {results.map(m=><section className="practice-module" key={m.id}><h2>{t(m.title)} · {m.level}</h2><p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(m.id))}.</p><div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,filters.status==='due'&&due.has(l.id),'practice')}/>)}</div></section>)}
+  </>}
+ </div>;
+}
+function LessonRow({lesson,completed,inProgress,due,onOpen}:{lesson:Lesson;completed:boolean;inProgress:boolean;due:boolean;onOpen:()=>void}) {
+ const meta=lessonMetadata[lesson.id];
+ return <button className="guided-lesson" onClick={onOpen}><span><span className="eyebrow">{t(disciplines[meta.primary])} · {t(stages[meta.stage])}</span><strong>{t(lesson.title)}</strong><small>{meta.focusSkills.map(s=>t(skills[s])).join(" · ")}</small><small>{t(inProgress?'Em andamento':completed?'Concluída':'Não iniciada')}{due?' · '+t('Revisão pendente'):''} · {lesson.minutes} {t('min')}</small></span>{completed?<Check size={18}/>:<ArrowRight size={18}/>}</button>;
 }

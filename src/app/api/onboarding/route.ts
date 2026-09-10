@@ -90,6 +90,18 @@ export async function POST(request: NextRequest) {
       await ensureDraft(key, loaded.profile);
       return NextResponse.json(await snapshot(key), { headers });
     }
+    if (body.action === "placement-start" || body.action === "preferences-start") {
+      if (!loaded.profile?.onboardingCompleted) throw new Error("Conclua primeiro seu perfil.");
+      const draft = await ensureDraft(key, loaded.profile);
+      await saveDraft(key, { ...draft.data, step: body.action === "placement-start" ? "test" : "level", placement: body.action === "placement-start" ? startPlacement() : undefined }, draft.revision);
+      return NextResponse.json(await snapshot(key), { headers });
+    }
+    if (body.action === "cancel-edit") {
+      if (!loaded.profile?.onboardingCompleted) throw new Error("Conclua primeiro seu perfil.");
+      const removed = await db.from("sparky_onboarding_sessions").delete().eq("account_key", key);
+      if (removed.error) throw new Error("Não foi possível fechar o ajuste.");
+      return NextResponse.json(await snapshot(key), { headers });
+    }
     if (body.action === "pronunciation-start") {
       if (!loaded.profile?.onboardingCompleted) throw new Error("Conclua primeiro seu perfil.");
       if (loaded.session) throw new Error("Retome a personalização já iniciada.");

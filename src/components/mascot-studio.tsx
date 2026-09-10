@@ -1,5 +1,5 @@
 "use client";
-
+import { t, localizeAttribute, translate } from "@/lib/interface-language";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { BookOpen, Check, Coins, Compass, Eye, RotateCcw, ShoppingBag } from "lucide-react";
@@ -48,11 +48,11 @@ export function MascotFigure({ mascot, equipped, size = "large", decorative = fa
     return item ? [item] : [];
   });
   const name = mascot === "pinky" ? "Pinky" : "Sparky";
-  const description = [outfit?.name, ...accessories.map((item) => item.name)].filter(Boolean).join(", ");
+  const description = [outfit?.name, ...accessories.map((item) => item.name)].filter(Boolean).map((item) => translate(item!)).join(", ");
   const base = outfit?.assetPath ?? wardrobeBaseAssets[mascot];
   return <div className={`mascot-figure mascot-${mascot} mascot-${size}`}>
     {accessories.map((item) => item.assets[mascot].back && <Image key={`${item.id}-back`} className="wardrobe-layer wardrobe-back" src={item.assets[mascot].back!} alt="" width={640} height={640} sizes="(max-width: 700px) 260px, 300px" />)}
-    <Image className="mascot-base" src={base} alt={decorative ? "" : `${name}${description ? ` usando ${description}` : ""}`} width={640} height={640} loading={size === "hero" ? "eager" : "lazy"} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
+    <Image className="mascot-base" src={base} alt={decorative ? "" : `${name}${description ? ` ${translate("usando")} ${description}` : ""}`} width={640} height={640} loading={size === "hero" ? "eager" : "lazy"} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
     {accessories.filter((item) => item.assets[mascot].front).map((item) => <Image key={item.id} className={`wardrobe-layer wardrobe-${item.slot === "back" ? "front" : item.slot}`} src={item.assets[mascot].front} alt="" width={640} height={640} sizes="(max-width: 700px) 260px, 300px" />)}
   </div>;
 }
@@ -110,36 +110,36 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
   }
 
   return <section className="mascot-studio shop-v2" aria-labelledby="mascot-studio-title">
-    <header className="studio-header"><div><p className="eyebrow">Aprenda · conquiste · combine</p><h2 id="mascot-studio-title">Loja de descobertas</h2></div><span className="coin-balance" aria-label={`${reward.coins} moedas`}><Coins size={20} /> {reward.coins}</span></header>
-    <p className="shop-intro">Transforme seu estudo em trajes, acessórios, temas de caderno e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.</p>
-    {!!reward.sceneRefund && <details className="shop-refund"><summary>{reward.sceneRefund} moedas devolvidas pelos cenários retirados</summary><p>Os cenários foram descontinuados. Todas as compras foram reembolsadas integralmente uma única vez.</p></details>}
-    {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund} moedas devolvidas pela atualização anterior</summary><p>Esse reembolso já foi incluído no seu saldo. Você pode combinar os novos acessórios com os trajes disponíveis.</p></details>}
+    <header className="studio-header"><div><p className="eyebrow">{t("Aprenda · conquiste · combine")}</p><h2 id="mascot-studio-title">{t("Loja de descobertas")}</h2></div><span className="coin-balance" aria-label={localizeAttribute(`${reward.coins} moedas`)}><Coins size={20} /> {reward.coins}</span></header>
+    <p className="shop-intro">{t("Transforme seu estudo em trajes, acessórios, temas de caderno e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.")}</p>
+    {!!reward.sceneRefund && <details className="shop-refund"><summary>{reward.sceneRefund}{t(" moedas devolvidas pelos cenários retirados")}</summary><p>{t("Os cenários foram descontinuados. Todas as compras foram reembolsadas integralmente uma única vez.")}</p></details>}
+    {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund}{t(" moedas devolvidas pela atualização anterior")}</summary><p>{t("Esse reembolso já foi incluído no seu saldo. Você pode combinar os novos acessórios com os trajes disponíveis.")}</p></details>}
 
     <div className="studio-main">
-      <div className="mascot-preview"><h3 ref={previewHeading} tabIndex={-1}>{preview ? `Experimentando: ${preview.name}` : `Visual de ${name}`}</h3>
+      <div className="mascot-preview"><h3 ref={previewHeading} tabIndex={-1}>{preview ? <>{t("Experimentando:")}{t(preview.name)}</> : <>{t("Visual de")}{t(name)}</>}</h3>
         <MascotFigure mascot={mascot} equipped={previewEquipped} />
-        <p aria-live="polite">{preview ? "Prévia ativa. A compra e o visual só mudam quando você confirmar." : "Combine um traje com até quatro acessórios independentes."}</p>
+        <p aria-live="polite">{t(preview ? "Prévia ativa. A compra e o visual só mudam quando você confirmar." : "Combine um traje com até quatro acessórios independentes.")}</p>
         {preview && <div className="preview-actions">
           {reward.owned.includes(preview.id)
-            ? <button className="primary-button" disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: preview.slot, itemId: preview.id })) clearPreview(); }}>Usar este item</button>
-            : <button className="primary-button" disabled={busy || reward.coins < preview.price} onClick={() => requestPurchase(preview.id)}>Comprar por {preview.price} moedas</button>}
-          <button className="text-button" disabled={busy} onClick={clearPreview}>Sair da prévia</button>
+            ? <button className="primary-button" disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: preview.slot, itemId: preview.id })) clearPreview(); }}>{t("Usar este item")}</button>
+            : <button className="primary-button" disabled={busy || reward.coins < preview.price} onClick={() => requestPurchase(preview.id)}>{t("Comprar por")} {preview.price}{t(" moedas")}</button>}
+          <button className="text-button" disabled={busy} onClick={clearPreview}>{t("Sair da prévia")}</button>
         </div>}
-        <div className="equipped-slots" aria-label="Itens usados atualmente">
-          {(["outfit", ...accessorySlots] as CosmeticSlot[]).map((slot) => <span key={slot}><strong>{slotLabels[slot]}</strong>{cosmeticCatalog.find((item) => item.id === reward.equipped[mascot]?.[slot])?.name ?? (slot === "outfit" ? "Básico" : "Sem acessório")}
-            {reward.equipped[mascot][slot] && <button className="text-button" aria-label={`Remover ${slotLabels[slot].toLowerCase()}`} disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot, itemId: null })) clearPreview(); }}>Remover</button>}
+        <div className="equipped-slots" aria-label={localizeAttribute("Itens usados atualmente")}>
+          {(["outfit", ...accessorySlots] as CosmeticSlot[]).map((slot) => <span key={slot}><strong>{t(slotLabels[slot])}</strong>{t(cosmeticCatalog.find((item) => item.id === reward.equipped[mascot]?.[slot])?.name ?? (slot === "outfit" ? "Básico" : "Sem acessório"))}
+            {reward.equipped[mascot][slot] && <button className="text-button" aria-label={localizeAttribute(`${translate("Remover")} ${translate(slotLabels[slot]).toLowerCase()}`)} disabled={busy} onClick={async () => { if (await onAction({ action: "equip", mascot, slot, itemId: null })) clearPreview(); }}>{t("Remover")}</button>}
           </span>)}
         </div>
-        <button className="text-button reset-look" disabled={busy || !Object.keys(reward.equipped[mascot]).length} onClick={async () => { if (await onAction({ action: "reset-look", mascot })) clearPreview(); }}><RotateCcw size={15} /> Restaurar visual básico</button>
+        <button className="text-button reset-look" disabled={busy || !Object.keys(reward.equipped[mascot]).length} onClick={async () => { if (await onAction({ action: "reset-look", mascot })) clearPreview(); }}><RotateCcw size={15} /> {t("Restaurar visual básico")}</button>
       </div>
-      <div className="shop-companion-panel"><div className="mascot-selector" role="group" aria-label="Escolher mascote">
+      <div className="shop-companion-panel"><div className="mascot-selector" role="group" aria-label={localizeAttribute("Escolher mascote")}>
         {(["sparky", "pinky"] as const).map((choice) => <button key={choice} className={choice === mascot ? "selected" : ""} aria-pressed={choice === mascot} disabled={busy} onClick={async () => { if (await onAction({ action: "select-mascot", mascot: choice })) clearPreview(); }}>
-          <MascotFigure mascot={choice} equipped={reward.equipped} size="small" decorative /><span>{choice === "pinky" ? "Pinky" : "Sparky"}</span>{choice === mascot && <Check size={16} />}
+          <MascotFigure mascot={choice} equipped={reward.equipped} size="small" decorative /><span>{t(choice === "pinky" ? "Pinky" : "Sparky")}</span>{choice === mascot && <Check size={16} />}
         </button>)}
-      </div><div className="shop-earning"><h3>Seu próximo item</h3><p>Com 40 moedas você já desbloqueia acessórios ou duas missões do cotidiano. Trajes especiais começam em 90 moedas.</p>
-        <div className="reward-rules"><span><strong>+10</strong> primeira conclusão</span><span><strong>+20</strong> módulo completo</span><span><strong>+2</strong> por revisão vencida · até 10 por dia</span></div>
-        <button className="secondary-button" disabled={busy} onClick={onStudy}>Praticar para ganhar moedas <Compass size={16} /></button>
-        <p>As moedas não compram respostas, notas ou conclusão de lições.</p>
+      </div><div className="shop-earning"><h3>{t("Seu próximo item")}</h3><p>{t("Com 40 moedas você já desbloqueia acessórios ou duas missões do cotidiano. Trajes especiais começam em 90 moedas.")}</p>
+        <div className="reward-rules"><span><strong>+10</strong>{t(" primeira conclusão")}</span><span><strong>+20</strong>{t(" módulo completo")}</span><span><strong>+2</strong>{t(" por revisão vencida · até 10 por dia")}</span></div>
+        <button className="secondary-button" disabled={busy} onClick={onStudy}>{t("Praticar para ganhar moedas")} <Compass size={16} /></button>
+        <p>{t("As moedas não compram respostas, notas ou conclusão de lições.")}</p>
       </div></div>
     </div>
 
@@ -147,27 +147,27 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
       const item = storeCatalog.find((entry) => entry.id === confirmId);
       if (!item) return null;
       const cosmetic = isCosmeticItem(item);
-      return <section ref={purchaseConfirmation} tabIndex={-1} className="shop-confirm" role="region" aria-label="Confirmar compra">
-        <h3>Adquirir {item.name}?</h3><p>Preço: {item.price} moedas · Saldo depois da compra: {Math.max(0, reward.coins - item.price)} moedas. Compra permanente.</p>
-        {cosmetic && <button className="primary-button" disabled={busy || reward.coins < item.price} onClick={async () => { if (await onAction({ action: "buy-and-equip", mascot, itemId: item.id })) clearPreview(); }}>Comprar e usar</button>}
-        <button className={cosmetic ? "secondary-button" : "primary-button"} disabled={busy || reward.coins < item.price} onClick={async () => { if (await onAction({ action: "buy", itemId: item.id })) { setConfirmId(null); setFilter("owned"); } }}>Só comprar</button>
-        <button className="text-button" aria-label="Cancelar compra" disabled={busy} onClick={() => setConfirmId(null)}>Cancelar</button>
+      return <section ref={purchaseConfirmation} tabIndex={-1} className="shop-confirm" role="region" aria-label={localizeAttribute("Confirmar compra")}>
+        <h3>{t("Adquirir")}{t(item.name)}?</h3><p>{t("Preço:")}{item.price}{t(" moedas · Saldo depois da compra:")}{Math.max(0, reward.coins - item.price)}{t(" moedas. Compra permanente.")}</p>
+        {cosmetic && <button className="primary-button" disabled={busy || reward.coins < item.price} onClick={async () => { if (await onAction({ action: "buy-and-equip", mascot, itemId: item.id })) clearPreview(); }}>{t("Comprar e usar")}</button>}
+        <button className={cosmetic ? "secondary-button" : "primary-button"} disabled={busy || reward.coins < item.price} onClick={async () => { if (await onAction({ action: "buy", itemId: item.id })) { setConfirmId(null); setFilter("owned"); } }}>{t("Só comprar")}</button>
+        <button className="text-button" aria-label={localizeAttribute("Cancelar compra")} disabled={busy} onClick={() => setConfirmId(null)}>{t("Cancelar")}</button>
       </section>;
     })()}
 
-    <div className="wardrobe-filters" role="group" aria-label="Categorias da loja">
-      {([ ["outfits", "Trajes"], ["accessories", "Acessórios"], ["missions", "Missões"], ["themes", "Cadernos"], ["owned", "Meus itens"] ] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setConfirmId(null); setThemePreview(null); }}>{label}</button>)}
+    <div className="wardrobe-filters" role="group" aria-label={localizeAttribute("Categorias da loja")}>
+      {([ ["outfits", "Trajes"], ["accessories", "Acessórios"], ["missions", "Missões"], ["themes", "Cadernos"], ["owned", "Meus itens"] ] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setConfirmId(null); setThemePreview(null); }}>{t(label)}</button>)}
     </div>
-    {filter === "accessories" && <div className="accessory-filters" role="group" aria-label="Tipos de acessório">
-      {([ ["all", "Todos"], ["head", "Cabeça"], ["face", "Rosto"], ["neck", "Pescoço"], ["back", "Bolsas"] ] as const).map(([id, label]) => <button key={id} aria-pressed={accessoryFilter === id} onClick={() => setAccessoryFilter(id)}>{label}</button>)}
+    {filter === "accessories" && <div className="accessory-filters" role="group" aria-label={localizeAttribute("Tipos de acessório")}>
+      {([ ["all", "Todos"], ["head", "Cabeça"], ["face", "Rosto"], ["neck", "Pescoço"], ["back", "Bolsas"] ] as const).map(([id, label]) => <button key={id} aria-pressed={accessoryFilter === id} onClick={() => setAccessoryFilter(id)}>{t(label)}</button>)}
     </div>}
-    {filter === "themes" && <p className="shop-explanation">Os temas mudam as cores do Caderno sem alterar seus textos ou atividades.</p>}
-    {themePreview && (() => { const theme = notebookThemeCatalog.find((item) => item.id === themePreview); if (!theme) return null; return <section ref={notebookPreview} tabIndex={-1} className={`notebook-theme-preview ${theme.className}`} aria-label={`Prévia: ${theme.name}`}>
-      <p className="eyebrow">Prévia gratuita</p><h3>{theme.name}</h3><p lang="en">Small steps today. Clearer ideas tomorrow.</p><p>Suas frases, novas versões e um espaço para aprender com os erros.</p>
-      <button className="secondary-button" onClick={() => setThemePreview(null)}>Fechar prévia</button>
+    {filter === "themes" && <p className="shop-explanation">{t("Os temas mudam as cores do Caderno sem alterar seus textos ou atividades.")}</p>}
+    {themePreview && (() => { const theme = notebookThemeCatalog.find((item) => item.id === themePreview); if (!theme) return null; return <section ref={notebookPreview} tabIndex={-1} className={`notebook-theme-preview ${theme.className}`} aria-label={localizeAttribute(`${translate("Prévia")}: ${translate(theme.name)}`)}>
+      <p className="eyebrow">{t("Prévia gratuita")}</p><h3>{t(theme.name)}</h3><p lang="en">Small steps today. Clearer ideas tomorrow.</p><p>{t("Suas frases, novas versões e um espaço para aprender com os erros.")}</p>
+      <button className="secondary-button" onClick={() => setThemePreview(null)}>{t("Fechar prévia")}</button>
     </section>; })()}
-    {filter === "missions" && <p className="shop-explanation">Cada pacote inclui situações, decisões explicadas e propostas de escrita. O curso A1–C2 continua acessível sem compras.</p>}
-    {items.length === 0 && <p className="shop-empty">Nenhum item desta categoria está disponível para {name}.</p>}
+    {filter === "missions" && <p className="shop-explanation">{t("Cada pacote inclui situações, decisões explicadas e propostas de escrita. O curso A1–C2 continua acessível sem compras.")}</p>}
+    {items.length === 0 && <p className="shop-empty">{t("Nenhum item desta categoria está disponível para")}{t(name)}.</p>}
     <div className="shop-grid">{items.map((item) => {
       const cosmetic = isCosmeticItem(item);
       const owned = reward.owned.includes(item.id);
@@ -177,22 +177,22 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
       const compatible = !cosmetic || isCompatibleCosmetic(item, mascot, currentOutfit);
       const shown = cosmetic ? { ...reward.equipped, [mascot]: { ...reward.equipped[mascot], [item.slot]: item.id } } : reward.equipped;
       return <article className="shop-card" key={item.id} data-item={item.id}>
-        <div className={`shop-card-art ${theme ? `notebook-theme-art ${item.className}` : ""}`}>{cosmetic ? <MascotFigure mascot={mascot} equipped={shown} decorative /> : theme ? <><BookOpen size={48} aria-hidden="true" /><strong>My English notebook</strong><span>Frases · ideias · novas versões</span></> : <><Compass size={46} /><strong>{item.level}</strong><span>2 missões de prática</span></>}</div>
-        <div className="shop-card-copy"><p className="eyebrow">{owned ? equipped ? "Em uso" : "Adquirido" : cosmetic ? slotLabels[item.slot] : theme ? "Tema de caderno" : "Pacote permanente"}</p><h3>{item.name}</h3><p>{item.description}</p></div>
+        <div className={`shop-card-art ${theme ? `notebook-theme-art ${item.className}` : ""}`}>{cosmetic ? <MascotFigure mascot={mascot} equipped={shown} decorative /> : theme ? <><BookOpen size={48} aria-hidden="true" /><strong>{t("My English notebook")}</strong><span>{t("Frases · ideias · novas versões")}</span></> : <><Compass size={46} /><strong>{item.level}</strong><span>{t("2 missões de prática")}</span></>}</div>
+        <div className="shop-card-copy"><p className="eyebrow">{t(owned ? equipped ? "Em uso" : "Adquirido" : cosmetic ? slotLabels[item.slot] : theme ? "Tema de caderno" : "Pacote permanente")}</p><h3>{t(item.name)}</h3><p>{t(item.description)}</p></div>
         <div className="shop-card-actions">
-          {!compatible && <p>Esta peça não combina com o traje atual. Troque o traje para experimentar.</p>}
-          {cosmetic && <button className="text-button" disabled={busy || !compatible} onClick={() => tryItem(item.id)}><Eye size={16} /> {compatible ? "Experimentar" : "Incompatível"}</button>}
-          {theme && <button className="text-button" onClick={() => tryTheme(item.id)}><Eye size={16} /> Ver prévia</button>}
-          {owned ? cosmetic ? <button className="secondary-button" disabled={busy || !compatible} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: item.slot, itemId: equipped ? null : item.id })) clearPreview(); }}>{equipped ? "Remover" : "Usar"}</button>
-            : theme ? <button className="secondary-button" disabled={busy} onClick={() => onAction({ action: "notebook-theme", itemId: equipped ? null : item.id })}>{equipped ? "Usar tema original" : "Usar no caderno"}</button>
-            : <button className="primary-button" onClick={() => setPack(item.id)}>Abrir missões</button>
-            : <><span className="shop-price"><Coins size={16} /> {item.price} moedas</span>
-              {shortfall > 0 ? <><p className="shop-shortfall">Faltam {shortfall} moedas</p><button className="secondary-button" disabled={busy} onClick={onStudy}>Continuar estudando</button></> : <button className="secondary-button" disabled={busy || !compatible} onClick={() => requestPurchase(item.id)}><ShoppingBag size={16} /> Adquirir</button>}
+          {!compatible && <p>{t("Esta peça não combina com o traje atual. Troque o traje para experimentar.")}</p>}
+          {cosmetic && <button className="text-button" disabled={busy || !compatible} onClick={() => tryItem(item.id)}><Eye size={16} /> {t(compatible ? "Experimentar" : "Incompatível")}</button>}
+          {theme && <button className="text-button" onClick={() => tryTheme(item.id)}><Eye size={16} /> {t("Ver prévia")}</button>}
+          {owned ? cosmetic ? <button className="secondary-button" disabled={busy || !compatible} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: item.slot, itemId: equipped ? null : item.id })) clearPreview(); }}>{t(equipped ? "Remover" : "Usar")}</button>
+            : theme ? <button className="secondary-button" disabled={busy} onClick={() => onAction({ action: "notebook-theme", itemId: equipped ? null : item.id })}>{t(equipped ? "Usar tema original" : "Usar no caderno")}</button>
+            : <button className="primary-button" onClick={() => setPack(item.id)}>{t("Abrir missões")}</button>
+            : <><span className="shop-price"><Coins size={16} /> {item.price}{t(" moedas")}</span>
+              {shortfall > 0 ? <><p className="shop-shortfall">{t("Faltam")}{shortfall}{t(" moedas")}</p><button className="secondary-button" disabled={busy} onClick={onStudy}>{t("Continuar estudando")}</button></> : <button className="secondary-button" disabled={busy || !compatible} onClick={() => requestPurchase(item.id)}><ShoppingBag size={16} /> {t("Adquirir")}</button>}
             </>}
         </div>
       </article>;
     })}</div>
-    <p className="wardrobe-note">Moedas virtuais, sem compra com dinheiro, validade ou sorteios. Cada acessório inclui uma versão ajustada para Sparky e outra para Pinky.</p>
+    <p className="wardrobe-note">{t("Moedas virtuais, sem compra com dinheiro, validade ou sorteios. Cada acessório inclui uma versão ajustada para Sparky e outra para Pinky.")}</p>
     {pack && reward.owned.includes(pack) && <StorePractice key={pack} packId={pack} userId={userId} onClose={() => setPack(null)} />}
   </section>;
 }

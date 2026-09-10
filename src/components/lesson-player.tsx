@@ -1,4 +1,6 @@
 "use client";
+import { lessonMetadata, pathsForLesson } from "@/lib/course-guide";
+import { t, localizeAttribute } from "@/lib/interface-language";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { lessonIllustrationId } from "@/lib/lesson-illustrations";
@@ -29,7 +31,11 @@ export default function LessonPlayer({
   learnerProfile,
   onClose,
   onFinish,
+  studyMode = "guided",
+  nextLesson,
 }: {
+  studyMode?: "guided"|"practice";
+  nextLesson?: Lesson;
   userId: string;
   lesson: Lesson;
   review: boolean;
@@ -46,7 +52,7 @@ export default function LessonPlayer({
   const body = useRef<HTMLDivElement>(null);
   const feedback = useRef<HTMLDivElement>(null);
   const [recovered] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
-  const [initial] = useState(() => recovered && Date.now() - Date.parse(recovered.updatedAt) < 7 * 3600000 ? recovered : null);
+  const [initial] = useState(() => recovered && (!review || recovered.reviewFormat === 2) && Date.now() - Date.parse(recovered.updatedAt) < 7 * 3600000 ? recovered : null);
   const steps = lessonSteps(lesson, review);
   const [index, setIndex] = useState(initial && initial.index < steps.length ? initial.index : 0);
   const [answer, setAnswer] = useState(initial?.answer || "");
@@ -90,7 +96,7 @@ export default function LessonPlayer({
   }, [checked, error]);
   useEffect(() => {
     history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
-    const saved = saveCheckpoint(userId, { lessonId: lesson.id, review, index, answer, tokens, checked, correct,
+    const saved = saveCheckpoint(userId, { reviewFormat: 2, lessonId: lesson.id, review, index, answer, tokens, checked, correct,
       translation, assisted, contextVisible, revealed, listened, receipt, draft, furthestIndex: furthestIndex.current,
       history: history.current, updatedAt: new Date().toISOString(), contentVersion, flowVersion: lessonFlowVersion });
     if (!saved) queueMicrotask(() => setStorageError(true));
@@ -207,30 +213,30 @@ export default function LessonPlayer({
           className="icon-button"
           disabled={saving || verifying}
           onClick={() => { saveWriting(); onClose(); }}
-          aria-label="Fechar lição"
+          aria-label={localizeAttribute("Fechar lição")}
         >
           <X size={20} />
         </button>
         <div>
-          <p>{review ? "Revisão" : lesson.title}</p>
+          <p>{t(review ? "Revisão" : lesson.title)}</p>
           <progress
             value={index + 1}
             max={steps.length}
-            aria-label="Etapas da lição"
+            aria-label={localizeAttribute("Etapas da lição")}
           />
         </div>
         <span>
-          {index + 1}/{steps.length}
+          {t(index + 1)}/{t(steps.length)}
         </span>
       </header>
       <div className="lesson-body" ref={body} data-step-kind={step.kind}>
-        {error && <p className="study-error" role="alert">{error}</p>}
-        {storageError && <p className="study-error" role="alert">O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.</p>}
+        {error && <p className="study-error" role="alert">{t(error)}</p>}
+        {storageError && <p className="study-error" role="alert">{t("O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.")}</p>}
         {showIllustration && (
           <figure className="lesson-illustration" aria-hidden="true">
             <Image
               src={`/lesson-images/${illustrationId}.png`}
-              alt=""
+              alt={localizeAttribute("")}
               width={960}
               height={640}
               sizes="(max-width: 720px) calc(100vw - 40px), 760px"
@@ -242,7 +248,7 @@ export default function LessonPlayer({
           <MascotFigure mascot={mascot} equipped={equipped} size="small" decorative />
         )}
         <p className="eyebrow">
-          {step.kind === "teach"
+          {t(step.kind === "teach"
             ? "Entenda primeiro"
             : step.kind === "hook"
               ? lesson.experience.personality
@@ -260,76 +266,67 @@ export default function LessonPlayer({
                       ? "Aprenda com os erros"
                   : isExercise(step)
                     ? "Sua vez"
-                    : "Observe o exemplo"}
+                    : "Observe o exemplo")}
         </p>
         <h2 id="lesson-title" ref={heading} tabIndex={-1}>
-          {step.title}
+          {t(step.title)}
         </h2>
         {step.kind === "vocabulary" ? (
-          <dl className="vocabulary-cards" aria-label="Vocabulário da lição">
+          <dl className="vocabulary-cards" aria-label={localizeAttribute("Vocabulário da lição")}>
             {step.body.split("\n").filter(Boolean).map((line, lineIndex) => {
               const separator = line.indexOf(" — ");
               return <div key={lineIndex}>
-                <dt lang={separator >= 0 ? "en" : undefined}>{separator >= 0 ? line.slice(0, separator) : line}</dt>
-                {separator >= 0 && <dd>{line.slice(separator + 3)}</dd>}
+                <dt lang={separator >= 0 ? "en" : undefined}>{t(separator >= 0 ? line.slice(0, separator) : line)}</dt>
+                {separator >= 0 && <dd>{t(line.slice(separator + 3))}</dd>}
               </div>;
             })}
           </dl>
-        ) : <p className="step-explanation">{step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body}</p>}
+        ) : <p className="step-explanation">{t(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
+        {index===0&&!review&&studyMode==='practice'&&<p className="practice-context">{t('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{t('Próxima na trilha:')}{t(nextLesson.title)}</>}</p>}
+        {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p>{t(lessonMetadata[lesson.id].outcome)}.</p><p>{t('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p><strong>{t('Depois de concluir, próxima na trilha:')}</strong>{t(nextLesson.title)}</p>:<p>{t('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
-            <p><b>Seu desafio:</b> {lesson.experience.challenge}</p>
-            <p>Para usar no dia a dia: {lesson.experience.application}.</p>
-            <details className="learning-disclosure"><summary>Ver uma dica</summary><p>{lesson.experience.discovery}</p></details>
+            <p><b>{t("Seu desafio:")}</b> {t(lesson.experience.challenge)}</p>
+            <p>{t("Para usar no dia a dia:")}{t(lesson.experience.application)}.</p>
+            <details className="learning-disclosure"><summary>{t("Ver uma dica")}</summary><p>{t(lesson.experience.discovery)}</p></details>
           </div>
         )}
-        {step.kind === "hook" && lesson.experience.recall && (
-          <aside className="recall-card" aria-label="Aquecimento de memória">
-            <h3>Antes de começar · 30 segundos</h3>
-            <p>{lesson.experience.memoryCue}</p>
-            <blockquote>{lesson.experience.recall.prompt}</blockquote>
-            <details key={index} className="learning-disclosure">
-              <summary>Ver uma sugestão de resposta</summary>
-              <p lang="en">{lesson.experience.recall.model}</p>
-              <p>Há outras formas de dizer a mesma coisa. Se o assunto for novo para você, leia o exemplo e depois tente repeti-lo sem olhar.</p>
-            </details>
-          </aside>
-        )}
+
         {step.kind === "pronunciation" && step.pronunciation && (
-          <section className="pronunciation-lab" aria-label="Treino de pronúncia">
-            <div className="pronunciation-focus"><strong>{step.pronunciation.focus}</strong>{step.pronunciation.ipa && <span>{step.pronunciation.ipa}</span>}</div>
-            <p><strong>Posição da boca:</strong> {step.pronunciation.mouth}</p>
+          <section className="pronunciation-lab" aria-label={localizeAttribute("Treino de pronúncia")}>
+            <div className="pronunciation-focus"><strong>{t(step.pronunciation.focus)}</strong>{step.pronunciation.ipa && <span>{t(step.pronunciation.ipa)}</span>}</div>
+            <p><strong>{t("Posição da boca:")}</strong> {t(step.pronunciation.mouth)}</p>
             <div className="speech-forms">
-              <div><span>FRASE DO ÁUDIO</span><p lang="en">{step.pronunciation.careful}</p></div>
-              <div><span>COMO ESCUTAR</span><p>{step.pronunciation.natural}</p></div>
+              <div><span>{t("FRASE DO ÁUDIO")}</span><p lang="en">{t(step.pronunciation.careful)}</p></div>
+              <div><span>{t("COMO ESCUTAR")}</span><p>{t(step.pronunciation.natural)}</p></div>
             </div>
-            <p><strong>O que muda:</strong> {step.pronunciation.change}</p>
+            <p><strong>{t("O que muda:")}</strong> {t(step.pronunciation.change)}</p>
             {step.pronunciation.contrast && (
-              <div className="contrast-drill"><span>COMPARE OS SONS</span><p lang="en">{step.pronunciation.contrast[0]} <strong>×</strong> {step.pronunciation.contrast[1]}</p><small>Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.</small></div>
+              <div className="contrast-drill"><span>{t("COMPARE OS SONS")}</span><p lang="en">{t(step.pronunciation.contrast[0])} <strong>{t("×")}</strong> {t(step.pronunciation.contrast[1])}</p><small>{t("Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.")}</small></div>
             )}
             <ol className="repeat-ladder">
-              {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{drillIndex + 1}</span><span lang="en">{item}</span></li>)}
+              {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{t(drillIndex + 1)}</span><span lang="en">{t(item)}</span></li>)}
             </ol>
-            <p className="microtrain-instruction"><strong>Repita acompanhando a voz (shadowing):</strong> ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.</p>
+            <p className="microtrain-instruction"><strong>{t("Repita acompanhando a voz (shadowing):")}</strong>{t(" ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.")}</p>
             {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />}
           </section>
         )}
         {step.kind === "error_analysis" && step.contrasts && (
-          <div className="usage-contrast" aria-label="Comparação de uso">
-            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{item.label}</span><p lang="en">{item.text}</p></div>)}
-            <p>Que escolha precisa mudar para atender ao contexto da frase?</p>
+          <div className="usage-contrast" aria-label={localizeAttribute("Comparação de uso")}>
+            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{t(item.label)}</span><p lang="en">{t(item.text)}</p></div>)}
+            <p>{t("Que escolha precisa mudar para atender ao contexto da frase?")}</p>
             <details key={index} className="learning-disclosure">
-              <summary>Ver o ajuste e o motivo</summary>
-              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{item.text}</p>)}
-              <p>{step.explanation}</p>
+              <summary>{t("Ver o ajuste e o motivo")}</summary>
+              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{t(item.text)}</p>)}
+              <p>{t(step.explanation)}</p>
             </details>
           </div>
         )}
         {!review && step.kind === "pronunciation" && lesson.steps.find(item => item.kind === "production")?.speakingTask && (
           <details className="learning-disclosure">
-            <summary>Experimente uma resposta sua</summary>
-            <p>{lesson.steps.find(item => item.kind === "production")!.speakingTask}</p>
-            <p>Prática opcional em voz alta, sem precisar escrever ou gravar.</p>
+            <summary>{t("Experimente uma resposta sua")}</summary>
+            <p>{t(lesson.steps.find(item => item.kind === "production")!.speakingTask)}</p>
+            <p>{t("Prática opcional em voz alta, sem precisar escrever ou gravar.")}</p>
           </details>
         )}
         {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
@@ -337,9 +334,9 @@ export default function LessonPlayer({
           attempted={checked || step.kind !== "choice" || readWorkspace(userId).attempts.some(attempt => attempt.lessonId === lesson.id && attempt.stepId === exerciseId(lesson, step) && attempt.review === review && attempt.contentVersion === contentVersion)}
           onAssisted={() => setAssisted(true)} />}
         {retrievalExercise && (
-          <aside className="review-retrieval-note" aria-label="Estratégia de revisão">
-            <strong>Leia o enunciado e tente responder.</strong>
-            <p>O texto e a frase com lacuna fazem parte da pergunta. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.</p>
+          <aside className="review-retrieval-note" aria-label={localizeAttribute("Estratégia de revisão")}>
+            <strong>{t("Leia o enunciado e tente responder.")}</strong>
+            <p>{t("O texto e a frase com lacuna fazem parte da pergunta. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.")}</p>
           </aside>
         )}
         {voiceEnabled && step.english && step.kind === "example" && (
@@ -347,9 +344,9 @@ export default function LessonPlayer({
         )}
         {voiceEnabled && step.kind === "example" && (
           <div className="listening-reveal">
-            <p>{listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto."}</p>
+            <p>{t(listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto.")}</p>
             <button className="secondary-button" onClick={() => setRevealed(value => !value)} aria-expanded={revealed}>
-              {revealed ? "Ocultar frase" : "Revelar frase"}
+              {t(revealed ? "Ocultar frase" : "Revelar frase")}
             </button>
           </div>
         )}
@@ -358,7 +355,7 @@ export default function LessonPlayer({
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
             lang="en"
           >
-            {step.english}
+            {t(step.english)}
           </div>
         )}
         {step.translation && (step.kind !== "example" || !voiceEnabled || revealed) && (
@@ -369,15 +366,15 @@ export default function LessonPlayer({
               aria-expanded={translation}
             >
               <Languages size={16} />
-              {step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução" : "Ver tradução"}
+              {t(step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução" : "Ver tradução")}
             </button>
-            {translation && <p>{step.translation}</p>}
+            {translation && <p>{t(step.translation)}</p>}
           </div>
         )}
-        {step.english && step.kind !== "summary" && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno"}</button>}
+        {step.english && step.kind !== "summary" && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{t(savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno")}</button>}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
-            <div className="word-answer" aria-label="Frase montada">
+            <div className="word-answer" aria-label={localizeAttribute("Frase montada")}>
               {tokens.length ? (
                 tokens.map((token) => (
                   <button
@@ -388,11 +385,11 @@ export default function LessonPlayer({
                     }
                     lang="en"
                   >
-                    {step.options![token]} <X size={12} />
+                    {t(step.options![token])} <X size={12} />
                   </button>
                 ))
               ) : (
-                <span>Toque nas palavras abaixo para montar a frase.</span>
+                <span>{t("Toque nas palavras abaixo para montar a frase.")}</span>
               )}
             </div>
             <div className="word-bank">
@@ -403,7 +400,7 @@ export default function LessonPlayer({
                   onClick={() => setTokens([...tokens, token])}
                   lang="en"
                 >
-                  {word}
+                  {t(word)}
                 </button>
               ))}
             </div>
@@ -413,7 +410,7 @@ export default function LessonPlayer({
             <div
               className="answer-options"
               role="group"
-              aria-label="Opções de resposta"
+              aria-label={localizeAttribute("Opções de resposta")}
             >
               {step.options!.map((option, optionIndex) => (
                 <button
@@ -423,8 +420,8 @@ export default function LessonPlayer({
                   className={answer === option ? "selected" : ""}
                   onClick={() => setAnswer(option)}
                 >
-                  <span>{String.fromCharCode(65 + optionIndex)}</span>
-                  <span lang="en">{option}</span>
+                  <span>{t(String.fromCharCode(65 + optionIndex))}</span>
+                  <span lang="en">{t(option)}</span>
                   {answer === option && <Check size={17} />}
                 </button>
               ))}
@@ -438,23 +435,21 @@ export default function LessonPlayer({
               setAssisted(true);
             }
           }}>
-            <summary>Consultar explicação e vocabulário</summary>
+            <summary>{t("Consultar explicação e vocabulário")}</summary>
             {lesson.steps
               .filter(
                 (item) => item.kind === "teach" || item.kind === "vocabulary",
               )
               .map((item, noteIndex) => (
                 <section key={noteIndex}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
+                  <h3>{t(item.title)}</h3>
+                  <p>{t(item.body)}</p>
                 </section>
               ))}
           </details>
         )}
         {retrievalExercise && assisted && !checked && (
-          <p className="review-assistance-status" role="status">
-            Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.
-          </p>
+          <p className="review-assistance-status" role="status">{t("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
         )}
         {checked && (
           <div
@@ -463,12 +458,11 @@ export default function LessonPlayer({
             role="status"
           >
             <strong>
-              {correct ? "Resposta correta." : "Vamos rever essa resposta."}
+              {t(correct ? "Resposta correta." : "Vamos rever essa resposta.")}
             </strong>
-            <p>{step.explanation}</p>
+            <p>{t(step.explanation)}</p>
             {!correct && (
-              <p>
-                Resposta: <span lang="en">{step.answer}</span>
+              <p>{t("Resposta: ")}<span lang="en">{t(step.answer)}</span>
               </p>
             )}
           </div>
@@ -476,13 +470,13 @@ export default function LessonPlayer({
       </div>
       <footer>
         <span>
-          {review
+          {t(review
             ? retrievalExercise
               ? assisted
                 ? "Apoio consultado nesta etapa"
                 : "Tente responder antes de consultar explicações"
               : "Prática de revisão"
-            : "Você pode consultar as explicações"}
+            : "Você pode consultar as explicações")}
         </span>
         <div className="lesson-footer-actions">
           <button
@@ -490,15 +484,13 @@ export default function LessonPlayer({
             disabled={index === 0 || saving || verifying}
             onClick={previous}
           >
-            <ArrowLeft size={16} />
-            Voltar etapa
-          </button>
+            <ArrowLeft size={16} />{t("Voltar etapa")}</button>
           <button
             className="primary-button lesson-forward-button"
             disabled={saving || verifying || (isExercise(step) && !selected)}
             onClick={next}
           >
-            {verifying ? "Verificando…" : saving
+            {t(verifying ? "Verificando…" : saving
               ? "Salvando…"
               : isExercise(step) && !checked
               ? "Verificar"
@@ -506,7 +498,7 @@ export default function LessonPlayer({
                 ? "Tentar novamente"
                 : index === steps.length - 1
                   ? "Concluir"
-                  : "Continuar"}
+                  : "Continuar")}
             <ArrowRight size={16} />
           </button>
         </div>

@@ -217,6 +217,7 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     }
   });
   return {
+    dailyReviews: { day: new Date(state.reviewDay * 86400000).toISOString().slice(0,10), count: state.reviewCount },
     coins: state.coins,
     completed,
     reviews,
@@ -256,13 +257,13 @@ export function completeStudy(
       hasBit(completed, index) &&
       due > 0 &&
       due <= today &&
-      !hasBit(reviewBits, index)
+      !hasBit(reviewBits, index) && state.reviewCount < 3
     ) {
       setBit(reviewBits, index);
       state.reviewBits = reviewBits.toString("base64url");
       state.reviewStages[index] = independent ? Math.min(4, state.reviewStages[index] + 1) : 0;
-      state.dueDays[index] = today + [1, 3, 7, 14, 30][state.reviewStages[index]];
-      if (state.reviewCount < 10) {
+      state.dueDays[index] = today + [3, 7, 14, 30, 60][state.reviewStages[index]];
+      if (state.reviewCount < 3) {
         state.reviewCount++;
         state.coins += 2;
         earned = 2;
@@ -275,7 +276,7 @@ export function completeStudy(
   if (!hasBit(completed, index)) {
     setBit(completed, index);
     state.completedBits = completed.toString("base64url");
-    state.dueDays[index] = today + 1;
+    state.dueDays[index] = today + 3;
     state.coins += 10;
     earned = 10;
     reason = "lesson";

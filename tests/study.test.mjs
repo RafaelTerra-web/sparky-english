@@ -4,7 +4,7 @@ import { lessons, modules } from '../src/lib/curriculum.ts';
 import { a1Modules } from '../src/lib/content/a1.ts';
 import { buildLesson, contentVersion } from '../src/lib/content/build.ts';
 import { lessonLedger, moduleLedger } from '../src/lib/content/ledger.ts';
-import { gradeAttempt, verifyCompletion, exerciseId, isExercise } from '../src/lib/study.ts';
+import { gradeAttempt, verifyCompletion, exerciseId, isExercise, studyExercises } from '../src/lib/study.ts';
 import { normalizeWorkspace, blankWorkspace, writingLimit } from '../src/lib/learning-local.ts';
 import { normalizeRewardState, publicRewardState, emptyRewardState, completeStudy } from '../src/lib/rewards.ts';
 import { seal } from '../src/lib/auth-session.ts';
@@ -44,7 +44,7 @@ test('server grading rejects skipped exercises and incomplete, wrong-lesson or e
   assert.throws(() => verifyCompletion(receipt,lesson.id,false,now + 9*3600000), /incomplete/);
 });
 test('retry and help remain in completion evidence after a later correct answer', () => {
-  const lesson = lessons[0], steps = lesson.steps.filter(isExercise);
+  const lesson = lessons[0], steps = studyExercises(lesson, true);
   let receipt = gradeAttempt({ lessonId: lesson.id, review: true, stepId: exerciseId(lesson,steps[0]), answer:'wrong', assisted:false }).receipt;
   for (const step of steps) receipt = gradeAttempt({ lessonId: lesson.id, review: true, stepId: exerciseId(lesson,step), answer:step.answer, assisted:true, previous:receipt }).receipt;
   assert.equal(verifyCompletion(receipt,lesson.id,true).independent,false);
@@ -52,13 +52,13 @@ test('retry and help remain in completion evidence after a later correct answer'
 test('independent delayed reviews expand spacing; assisted review resets spacing without removing coins', () => {
   const id=lessons[0].id;
   let state=completeStudy(emptyRewardState(),id,false,new Date('2026-09-01T12:00Z')).state;
-  state=completeStudy(state,id,true,new Date('2026-09-02T12:00Z'),true).state;
-  assert.equal(publicRewardState(state).reviews[id],'2026-09-05T03:00:00.000Z');
-  state=completeStudy(state,id,true,new Date('2026-09-05T12:00Z'),true).state;
-  assert.equal(publicRewardState(state).reviews[id],'2026-09-12T03:00:00.000Z');
+  state=completeStudy(state,id,true,new Date('2026-09-04T12:00Z'),true).state;
+  assert.equal(publicRewardState(state).reviews[id],'2026-09-11T03:00:00.000Z');
+  state=completeStudy(state,id,true,new Date('2026-09-11T12:00Z'),true).state;
+  assert.equal(publicRewardState(state).reviews[id],'2026-09-25T03:00:00.000Z');
   const coins=state.coins;
-  state=completeStudy(state,id,true,new Date('2026-09-12T12:00Z'),false).state;
-  assert.equal(publicRewardState(state).reviews[id],'2026-09-13T03:00:00.000Z');
+  state=completeStudy(state,id,true,new Date('2026-09-25T12:00Z'),false).state;
+  assert.equal(publicRewardState(state).reviews[id],'2026-09-28T03:00:00.000Z');
   assert.equal(state.coins,coins+2);
 });
 test('corrupt storage cannot crash notebook and obsolete checkpoints cannot resume', () => {

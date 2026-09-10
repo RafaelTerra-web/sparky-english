@@ -1,4 +1,5 @@
 "use client";
+import { t, localizeAttribute } from "@/lib/interface-language";
 
 import { Download, MoreVertical, Share, X } from "lucide-react";
 import Image from "next/image";
@@ -91,43 +92,43 @@ export function InstallAppPrompt({ dismissible = true }: { dismissible?: boolean
   const title = platform === "ios" ? (/iPhone|iPod/i.test(navigator.userAgent) ? "Instale no iPhone" : "Instale no iPad") : "Instale no Android";
 
   return (
-    <aside className="install-prompt install-inline" aria-label="Instalar Sparky English no celular">
-      {dismissible && <button className="install-dismiss" onClick={dismiss} aria-label="Fechar convite de instalação"><X size={17} /></button>}
+    <aside className="install-prompt install-inline" aria-label={localizeAttribute("Instalar Sparky English no celular")}>
+      {dismissible && <button className="install-dismiss" onClick={dismiss} aria-label={localizeAttribute("Fechar convite de instalação")}><X size={17} /></button>}
       <div className="install-heading">
-        <Image src="/icons/sparky-192-v2.png" alt="" width={46} height={46} />
+        <Image src="/icons/sparky-192-v2.png" alt={localizeAttribute("")} width={46} height={46} />
         <div>
-          <p className="eyebrow">Sparky no celular</p>
-          <h2>{title}</h2>
+          <p className="eyebrow">{t("Sparky no celular")}</p>
+          <h2>{t(title)}</h2>
         </div>
       </div>
-      <p>Abra o curso pela Tela de Início, em uma janela própria e sem a barra do navegador.</p>
+      <p>{t("Abra o curso pela Tela de Início, em uma janela própria e sem a barra do navegador.")}</p>
       {expanded && platform === "ios" && (
         <div className="install-instructions" role="status">
-          {!detected.safari && <p className="install-browser-note"><strong>Primeiro:</strong> abra este endereço no Safari.</p>}
+          {!detected.safari && <p className="install-browser-note"><strong>{t("Primeiro:")}</strong>{t(" abra este endereço no Safari.")}</p>}
           <ol>
-            <li><span><Share size={17} /></span><p>Toque em <strong>Compartilhar</strong> no Safari (pode estar dentro de <strong>Mais</strong>).</p></li>
-            <li><span>2</span><p>Escolha <strong>Adicionar à Tela de Início</strong>.</p></li>
-            <li><span>3</span><p>Se aparecer, ative <strong>Abrir como App da Web</strong> e toque em <strong>Adicionar</strong>.</p></li>
+            <li><span><Share size={17} /></span><p>{t("Toque em")}<strong>{t("Compartilhar")}</strong>{t(" no Safari (pode estar dentro de")}<strong>{t("Mais")}</strong>).</p></li>
+            <li><span>2</span><p>{t("Escolha")}<strong>{t("Adicionar à Tela de Início")}</strong>.</p></li>
+            <li><span>3</span><p>{t("Se aparecer, ative")}<strong>{t("Abrir como App da Web")}</strong>{t(" e toque em")}<strong>{t("Adicionar")}</strong>.</p></li>
           </ol>
         </div>
       )}
       {expanded && platform === "android" && !nativeInstall && (
         <div className="install-instructions" role="status">
           <ol>
-            <li><span><MoreVertical size={17} /></span><p>Abra o menu do navegador.</p></li>
-            <li><span>2</span><p>Toque em <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</p></li>
-            <li><span>3</span><p>Confirme a instalação do <strong>Sparky English</strong>.</p></li>
+            <li><span><MoreVertical size={17} /></span><p>{t("Abra o menu do navegador.")}</p></li>
+            <li><span>2</span><p>{t("Toque em")}<strong>{t("Instalar app")}</strong>{t(" ou")}<strong>{t("Adicionar à tela inicial")}</strong>.</p></li>
+            <li><span>3</span><p>{t("Confirme a instalação do")}<strong>{t("Sparky English")}</strong>.</p></li>
           </ol>
         </div>
       )}
       <div className="install-actions">
         {nativeInstall || busy ? (
           <button className="primary-button" onClick={install} disabled={busy}>
-            <Download size={17} /> {busy ? "Abrindo…" : "Instalar app"}
+            <Download size={17} /> {t(busy ? "Abrindo…" : "Instalar app")}
           </button>
         ) : (
           <button className="secondary-button" onClick={() => setExpanded(value => !value)} aria-expanded={expanded}>
-            {expanded ? "Ocultar instruções" : "Ver como instalar"}
+            {t(expanded ? "Ocultar instruções" : "Ver como instalar")}
           </button>
         )}
       </div>

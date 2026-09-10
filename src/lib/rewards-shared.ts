@@ -41,6 +41,7 @@ export type PublicRewardState = {
   owned: string[];
   mascot: MascotId;
   equipped: EquippedItems;
+  dailyReviews?: { day: string; count: number };
   wardrobeRefund?: number;
   sceneRefund?: number;
   notebookTheme: string | null;

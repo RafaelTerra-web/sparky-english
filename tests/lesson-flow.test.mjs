@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { lessons } from '../src/lib/curriculum.ts';
 import { lessonSteps, migrateLessonCheckpoint, lessonFlowVersion } from '../src/lib/lesson-flow.ts';
-import { isExercise } from '../src/lib/study.ts';
+import { isExercise, studyExercises } from '../src/lib/study.ts';
 import { lessonDelivery, lessonVoiceIdentity, preservedDelivery } from '../src/lib/lesson-voice-config.ts';
 import { mascotSpeechPrompt } from '../src/lib/gemini-voice.ts';
 import { contentVersion } from '../src/lib/content/build.ts';
@@ -12,7 +12,7 @@ test('shorter lesson flow retains every assessed item in its original order', ()
     const steps = lessonSteps(lesson, review);
     assert.ok(!steps.some(step => step.kind === 'production'));
     assert.equal(steps.at(-1).kind, 'summary');
-    assert.deepEqual(steps.filter(isExercise), lesson.steps.filter(isExercise));
+    assert.deepEqual(steps.filter(isExercise), studyExercises(lesson, review));
   }
 });
 

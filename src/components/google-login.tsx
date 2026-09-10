@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/interface-language";
 
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
@@ -120,12 +121,12 @@ export function GoogleLogin() {
       <div ref={button} className="google-button" />
       {status && (
         <p role="status" className="login-status">
-          {status}
+          {t(status)}
         </p>
       )}
       {error && (
         <div className="login-error" role="alert">
-          <p>{error}</p>
+          <p>{t(error)}</p>
           <button
             type="button"
             onClick={() => {
@@ -133,9 +134,7 @@ export function GoogleLogin() {
               if (!ready) window.location.reload();
               else setAttempt((value) => value + 1);
             }}
-          >
-            Tentar novamente
-          </button>
+          >{t("Tentar novamente")}</button>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 "use client";
+import { t, localizeAttribute, useCurrentInterfaceLanguage } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { Volume2, Square } from "lucide-react";
 import { playTimeline, createPlaybackContext } from "@/lib/audio-timeline";
@@ -11,6 +12,7 @@ export function PersonalSparkyMessage({ profile, occasion, onPronunciation }: {
   occasion: "welcome" | "practice";
   onPronunciation?: () => void;
 }) {
+  const language = useCurrentInterfaceLanguage();
   const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
@@ -33,13 +35,13 @@ export function PersonalSparkyMessage({ profile, occasion, onPronunciation }: {
       if (!current.signal.aborted) setError(e instanceof Error ? e.message : "Não foi possível ouvir agora.");
     } finally { current.signal.removeEventListener("abort", stop); stop(); if (controller.current === current) { controller.current = null; setState("idle"); } }
   }
-  return <aside className="sparky-checkin" aria-label="Um recado do Sparky">
-    <p className="eyebrow">Sparky com você</p>
-    <p>{personalVoiceText(profile.name, occasion)}</p>
-    {pronunciationConfirmed(profile) ? <button type="button" className="text-button" onClick={() => void play()}>
+  return <aside className="sparky-checkin" aria-label={localizeAttribute("Um recado do Sparky")}>
+    <p className="eyebrow">{t("Sparky com você")}</p>
+    <p>{t(personalVoiceText(profile.name, occasion))}</p>
+    {language === "en" ? null : pronunciationConfirmed(profile) ? <button type="button" className="text-button" onClick={() => void play()}>
       {state === "idle" ? <Volume2 size={17} aria-hidden="true" /> : <Square size={17} aria-hidden="true" />}
-      {state === "loading" ? "Preparando recado… Cancelar" : state === "playing" ? "Parar recado" : "Ouvir recado do Sparky"}
-    </button> : onPronunciation && <button type="button" className="text-button" onClick={onPronunciation}>Ensinar meu nome ao Sparky</button>}
-    {error && <p role="status">{error}</p>}
+      {t(state === "loading" ? "Preparando recado… Cancelar" : state === "playing" ? "Parar recado" : "Ouvir recado do Sparky")}
+    </button> : onPronunciation && <button type="button" className="text-button" onClick={onPronunciation}>{t("Ensinar meu nome ao Sparky")}</button>}
+    {error && <p role="status">{t(error)}</p>}
   </aside>;
 }

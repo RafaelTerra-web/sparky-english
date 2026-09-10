@@ -1,12 +1,10 @@
 import type { Lesson } from "./curriculum";
 import type { Checkpoint } from "./learning-local";
-import { isExercise } from "./study.ts";
+import { studyExercises } from "./study.ts";
 
 export const lessonFlowVersion = 2;
 export function lessonSteps(lesson: Lesson, review: boolean) {
-  return lesson.steps.filter(step => review
-    ? isExercise(step) || step.kind === "summary"
-    : step.kind !== "production");
+  return review ? [...studyExercises(lesson, true), ...lesson.steps.filter(step => step.kind === "summary")] : lesson.steps.filter(step => step.kind !== "production");
 }
 
 /** Keep receipts, answers and drafts when removing a non-assessed screen. */

@@ -126,3 +126,9 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
   .lesson-illustration { height: 110px; }
   .lesson-dialog > header, .lesson-dialog > footer { padding-block: 8px; }
 }
+
+.classroom-visual{width:100%;height:auto;border-radius:18px}.profile-setting select{max-width:100%}
+
+.english-classroom{max-width:850px;margin:auto;display:grid;gap:20px}.english-classroom select{padding:10px;max-width:100%;border:1px solid var(--border);border-radius:10px}.english-classroom audio{width:100%}.english-classroom fieldset{border:0;padding:0}.english-classroom legend{font-weight:700;margin-bottom:12px}.class-option{display:flex;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;margin:8px 0}.class-focus{display:flex;gap:10px;flex-wrap:wrap}.class-focus span{padding:10px;background:var(--surface);border-radius:12px}.english-classroom details p{line-height:1.8}
+
+.english-classroom{min-width:0;width:100%;padding-bottom:24px}.english-classroom>*{min-width:0;max-width:100%}.english-classroom select{width:100%;min-width:0}.english-classroom audio{min-width:0;display:block}.english-classroom h1{overflow-wrap:anywhere}

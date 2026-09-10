@@ -1,0 +1,282 @@
+[
+  {
+    "file": "/audio/classes/disagree-politely.wav",
+    "text": "Hi, I'm Sparky. Look at the people considering different places to visit. They don't have to agree to have a useful conversation. Imagine a friend says, let's spend the whole weekend in the city. You prefer the mountains. Start by acknowledging something reasonable. I can see why that appeals to you. Then explain your concern. My main concern is the cost. Finally, suggest an alternative. What if we spent one day in the city and one day hiking? This sequence shows that you've listened and gives the other person something concrete to respond to. Avoid agreeing with a claim you don't believe. You can acknowledge someone's reason without accepting their conclusion. Now pause and respond to this suggestion. Let's finish the project tonight, even if we have to skip the final checks. Acknowledge, explain your concern, and propose another plan.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 735,
+      "input_tokens": 567,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 567
+      },
+      "output_tokens": 168
+    }
+  },
+  {
+    "file": "/audio/classes/first-conversation.wav",
+    "text": "Hi, I'm Sparky. Welcome to our English classroom. Today, let's start a conversation. Look at the two people greeting each other. One person says, Hello, I'm Alex. The other says, Hi, I'm Sam. Nice to meet you. We use I'm to introduce ourselves. I'm means I am. Listen again. I'm Alex. Now pause and say your name using I'm. Great. Let's keep the conversation going. Ask, what's your name? Then listen to the answer. You don't need a long speech. A greeting, your name, and one friendly question are enough. Your turn. Imagine a new classmate sits beside you. Greet them, introduce yourself, and ask their name.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 646,
+      "input_tokens": 502,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 502
+      },
+      "output_tokens": 144
+    }
+  },
+  {
+    "file": "/audio/classes/daily-routine.wav",
+    "text": "Hi, I'm Sparky. Let's talk about everyday routines. Look at the clock and the cup on our board. I usually have breakfast at seven. Then I start work. We use the present simple for habits. Listen to the difference: I have breakfast. She has breakfast. With she or he, the verb often changes. I walk to school, but my friend walks to school. Usually tells us that something happens on most days. Always means every time. Sometimes means on some occasions. Try this. I usually study in the evening, but sometimes I study in the morning. Pause and say one true sentence about your day. Now connect three actions with first, then, and after that. Your routine can sound natural, even with simple words.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 724,
+      "input_tokens": 571,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 571
+      },
+      "output_tokens": 153
+    }
+  },
+  {
+    "file": "/audio/classes/mediate-perspectives.wav",
+    "text": "Hi, I'm Sparky. Today, we'll mediate a disagreement. One group wants a public space to stay quiet, another wants it to host community events. Simply saying that both sides have valid points doesn't move the discussion forward. Identify the interests beneath the positions: the first group needs reliable access to a calm environment, the second needs an affordable place for people to meet. Now preserve the real tension: more events could reduce quiet access, while a complete ban could exclude community activities. A useful summary makes that trade-off visible without exaggerating either side. Then propose a testable next step: a limited trial of scheduled events, protected quiet hours, and feedback from both groups. Mediation is not a promise that everyone will be satisfied. It helps people understand the disagreement and evaluate a specific way forward. Pause and give a balanced summary, followed by your proposed trial.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 808,
+      "input_tokens": 632,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 632
+      },
+      "output_tokens": 176
+    }
+  },
+  {
+    "file": "/audio/classes/tell-a-story.wav",
+    "text": "Hello, I'm Sparky. Today, we'll build a short story. Start with the situation. Yesterday, I was waiting for a bus. Was waiting describes an action already in progress. Then, add an event. I was waiting for a bus when it started to rain. Started describes the new event. A listener also needs to know why the event matters. I had an interview, so I couldn't arrive late. Now, give the outcome. In the end, a friend offered me a ride. Notice how the details work together. We know the situation, the problem, and the result. You don't need to describe every minute. Choose details that help the listener follow your point. Pause and tell me about a small problem you solved. What were you doing when the problem happened? How did it end?",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 704,
+      "input_tokens": 540,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 540
+      },
+      "output_tokens": 164
+    }
+  },
+  {
+    "file": "/audio/classes/qualify-a-claim.wav",
+    "text": "Hello, I'm Sparky. Let's make an argument more precise. Consider this statement: Remote work improves productivity. Does the evidence justify such a broad conclusion? Suppose one small team completed more tasks during a three-month trial. A more defensible claim is, in this team, remote work appears to have improved short-term output. In this team limits the scope. Appears to have signals uncertainty about the explanation. Short-term output describes what was actually measured. Qualification shouldn't make your point impossible to understand. Say what the evidence supports, then identify one meaningful limitation. For example, we don't yet know whether the improvement will persist or whether task quality changed. Your turn. A survey finds that students who read for pleasure report higher confidence in English. Explain the finding without claiming that the survey proves a causal relationship.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 763,
+      "input_tokens": 600,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 600
+      },
+      "output_tokens": 163
+    }
+  },
+  {
+    "file": "/audio/exams/v2/bell-work-pinky.wav",
+    "text": "Good morning, everyone. Before you open your textbooks, write two sentences explaining why communities create public parks. Work independently for five minutes, then compare your answer with the person beside you and underline one reason you both included.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 220,
+      "input_tokens": 174,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 174
+      },
+      "output_tokens": 46
+    }
+  },
+  {
+    "file": "/audio/exams/v2/bell-work-sparky.wav",
+    "text": "Good morning, everyone. Before you open your textbooks, write two sentences explaining why communities create public parks. Work independently for five minutes, then compare your answer with the person beside you and underline one reason you both included.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 224,
+      "input_tokens": 178,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 178
+      },
+      "output_tokens": 46
+    }
+  },
+  {
+    "file": "/audio/exams/v2/biology-lecture-pinky.wav",
+    "text": "Plants lose water through tiny openings in their leaves. On a hot, dry day, that loss can become faster than the roots can replace it. Some plants respond by closing the openings. This conserves water, although it also limits the carbon dioxide available for photosynthesis.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 252,
+      "input_tokens": 196,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 196
+      },
+      "output_tokens": 56
+    }
+  },
+  {
+    "file": "/audio/exams/v2/counselor-schedule-pinky.wav",
+    "text": "I can move your chemistry class to second period, but that would place algebra immediately after lunch. Another option is to keep chemistry where it is and move art to Friday afternoon. Look at both schedules tonight and email me your choice by 10 tomorrow morning.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 233,
+      "input_tokens": 180,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 180
+      },
+      "output_tokens": 53
+    }
+  },
+  {
+    "file": "/audio/exams/v2/counselor-schedule-sparky.wav",
+    "text": "I can move your chemistry class to second period, but that would place algebra immediately after lunch. Another option is to keep chemistry where it is and move art to Friday afternoon. Look at both schedules tonight and email me your choice by 10 tomorrow morning.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 234,
+      "input_tokens": 181,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 181
+      },
+      "output_tokens": 53
+    }
+  },
+  {
+    "file": "/audio/exams/v2/exchange-orientation-pinky.wav",
+    "text": "Your whole school may feel unfamiliar during the first week. Ask your counselor where to find academic support before you need it. Clubs are also a useful way to meet students who share your interests. You do not have to join immediately. Attend a meeting, observe, and decide whether the group suits you.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 270,
+      "input_tokens": 208,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 208
+      },
+      "output_tokens": 62
+    }
+  },
+  {
+    "file": "/audio/exams/v2/exchange-orientation-sparky.wav",
+    "text": "Your host school may feel unfamiliar during the first week. Ask your counselor where to find academic support before you need it. Clubs are also a useful way to meet students who share your interests. You do not have to join immediately. Attend a meeting, observe, and decide whether the group suits you.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 265,
+      "input_tokens": 203,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 203
+      },
+      "output_tokens": 62
+    }
+  },
+  {
+    "file": "/audio/exams/v2/biology-lecture-sparky.wav",
+    "text": "Plants lose water through tiny openings in their leaves. On a hot, dry day, that loss can become faster than the roots can replace it. Some plants respond by closing the openings. This conserves water, although it also limits the carbon dioxide available for photosynthesis.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 267,
+      "input_tokens": 211,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 211
+      },
+      "output_tokens": 56
+    }
+  },
+  {
+    "file": "/audio/exams/v2/history-project-pinky.wav",
+    "text": "Ms. Rivera, do both partners need to speak during the presentation? Yes, each person should explain one source, but you may decide together who introduces the topic. And should our slides include the full paragraphs? No, use short quotations and explain the evidence in your own words.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 275,
+      "input_tokens": 217,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 217
+      },
+      "output_tokens": 58
+    }
+  },
+  {
+    "file": "/audio/exams/v2/history-project-sparky.wav",
+    "text": "Ms. Rivera, do both partners need to speak during the presentation? Yes, each person should explain one source, but you may decide together who introduces the topic. And should our slides include the full paragraphs? No. Use short quotations and explain the evidence in your own words.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 279,
+      "input_tokens": 221,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 221
+      },
+      "output_tokens": 58
+    }
+  },
+  {
+    "file": "/audio/exams/v2/lab-safety-pinky.wav",
+    "text": "Place your goggles over your eyes before you pick up any equipment. Your partner should check that the glass tube has no cracks. If either of you sees damage, leave the tube on the tray and raise your hand. Do not carry it across the room.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 209,
+      "input_tokens": 156,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 156
+      },
+      "output_tokens": 53
+    }
+  },
+  {
+    "file": "/audio/exams/v2/math-ratio-pinky.wav",
+    "text": "The art club has 36 sheets of blue paper. It uses one-third of them for posters and divides the remaining sheets equally among four groups. Which expression shows the number of sheets each group receives?",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 192,
+      "input_tokens": 150,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 150
+      },
+      "output_tokens": 42
+    }
+  },
+  {
+    "file": "/audio/exams/v2/lab-safety-sparky.wav",
+    "text": "Place your goggles over your eyes before you pick up any equipment. Your partner should check that the glass tube has no cracks. If either of you sees damage, leave the tube on the tray and raise your hand. Do not carry it across the room.",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 218,
+      "input_tokens": 165,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 165
+      },
+      "output_tokens": 53
+    }
+  },
+  {
+    "file": "/audio/exams/v2/math-ratio-sparky.wav",
+    "text": "The art club has 36 sheets of blue paper. It uses one-third of them for posters and divides the remaining sheets equally among four groups. Which expression shows the number of sheets each group receives?",
+    "usage": {
+      "type": "tokens",
+      "total_tokens": 199,
+      "input_tokens": 157,
+      "input_token_details": {
+        "text_tokens": 0,
+        "audio_tokens": 157
+      },
+      "output_tokens": 42
+    }
+  }
+]

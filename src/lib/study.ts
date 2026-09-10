@@ -2,7 +2,8 @@ import { lessons, type Lesson, type Step } from "./curriculum.ts";
 import { contentVersion } from "./content/build.ts";
 import { personalizeLesson } from "./personalized-lesson.ts";
 
-export const evaluationVersion = "closed-exact-1";
+export const evaluationVersion = "closed-exact-2";
+export function studyExercises(lesson: Lesson, review: boolean) { const all = lesson.steps.filter(isExercise); return review ? all.slice(0, 1) : all; }
 export const isExercise = (step: Step) =>
   ["choice", "listening_detail", "listening_inference", "complete_sentence", "order_words"].includes(step.kind);
 // Each published lesson has one exercise of each kind; editorial tests enforce it.
@@ -18,7 +19,7 @@ export function gradeAttempt(input: {
   const original = lessons.find((item) => item.id === input.lessonId);
   const lesson = original ? personalizeLesson(original, input.learnerName) : undefined;
   if (!lesson) throw new Error("lesson-not-found");
-  const exercises = lesson.steps.filter(isExercise);
+  const exercises = studyExercises(lesson, input.review);
   const index = exercises.findIndex((step) => exerciseId(lesson, step) === input.stepId);
   if (index < 0 || input.answer.length > 4000) throw new Error("invalid-attempt");
   const old = input.previous;
@@ -43,7 +44,7 @@ export function verifyCompletion(receipt: StudyReceipt | null, lessonId: string,
   if (!receipt || !lesson || receipt.lessonId !== lessonId || receipt.review !== review ||
     receipt.contentVersion !== contentVersion || now - receipt.startedAt > 8 * 3600000 ||
     receipt.startedAt > now || (review && studyDay(receipt.startedAt) !== studyDay(now)) ||
-    receipt.passed !== (1 << lesson.steps.filter(isExercise).length) - 1)
+    receipt.passed !== (1 << studyExercises(lesson, review).length) - 1)
     throw new Error("study-incomplete");
   return { independent: receipt.failed === 0 && receipt.assisted === 0 };
 }

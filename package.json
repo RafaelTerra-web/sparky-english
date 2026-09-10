@@ -12,7 +12,9 @@
     "audit:experience": "node scripts/audit-learning-experience.mjs",
     "images:manifest": "node scripts/build-lesson-illustration-manifest.mjs",
     "voice:generate": "node scripts/generate-voices.mjs",
-    "voice:generate-tips": "node scripts/generate-tip-audio.mjs"
+    "voice:generate-tips": "node scripts/generate-tip-audio.mjs",
+    "audit:coverage": "node scripts/audit-course-coverage.mjs",
+    "prebuild": "node scripts/audit-course-coverage.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

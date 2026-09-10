@@ -1,6 +1,6 @@
 # Sparky English
 
-PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback são em PT-BR; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
+PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback podem ser usados em PT-BR ou inglês, selecionados no Perfil; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
 
 ## Local development
 
@@ -18,13 +18,13 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.
 
-Há 168 lições (162 autorais e as 6 originais), em 27 módulos: 38 lições em A1, 44 em A2, 38 em B1, 12 em B2 e 18 em C1 e C2. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada lição tem missão, descoberta, escuta antes da revelação, pronúncia, contraste de erros, três exercícios objetivos com feedback e transferência escrita e oral. O curso alterna oito sequências de atividade em vez de repetir uma ordem fixa. São 504 exercícios objetivos. A trilha orienta o estudo até temas C2; sua conclusão não comprova fluência nem cobertura integral do CEFR. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md), e o redesenho em [docs/pedagogical-review.md](docs/pedagogical-review.md).
+Há 176 lições (170 autorais e as 6 originais), em 31 módulos: 38 lições em A1, 44 em A2, 40 em B1, 14 em B2 e 20 em C1 e C2. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada lição tem missão, descoberta, escuta antes da revelação, pronúncia, contraste de erros, três exercícios objetivos com feedback e transferência escrita e oral. O curso alterna oito sequências de atividade em vez de repetir uma ordem fixa. São 528 exercícios objetivos. A trilha orienta o estudo até temas C2; sua conclusão não comprova fluência nem cobertura integral do CEFR. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md), e o redesenho em [docs/pedagogical-review.md](docs/pedagogical-review.md).
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 
 Conclusões, revisões, moedas e roupas ficam em um cookie HttpOnly criptografado por até um ano no navegador atual. O Caderno mantém neste dispositivo a retomada da lição, tentativas, frases salvas, textos e preferências, separados pela conta. Ele permite exportar ou apagar esses dados locais. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação ou recompensas.
 
-O aluno precisa concluir os exercícios fechados na ordem para receber a recompensa. As respostas são validadas pelo servidor e um comprovante criptografado de até oito horas é vinculado à conta, à lição e ao modo de prática. Isso protege o fluxo normal do app, mas não transforma conteúdo público em uma avaliação certificada. Revisões independentes usam os intervalos de 1, 3, 7, 14 e 30 dias; uma tentativa com erro ou ajuda volta para um dia.
+O aluno precisa concluir os exercícios fechados na ordem para receber a recompensa. As respostas são validadas pelo servidor e um comprovante criptografado de até oito horas é vinculado à conta, à lição e ao modo de prática. Isso protege o fluxo normal do app, mas não transforma conteúdo público em uma avaliação certificada. Revisões independentes usam os intervalos de 3, 7, 14, 30 e 60 dias; uma tentativa com erro ou ajuda volta para três dias. A fila tem no máximo três revisões curtas por dia, intercaladas com lições novas.
 
 Para sincronizar conclusões, revisões, moedas e roupas entre dispositivos, aplique as migrações em `supabase/migrations/`, configure `NEXT_PUBLIC_SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` apenas no servidor e só então defina `SPARKY_DURABLE_PROGRESS=true`. A migração de setembro revoga o acesso direto de clientes a essa tabela. Teste a migração em ambiente isolado antes de habilitá-la em produção. Textos, tentativas e frases continuam locais nesta entrega.
 
@@ -44,7 +44,7 @@ O manifesto publica ícones próprios do Sparky em 192 e 512 px, uma versão mas
 
 ## Moedas e mascotes
 
-A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até dez vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
+A primeira conclusão de uma lição concede 10 moedas, terminar um módulo pela primeira vez concede mais 20 e uma revisão vencida concede 2, até três vezes ao dia. Repetições não geram saldo. O guarda-roupa fica no Perfil, exige confirmação antes da compra e oferece boné, lenço e moletom com compatibilidade por mascote. Itens equipados aparecem também na página inicial e nas lições. Não há dinheiro real, transferência, caixas aleatórias ou penalidade.
 
 Sparky e Pinky são gratuitos. A Pinky usa uma arte original criada para o projeto com o GPT Image, sem antenas e com fundo transparente. A implementação e as limitações da primeira versão estão registradas em [docs/mascots-and-rewards-plan.md](docs/mascots-and-rewards-plan.md).
 
@@ -72,3 +72,9 @@ Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado
 `node scripts/smoke-pwa-install.mjs` simula Safari no iPhone e Chrome no Android. Ele verifica as instruções do iOS, o prompt nativo do Android, a ocultação quando o app já está instalado, manifesto standalone, ícones e cabeçalhos do service worker.
 
 O contrato de banco inicial está em `supabase/migrations/20260903000100_sparky_english.sql`; a sincronização só fica ativa após aplicar também `20260905000100_durable_google_progress.sql` e configurar a flag descrita acima.
+
+A [atualização de 9 de setembro](docs/release-2026-09-09.md) acrescenta nivelamento direto pelo Perfil, preferência de idioma English e seis aulas narradas em inglês pelo Sparky, com visuais próprios e correção da voz da Pinky nos simulados.
+
+## Curso guiado
+
+A trilha, os filtros por disciplina e as recomendações estão documentados em [docs/course-guide.md](docs/course-guide.md). Execute `npm run audit:coverage` para atualizar o mapa de cobertura e verificar as referências pedagógicas.

@@ -16,7 +16,7 @@ test("first completion rewards once and schedules a server-side review", () => {
   assert.equal(first.earned, 10);
   assert.equal(first.state.coins, 10);
   assert.ok(publicRewardState(first.state).completed[lessons[0].id]);
-  assert.equal(publicRewardState(first.state).reviews[lessons[0].id], "2026-09-06T03:00:00.000Z");
+  assert.equal(publicRewardState(first.state).reviews[lessons[0].id], "2026-09-08T03:00:00.000Z");
   const repeated = completeStudy(first.state, lessons[0].id, false, new Date("2026-09-05T13:00:00Z"));
   assert.equal(repeated.earned, 0);
   assert.equal(repeated.state.coins, 10);
@@ -32,14 +32,14 @@ test("completing every lesson in a module awards its bonus exactly once", () => 
   assert.equal(repeated.coins, state.coins);
 });
 
-test("due reviews reward at most once per lesson and ten times per day", () => {
+test("due reviews reward at most once per lesson and three times per day", () => {
   let state = emptyRewardState();
   for (const lesson of lessons.slice(0, 11))
     state = completeStudy(state, lesson.id, false, new Date("2026-09-01T12:00:00Z")).state;
   const balance = state.coins;
   for (const lesson of lessons.slice(0, 11))
     state = completeStudy(state, lesson.id, true, new Date("2026-09-05T12:00:00Z")).state;
-  assert.equal(state.coins, balance + 20);
+  assert.equal(state.coins, balance + 6);
   const duplicate = completeStudy(state, lessons[0].id, true, new Date("2026-09-05T14:00:00Z"));
   assert.equal(duplicate.earned, 0);
 });

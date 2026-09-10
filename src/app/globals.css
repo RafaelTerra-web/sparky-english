@@ -1909,3 +1909,35 @@ html[data-palette] .pronunciation-focus span{background:transparent;color:inheri
 html[data-palette] .install-dismiss{color:var(--muted)}
 html[data-palette] .install-dismiss:hover{background:var(--surface-strong);color:var(--foreground)}
 html[data-palette] .install-instructions li>span{background:var(--primary);color:var(--on-primary)}
+
+/* Guided course and complementary practice */
+.course-modes,.filter-chips{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.guided-course p,.lesson-outcome p{line-height:1.65}
+.trail-current,.practice-context,.course-filters,.practice-module,.competency-paths,.lesson-outcome,.exam-lesson-recommendations{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;margin:20px 0;min-width:0}
+.trail-current{border-left:5px solid var(--accent);background:var(--surface-soft)}
+.trail-current p,.practice-context p,.practice-module>p,.lesson-outcome p{margin:10px 0}
+.trail-current .primary-button{margin-top:12px}
+.course-trail{padding:0;list-style:none;display:grid;gap:12px}
+.course-trail>li,.competency-paths>details{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.course-trail .is-current{border-color:var(--accent)}
+.course-trail summary,.competency-paths summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px;font-weight:600}
+.course-trail summary>span:last-child{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.course-trail summary b{display:block;color:var(--accent);font-size:12px;margin-top:6px}
+.trail-module-body{padding:0 20px 20px;display:grid;gap:12px}
+.guided-lesson-list{display:grid;gap:8px}
+.guided-lesson{display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;background:var(--surface-soft);color:var(--foreground);border-radius:12px;padding:16px;width:100%;min-width:0}
+.guided-lesson:hover{background:var(--surface-strong)}
+.guided-lesson>span{display:grid;gap:7px;min-width:0}.guided-lesson small{color:var(--muted)}.guided-lesson>svg{flex:none}
+.filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.filter-grid label{display:grid;gap:7px;color:var(--muted);font-size:13px}
+.filter-grid select{width:100%;min-width:0;padding:11px;border:1px solid var(--line);border-radius:9px;background:var(--input-background);color:var(--foreground)}
+.filter-chips button:not(.text-button){padding:8px 11px;border-radius:20px;background:var(--surface-strong);color:var(--foreground);font-size:13px}
+.course-filters .catalog-search{display:flex;align-items:center;gap:10px;max-width:none;padding:12px;border:1px solid var(--line);border-radius:10px}
+.course-filters .catalog-search input{min-width:0;width:100%;border:0;background:transparent;color:var(--foreground)}
+.competency-paths>details{margin-top:12px}.competency-paths ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;padding:12px 28px 24px;list-style:none}
+.competency-paths li{display:grid;gap:8px;align-content:start}.competency-paths li p{color:var(--muted);font-size:14px}
+.competency-paths .text-button,.prerequisite-note .text-button,.practice-context .text-button{text-align:left;white-space:normal}
+.recommendation-reason{font-size:13px;color:var(--muted);line-height:1.5;margin:10px 8px}.complementary-practice .lesson-card{height:100%;min-height:140px}.complementary-practice .lesson-cards>div{display:grid;grid-template-rows:1fr auto;min-width:0}
+.daily-plan-list{padding-left:20px;font-size:14px;line-height:1.7;margin:16px 0}.next-lesson .lesson-copy>p{line-height:1.5}.lesson-outcome details{margin:14px 0}.lesson-outcome summary{cursor:pointer;font-weight:600}.exam-lesson-recommendations article{margin-top:16px}.exam-lesson-recommendations article p{margin-bottom:8px}
+.guided-course .section-heading{gap:16px;flex-wrap:wrap}.guided-course .section-heading>span{color:var(--muted);font-size:13px}
+@media(max-width:720px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.competency-paths ol{grid-template-columns:1fr}.trail-current,.practice-context,.course-filters,.practice-module,.competency-paths,.lesson-outcome{padding:18px}.course-modes>button{flex:1;min-width:130px}.course-trail summary{padding:16px}.trail-module-body{padding:0 14px 16px}.guided-lesson .eyebrow{font-size:10px}}
