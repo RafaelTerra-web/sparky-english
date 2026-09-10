@@ -9,3 +9,9 @@
 7. Execute `node scripts/audit-advanced-expansion.mjs --release --out=.release-work/advanced-review`. O relatório confere hash do arquivo, hash do roteiro e duração medida. Enquanto houver pendências o comando falha e as candidatas continuam fora do currículo ativo.
 
 Em 10/09: 176 lições publicadas, 36 candidatas, 0 áudios avançados aprovados. Após aceitação do conjunto: 212 lições, 37 módulos e 708 exercícios objetivos. A meta antiga de 204 foi ultrapassada pelas oito lições publicadas paralelamente.
+
+## Geração direta autorizada em 10/09
+
+A chave fornecida pelo usuário funcionou no endpoint Vertex `generateContent`. O script `node scripts/generate-listening-audio.mjs --id=b2-service-repair` recebe `GEMINI_API_KEY` apenas pelo ambiente e gera uma conversa fixa por execução. Ele confere a versão retornada pelo provedor, as configurações Achird/Zephyr, o formato PCM e a duração; conserva WAV e relatório em `.release-work/listening-generated`, fora da publicação. Não possui fallback de modelo nem aprova automaticamente os arquivos.
+
+Duas tentativas reais da conversa sobre conserto de bicicleta produziram 63,84 e 68,80 segundos, ambas abaixo dos 75 segundos mínimos. A segunda solicitou ritmo mais calmo; continua pendente. Os arquivos não foram importados ao manifesto público. A próxima revisão deve verificar o roteiro por transcrição e audição e ajustar a entrega sem acrescentar silêncio artificial para cumprir duração.
