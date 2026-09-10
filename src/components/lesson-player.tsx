@@ -333,12 +333,6 @@ export default function LessonPlayer({
         {step.listening && <ConversationListening key={`${lesson.id}:${index}`} conversation={step.listening}
           attempted={checked || step.kind !== "choice" || readWorkspace(userId).attempts.some(attempt => attempt.lessonId === lesson.id && attempt.stepId === exerciseId(lesson, step) && attempt.review === review && attempt.contentVersion === contentVersion)}
           onAssisted={() => setAssisted(true)} />}
-        {retrievalExercise && (
-          <aside className="review-retrieval-note" aria-label={localizeAttribute("Estratégia de revisão")}>
-            <strong>{t("Leia o enunciado e tente responder.")}</strong>
-            <p>{t("O texto e a frase com lacuna fazem parte da pergunta. Se você consultar a explicação ou a tradução antes de verificar, a tentativa será marcada como “com ajuda”.")}</p>
-          </aside>
-        )}
         {voiceEnabled && step.english && step.kind === "example" && (
           <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />
         )}

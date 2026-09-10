@@ -95,12 +95,7 @@ html[data-palette] progress,
 html[data-palette] progress::-webkit-progress-bar { background: var(--surface-interactive); }
 html[data-palette] progress::-webkit-progress-value { background: var(--accent); }
 html[data-palette] progress::-moz-progress-bar { background: var(--accent); }
-.daily-goal { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 16px; color: var(--hero-muted); font-size: 12px; }
-.daily-goal > span { opacity: .72; }
-.daily-plan-list { display: grid; gap: 5px; }
-.daily-plan-list strong { color: var(--hero-text); font-weight: 650; }
 .next-lesson { isolation: isolate; }
-.next-lesson::before { content: ""; position: absolute; width: 260px; height: 260px; right: -80px; top: -100px; border-radius: 50%; background: color-mix(in srgb,var(--accent) 17%,transparent); pointer-events: none; }
 .next-lesson > .mascot-figure { transition: transform 220ms ease; }
 .next-lesson:hover > .mascot-figure { transform: translateY(-4px); }
 .profile-gear { position: relative; }

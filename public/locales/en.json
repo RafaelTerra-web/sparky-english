@@ -2997,6 +2997,8 @@
   "Seu espaço está pronto. Vamos aprender muita coisa juntos!": "Your space is ready. Let's learn a lot together!",
   "Seu espaço está quase pronto. Vamos aprender muita coisa juntos!": "Your space is almost ready. Let's learn a lot together!",
   "Seu estudo": "Your study",
+  "Seu estudo de hoje": "Today's study",
+  "Detalhes do plano": "Plan details",
   "Seu estudo vira novas possibilidades: um look, um cenário, um tema de caderno ou uma missão extra para usar o inglês.": "Your study turns into new possibilities: a look, a scene, a notebook theme, or an extra mission to use English.",
   "Seu idioma:": "Your language:",
   "Seu inventário para": "Your inventory for",
@@ -4418,5 +4420,10 @@
   "usando": "wearing",
   "Óculos de sol": "Sunglasses",
   "Óculos redondos": "Round glasses",
-  "Óculos âmbar": "Amber glasses"
+  "Óculos âmbar": "Amber glasses",
+  "Lições de {level} concluídas": "{level} lessons completed",
+  "{level} · Falta 1 lição para {next}": "{level} · 1 lesson left before {next}",
+  "{level} · Faltam {count} lições para {next}": "{level} · {count} lessons left before {next}",
+  "Falta 1 lição para concluir o C2": "1 lesson left to complete C2",
+  "Faltam {count} lições para concluir o C2": "{count} lessons left to complete C2"
 }

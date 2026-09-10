@@ -425,6 +425,14 @@ export default function SparkyApp() {
   const interleaved = newLessonsToday > dailyDone && workspace.recommendation !== "new";
   const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : (interleaved ? dueLessons[0] : undefined) || next;
   const recommendedReview = resume ? resume.review : dueLessons.some(l=>l.id===recommended.id);
+  const remainingInLevel = lessons.filter(lesson => lesson.level === recommended.level && !progress.completed[lesson.id]).length;
+  const followingLevel = levels[levels.indexOf(recommended.level) + 1];
+  const levelProgressText = (remainingInLevel === 0
+    ? t("Lições de {level} concluídas")
+    : followingLevel
+      ? t(remainingInLevel === 1 ? "{level} · Falta 1 lição para {next}" : "{level} · Faltam {count} lições para {next}")
+      : t(remainingInLevel === 1 ? "Falta 1 lição para concluir o C2" : "Faltam {count} lições para concluir o C2"))
+    .replace("{level}", recommended.level).replace("{next}", followingLevel ?? "").replace("{count}", String(remainingInLevel));
   const plannedReview = workspace.recommendation !== "new" ? dueLessons.find(l=>l.id!==recommended.id) : undefined;
   const planMinutes = (recommendedReview ? 2 + (trailNext?.minutes ?? 0) : recommended.minutes) + (plannedReview && !recommendedReview ? 2 : 0);
   const open = (lesson: Lesson, review = false, mode: "guided"|"practice" = "guided") => {
@@ -518,7 +526,7 @@ export default function SparkyApp() {
             <div className="page-heading">
               <div>
                 <p className="eyebrow">{t("Olá,")} {learnerProfile?.name ?? user.name}</p>
-                <h1>{t("Seu estudo")} <span>{t("de hoje")}</span></h1>
+                <h1>{t("Seu estudo de hoje")}</h1>
               </div>
               <span className="language-chip">
                 <Languages size={15} />{t("Português ")}<ArrowRight size={12} />{t(" Inglês")}</span>
@@ -530,18 +538,22 @@ export default function SparkyApp() {
                     {t(resume ? "RETOMAR PRÁTICA" : recommendedReview ? "REVISÃO PARA HOJE" : "PRÓXIMA LIÇÃO")} <span>{t(recommended.level)}</span>
                   </span>
                   <h2>{t(recommended.title)}</h2>
-                  {!recommendedReview && <p className="english-title" lang="en">{t(recommended.englishTitle)}</p>}
-                  <p className="lesson-description">{t(!trailNext && !resume && !recommendedReview ? "Você concluiu a trilha do nível recomendado. Esta é uma prática opcional." : recommendationReason(Boolean(resume),recommendedReview))}</p>
-                  <p className="daily-goal">{t("Meta diária:")} {t(workspace.minutes)} {t("min")} <span>·</span> {t("Lições novas hoje:")} {t(newLessonsToday)}</p>
-                  <ol className="daily-plan-list"><li><strong>{t(recommendedReview?'Revisão curta:':'Lição:')}</strong> {t(recommended.title)}</li>{plannedReview&&!recommendedReview&&<li><strong>{t('Depois, uma revisão curta:')}</strong> {t(plannedReview.title)}</li>}{recommendedReview&&trailNext&&<li><strong>{t('Depois, continue a trilha:')}</strong> {t(trailNext.title)}</li>}</ol>
-                  {planMinutes>workspace.minutes&&<p>{t('A lição pode passar da sua meta de tempo. Você pode pausar e retomar de onde parou.')}</p>}
                   <div className="lesson-meta">
                     <Clock3 size={15} />
-                    {t(planMinutes)}{t(" min estimados")}<span>•</span>{t("Explicação + prática")}</div>
+                    {t(recommendedReview ? 2 : recommended.minutes)} {t("min")}<span>·</span>{t(recommendedReview ? "Revisão" : "Explicação + prática")}</div>
                   <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
                     {t(resume ? "Continuar de onde parei" : "Começar meu plano")}
                     <ArrowRight size={17} />
                   </button>
+                  <p className="level-progress-note" role="status">{levelProgressText}</p>
+                  <details className="daily-plan-details">
+                    <summary>{t("Detalhes do plano")}</summary>
+                    <p>{t(!trailNext && !resume && !recommendedReview ? "Você concluiu a trilha do nível recomendado. Esta é uma prática opcional." : recommendationReason(Boolean(resume),recommendedReview))}</p>
+                    <p>{t("Meta diária:")} {workspace.minutes} {t("min")} · {t("Lições novas hoje:")} {newLessonsToday}</p>
+                    {plannedReview && !recommendedReview && <p><strong>{t("Depois, uma revisão curta:")}</strong> {t(plannedReview.title)}</p>}
+                    {recommendedReview && trailNext && <p><strong>{t("Depois, continue a trilha:")}</strong> {t(trailNext.title)}</p>}
+                    {planMinutes > workspace.minutes && <p>{t("A lição pode passar da sua meta de tempo. Você pode pausar e retomar de onde parou.")}</p>}
+                  </details>
                 </div>
                 <MascotFigure
                   mascot={reward.mascot}
