@@ -16,9 +16,11 @@ import {
   equipNotebookTheme,
   normalizeRewardState,
   publicRewardState,
+  resetLook,
   selectMascot,
 } from "@/lib/rewards";
 import {
+  cosmeticCatalog,
   cosmeticSlots,
   type CosmeticSlot,
   type MascotId,
@@ -103,6 +105,15 @@ export async function POST(request: Request) {
       state = result.state;
       spent = result.spent;
       reason = result.alreadyOwned ? "already-owned" : "purchased";
+    } else if (body.action === "buy-and-equip") {
+      if ((body.mascot !== "sparky" && body.mascot !== "pinky") || typeof body.itemId !== "string")
+        throw new Error("invalid-request");
+      const purchase = buyCosmetic(state, body.itemId);
+      const item = cosmeticCatalog.find((entry) => entry.id === body.itemId);
+      if (!item) throw new Error("item-not-found");
+      state = equipCosmetic(purchase.state, body.mascot as MascotId, item.slot, item.id);
+      spent = purchase.spent;
+      reason = purchase.alreadyOwned ? "equipped" : "purchased-and-equipped";
     } else if (body.action === "notebook-theme") {
       if (typeof body.itemId !== "string" && body.itemId !== null) throw new Error("invalid-request");
       state = equipNotebookTheme(state, body.itemId as string | null);
@@ -110,6 +121,10 @@ export async function POST(request: Request) {
       if (body.mascot !== "sparky" && body.mascot !== "pinky")
         throw new Error("invalid-request");
       state = selectMascot(state, body.mascot);
+    } else if (body.action === "reset-look") {
+      if (body.mascot !== "sparky" && body.mascot !== "pinky")
+        throw new Error("invalid-request");
+      state = resetLook(state, body.mascot);
     } else if (body.action === "equip") {
       if (
         (body.mascot !== "sparky" && body.mascot !== "pinky") ||

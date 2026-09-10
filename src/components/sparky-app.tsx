@@ -329,7 +329,11 @@ export default function SparkyApp() {
         ? result.spent
           ? `Item adquirido por ${result.spent} moedas.`
           : "Esse item já estava no seu inventário."
-        : action.action === "equip"
+          : action.action === "buy-and-equip"
+            ? result.spent ? `Item adquirido por ${result.spent} moedas e colocado em uso.` : "Item colocado em uso."
+          : action.action === "reset-look"
+            ? "Visual básico restaurado. Seus itens continuam no inventário."
+          : action.action === "equip"
           ? "Visual atualizado."
           : action.action === "notebook-theme"
             ? "Tema do caderno atualizado. Seus textos foram preservados."

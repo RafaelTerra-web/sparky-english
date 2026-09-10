@@ -1,6 +1,6 @@
 # Expansão avançada — registro de implementação
 
-Atualizado em 7 de setembro de 2026. Especificação: 36 lições B2–C2, 48 conversas multilocutor, loja ampliada e avaliações internas verificáveis. Este documento registra trabalho efetivo, não uma declaração de lançamento concluído.
+Atualizado em 9 de setembro de 2026. Especificação: 36 lições B2–C2, 48 conversas multilocutor, loja ampliada e avaliações internas verificáveis. Este documento registra trabalho efetivo, não uma declaração de lançamento concluído.
 
 ## Conteúdo e listening
 
@@ -15,39 +15,39 @@ Atualizado em 7 de setembro de 2026. Especificação: 36 lições B2–C2, 48 co
 
 ## Loja e interface implementadas localmente
 
-- Oito cenários ilustrados integrados: os três antigos preservam IDs e preços, com nova arte; canto de estudos, café, trem, biblioteca e aurora acrescentados por 45/70/95/120/160 moedas.
-- Dezesseis WebPs em larguras 480 e 960; hashes e prompts em advanced-scene-generation.json. Prévia e equipamento funcionam com os dois mascotes.
+- Doze trajes e dezesseis acessórios compartilhados estão integrados, com variantes PNG 640×640 próprias para cada mascote. A combinação usa slots separados para traje, cabeça, rosto, pescoço e bolsas.
+- Os oito cenários foram aposentados na migração v4 da loja; compras antigas são reembolsadas integralmente uma única vez, até 650 moedas. IDs históricos continuam reservados no ledger para não alterar compras existentes.
 - Quatro temas de Caderno funcionais: menta, meia-noite, papel clássico e frutas vermelhas, por 25/40/55/70 moedas. Compra permanente, prévia gratuita, seleção validada pelo servidor e retorno gratuito ao original. Textos não são modificados pela troca.
-- RewardState v3 usa bitset de propriedade e store-ledger.ts com posições permanentes. Migra arrays v1, saldo, reembolsos e equipamentos; não repete reembolso nem débito de compra já adquirida. API pública continua fornecendo IDs legíveis.
-- Catálogo distingue looks, cenas, pacotes de prática e temas. Álbuns de listening ainda não são vendidos porque conteúdo e áudio não estão prontos.
+- RewardState v4 usa bitset de propriedade e `store-ledger.ts` com posições permanentes. Migra arrays v1 e estados v3, saldo, reembolsos e equipamentos; não repete reembolso nem débito de compra já adquirida. A API pública continua fornecendo IDs legíveis.
+- Catálogo distingue trajes, acessórios, pacotes de prática e temas. Álbuns de listening ainda não são vendidos porque conteúdo e áudio não estão prontos.
 - Convite de instalação dispensado fica oculto durante a sessão, inclusive após recarregar. Rolagem móvel reserva espaço para navegação inferior.
-- Quatro sprites novos do Sparky gerados e empacotados em 640×640 com alpha. Permanecem fora do catálogo enquanto passam por limpeza de bordas e inspeção no app. Variantes campus/apresentadora da Pinky com fundo quadriculado foram rejeitadas. Os oito looks novos ainda não estão concluídos. Prompts, arquivos e rejeições em advanced-art-generation.json.
+- As 46 artes do guarda-roupa foram empacotadas em 640×640 com transparência, hash e manifesto. Três trajes do Sparky e sua base receberam correções adicionais de transparência; as combinações completas foram inspecionadas em folhas de contato para os dois mascotes.
 
 ## Supabase e avaliações
 
 - Projeto confirmado: sparky-english, São Paulo, URL pública https://pqtlsrmzciriabzzgmzc.supabase.co.
 - Bootstrap das três primeiras migrações executado no banco inicialmente vazio; 22 tabelas com RLS verificadas e rubrica beta inserida. Não executar novamente o bootstrap em banco preenchido.
-- Migração adicional de privilégios de serviço enviada pelo SQL Editor; confirmação final e teste SQL transacional pendentes após falha do navegador.
-- Vercel Production recebeu URL pública, chave publicável e segredo de serviço Supabase. Segredo não está no código. Leitura server-side pelo SDK e leitura da rubrica verificadas. SPARKY_DURABLE_PROGRESS ainda não foi ativado.
+- Migração adicional de privilégios de serviço foi aplicada. Um teste transacional no Supabase real confirmou RLS, acesso exclusivo do serviço, leitura/escrita do estado v4 e rejeição de atualização com revisão desatualizada; as linhas do teste foram desfeitas ao final.
+- Vercel Production recebeu URL pública, chave publicável e segredo de serviço Supabase. O segredo não está no código. Leitura server-side pelo SDK e leitura da rubrica foram verificadas.
 - Conferência final pelo Vercel CLI confirmou OPENAI_API_KEY já cadastrada como Secret em Production. Não pedir nova chave nem reutilizar chaves antigas expostas na conversa. Existência da variável foi verificada; chamadas aos modelos ainda não foram validadas.
 - Política de pisos por habilidade, rubrica versionada, reconciliação de dois avaliadores e provedor estrito preparados. Indisponibilidade não produz aprovação/reprovação. Modelos não são substituídos silenciosamente.
 - Faltam fluxos completos de tentativa/resultado, simulados, revisão humana, sincronização de textos, emissão/QR/verificação/revogação de certificados e validação ponta a ponta desses serviços. Nenhum certificado foi emitido.
 
 ## Validação e publicação
 
-- 54 testes unitários, lint e build de produção passaram. Auditoria de dependências de produção: zero vulnerabilidades reportadas. Regressões da loja anterior e da instalação PWA também passaram.
-- Playwright com conta fictícia em localhost: oito cenários × dois mascotes em desktop/iPhone/Android emulados; prévia, compra, duplicidade, equipamento e recarga passaram.
+- A suíte automatizada inclui migração v4, comparação de revisão no armazenamento, 46 assets verificados e regressões da instalação, das lições e da loja.
+- Playwright com conta fictícia em localhost: trajes e acessórios nos dois mascotes, prévia, compra, cancelamento, remoção por slot, retorno ao básico e recarga passam em desktop/iPhone/Android emulados.
 - Quatro temas nas três telas: propriedade, compra, aplicação, preservação da meta escrita, contraste do corpo/título e retorno ao original passaram. Inspeção visual detectou e corrigiu título sem contraste no tema meia-noite.
 - Emulações usam Chromium; não equivalem a teste em hardware iOS/Safari real.
 - Exportação editorial e auditoria: node scripts/audit-advanced-expansion.mjs --out=<diretorio>. --release falha enquanto houver áudio ausente/reprovado.
-- Sem commit, push ou implantação desta expansão até este ponto. Trabalho revisável no checkout. Não anunciar 204 lições disponíveis, oito looks prontos, 48 áudios revisados ou certificados ativos.
+- Não anunciar 204 lições disponíveis, 48 áudios revisados ou certificados ativos: essas entregas continuam sujeitas aos critérios editoriais e de áudio descritos acima.
 
 ## Próximas entregas necessárias
 
 1. Restabelecer Computer Use e produzir/revisar os 48 áudios; concluir os 12 diálogos extras.
-2. Corrigir transparência/bordas e concluir os oito looks; integrar e testar álbuns.
+2. Produzir, integrar e testar os álbuns de listening.
 3. Concluir avaliações, simulados autorais e certificados com autorização, consentimento e evidência de todas as habilidades.
-4. Verificar privilégios/migrações no Supabase, ativar persistência e testar sincronização/conflitos com contas de teste controladas.
+4. Continuar acompanhando sincronização e conflitos em contas de teste controladas após a publicação.
 5. Revisão editorial/docente, testes de listening e avaliações nos três formatos de tela, auditoria de bundle e publicação beta após os critérios aplicáveis.
 
 Ao implantar v3, preservar cópia dos dados antes de qualquer rollback: a versão antiga não entende o novo bitset de propriedade.

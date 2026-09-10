@@ -15,17 +15,21 @@ const card=id=>page.locator(`[data-item="${id}"]`);
 async function buy(id) {
  await card(id).getByRole('button',{name:'Adquirir',exact:true}).click();
  await page.waitForFunction(()=>document.activeElement?.classList.contains('shop-confirm'));
- await page.getByRole('button',{name:'Confirmar compra',exact:true}).click();
+ await page.getByRole('button',{name:'Só comprar',exact:true}).click();
  await page.waitForFunction(id=>!document.querySelector('.shop-confirm') && document.querySelector(`[data-item="${id}"]`),id);
 }
 try {
  await page.goto('http://localhost:3201'); await page.locator('.app-frame').waitFor(); await nav('Loja');
  await page.getByRole('heading',{name:'Loja de descobertas'}).waitFor();
- await page.locator('.mascot-selector button').filter({hasText:'Pinky'}).click();
+ const pinkyButton=page.locator('.mascot-selector button').filter({hasText:'Pinky'});
+ await pinkyButton.waitFor(); await page.waitForFunction(()=>![...document.querySelectorAll('.mascot-selector button')].some(b=>b.disabled));
+ const selectionRequest=page.waitForResponse(response=>response.url().endsWith('/api/rewards') && response.request().method()==='POST');
+ await pinkyButton.click(); const selectionResponse=await selectionRequest;
+ assert.equal(selectionResponse.ok(),true,`select Pinky failed: ${selectionResponse.status()} ${await selectionResponse.text()}`);
  await page.waitForFunction(()=>document.querySelector('.mascot-pinky') && [...document.querySelectorAll('.mascot-selector button')].some(b=>b.textContent.includes('Pinky') && b.getAttribute('aria-pressed')==='true'));
  const before=await reward(); assert.equal(before.coins,0);
  await card('pinky-focus-look').getByRole('button',{name:'Experimentar'}).click();
- assert.ok((await page.locator('.mascot-preview img').getAttribute('src')).includes('pinky-focus-v2'));
+ assert.ok((await page.locator('.mascot-preview .mascot-base').getAttribute('src')).includes('pinky-focus-look'));
  assert.deepEqual((await reward()).equipped,before.equipped,'preview cannot equip or debit');
  await page.getByRole('button',{name:'Sair da prévia'}).click();
  await card('pinky-focus-look').getByRole('button',{name:'Continuar estudando'}).click();
@@ -42,15 +46,14 @@ try {
  await buy('pinky-focus-look'); assert.equal((await reward()).coins,earned-40);
  await card('pinky-focus-look').getByRole('button',{name:'Usar',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('[data-item="pinky-focus-look"]')?.textContent.includes('Em uso'));
- await page.getByRole('button',{name:'Cenários',exact:true}).click(); await buy('scene-garden');
- await card('scene-garden').getByRole('button',{name:'Usar',exact:true}).click();
- await page.waitForFunction(()=>document.querySelector('.mascot-preview .scene-garden'));
- const fitted=await reward(); assert.equal(fitted.equipped.pinky.style,'pinky-focus-look'); assert.equal(fitted.equipped.pinky.scene,'scene-garden');
- assert.equal(await page.locator('.cosmetic-layer').count(),0);
- await page.getByRole('button',{name:'Missões extras',exact:true}).click(); await buy('practice-travel');
- assert.equal((await reward()).coins,earned-110);
+ await page.getByRole('button',{name:'Acessórios',exact:true}).click(); await buy('accessory-urban-cap-v4');
+ await card('accessory-urban-cap-v4').getByRole('button',{name:'Usar',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('.mascot-preview .wardrobe-head'));
+ const fitted=await reward(); assert.equal(fitted.equipped.pinky.outfit,'pinky-focus-look'); assert.equal(fitted.equipped.pinky.head,'accessory-urban-cap-v4');
+ await page.getByRole('button',{name:'Missões',exact:true}).click(); await buy('practice-travel');
+ assert.equal((await reward()).coins,earned-125);
  const duplicate=await page.evaluate(async()=> (await fetch('/api/rewards',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'buy',itemId:'practice-travel'})})).json());
- assert.equal(duplicate.spent,0); assert.equal(duplicate.coins,earned-110);
+ assert.equal(duplicate.spent,0); assert.equal(duplicate.coins,earned-125);
  await card('practice-travel').getByRole('button',{name:'Abrir missões'}).click();
  const dialog=page.locator('.store-practice-dialog'); await dialog.waitFor({state:'visible'});
  const decision=dialog.locator('.mission-decision').first();
@@ -74,11 +77,11 @@ try {
  await page.locator('.mascot-preview').scrollIntoViewIfNeeded();
  await page.screenshot({path:fileURLToPath(new URL('shop-pinky-mobile.png',output))});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
- await page.setViewportSize({width:1280,height:950}); await page.getByRole('button',{name:'Looks',exact:true}).click();
+ await page.setViewportSize({width:1280,height:950}); await page.getByRole('button',{name:'Trajes',exact:true}).click();
  await page.screenshot({path:fileURLToPath(new URL('shop-desktop.png',output)),fullPage:true});
  await page.reload(); await page.locator('.app-frame').waitFor(); await nav('Loja');
- assert.equal((await reward()).equipped.pinky.style,'pinky-focus-look');
- assert.equal((await reward()).coins,earned-110);
+ assert.equal((await reward()).equipped.pinky.outfit,'pinky-focus-look');
+ assert.equal((await reward()).coins,earned-125);
  assert.deepEqual(errors,[]);
- console.log('PASS: free preview, earn CTA, real purchases, cancellation, duplicate protection, fitted look + scene, permanent mission access, feedback, notebook drafts, mobile and reload persistence.');
+ console.log('PASS: free preview, earning, modular outfit + accessory, permanent mission access, mobile layout and reload persistence.');
 } finally {await browser.close();}

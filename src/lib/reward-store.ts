@@ -24,7 +24,30 @@ export async function loadRewards(userId: string, legacy: RewardState) {
     result = await query();
   }
   if (result.error || !result.data) throw new Error("progress-unavailable");
-  return { state: normalizeRewardState(result.data.state), revision: result.data.revision as number, storage: "account" as const };
+  let state = normalizeRewardState(result.data.state);
+  let revision = result.data.revision as number;
+  if (JSON.stringify(result.data.state) !== JSON.stringify(state)) {
+    const migrated = await db.from("sparky_account_progress")
+      .update({ state, revision: revision + 1, updated_at: new Date().toISOString() })
+      .eq("account_key", key).eq("revision", revision).select("revision").maybeSingle();
+    if (migrated.error) throw new Error("progress-unavailable");
+    if (migrated.data) revision = migrated.data.revision as number;
+    else {
+      result = await query();
+      if (result.error || !result.data) throw new Error("progress-unavailable");
+      state = normalizeRewardState(result.data.state);
+      revision = result.data.revision as number;
+      if (JSON.stringify(result.data.state) !== JSON.stringify(state)) {
+        const retried = await db.from("sparky_account_progress")
+          .update({ state, revision: revision + 1, updated_at: new Date().toISOString() })
+          .eq("account_key", key).eq("revision", revision).select("revision").maybeSingle();
+        if (retried.error) throw new Error("progress-unavailable");
+        if (!retried.data) throw new Error("progress-conflict");
+        revision = retried.data.revision as number;
+      }
+    }
+  }
+  return { state, revision, storage: "account" as const };
 }
 export async function persistRewards(userId: string, state: RewardState, revision: number | null) {
   if (revision === null) return;

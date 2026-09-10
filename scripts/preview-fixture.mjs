@@ -8,6 +8,8 @@ if (process.env.VERCEL) throw new Error('The visual fixture must never run on Ve
 process.env.SPARKY_SESSION_SECRET = randomBytes(32).toString('hex');
 process.env.SPARKY_ALLOWED_EMAILS = 'preview@example.test';
 process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3201';
+process.env.SPARKY_DURABLE_PROGRESS = 'false';
+process.env.SPARKY_ONBOARDING_ENABLED = 'false';
 const token = await seal({ sub: 'local-visual-fixture', email: 'preview@example.test', name: 'Estudante' }, 'session', 3600);
 const child = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', '3200'], { env: { ...process.env, NODE_ENV: 'production' }, stdio: ['ignore', 'pipe', 'inherit'] });
 let authenticated = true;
@@ -15,6 +17,9 @@ const proxy = createServer((incoming, outgoing) => {
   if (incoming.url === '/api/session' && incoming.method === 'DELETE') authenticated = false;
   const headers = { ...incoming.headers };
   if (authenticated) headers.cookie = `${headers.cookie || ""}; __Host-sparky_session=${token}`;
+  // NEXT_PUBLIC_SITE_URL is embedded at build time. Mutating fixture requests
+  // use that trusted production origin while remaining entirely on localhost.
+  if (headers.origin) headers.origin = 'https://sparky-english-iota.vercel.app';
   const upstream = request({ hostname: '127.0.0.1', port: 3200, path: incoming.url, method: incoming.method, headers }, (response) => {
     outgoing.writeHead(response.statusCode || 500, response.headers); response.pipe(outgoing);
   });

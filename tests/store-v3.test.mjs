@@ -14,17 +14,18 @@ test('store bit identities are permanent, unique and cover every purchasable ite
   assert.equal(new Set(storeLedger).size, storeLedger.length);
   for (const item of storeCatalog) assert.ok(storeLedger.includes(item.id), item.id);
 });
-test('migration preserves purchases and equipment, then ignores legacy arrays in v3', () => {
+test('migration retires scenes, refunds once and grants modular legacy pieces', () => {
   const legacy = { ...emptyRewardState(), version: 1, coins: 47, owned: ['scene-garden','pinky-focus-look','scene-garden'], equipped: { sparky: { scene: 'scene-garden' }, pinky: { style: 'pinky-focus-look' } } };
   const migrated = normalizeRewardState(legacy);
-  assert.equal(migrated.version, 3); assert.equal(migrated.coins, 47);
-  assert.deepEqual(publicRewardState(migrated).owned, ['pinky-focus-look','scene-garden']);
-  assert.deepEqual(migrated.equipped, legacy.equipped);
+  assert.equal(migrated.version, 4); assert.equal(migrated.coins, 77);
+  assert.equal(migrated.sceneRefund, 30);
+  assert.deepEqual(publicRewardState(migrated).owned, ['pinky-focus-look','accessory-focus-headphones-v4']);
+  assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { outfit: 'pinky-focus-look', head: 'accessory-focus-headphones-v4' } });
   assert.equal('owned' in migrated, false);
   assert.deepEqual(normalizeRewardState(migrated), migrated);
   assert.deepEqual(normalizeRewardState({ ...migrated, owned: ['scene-aurora'] }), migrated);
-  const shortOldBits = normalizeRewardState({ ...migrated, ownedBits: Buffer.from([16]).toString('base64url') });
-  assert.deepEqual(publicRewardState(shortOldBits).owned, ['scene-garden']);
+  const repeated = normalizeRewardState(migrated);
+  assert.equal(repeated.coins, 77); assert.equal(repeated.sceneRefund, 30);
 });
 test('themes require ownership, never debit twice and can return to the free original', () => {
   let state = { ...emptyRewardState(), coins: 500 };

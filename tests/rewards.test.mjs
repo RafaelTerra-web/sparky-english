@@ -51,29 +51,29 @@ test("purchase and equipment validate balance, ownership, slot and mascot", () =
   const purchase = buyCosmetic(state, "sparky-explorer-look");
   assert.equal(purchase.spent, 60);
   state = purchase.state;
-  state = equipCosmetic(state, "sparky", "style", "sparky-explorer-look");
-  assert.equal(state.equipped.sparky.style, "sparky-explorer-look");
+  state = equipCosmetic(state, "sparky", "outfit", "sparky-explorer-look");
+  assert.equal(state.equipped.sparky.outfit, "sparky-explorer-look");
   assert.throws(() => equipCosmetic(state, "sparky", "body", "sparky-explorer-look"), /compatible/);
   assert.equal(buyCosmetic(state, "sparky-explorer-look").spent, 0);
   assert.equal(selectMascot(state, "pinky").mascot, "pinky");
 });
 
-test("a fitted look and scene coexist and survive normalization", () => {
+test("an outfit and independent accessory coexist and survive normalization", () => {
   let state = emptyRewardState();
   state.coins = 500;
-  state = buyCosmetic(state, "scene-garden").state;
   state = buyCosmetic(state, "sparky-academy-look").state;
-  state = equipCosmetic(state, "sparky", "scene", "scene-garden");
-  state = equipCosmetic(state, "sparky", "style", "sparky-academy-look");
+  state = buyCosmetic(state, "accessory-amber-readers-v4").state;
+  state = equipCosmetic(state, "sparky", "outfit", "sparky-academy-look");
+  state = equipCosmetic(state, "sparky", "face", "accessory-amber-readers-v4");
 
-  assert.equal(state.equipped.sparky.scene, "scene-garden");
-  assert.equal(state.equipped.sparky.style, "sparky-academy-look");
+  assert.equal(state.equipped.sparky.outfit, "sparky-academy-look");
+  assert.equal(state.equipped.sparky.face, "accessory-amber-readers-v4");
   assert.deepEqual(
     normalizeRewardState(state).equipped.sparky,
-    { scene: "scene-garden", style: "sparky-academy-look" },
+    { outfit: "sparky-academy-look", face: "accessory-amber-readers-v4" },
   );
   assert.throws(
-    () => equipCosmetic(state, "pinky", "style", "sparky-academy-look"),
+    () => equipCosmetic(state, "pinky", "outfit", "sparky-academy-look"),
     /compatible/,
   );
 });
@@ -89,15 +89,15 @@ test("retired accessories are refunded once while original complete looks and pr
   const migrated = normalizeRewardState(old);
   assert.equal(migrated.coins, 255);
   assert.equal(migrated.wardrobeRefund, 230);
-  assert.deepEqual(publicRewardState(migrated).owned, ["pinky-atelier-look"]);
-  assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { style: "pinky-atelier-look" } });
+  assert.deepEqual(publicRewardState(migrated).owned, ["pinky-atelier-look", "accessory-lavender-beret-v4", "accessory-book-tote-v4"]);
+  assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { outfit: "pinky-atelier-look", head: "accessory-lavender-beret-v4", back: "accessory-book-tote-v4" } });
   assert.equal(migrated.completedBits, old.completedBits);
   assert.deepEqual(normalizeRewardState(migrated), migrated);
   const purchased = buyCosmetic(migrated, "practice-travel").state;
   assert.equal(normalizeRewardState(purchased).coins, 215);
   assert.ok(publicRewardState(purchased).owned.includes("practice-travel"));
   assert.equal(buyCosmetic(purchased, "practice-travel").spent, 0);
-  assert.throws(() => equipCosmetic(purchased, "pinky", "style", "practice-travel"), /compatible/);
+  assert.throws(() => equipCosmetic(purchased, "pinky", "outfit", "practice-travel"), /compatible/);
   assert.throws(() => buyCosmetic(purchased, "campus-cap"), /item-not-found/);
 });
 
