@@ -55,3 +55,50 @@ html[data-theme="dark"] .streak-celebration .eyebrow { color: #ff896a; }
   .streak-celebration { animation: none; }
   .motion-loader-orbit video { display: none; }
 }
+
+/* Streak journey: compact trigger, touch-sized milestones and theme-aware surfaces. */
+.streak-badge { cursor: pointer; flex-shrink: 0; border-radius: 99px; border-color: color-mix(in srgb,#ee7845 35%,var(--line)); background: color-mix(in srgb,#ee7845 8%,var(--surface)); }
+.streak-badge:hover { background: color-mix(in srgb,#ee7845 16%,var(--surface)); }
+.streak-badge:focus-visible,.streak-targets button:focus-visible,.streak-close:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.streak-flame { animation: flame-breathe 1.45s ease-in-out 3; }
+.streak-roadmap { position: fixed; inset: 0; margin: auto; padding: 0; width: min(460px,calc(100vw - 28px)); max-height: calc(100dvh - 40px); overflow: auto; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); color: var(--foreground); box-shadow: 0 24px 80px #0005; }
+.streak-roadmap::backdrop { background: #0008; backdrop-filter: blur(5px); }
+.streak-roadmap-content { position: relative; padding: 28px 24px 22px; }
+.streak-roadmap-heading { display: flex; align-items: center; gap: 14px; padding-right: 15px; }
+.streak-roadmap-heading img { object-fit: contain; filter: drop-shadow(0 5px 10px #ef7b4533); }
+.streak-roadmap h2 { font-size: 25px; margin: 3px 0 0; }
+.streak-roadmap .eyebrow { color: var(--muted); font-size: 10px; margin: 0; }
+.streak-roadmap-stats { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.streak-roadmap-stats p { margin: 0; font-size: 14px; }
+.streak-roadmap-stats strong { font-size: 34px; font-variant-numeric: tabular-nums; }
+.streak-roadmap-stats > span { display: flex; gap: 5px; align-items: center; color: var(--muted); font-size: 12px; }
+.streak-roadmap-hint,.streak-roadmap-note { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.streak-targets { display: flex; gap: 8px; overflow-x: auto; padding: 10px 4px 16px; scrollbar-width: thin; scrollbar-color: var(--accent) var(--surface-soft); }
+.streak-targets button { position: relative; display: grid; justify-items: center; gap: 7px; flex: 0 0 52px; min-height: 65px; border: 0; border-radius: 12px; padding: 5px 3px; background: transparent; color: var(--muted); cursor: pointer; }
+.streak-targets button > span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-soft); font-weight: 700; font-size: 11px; }
+.streak-targets button small { font-size: 10px; white-space: nowrap; }
+.streak-targets button.achieved > span { background: var(--accent); color: var(--on-accent); }
+.streak-targets button[aria-pressed="true"] { background: var(--surface-soft); color: var(--foreground); }
+.streak-targets button[aria-pressed="true"] > span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.streak-milestone-detail { display: grid; gap: 9px; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-soft); }
+.streak-milestone-detail > strong { font-size: 20px; }
+.streak-milestone-detail > span,.streak-milestone-detail small { font-size: 13px; color: var(--muted); }
+.streak-milestone-detail progress { appearance: none; width: 100%; height: 9px; border: 0; border-radius: 99px; overflow: hidden; background: var(--line); }
+.streak-milestone-detail progress::-webkit-progress-bar { background: var(--line); border-radius: 99px; }
+.streak-milestone-detail progress::-webkit-progress-value { background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+.streak-milestone-detail progress::-moz-progress-bar { background: var(--accent); border-radius: 99px; }
+.streak-roadmap-note { font-size: 11px; margin: 16px 0 0; }
+.streak-special { border-width: 2px; overflow: hidden; background: var(--surface); }
+.streak-special .streak-animation { background: color-mix(in srgb,#f9b942 18%,var(--surface)); }
+.streak-special .streak-animation-flame { animation: streak-milestone-pop 1s ease both, flame-breathe 1.8s 1s ease-in-out 3; }
+.streak-sparks { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.streak-sparks i { position: absolute; top: -10px; width: 5px; height: 8px; border-radius: 2px; background: #ee8e32; animation: streak-spark-fall 1.8s ease-out both; }
+.streak-sparks i:nth-child(even) { background: var(--accent); }
+@keyframes streak-milestone-pop { 0% { transform: scale(.5) rotate(-12deg); } 65% { transform: scale(1.12) rotate(5deg); } 100% { transform: scale(1); } }
+@keyframes streak-spark-fall { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(220px) rotate(220deg); opacity: 0; } }
+@media (prefers-reduced-motion:reduce) {
+ .streak-badge .streak-flame,.streak-special .streak-animation-flame { animation: none; }
+ .streak-sparks { display: none; }
+ .streak-milestone-detail progress::-webkit-progress-value { transition: none; }
+}
+.streak-roadmap .streak-close { width: 44px; height: 44px; }

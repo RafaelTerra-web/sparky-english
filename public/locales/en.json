@@ -4459,5 +4459,20 @@
   "Praticar conversação": "Practise speaking",
   "Call com Sparky ou Pinky": "Call with Sparky or Pinky",
   "A Call é uma prática opcional por turnos. O microfone só é ativado quando você toca em Falar. Cada trecho enviado tem no máximo 45 segundos e é convertido no navegador antes de ser processado pelo Alibaba Cloud Model Studio com Qwen para transcrever sua fala, preparar uma resposta pedagógica e gerar a voz do mascote.": "The Call is an optional turn-based practice. The microphone is activated only when you tap Speak. Each submitted recording lasts up to 45 seconds and is converted in your browser before Alibaba Cloud Model Studio uses Qwen to transcribe your speech, prepare a teaching response and generate the mascot voice.",
-  "O Sparky não armazena o arquivo de áudio da Call. A transcrição fica temporariamente no Supabase para permitir a retomada e é apagada ao encerrar por padrão. As respostas do mascote, o feedback e o resumo podem permanecer por até 30 dias. O feedback é formativo: não altera seu nível, não emite certificado e não avalia pronúncia apenas pelo texto transcrito. Você não deve falar senhas ou dados pessoais durante a conversa.": "Sparky does not store the Call audio file. The transcript remains temporarily in Supabase so you can resume and is erased when you end the Call by default. Mascot responses, feedback and the summary may remain for up to 30 days. Feedback is formative: it does not change your level, issue a certificate or assess pronunciation from the transcript alone. Do not say passwords or personal information during the conversation."
+  "O Sparky não armazena o arquivo de áudio da Call. A transcrição fica temporariamente no Supabase para permitir a retomada e é apagada ao encerrar por padrão. As respostas do mascote, o feedback e o resumo podem permanecer por até 30 dias. O feedback é formativo: não altera seu nível, não emite certificado e não avalia pronúncia apenas pelo texto transcrito. Você não deve falar senhas ou dados pessoais durante a conversa.": "Sparky does not store the Call audio file. The transcript remains temporarily in Supabase so you can resume and is erased when you end the Call by default. Mascot responses, feedback and the summary may remain for up to 30 days. Feedback is formative: it does not change your level, issue a certificate or assess pronunciation from the transcript alone. Do not say passwords or personal information during the conversation.",
+  "Fechar sequência": "Close streak",
+  "UM DIA DE CADA VEZ": "ONE DAY AT A TIME",
+  "Seu foguinho": "Your daily streak",
+  "dia seguido": "day in a row",
+  "dias seguidos": "days in a row",
+  "Recorde": "Best",
+  "Entre todos os dias para manter sua sequência. Toque em um marco para explorar.": "Check in daily to keep your streak. Tap a milestone to explore.",
+  "Marcos da sequência": "Streak milestones",
+  "Marco conquistado!": "Milestone reached!",
+  "Seu próximo passo, no seu ritmo.": "Your next step, at your pace.",
+  "Progresso até o marco selecionado": "Progress toward the selected milestone",
+  "Você construiu esse hábito dia após dia.": "You built this habit one day at a time.",
+  "Faltam {count} dias para este marco.": "{count} days to this milestone.",
+  "A cada 7 dias seguidos: +5 moedas. Se perder um dia, seu aprendizado e suas moedas continuam com você.": "Every 7 consecutive days: +5 coins. If you miss a day, you keep your learning progress and coins.",
+  "Um hábito que cresce com você. Parabéns pela constância!": "A habit that grows with you. Well done for showing up!"
 }
