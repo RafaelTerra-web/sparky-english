@@ -19,6 +19,7 @@ import {
   Coins,
   Globe2,
   GraduationCap,
+  Headphones,
   Home,
   Languages,
   LockKeyhole,
@@ -31,6 +32,8 @@ import {
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
 import { ThemePreferenceControl, ThemeQuickToggle, resetAppearanceSession } from "./theme-preference";
+import { MotionLoader, MotionTransition, StreakBadge, StreakCelebration } from "./motion-pack";
+import { LevelUpCelebration } from "./level-up-celebration";
 import { levels, levelDescriptions } from "@/lib/levels";
 import {
   lessons,
@@ -55,11 +58,13 @@ import type { PublicRewardState } from "@/lib/rewards-shared";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
 const Onboarding = dynamic(() => import('./onboarding'), { loading: () => <SectionLoading /> });
 const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.EltisSimulator), { loading: () => <SectionLoading label="Preparando o simulado…" /> });
+const CallExperience = dynamic(() => import("./call").then(m => m.CallExperience), { loading: () => <SectionLoading label="Preparando a conversa…" /> });
 
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
+const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
-type View = "classroom" | "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
+type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -74,6 +79,7 @@ const emptyRewards: PublicRewardState = {
   notebookTheme: null,
   mascot: "sparky",
   equipped: { sparky: {}, pinky: {} },
+  streak: { count: 0, longest: 0, lastDay: null },
 };
 const navigation = [
   { id: "today" as View, label: "Hoje", icon: Home },
@@ -144,9 +150,27 @@ export default function SparkyApp() {
   const [notice, setNotice] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   const [reward, setReward] = useState<PublicRewardState>(emptyRewards);
+  const [streakCelebration, setStreakCelebration] = useState<{ count: number; milestone: boolean; earned: number } | null>(null);
+  const [transitioning, setTransitioning] = useState(false);
+  const transitionTimer = useRef<number | null>(null);
   const [rewardBusy, setRewardBusy] = useState(false);
   const [rewardAvailable, setRewardAvailable] = useState(true);
   const [workspace, setWorkspace] = useState(blankWorkspace);
+  function navigate(nextView: View) {
+    setNotice("");
+    if (nextView === view) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setView(nextView);
+      return;
+    }
+    setTransitioning(true);
+    setView(nextView);
+    if (transitionTimer.current) window.clearTimeout(transitionTimer.current);
+    transitionTimer.current = window.setTimeout(() => setTransitioning(false), 480);
+  }
+  useEffect(() => () => {
+    if (transitionTimer.current) window.clearTimeout(transitionTimer.current);
+  }, []);
   useEffect(() => {
     if (!user) return;
     const refresh = () => { if (!active) setWorkspace(readWorkspace(user.id)); };
@@ -170,7 +194,22 @@ export default function SparkyApp() {
           try {
             const response = await fetch("/api/rewards", { cache: "no-store" });
             if (!response.ok) throw new Error("rewards");
-            const rewards = (await response.json()) as PublicRewardState;
+            let rewards = (await response.json()) as PublicRewardState;
+            const checkInResponse = await fetch("/api/rewards", {
+              method: "POST",
+              signal: controller.signal,
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ action: "check-in" }),
+            });
+            if (checkInResponse.ok) {
+              const checked = await checkInResponse.json() as PublicRewardState & { streakAdvanced?: boolean; streakMilestone?: boolean; earned?: number };
+              rewards = checked;
+              if (checked.streakAdvanced && checked.streak)
+                setStreakCelebration({ count: checked.streak.count, milestone: Boolean(checked.streakMilestone), earned: checked.earned ?? 0 });
+            } else if (checkInResponse.status === 409) {
+              const latestResponse = await fetch("/api/rewards", { cache: "no-store", signal: controller.signal });
+              if (latestResponse.ok) rewards = await latestResponse.json() as PublicRewardState;
+            }
             setReward(rewards);
             setProgress({
               level: local.level,
@@ -386,7 +425,7 @@ export default function SparkyApp() {
     return (
       <main className="loading-page">
         <Brand />
-        <p role="status">{t("Abrindo seu espaço de estudo…")}</p>
+        <MotionLoader label="Abrindo seu espaço de estudo…" />
       </main>
     );
   if (connectionError)
@@ -453,6 +492,9 @@ export default function SparkyApp() {
   return (
     <div className="app-frame">
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
+      <MotionTransition active={transitioning} />
+      {streakCelebration && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
+      <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} />
       <aside className="sidebar">
         <Brand />
         <nav aria-label={localizeAttribute("Navegação principal")}>
@@ -462,8 +504,7 @@ export default function SparkyApp() {
               className={view === item.id ? "nav-item active" : "nav-item"}
               aria-current={view === item.id ? "page" : undefined}
               onClick={() => {
-                setView(item.id);
-                setNotice("");
+                navigate(item.id);
               }}
             >
               <item.icon size={19} />
@@ -490,7 +531,7 @@ export default function SparkyApp() {
       <main className="workspace" id="conteudo" tabIndex={-1} onClickCapture={event => {
         if (event.target instanceof Element) lessonOpener.current = event.target.closest('button');
       }}>
-        <header className="workspace-header">
+        {view !== "call" && <header className="workspace-header">
           <div className="mobile-brand">
             <Brand />
           </div>
@@ -503,13 +544,14 @@ export default function SparkyApp() {
           </p>
           <button
             className="account-chip profile-gear"
-            onClick={() => setView("profile")}
+            onClick={() => navigate("profile")}
             aria-label={localizeAttribute(`Abrir perfil de ${user.name}`)}
           >
             <Settings size={21} aria-hidden="true" />
           </button>
+          <StreakBadge count={reward.streak?.count ?? 0} longest={reward.streak?.longest ?? 0} />
           <ThemeQuickToggle userId={user.id} />
-        </header>
+        </header>}
         {notice && (
           <div className="notice" role="status">
             {t(notice)}
@@ -580,9 +622,9 @@ export default function SparkyApp() {
                 </div>
                 </div>
                 <div className="summary-stats">
-                <div className="stat-row">
-                  <span>{t("Tentativas registradas")}</span>
-                  <strong>{t(workspace.attempts.length)}</strong>
+                <div className="stat-row streak-stat">
+                  <span>{t("Sequência diária")}</span>
+                  <strong><Image className="streak-inline-flame" src="/motion/streak-flame-96.png" width={18} height={18} alt="" /> {reward.streak?.count ?? 0} {t((reward.streak?.count ?? 0) === 1 ? "dia" : "dias")}</strong>
                 </div>
                 <div className="stat-row">
                   <span>{t("Revisões para hoje")}</span>
@@ -595,15 +637,20 @@ export default function SparkyApp() {
                 </div>
                 <button
                   className="text-button"
-                  onClick={() => setView("review")}
+                  onClick={() => navigate("review")}
                 >{t("Abrir revisão ")}<ArrowRight size={15} />
                 </button>
               </aside>
             </div>
             {learnerProfile && voiceEnabled && !active && <PersonalSparkyMessage key={`${learnerProfile.name}-${learnerProfile.namePronunciation}`} profile={learnerProfile} occasion="welcome" onPronunciation={() => void editNamePronunciation()} />}
             <InstallAppPrompt />
-            <section className="learning-note"><span className="note-icon"><Languages size={22}/></span><div><h2>{t('Objetivo do módulo')}</h2><p>{t(moduleObjective(next.moduleId!))}.</p><button className="text-button" onClick={()=>{setCourseMode('guided');setView('course');}}>{t('Ver minha trilha')}<ArrowRight size={15}/></button></div></section>
-            <section className="complementary-practice"><div className="section-heading"><div><p className="eyebrow">{t('Opcional')}</p><h2>{t('Treino complementar')}</h2></div><button className="text-button" onClick={()=>{setCourseMode('practice');setView('course');}}>{t('Treinar por disciplina')}<ArrowRight size={15}/></button></div>
+            {callEnabled && <section className="call-invite">
+              <span className="call-invite-icon" aria-hidden="true"><Headphones size={24} /></span>
+              <div><p className="eyebrow">{t("CALL DE CONVERSAÇÃO · 10 MIN")}</p><h2>{t(`Fale com ${reward.mascot === "pinky" ? "a Pinky" : "o Sparky"}`)}</h2><p>{t("Pratique uma situação real no seu nível e receba feedback ao terminar.")}</p></div>
+              <button className="primary-button" onClick={() => navigate("call")}>{t("Praticar conversação")}<ArrowRight size={17}/></button>
+            </section>}
+            <section className="learning-note"><span className="note-icon"><Languages size={22}/></span><div><h2>{t('Objetivo do módulo')}</h2><p>{t(moduleObjective(next.moduleId!))}.</p><button className="text-button" onClick={()=>{setCourseMode('guided');navigate('course');}}>{t('Ver minha trilha')}<ArrowRight size={15}/></button></div></section>
+            <section className="complementary-practice"><div className="section-heading"><div><p className="eyebrow">{t('Opcional')}</p><h2>{t('Treino complementar')}</h2></div><button className="text-button" onClick={()=>{setCourseMode('practice');navigate('course');}}>{t('Treinar por disciplina')}<ArrowRight size={15}/></button></div>
              <p>{t('Escolha uma prática extra sem perder o próximo passo do curso.')}</p>
              <div className="lesson-cards">{complementary.map(({lesson,reason})=><div key={lesson.id}><LessonCard lesson={lesson} number={lessons.findIndex(l=>l.id===lesson.id)+1} done={Boolean(progress.completed[lesson.id])} onOpen={()=>open(lesson,false,'practice')}/><p className="recommendation-reason">{t(reason)}</p></div>)}</div>
             </section>
@@ -619,11 +666,12 @@ export default function SparkyApp() {
             mode={courseMode}
             onMode={setCourseMode}
             onOpen={open}
-            onExams={() => setView("exams")}
+            onExams={() => navigate("exams")}
           />
           </>
         )}
-        {(view === "course" || view === "today") && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>setView("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
+        {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => navigate("today")} />}
+        {(view === "course" || view === "today") && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "review" && (
           <>
             <div className="page-heading">
@@ -690,10 +738,10 @@ export default function SparkyApp() {
         )}
         {view === "classroom" && <EnglishClassroom level={progress.level} />}
         {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
-        {view === "exams" && <><button className="text-button" onClick={() => setView("course")}>{t("← Voltar ao Curso")}</button><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
+        {view === "exams" && <><button className="text-button" onClick={() => navigate("course")}>{t("← Voltar ao Curso")}</button><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
-          {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => setView(due ? "review" : "today")} /> : <p role="status">{t("Conecte-se novamente para carregar seu saldo e sua loja.")}</p>}
+          {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => navigate(due ? "review" : "today")} /> : <p role="status">{t("Conecte-se novamente para carregar seu saldo e sua loja.")}</p>}
         </>}
         {view === "profile" && (
           <>
@@ -723,6 +771,10 @@ export default function SparkyApp() {
                 <div className="profile-setting">
                   <span>{t("Idioma de estudo")}</span>
                   <strong>{t("Inglês")}</strong>
+                </div>
+                <div className="profile-setting">
+                  <span>{t("Maior sequência")}</span>
+                  <strong>{reward.streak?.longest ?? 0} {t((reward.streak?.longest ?? 0) === 1 ? "dia" : "dias")}</strong>
                 </div>
                 {onboardingEnabled && <><button className="secondary-button" onClick={() => void editNamePronunciation("placement-start")}>{t("Fazer nivelamento")}</button><button className="secondary-button" onClick={() => void editNamePronunciation("preferences-start")}>{t("Nível das lições recomendadas ·")}{t(learnerProfile?.level)}</button></>}
                 <label className="profile-setting">{t("Recomendação de estudo")}<select value={workspace.recommendation} onChange={e=>updateWorkspace(user.id,current=>({...current,recommendation:e.target.value as "balanced"|"new"}))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
@@ -762,8 +814,8 @@ export default function SparkyApp() {
                 <p><strong>{t(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
                 <p>
                   {t(reward.storage === "account"
-                    ? "Suas lições concluídas, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
-                    : "Suas conclusões, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
+                    ? "Suas lições concluídas, sequência, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
+                    : "Suas conclusões, sequência, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
                 </p>
                 <p>{t("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.")}</p>
                 <p>
@@ -775,24 +827,24 @@ export default function SparkyApp() {
                 </a>
               </aside>
             </div>
-            <button className="secondary-button" onClick={() => setView("shop")}><ShoppingBag size={18} />{t(" Escolher mascote e abrir a loja")}</button>
+            <button className="secondary-button" onClick={() => navigate("shop")}><ShoppingBag size={18} />{t(" Escolher mascote e abrir a loja")}</button>
             <InstallAppPrompt dismissible={false} />
           </>
         )}
       </main>
-      <nav className="mobile-nav" aria-label={localizeAttribute("Navegação no celular")}>
+      {view !== "call" && <nav className="mobile-nav" aria-label={localizeAttribute("Navegação no celular")}>
         {navigation.filter(item => item.id !== "profile" && item.id !== "exams").map((item) => (
           <button
             key={item.id}
             aria-current={view === item.id || (view === "exams" && item.id === "course") ? "page" : undefined}
             className={view === item.id || (view === "exams" && item.id === "course") ? "active" : ""}
-            onClick={() => { setView(item.id); setNotice(""); }}
+            onClick={() => navigate(item.id)}
           >
             <item.icon size={20} />
             <span>{t(item.label)}</span>
           </button>
         ))}
-      </nav>
+      </nav>}
       {active && (
         <LessonPlayer
           key={`${active.lesson.id}-${active.review}`}

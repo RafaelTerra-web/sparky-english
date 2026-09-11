@@ -240,13 +240,22 @@ progress::-moz-progress-bar {
 .skip-link {
   position: fixed;
   left: 15px;
-  top: -100px;
+  top: 15px;
   z-index: 99;
   padding: 14px;
   background: #fff;
+  color: #102f29;
+  clip-path: inset(100%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
 }
-.skip-link:focus {
-  top: 15px;
+.skip-link:focus-visible {
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
 }
 
 /* Login: one teaching example instead of a marketing slogan. */

@@ -11,6 +11,7 @@ import {
 } from "@/lib/auth-session";
 import {
   buyCosmetic,
+  checkIn,
   completeStudy,
   equipCosmetic,
   equipNotebookTheme,
@@ -88,8 +89,19 @@ export async function POST(request: Request) {
   let earned = 0;
   let spent = 0;
   let reason = "updated";
+  let streakAdvanced = false;
+  let streakMilestone = false;
+  let shouldPersist = true;
   try {
-    if (body.action === "complete") {
+    if (body.action === "check-in") {
+      const result = checkIn(state, new Date());
+      state = result.state;
+      earned = result.earned;
+      streakAdvanced = result.advanced;
+      streakMilestone = result.milestone;
+      shouldPersist = result.advanced;
+      reason = result.milestone ? "streak-milestone" : result.advanced ? "streak" : "already-checked-in";
+    } else if (body.action === "complete") {
       if (typeof body.lessonId !== "string" || typeof body.review !== "boolean")
         throw new Error("invalid-request");
       if (typeof body.receipt !== "string") throw new Error("study-incomplete");
@@ -145,14 +157,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: code }, { status });
   }
   try {
-    await persistRewards(value.user.id, state, value.revision);
-    if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
+    if (shouldPersist) {
+      await persistRewards(value.user.id, state, value.revision);
+      if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
+    }
   } catch (error) {
     const code = error instanceof Error ? error.message : "progress-unavailable";
     return NextResponse.json({ error: code }, { status: code === "progress-conflict" ? 409 : 503 });
   }
   return NextResponse.json(
-    { ...publicRewardState(state), earned, spent, reason, storage: value.storage },
+    { ...publicRewardState(state), earned, spent, reason, streakAdvanced, streakMilestone, storage: value.storage },
     { headers: { "cache-control": "private, no-store" } },
   );
 }

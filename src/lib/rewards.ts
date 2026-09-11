@@ -17,7 +17,7 @@ import {
 } from "./rewards-shared.ts";
 
 export type RewardState = {
-  version: 4;
+  version: 5;
   wardrobeVersion: 3;
   wardrobeRefund: number;
   sceneRefund: number;
@@ -30,6 +30,9 @@ export type RewardState = {
   reviewDay: number;
   reviewBits: string;
   reviewCount: number;
+  streakDay: number;
+  streakCount: number;
+  longestStreak: number;
   ownedBits: string;
   notebookTheme: string | null;
   mascot: MascotId;
@@ -44,7 +47,7 @@ const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 
 export function emptyRewardState(): RewardState {
   return {
-    version: 4,
+    version: 5,
     wardrobeVersion: 3,
     wardrobeRefund: 0,
     sceneRefund: 0,
@@ -57,6 +60,9 @@ export function emptyRewardState(): RewardState {
     reviewDay: 0,
     reviewBits: blankBits(lessonBytes),
     reviewCount: 0,
+    streakDay: 0,
+    streakCount: 0,
+    longestStreak: 0,
     ownedBits: blankBits(storeBytes),
     notebookTheme: null,
     mascot: "sparky",
@@ -107,8 +113,8 @@ export function normalizeRewardState(input: unknown): RewardState {
     owned?: unknown[];
     equipped?: Record<string, Record<string, string>>;
   };
-  if (raw.version !== 1 && raw.version !== 3 && raw.version !== 4) return blank;
-  const ownedBits = raw.version === 3 || raw.version === 4
+  if (raw.version !== 1 && raw.version !== 3 && raw.version !== 4 && raw.version !== 5) return blank;
+  const ownedBits = raw.version === 3 || raw.version === 4 || raw.version === 5
     ? decodeBits(raw.ownedBits, storeBytes)
     : Buffer.alloc(storeBytes);
   if (raw.version === 1 && Array.isArray(raw.owned)) {
@@ -132,7 +138,7 @@ export function normalizeRewardState(input: unknown): RewardState {
     }
   }
 
-  const needsModularMigration = raw.version !== 4 || raw.wardrobeVersion !== 3;
+  const needsModularMigration = (raw.version !== 4 && raw.version !== 5) || raw.wardrobeVersion !== 3;
   if (needsModularMigration) {
     for (const [lookId, grants] of Object.entries(legacyLookGrants)) {
       const lookIndex = storeLedger.indexOf(lookId as typeof storeLedger[number]);
@@ -167,8 +173,11 @@ export function normalizeRewardState(input: unknown): RewardState {
       }
     }
   }
+  const streakDay = typeof raw.streakDay === "number" && Number.isSafeInteger(raw.streakDay) && raw.streakDay >= 0 && raw.streakDay <= 1000000 ? raw.streakDay : 0;
+  const streakCount = typeof raw.streakCount === "number" && Number.isSafeInteger(raw.streakCount) && raw.streakCount >= 0 && raw.streakCount <= 10000 ? raw.streakCount : 0;
+  const longestStreak = typeof raw.longestStreak === "number" && Number.isSafeInteger(raw.longestStreak) && raw.longestStreak >= 0 && raw.longestStreak <= 10000 ? raw.longestStreak : 0;
   return {
-    version: 4,
+    version: 5,
     wardrobeVersion: 3,
     wardrobeRefund: Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : wardrobeRefund,
     sceneRefund: Math.min(650, (Number.isSafeInteger(raw.sceneRefund) && raw.sceneRefund! >= 0 ? raw.sceneRefund! : 0) + newSceneRefund),
@@ -198,6 +207,9 @@ export function normalizeRewardState(input: unknown): RewardState {
       raw.reviewCount <= 10
         ? raw.reviewCount
         : 0,
+    streakDay,
+    streakCount,
+    longestStreak: Math.max(streakCount, longestStreak),
     ownedBits: ownedBits.toString("base64url"),
     notebookTheme: notebookThemeCatalog.some(item => item.id === raw.notebookTheme && owned.includes(item.id)) ? raw.notebookTheme! : null,
     mascot,
@@ -218,6 +230,7 @@ export function publicRewardState(state: RewardState): PublicRewardState {
   });
   return {
     dailyReviews: { day: new Date(state.reviewDay * 86400000).toISOString().slice(0,10), count: state.reviewCount },
+    streak: { count: state.streakCount, longest: Math.max(state.streakCount, state.longestStreak), lastDay: state.streakDay ? dayIso(state.streakDay).slice(0, 10) : null },
     coins: state.coins,
     completed,
     reviews,
@@ -228,6 +241,20 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     wardrobeRefund: state.wardrobeRefund,
     sceneRefund: state.sceneRefund,
   };
+}
+
+export function checkIn(current: RewardState, now = new Date()) {
+  const state = normalizeRewardState(current);
+  const today = dayNumber(now);
+  if (state.streakDay === today)
+    return { state, advanced: false, milestone: false, earned: 0 };
+  state.streakCount = state.streakDay === today - 1 ? state.streakCount + 1 : 1;
+  state.streakDay = today;
+  state.longestStreak = Math.max(state.longestStreak, state.streakCount);
+  const milestone = state.streakCount > 1 && state.streakCount % 7 === 0;
+  const earned = milestone ? 5 : 0;
+  state.coins = Math.min(100000, state.coins + earned);
+  return { state, advanced: true, milestone, earned };
 }
 
 export function completeStudy(

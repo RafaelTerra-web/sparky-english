@@ -1,0 +1,90 @@
+{
+  "version": 2,
+  "createdAt": "2026-09-11",
+  "artDirection": "Expressive 2D motion pack with a mint trail and a standalone warm learning flame on transparent backgrounds.",
+  "higgsfield": {
+    "model": "hf_mult_motion_control",
+    "jobId": "2ad8d4e5-ee0e-4313-a100-46feec8b4c61",
+    "statusAtPackaging": "queued",
+    "freeGeneration": true,
+    "characterMediaId": "2a782601-a4be-49af-a772-154068193b61",
+    "drivingMediaId": "c429db09-05d9-4188-8a5c-c180870cfd24"
+  },
+  "publishedSource": {
+    "kind": "deterministic-driving-preview",
+    "script": "scripts/create-streak-driving-video.mjs",
+    "note": "Published immediately from the same approved driving motion while the provider render remains queued. Replace atomically only after visual and alpha-channel review."
+  },
+  "assets": [
+    {
+      "file": "sparky-loader.webm",
+      "format": "WebM VP9",
+      "alpha": true,
+      "width": 320,
+      "height": 320,
+      "bytes": 58485,
+      "sha256": "01a51d2e7b26943f347472accf905eda1b67a478647f0aff4d6a111023aa79d7"
+    },
+    {
+      "file": "sparky-loader.webp",
+      "format": "animated WebP",
+      "alpha": true,
+      "width": 96,
+      "height": 96,
+      "bytes": 52224,
+      "sha256": "bb9e9574673d975605c56dcbcb35d28aa33223ba304af5caf7093890dad4ac3f"
+    },
+    {
+      "file": "sparky-transition.webm",
+      "format": "WebM VP9",
+      "alpha": true,
+      "width": 320,
+      "height": 320,
+      "bytes": 93837,
+      "sha256": "f1da5ccf91fd14b51148e0300136850616be4bc45d13658b29d0e49140736b4e"
+    },
+    {
+      "file": "sparky-transition.webp",
+      "format": "animated WebP",
+      "alpha": true,
+      "width": 150,
+      "height": 150,
+      "bytes": 110754,
+      "sha256": "39c16386888d10e704657ea530d9befb9722d880e2e6b88d81e490933a40f251"
+    },
+    {
+      "file": "streak-flame.png",
+      "format": "PNG source",
+      "alpha": true,
+      "width": 1241,
+      "height": 1268,
+      "bytes": 798564,
+      "sha256": "b209836ed5c7beb533dc025a46dbd304659d9eb8e0f51110b51db7aaf87d477c"
+    },
+    {
+      "file": "streak-flame-96.png",
+      "format": "PNG",
+      "alpha": true,
+      "width": 96,
+      "height": 96,
+      "bytes": 13000,
+      "sha256": "6e066f7cd7d05b8ef84751722d687c2c510caa10e9b7f14872eb3ae4644d2fea"
+    },
+    {
+      "file": "streak-flame-192.png",
+      "format": "PNG",
+      "alpha": true,
+      "width": 192,
+      "height": 192,
+      "bytes": 41031,
+      "sha256": "1914ba692387427a36fd4469a88c6f8bbedaee75c45ed7a100d81f6554d33386"
+    }
+  ],
+  "streakArtwork": {
+    "provider": "OpenAI built-in image generation",
+    "requestedModel": "GPT Image 2.5",
+    "actualModel": "managed by built-in generator (identifier not exposed)",
+    "promptSummary": "Single friendly cartoon learning flame, no Sparky or other mascot, transparent PNG, readable on light and dark themes.",
+    "sourceFile": "streak-flame.png"
+  }
+}

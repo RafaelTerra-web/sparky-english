@@ -3,6 +3,7 @@ import test from "node:test";
 import { lessons, modules } from "../src/lib/curriculum.ts";
 import {
   buyCosmetic,
+  checkIn,
   completeStudy,
   emptyRewardState,
   equipCosmetic,
@@ -10,6 +11,36 @@ import {
   publicRewardState,
   selectMascot,
 } from "../src/lib/rewards.ts";
+
+test("daily check-in advances once per Sao Paulo day and rewards weekly milestones", () => {
+  let state = emptyRewardState();
+  for (let day = 5; day <= 11; day++) {
+    const result = checkIn(state, new Date(`2026-09-${String(day).padStart(2, "0")}T12:00:00Z`));
+    state = result.state;
+    assert.equal(result.advanced, true);
+    assert.equal(result.earned, day === 11 ? 5 : 0);
+  }
+  assert.deepEqual(publicRewardState(state).streak, { count: 7, longest: 7, lastDay: "2026-09-11" });
+  const duplicate = checkIn(state, new Date("2026-09-11T22:00:00Z"));
+  assert.equal(duplicate.advanced, false);
+  assert.equal(duplicate.state.coins, 5);
+  const reset = checkIn(state, new Date("2026-09-14T12:00:00Z"));
+  assert.equal(reset.state.streakCount, 1);
+  assert.equal(reset.state.longestStreak, 7);
+});
+
+test("v4 progress migrates to streak storage without changing learning or currency", () => {
+  const legacy = completeStudy(emptyRewardState(), lessons[0].id, false, new Date("2026-09-10T12:00:00Z")).state;
+  legacy.version = 4;
+  delete legacy.streakDay;
+  delete legacy.streakCount;
+  delete legacy.longestStreak;
+  const migrated = normalizeRewardState(legacy);
+  assert.equal(migrated.version, 5);
+  assert.equal(migrated.coins, 10);
+  assert.ok(publicRewardState(migrated).completed[lessons[0].id]);
+  assert.deepEqual(publicRewardState(migrated).streak, { count: 0, longest: 0, lastDay: null });
+});
 
 test("first completion rewards once and schedules a server-side review", () => {
   const first = completeStudy(emptyRewardState(), lessons[0].id, false, new Date("2026-09-05T12:00:00Z"));

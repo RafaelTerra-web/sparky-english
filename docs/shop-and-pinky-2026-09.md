@@ -38,7 +38,7 @@ Rascunhos entram no mesmo Caderno das lições, separados por conta, com limite 
 
 Os oito acessórios CSS retirados são reembolsados integralmente a quem os possui: lenço 60, boné 80, moletom 150, óculos 90, fones 110, boina 95, bolsa 125 e cardigã 150. IDs duplicados não duplicam a devolução. O máximo é 860 moedas.
 
-`normalizeRewardState` reconhece os estados antigos, converte o equipamento por slots e devolve até 650 moedas pelos oito cenários aposentados. Um bitset registra cada devolução e torna a migração idempotente. O estado normalizado recebe `version: 4`, `wardrobeVersion: 3`, `retiredRefundBits` e `sceneRefund`. A primeira leitura autenticada persiste a migração com comparação de revisão e uma nova tentativa em caso de conflito.
+`normalizeRewardState` reconhece os estados antigos, converte o equipamento por slots e devolve até 650 moedas pelos oito cenários aposentados. Um bitset registra cada devolução e torna a migração idempotente. O estado normalizado recebe `version: 5`, `wardrobeVersion: 3`, `retiredRefundBits`, `sceneRefund` e os contadores da sequência diária. A primeira leitura autenticada persiste a migração com comparação de revisão e uma nova tentativa em caso de conflito.
 
 Conclusões, revisões, mascote escolhido e looks completos comprados são preservados. O Ateliê mantém a propriedade e recebe a arte da nova Pinky. Persistência permanece conforme a configuração existente: cookie criptografado no navegador ou estado com controle de revisão no banco. A migração não muda essa arquitetura.
 

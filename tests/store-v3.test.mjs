@@ -17,7 +17,7 @@ test('store bit identities are permanent, unique and cover every purchasable ite
 test('migration retires scenes, refunds once and grants modular legacy pieces', () => {
   const legacy = { ...emptyRewardState(), version: 1, coins: 47, owned: ['scene-garden','pinky-focus-look','scene-garden'], equipped: { sparky: { scene: 'scene-garden' }, pinky: { style: 'pinky-focus-look' } } };
   const migrated = normalizeRewardState(legacy);
-  assert.equal(migrated.version, 4); assert.equal(migrated.coins, 77);
+  assert.equal(migrated.version, 5); assert.equal(migrated.coins, 77);
   assert.equal(migrated.sceneRefund, 30);
   assert.deepEqual(publicRewardState(migrated).owned, ['pinky-focus-look','accessory-focus-headphones-v4']);
   assert.deepEqual(migrated.equipped, { sparky: {}, pinky: { outfit: 'pinky-focus-look', head: 'accessory-focus-headphones-v4' } });

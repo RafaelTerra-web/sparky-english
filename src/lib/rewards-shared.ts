@@ -42,6 +42,7 @@ export type PublicRewardState = {
   mascot: MascotId;
   equipped: EquippedItems;
   dailyReviews?: { day: string; count: number };
+  streak?: { count: number; longest: number; lastDay: string | null };
   wardrobeRefund?: number;
   sceneRefund?: number;
   notebookTheme: string | null;
