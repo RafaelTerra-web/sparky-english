@@ -9,7 +9,7 @@ async function account(page) {
 }
 async function audit(page) {
  return page.evaluate(()=>{
-  const rgb=s=>(s.match(/[\d.]+/g)||[]).map(Number);
+  const rgb=s=>{const values=(s.match(/[\d.]+/g)||[]).map(Number);return s.startsWith('color(srgb ')?values.map((value,index)=>index<3?value*255:value):values;};
   const lum=a=>a.slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((x,v,i)=>x+v*[.2126,.7152,.0722][i],0);
   const issues=[];
   for(const el of (document.querySelector('dialog[open]')||document).querySelectorAll('p,span,small,strong,h1,h2,h3,summary,label,button,blockquote')){

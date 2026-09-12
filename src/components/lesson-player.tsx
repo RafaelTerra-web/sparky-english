@@ -1,6 +1,7 @@
 "use client";
+import { englishVariety } from "@/lib/language-policy";
 import { lessonMetadata, pathsForLesson } from "@/lib/course-guide";
-import { t, localizeAttribute } from "@/lib/interface-language";
+import { t, supportT, targetText, useSupportLanguage, setSupportLanguage, localizeAttribute, getSupportLocale } from "@/lib/interface-language";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { lessonIllustrationId } from "@/lib/lesson-illustrations";
@@ -47,6 +48,7 @@ export default function LessonPlayer({
   onClose: () => void;
   onFinish: (receipt: string) => Promise<boolean>;
 }) {
+  const supportLanguage = useSupportLanguage();
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -218,7 +220,7 @@ export default function LessonPlayer({
           <X size={20} />
         </button>
         <div>
-          <p>{t(review ? "Revisão" : lesson.title)}</p>
+          <p lang={getSupportLocale()}>{supportT(review ? "Revisão" : lesson.title)}</p>
           <progress
             value={index + 1}
             max={steps.length}
@@ -230,8 +232,8 @@ export default function LessonPlayer({
         </span>
       </header>
       <div className="lesson-body" ref={body} data-step-kind={step.kind}>
-        {error && <p className="study-error" role="alert">{t(error)}</p>}
-        {storageError && <p className="study-error" role="alert">{t("O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.")}</p>}
+        {error && <p lang={getSupportLocale()} className="study-error" role="alert">{supportT(error)}</p>}
+        {storageError && <p lang={getSupportLocale()} className="study-error" role="alert">{supportT("O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.")}</p>}
         {showIllustration && (
           <figure className="lesson-illustration" aria-hidden="true">
             <Image
@@ -271,62 +273,71 @@ export default function LessonPlayer({
         <h2 id="lesson-title" ref={heading} tabIndex={-1}>
           {t(step.title)}
         </h2>
+        {index === 0 && !review && <details className="learning-disclosure lesson-language-help">
+          <summary>{t("Idiomas desta lição")}</summary>
+          <p>{englishVariety(lesson.steps.map(item => [item.english, ...(item.options ?? [])].join(" ")).join(" "))}</p>
+          <p lang={supportLanguage}>{supportT("O padrão de produção é US English. Grafias britânicas aparecem como exposição ao inglês internacional; esta etiqueta não identifica o sotaque do áudio.")}</p>
+          <label htmlFor="lesson-support-language">{t("Idioma das explicações")}</label>
+          <select id="lesson-support-language" value={supportLanguage} onChange={event => void setSupportLanguage(event.target.value as "pt-BR" | "en", userId).catch(() => setError("Não foi possível carregar o inglês. Tente novamente."))}>
+            <option value="pt-BR">Português (Brasil)</option><option value="en">English</option>
+          </select>
+        </details>}
         {step.kind === "vocabulary" ? (
           <dl className="vocabulary-cards" aria-label={localizeAttribute("Vocabulário da lição")}>
             {step.body.split("\n").filter(Boolean).map((line, lineIndex) => {
               const separator = line.indexOf(" — ");
               return <div key={lineIndex}>
-                <dt lang={separator >= 0 ? "en" : undefined}>{t(separator >= 0 ? line.slice(0, separator) : line)}</dt>
-                {separator >= 0 && <dd>{t(line.slice(separator + 3))}</dd>}
+                <dt lang={separator >= 0 ? "en" : undefined}>{targetText(separator >= 0 ? line.slice(0, separator) : line)}</dt>
+                {separator >= 0 && <dd lang={supportLanguage}>{supportT(line.slice(separator + 3))}</dd>}
               </div>;
             })}
           </dl>
-        ) : <p className="step-explanation">{t(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
-        {index===0&&!review&&studyMode==='practice'&&<p className="practice-context">{t('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{t('Próxima na trilha:')}{t(nextLesson.title)}</>}</p>}
-        {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p>{t(lessonMetadata[lesson.id].outcome)}.</p><p>{t('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p><strong>{t('Depois de concluir, próxima na trilha:')}</strong>{t(nextLesson.title)}</p>:<p>{t('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
+        ) : <p lang={step.kind === "order_words" ? "pt-BR" : supportLanguage} className="step-explanation">{step.kind === "order_words" ? step.body : supportT(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
+        {index===0&&!review&&studyMode==='practice'&&<p lang={getSupportLocale()} className="practice-context">{supportT('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{supportT('Próxima na trilha:')}{supportT(nextLesson.title)}</>}</p>}
+        {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p lang={getSupportLocale()}>{supportT(lessonMetadata[lesson.id].outcome)}.</p><p lang={getSupportLocale()}>{supportT('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p lang={getSupportLocale()}><strong>{supportT('Depois de concluir, próxima na trilha:')}</strong>{supportT(nextLesson.title)}</p>:<p lang={getSupportLocale()}>{supportT('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
         {step.kind === "hook" && (
           <div className="lesson-identity-card">
-            <p><b>{t("Seu desafio:")}</b> {t(lesson.experience.challenge)}</p>
-            <p><b>{t("Para usar no dia a dia:")}</b> {t(lesson.experience.application)}.</p>
-            <details className="learning-disclosure"><summary>{t("Ver uma dica")}</summary><p>{t(lesson.experience.discovery)}</p></details>
+            <p lang={getSupportLocale()}><b>{supportT("Seu desafio:")}</b> {supportT(lesson.experience.challenge)}</p>
+            <p lang={getSupportLocale()}><b>{supportT("Para usar no dia a dia:")}</b> {supportT(lesson.experience.application)}.</p>
+            <details className="learning-disclosure"><summary>{t("Ver uma dica")}</summary><p lang={getSupportLocale()}>{supportT(lesson.experience.discovery)}</p></details>
           </div>
         )}
 
         {step.kind === "pronunciation" && step.pronunciation && (
           <section className="pronunciation-lab" aria-label={localizeAttribute("Treino de pronúncia")}>
-            <div className="pronunciation-focus"><strong>{t(step.pronunciation.focus)}</strong>{step.pronunciation.ipa && <span>{t(step.pronunciation.ipa)}</span>}</div>
-            <p><strong>{t("Posição da boca:")}</strong> {t(step.pronunciation.mouth)}</p>
+            <div className="pronunciation-focus"><strong>{supportT(step.pronunciation.focus)}</strong>{step.pronunciation.ipa && <span>{targetText(step.pronunciation.ipa)}</span>}</div>
+            <p lang={getSupportLocale()}><strong>{supportT("Posição da boca:")}</strong> {supportT(step.pronunciation.mouth)}</p>
             <div className="speech-forms">
-              <div><span>{t("FRASE DO ÁUDIO")}</span><p lang="en">{t(step.pronunciation.careful)}</p></div>
-              <div><span>{t("COMO ESCUTAR")}</span><p>{t(step.pronunciation.natural)}</p></div>
+              <div><span>{t("FRASE DO ÁUDIO")}</span><p lang="en">{targetText(step.pronunciation.careful)}</p></div>
+              <div><span>{t("COMO ESCUTAR")}</span><p lang={getSupportLocale()}>{supportT(step.pronunciation.natural)}</p></div>
             </div>
-            <p><strong>{t("O que muda:")}</strong> {t(step.pronunciation.change)}</p>
+            <p lang={getSupportLocale()}><strong>{supportT("O que muda:")}</strong> {supportT(step.pronunciation.change)}</p>
             {step.pronunciation.contrast && (
-              <div className="contrast-drill"><span>{t("COMPARE OS SONS")}</span><p lang="en">{t(step.pronunciation.contrast[0])} <strong>{t("×")}</strong> {t(step.pronunciation.contrast[1])}</p><small>{t("Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.")}</small></div>
+              <div className="contrast-drill"><span>{t("COMPARE OS SONS")}</span><p lang="en">{targetText(step.pronunciation.contrast[0])} <strong>{targetText("×")}</strong> {targetText(step.pronunciation.contrast[1])}</p><small lang={getSupportLocale()}>{supportT("Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.")}</small></div>
             )}
             <ol className="repeat-ladder">
-              {step.pronunciation.drill.map((item, drillIndex) => <li key={drillIndex}><span>{t(drillIndex + 1)}</span><span lang="en">{t(item)}</span></li>)}
+              {step.pronunciation.drill.map((item, drillIndex) => <li lang={getSupportLocale()} key={drillIndex}><span>{supportT(drillIndex + 1)}</span><span lang="en">{targetText(item)}</span></li>)}
             </ol>
-            <p className="microtrain-instruction"><strong>{t("Repita acompanhando a voz (shadowing):")}</strong>{t(" ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.")}</p>
+            <p lang={getSupportLocale()} className="microtrain-instruction"><strong>{supportT("Repita acompanhando a voz (shadowing):")}</strong>{supportT(" ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.")}</p>
             {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />}
           </section>
         )}
         {step.kind === "error_analysis" && step.contrasts && (
           <div className="usage-contrast" aria-label={localizeAttribute("Comparação de uso")}>
-            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{t(item.label)}</span><p lang="en">{t(item.text)}</p></div>)}
-            <p>{t("Que escolha precisa mudar para atender ao contexto da frase?")}</p>
+            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{t(item.label)}</span><p lang="en">{targetText(item.text)}</p></div>)}
+            <p lang={getSupportLocale()}>{supportT("Que escolha precisa mudar para atender ao contexto da frase?")}</p>
             <details key={index} className="learning-disclosure">
               <summary>{t("Ver o ajuste e o motivo")}</summary>
-              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{t(item.text)}</p>)}
-              <p>{t(step.explanation)}</p>
+              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{targetText(item.text)}</p>)}
+              <p lang={getSupportLocale()}>{supportT(step.explanation)}</p>
             </details>
           </div>
         )}
         {!review && step.kind === "pronunciation" && lesson.steps.find(item => item.kind === "production")?.speakingTask && (
           <details className="learning-disclosure">
             <summary>{t("Experimente uma resposta sua")}</summary>
-            <p>{t(lesson.steps.find(item => item.kind === "production")!.speakingTask)}</p>
-            <p>{t("Prática opcional em voz alta, sem precisar escrever ou gravar.")}</p>
+            <p lang={getSupportLocale()}>{supportT(lesson.steps.find(item => item.kind === "production")!.speakingTask)}</p>
+            <p lang={getSupportLocale()}>{supportT("Prática opcional em voz alta, sem precisar escrever ou gravar.")}</p>
           </details>
         )}
         {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
@@ -338,7 +349,7 @@ export default function LessonPlayer({
         )}
         {voiceEnabled && step.kind === "example" && (
           <div className="listening-reveal">
-            <p>{t(listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto.")}</p>
+            <p lang={getSupportLocale()}>{supportT(listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto.")}</p>
             <button className="secondary-button" onClick={() => setRevealed(value => !value)} aria-expanded={revealed}>
               {t(revealed ? "Ocultar frase" : "Revelar frase")}
             </button>
@@ -349,7 +360,7 @@ export default function LessonPlayer({
             className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
             lang="en"
           >
-            {t(step.english)}
+            {targetText(step.english)}
           </div>
         )}
         {step.translation && (step.kind !== "example" || !voiceEnabled || revealed) && (
@@ -360,9 +371,9 @@ export default function LessonPlayer({
               aria-expanded={translation}
             >
               <Languages size={16} />
-              {t(step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução" : "Ver tradução")}
+              {t(step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução em português" : "Ver tradução em português")}
             </button>
-            {translation && <p>{t(step.translation)}</p>}
+            {translation && <p lang="pt-BR" data-language-role="translation">{step.translation}</p>}
           </div>
         )}
         {step.english && step.kind !== "summary" && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{t(savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno")}</button>}
@@ -379,7 +390,7 @@ export default function LessonPlayer({
                     }
                     lang="en"
                   >
-                    {t(step.options![token])} <X size={12} />
+                    {targetText(step.options![token])} <X size={12} />
                   </button>
                 ))
               ) : (
@@ -394,7 +405,7 @@ export default function LessonPlayer({
                   onClick={() => setTokens([...tokens, token])}
                   lang="en"
                 >
-                  {t(word)}
+                  {targetText(word)}
                 </button>
               ))}
             </div>
@@ -415,7 +426,7 @@ export default function LessonPlayer({
                   onClick={() => setAnswer(option)}
                 >
                   <span>{t(String.fromCharCode(65 + optionIndex))}</span>
-                  <span lang="en">{t(option)}</span>
+                  <span lang="en">{targetText(option)}</span>
                   {answer === option && <Check size={17} />}
                 </button>
               ))}
@@ -437,13 +448,16 @@ export default function LessonPlayer({
               .map((item, noteIndex) => (
                 <section key={noteIndex}>
                   <h3>{t(item.title)}</h3>
-                  <p>{t(item.body)}</p>
+                  {item.kind === "vocabulary" ? <dl className="vocabulary-cards">{item.body.split("\n").filter(Boolean).map((line, i) => {
+                    const separator = line.indexOf(" — ");
+                    return <div key={i}><dt lang="en">{separator < 0 ? line : line.slice(0, separator)}</dt>{separator >= 0 && <dd lang={supportLanguage}>{supportT(line.slice(separator + 3))}</dd>}</div>;
+                  })}</dl> : <p lang={supportLanguage}>{supportT(item.body)}</p>}
                 </section>
               ))}
           </details>
         )}
         {retrievalExercise && assisted && !checked && (
-          <p className="review-assistance-status" role="status">{t("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
+          <p lang={getSupportLocale()} className="review-assistance-status" role="status">{supportT("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
         )}
         {checked && (
           <div
@@ -454,9 +468,9 @@ export default function LessonPlayer({
             <strong>
               {t(correct ? "Resposta correta." : "Vamos rever essa resposta.")}
             </strong>
-            <p>{t(step.explanation)}</p>
+            <p lang={getSupportLocale()}>{supportT(step.explanation)}</p>
             {!correct && (
-              <p>{t("Resposta: ")}<span lang="en">{t(step.answer)}</span>
+              <p lang={getSupportLocale()}>{supportT("Resposta: ")}<span lang="en">{targetText(step.answer)}</span>
               </p>
             )}
           </div>

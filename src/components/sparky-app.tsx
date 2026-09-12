@@ -1,6 +1,7 @@
 "use client";
-import { getInterfaceLocale, t, localizeAttribute } from "@/lib/interface-language";
-import { useInterfaceLanguage, setInterfaceLanguage } from "@/lib/interface-language";
+import { getInterfaceLocale, getSupportLocale, t, supportT, targetText, localizeAttribute } from "@/lib/interface-language";
+import { useInterfaceLanguage } from "@/lib/interface-language";
+import { LearningLanguagePreferences } from "./learning-language-preferences";
 import { nextInTrail, complementaryPractice, recommendationReason, moduleObjective } from "@/lib/course-guide";
 import { disciplines, type Discipline } from "@/lib/course-metadata";
 import { planReviews, studyDay } from "@/lib/review-plan";
@@ -554,7 +555,7 @@ export default function SparkyApp() {
         </header>}
         {notice && (
           <div className="notice" role="status">
-            {t(notice)}
+            {supportT(notice)}
             <button
               aria-label={localizeAttribute("Dispensar mensagem")}
               onClick={() => setNotice("")}
@@ -649,7 +650,7 @@ export default function SparkyApp() {
               <div><p className="eyebrow">{t("CALL DE CONVERSAÇÃO · 10 MIN")}</p><h2>{t(`Fale com ${reward.mascot === "pinky" ? "a Pinky" : "o Sparky"}`)}</h2><p>{t("Pratique uma situação real no seu nível e receba feedback ao terminar.")}</p></div>
               <button className="primary-button" onClick={() => navigate("call")}>{t("Praticar conversação")}<ArrowRight size={17}/></button>
             </section>}
-            <section className="learning-note"><span className="note-icon"><Languages size={22}/></span><div><h2>{t('Objetivo do módulo')}</h2><p>{t(moduleObjective(next.moduleId!))}.</p><button className="text-button" onClick={()=>{setCourseMode('guided');navigate('course');}}>{t('Ver minha trilha')}<ArrowRight size={15}/></button></div></section>
+            <section className="learning-note"><span className="note-icon"><Languages size={22}/></span><div><h2>{t('Objetivo do módulo')}</h2><p>{supportT(moduleObjective(next.moduleId!))}.</p><button className="text-button" onClick={()=>{setCourseMode('guided');navigate('course');}}>{t('Ver minha trilha')}<ArrowRight size={15}/></button></div></section>
             <section className="complementary-practice"><div className="section-heading"><div><p className="eyebrow">{t('Opcional')}</p><h2>{t('Treino complementar')}</h2></div><button className="text-button" onClick={()=>{setCourseMode('practice');navigate('course');}}>{t('Treinar por disciplina')}<ArrowRight size={15}/></button></div>
              <p>{t('Escolha uma prática extra sem perder o próximo passo do curso.')}</p>
              <div className="lesson-cards">{complementary.map(({lesson,reason})=><div key={lesson.id}><LessonCard lesson={lesson} number={lessons.findIndex(l=>l.id===lesson.id)+1} done={Boolean(progress.completed[lesson.id])} onOpen={()=>open(lesson,false,'practice')}/><p className="recommendation-reason">{t(reason)}</p></div>)}</div>
@@ -764,10 +765,7 @@ export default function SparkyApp() {
                       <Check size={13} />{t("Conta Google conectada")}</span>
                   </div>
                 </div>
-                <div className="profile-setting">
-                  <label htmlFor="interface-language">{t("Idioma do aplicativo")}</label>
-                  <select id="interface-language" value={interfaceLanguage} onChange={e=>void setInterfaceLanguage(e.target.value as "pt-BR"|"en",user.id).catch(()=>setNotice("Não foi possível carregar o inglês. Tente novamente."))}><option value="pt-BR">{t("Português (Brasil)")}</option><option value="en">{t("English")}</option></select>
-                </div>
+                <LearningLanguagePreferences userId={user.id} />
                 <div className="profile-setting">
                   <span>{t("Idioma de estudo")}</span>
                   <strong>{t("Inglês")}</strong>
@@ -810,20 +808,20 @@ export default function SparkyApp() {
               </section>
               <aside className="profile-note">
                 <Globe2 size={24} />
-                <h2>{t("Sobre seu progresso")}</h2>
-                <p><strong>{t(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
-                <p>
-                  {t(reward.storage === "account"
+                <h2>{supportT("Sobre seu progresso")}</h2>
+                <p lang={getSupportLocale()}><strong>{supportT(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
+                <p lang={getSupportLocale()}>
+                  {supportT(reward.storage === "account"
                     ? "Suas lições concluídas, sequência, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
                     : "Suas conclusões, sequência, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
                 </p>
-                <p>{t("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.")}</p>
-                <p>
-                  {t(voiceEnabled
+                <p lang={getSupportLocale()}>{supportT("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.")}</p>
+                <p lang={getSupportLocale()}>
+                  {supportT(voiceEnabled
                     ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."
                     : "Os recursos de voz estão desativados nesta versão.")}
                 </p>
-                <a href="/privacidade">{t("Como seus dados são usados ")}<ArrowRight size={14} />
+                <a href="/privacidade">{supportT("Como seus dados são usados ")}<ArrowRight size={14} />
                 </a>
               </aside>
             </div>
@@ -1005,7 +1003,7 @@ function LessonCard({
           {t(done && "· Concluída")}
         </span>
         <strong>{t(lesson.title)}</strong>
-        <span lang="en">{t(lesson.englishTitle)}</span>
+        <span lang="en">{targetText(lesson.englishTitle)}</span>
       </span>
       <ChevronRight size={18} />
     </button>

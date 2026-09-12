@@ -4,7 +4,7 @@ import { Check, ChevronRight, Trophy, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { isStreakMilestone, streakTargets } from "@/lib/streak-milestones";
-import { localizeAttribute, t } from "@/lib/interface-language";
+import { localizeAttribute, t, supportT, getSupportLocale } from "@/lib/interface-language";
 
 export function MotionLoader({ label }: { label: string }) {
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -25,7 +25,7 @@ export function MotionLoader({ label }: { label: string }) {
         {pageLoaded && !videoFailed && <video className={videoReady ? "ready" : ""} src="/motion/sparky-loader.webm" autoPlay muted loop playsInline onCanPlay={() => setVideoReady(true)} onError={() => setVideoFailed(true)} />}
         {(!videoReady || videoFailed) && <><span className="motion-loader-sparky"><Image src="/icons/sparky-192-v2.png" width={34} height={34} alt="" /></span><i /></>}
       </span>
-      <p>{t(label)}</p>
+      <p lang={getSupportLocale()}>{supportT(label)}</p>
     </div>
   );
 }
@@ -55,13 +55,13 @@ export function StreakBadge({ count, longest }: { count: number; longest: number
       <div className="streak-roadmap-content">
         <button type="button" className="streak-close" onClick={() => dialog.current?.close()} aria-label={localizeAttribute("Fechar sequência")}><X size={20}/></button>
         <div className="streak-roadmap-heading"><Image src="/motion/streak-flame-192.png" width={64} height={64} alt=""/><div><p className="eyebrow">{t("UM DIA DE CADA VEZ")}</p><h2 id="streak-roadmap-title">{t("Seu foguinho")}</h2></div></div>
-        <div className="streak-roadmap-stats"><p><strong>{count}</strong> {t(count === 1 ? "dia seguido" : "dias seguidos")}</p><span><Trophy size={15} aria-hidden="true"/>{t("Recorde")} · {longest}</span></div>
-        <p className="streak-roadmap-hint">{t("Entre todos os dias para manter sua sequência. Toque em um marco para explorar.")}</p>
+        <div className="streak-roadmap-stats"><p lang={getSupportLocale()}><strong>{count}</strong> {supportT(count === 1 ? "dia seguido" : "dias seguidos")}</p><span><Trophy size={15} aria-hidden="true"/>{t("Recorde")} · {longest}</span></div>
+        <p lang={getSupportLocale()} className="streak-roadmap-hint">{supportT("Entre todos os dias para manter sua sequência. Toque em um marco para explorar.")}</p>
         <div className="streak-targets" aria-label={localizeAttribute("Marcos da sequência")}>
-          {targets.map(day => <button type="button" key={day} className={count >= day ? "achieved" : ""} aria-pressed={selected === day} onClick={() => setSelected(day)}><span>{count >= day ? <Check size={14} aria-hidden="true"/> : day}</span><small>{day} {t("dias")}</small></button>)}
+          {targets.map(day => <button type="button" key={day} className={count >= day ? "achieved" : ""} aria-pressed={selected === day} onClick={() => setSelected(day)}><span>{count >= day ? <Check size={14} aria-hidden="true"/> : day}</span><small lang={getSupportLocale()}>{day} {supportT("dias")}</small></button>)}
         </div>
-        <div className="streak-milestone-detail" aria-live="polite"><strong>{selected} {t("dias")}</strong><span>{t(reached ? "Marco conquistado!" : "Seu próximo passo, no seu ritmo.")}</span><progress aria-label={localizeAttribute("Progresso até o marco selecionado")} value={Math.min(count, selected)} max={selected}/><small>{reached ? t("Você construiu esse hábito dia após dia.") : t("Faltam {count} dias para este marco.").replace("{count}", String(selected - count))}</small></div>
-        <p className="streak-roadmap-note">{t("A cada 7 dias seguidos: +5 moedas. Se perder um dia, seu aprendizado e suas moedas continuam com você.")}</p>
+        <div className="streak-milestone-detail" aria-live="polite"><strong>{selected} {t("dias")}</strong><span>{t(reached ? "Marco conquistado!" : "Seu próximo passo, no seu ritmo.")}</span><progress aria-label={localizeAttribute("Progresso até o marco selecionado")} value={Math.min(count, selected)} max={selected}/><small lang={getSupportLocale()}>{reached ? supportT("Você construiu esse hábito dia após dia.") : supportT("Faltam {count} dias para este marco.").replace("{count}", String(selected - count))}</small></div>
+        <p lang={getSupportLocale()} className="streak-roadmap-note">{supportT("A cada 7 dias seguidos: +5 moedas. Se perder um dia, seu aprendizado e suas moedas continuam com você.")}</p>
       </div>
     </dialog>
     </>
@@ -97,7 +97,7 @@ export function StreakCelebration({ count, milestone, earned, onClose }: { count
       <div>
         <p className="eyebrow">{t(special || milestone ? "MARCO DA SEQUÊNCIA" : "SEQUÊNCIA DIÁRIA")}</p>
         <strong>{count} {t(count === 1 ? "dia seguido" : "dias seguidos")}</strong>
-        <p>{special ? t("Um hábito que cresce com você. Parabéns pela constância!") : milestone ? <>{t("Você manteve o ritmo por")} {count} {t("dias.")}</> : t("Volte amanhã para manter o foguinho aceso.")}{earned > 0 && <> +{earned} {t("moedas.")}</>}</p>
+        <p lang={getSupportLocale()}>{special ? supportT("Um hábito que cresce com você. Parabéns pela constância!") : milestone ? <>{supportT("Você manteve o ritmo por")} {count} {supportT("dias.")}</> : supportT("Volte amanhã para manter o foguinho aceso.")}{earned > 0 && <> +{earned} {supportT("moedas.")}</>}</p>
       </div>
     </aside>
   );

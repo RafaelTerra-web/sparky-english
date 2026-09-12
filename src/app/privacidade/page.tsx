@@ -1,12 +1,17 @@
 "use client";
-import { t, useInterfaceLanguage } from "@/lib/interface-language";
+import { supportT as t, uiT, useSupportLanguage, setSupportLanguage, useInterfaceLanguage } from "@/lib/interface-language";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function PrivacyPage() {
   useInterfaceLanguage();
+  const support = useSupportLanguage();
+  const [languageError, setLanguageError] = useState(false);
   return (
-    <main className="privacy-page">
-      <Link href="/">{t("← Voltar ao Sparky English")}</Link>
+    <main className="privacy-page" lang={support}>
+      <label htmlFor="privacy-language">Português / English </label><select id="privacy-language" value={support} onChange={event => { setLanguageError(false); void setSupportLanguage(event.target.value as "pt-BR" | "en").catch(() => setLanguageError(true)); }}><option value="pt-BR">Português (Brasil)</option><option value="en">English</option></select>
+      {languageError && <p role="alert">{t("Não foi possível carregar o inglês. Tente novamente.")}</p>}
+      <Link href="/">{uiT("← Voltar ao Sparky English")}</Link>
       <h1>{t("Como seus dados são usados")}</h1>
       <p>{t("O Sparky English é um espaço privado para estudar inglês com explicações em português do Brasil.")}</p>
       <h2>{t("Entrada com Google")}</h2>

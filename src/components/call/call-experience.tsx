@@ -1,6 +1,6 @@
 "use client";
 
-import { localizeAttribute, t } from "@/lib/interface-language";
+import { localizeAttribute, t, supportT, getSupportLocale } from "@/lib/interface-language";
 import {
   ArrowLeft,
   Check,
@@ -404,9 +404,9 @@ export function CallExperience({
           </div>
           <div className={styles.privacyNote}>
             <strong>{t("Antes de começar")}</strong>
-            <p>{t("O microfone só liga quando você tocar em Falar. Cada gravação termina quando você tocar em Enviar ou após 45 segundos.")}</p>
+            <p lang={getSupportLocale()}>{supportT("O microfone só liga quando você tocar em Falar. Cada gravação termina quando você tocar em Enviar ou após 45 segundos.")}</p>
           </div>
-          {error && <p className={styles.error} role="alert">{t(error)}</p>}
+          {error && <p className={styles.error} role="alert">{supportT(error)}</p>}
           <button className={styles.primary} type="button" onClick={startCall}>
             <Mic size={19} />{t("Iniciar Call")}
           </button>
@@ -422,7 +422,7 @@ export function CallExperience({
           <span className={styles.completeMark}><Check aria-hidden="true" size={28} /></span>
           <p className={styles.eyebrow}>{t("Prática concluída")}</p>
           <h1 id="call-complete-heading">{t("Boa conversa")}{learnerName ? t(`, ${learnerName}`) : ""}!</h1>
-          {snapshot.summary && <p>{t(snapshot.summary)}</p>}
+          {snapshot.summary && <p lang={getSupportLocale()}>{supportT(snapshot.summary)}</p>}
           <div className={styles.completeStats}>
             <span><strong>{snapshot.turns.filter((turn) => turn.speaker === "learner").length}</strong>{t(" turnos falados")}</span>
             <span><strong>{completedObjectives}/{snapshot.objectives.length}</strong>{t(" objetivos")}</span>
@@ -465,11 +465,11 @@ export function CallExperience({
             <span className={styles.iconBox}><Target aria-hidden="true" size={19} /></span>
             <div><p>{t("Meta da conversa")}</p><h2 id="call-objectives-heading">{t("Seus objetivos")}</h2></div>
           </div>
-          {snapshot.context && <p className={styles.context}>{t(snapshot.context)}</p>}
+          {snapshot.context && <p className={styles.context}>{supportT(snapshot.context)}</p>}
           {snapshot.objectives.length ? <ul>{snapshot.objectives.map((objective) => (
             <li key={objective.id} className={objective.completed ? styles.objectiveDone : ""}>
               <span>{objective.completed ? <CheckCircle2 aria-hidden="true" size={18} /> : <span aria-hidden="true" className={styles.objectiveDot} />}</span>
-              <div><strong>{t(objective.label)}</strong>{objective.description && <small>{t(objective.description)}</small>}</div>
+              <div><strong>{t(objective.label)}</strong>{objective.description && <small>{supportT(objective.description)}</small>}</div>
             </li>
           ))}</ul> : <div className={styles.objectiveSkeleton} aria-label={localizeAttribute("Objetivos sendo preparados")}><span /><span /><span /></div>}
         </aside>
@@ -484,7 +484,7 @@ export function CallExperience({
               <article key={turn.id} className={`${styles.turn} ${turn.speaker === "learner" ? styles.learnerTurn : styles.mascotTurn}`}>
                 <div className={styles.turnMeta}><strong>{t(speakerName(turn, learnerName))}</strong>{turn.isPartial && <span>{t("transcrevendo…")}</span>}</div>
                 <p lang={turn.speaker === "learner" ? "en" : "en"}>{turn.text}</p>
-                {turn.translation && <details><summary>{t("Ver apoio em português")}</summary><p lang="pt-BR">{t(turn.translation)}</p></details>}
+                {turn.translation && <details><summary>{t("Ver apoio em português")}</summary><p lang="pt-BR">{turn.translation}</p></details>}
               </article>
             )) : <div className={styles.emptyTranscript}>
               <Volume2 aria-hidden="true" size={25} />
@@ -492,8 +492,8 @@ export function CallExperience({
             </div>}
             {snapshot.feedback && snapshot.turns.some((turn) => turn.speaker === "learner") && <article className={styles.turnFeedback}>
               <strong>{t("Dica deste turno")}</strong>
-              <p>{t(snapshot.feedback.message)}</p>
-              {snapshot.feedback.nextStep && <small>{t(snapshot.feedback.nextStep)}</small>}
+              <p lang={getSupportLocale()}>{supportT(snapshot.feedback.message)}</p>
+              {snapshot.feedback.nextStep && <small>{supportT(snapshot.feedback.nextStep)}</small>}
             </article>}
             <div ref={transcriptEnd} />
           </div>
@@ -503,8 +503,8 @@ export function CallExperience({
               <span className={styles.statePulse} aria-hidden="true" />
               <div><strong>{t(phaseCopy(snapshot.phase, mascotName))}</strong><small>{t(snapshot.phase === "listening" ? "Fale em inglês e toque em Enviar ao terminar." : snapshot.phase === "ready" ? "Toque no microfone para responder." : "Você pode acompanhar o texto acima.")}</small></div>
             </div>
-            {error && <p className={styles.error} role="alert">{t(error)}</p>}
-            {permission === "denied" && <p className={styles.permissionHelp}>{t("Abra as permissões deste site no navegador e permita o uso do microfone.")}</p>}
+            {error && <p className={styles.error} role="alert">{supportT(error)}</p>}
+            {permission === "denied" && <p className={styles.permissionHelp}>{supportT("Abra as permissões deste site no navegador e permita o uso do microfone.")}</p>}
             <div className={styles.controlButtons}>
               {snapshot.phase === "listening" ? (
                 <button className={`${styles.micButton} ${styles.recording}`} type="button" onClick={stopRecording} aria-label={localizeAttribute("Parar gravação e enviar resposta")}><Square size={22} /><span>{t("Enviar")}</span></button>

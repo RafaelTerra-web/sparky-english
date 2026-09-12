@@ -1,5 +1,5 @@
 "use client";
-import { t, localizeAttribute, useCurrentInterfaceLanguage } from "@/lib/interface-language";
+import { t, targetText, localizeAttribute, useSupportLanguage, supportT, getSupportLocale } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { MascotFigure } from "./mascot-studio";
 import {
@@ -50,7 +50,7 @@ export default function Onboarding({
   onCancel: () => void;
   editing?: boolean;
 }) {
-  const language = useCurrentInterfaceLanguage();
+  const language = useSupportLanguage();
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -208,7 +208,7 @@ export default function Onboarding({
     return (
       <main className="onboarding">
         <h1>{t("Vamos esperar seu responsável")}</h1>
-        <p>{t("O nome, o áudio provisório e esta personalização foram removidos.")}</p>
+        <p lang={getSupportLocale()}>{supportT("O nome, o áudio provisório e esta personalização foram removidos.")}</p>
         <button onClick={onCancel}>{editing ? "← " : ""}{t(editing ? "Perfil" : "Sair")}</button>
       </main>
     );
@@ -234,10 +234,10 @@ export default function Onboarding({
         {t(copy[step])}
       </h1>
       {offline && (
-        <p role="alert">{t("Você está sem conexão. Suas etapas confirmadas estão salvas; reconecte para continuar.")}</p>
+        <p lang={getSupportLocale()} role="alert">{supportT("Você está sem conexão. Suas etapas confirmadas estão salvas; reconecte para continuar.")}</p>
       )}
-      <p role="status" className="onboarding-status">
-        {t(speaking
+      <p lang={getSupportLocale()} role="status" className="onboarding-status">
+        {supportT(speaking
           ? "Sparky está falando…"
           : audioState === "loading"
             ? "Sparky está preparando sua saudação…"
@@ -245,7 +245,7 @@ export default function Onboarding({
               ? "Salvando sua escolha…"
               : "")}
       </p>
-      {error && <><p role="alert">{t(error)}</p><button className="secondary-button" onClick={() => window.location.reload()}>{t("Recarregar dados salvos")}</button></>}
+      {error && <><p lang={getSupportLocale()} role="alert">{supportT(error)}</p><button className="secondary-button" onClick={() => window.location.reload()}>{t("Recarregar dados salvos")}</button></>}
       {language !== "en" && step !== "test" && step !== "pronunciation" && (
         <button
           className="secondary-button"
@@ -258,7 +258,7 @@ export default function Onboarding({
         <div className="onboarding-body">
           {step === "welcome" && (
             <>
-              <p>{t("Uma pergunta por vez. Suas escolhas ficam salvas na conta e podem ser alteradas depois.")}</p>
+              <p lang={getSupportLocale()}>{supportT("Uma pergunta por vez. Suas escolhas ficam salvas na conta e podem ser alteradas depois.")}</p>
               <button
                 className="primary-button"
                 disabled={busy || offline}
@@ -289,7 +289,7 @@ export default function Onboarding({
                 onChange={(e) => setName(e.target.value)}
                 required
               />
-              <p>{t("Ao confirmar, enviamos seu nome ao Google para gerar a saudação privada do Sparky. Não inclua sobrenome se não quiser.")}</p>
+              <p lang={getSupportLocale()}>{supportT("Ao confirmar, enviamos seu nome ao Google para gerar a saudação privada do Sparky. Não inclua sobrenome se não quiser.")}</p>
               <button className="primary-button" disabled={busy || offline}>{t("Confirmar nome")}</button>
             </form>
           )}
@@ -317,12 +317,12 @@ export default function Onboarding({
               />
               {Number(age) >= 4 && Number(age) < 13 && (
                 <>
-                  <label className="onboarding-consent">
+                  <label className="onboarding-consent" lang={getSupportLocale()}>
                     <input
                       type="checkbox"
                       checked={consent}
                       onChange={(e) => setConsent(e.target.checked)}
-                    />{t("Sou responsável por este aluno e autorizo o perfil e o áudio personalizado conforme a política de privacidade.")}</label>
+                    />{supportT("Sou responsável por este aluno e autorizo o perfil e o áudio personalizado conforme a política de privacidade.")}</label>
                   <button
                     type="button"
                     className="secondary-button"
@@ -336,12 +336,12 @@ export default function Onboarding({
           )}
           {step === "pronunciation" && (
             <section className="name-pronunciation" aria-label={localizeAttribute("Confirmar a pronúncia do nome")}>
-              <p className="sparky-name-question">{t("Que bom conhecer você,")}<strong>{t(draft?.name)}</strong>{t("! Me conta: falei seu nome do jeito certo?")}</p>
+              <p lang={getSupportLocale()} className="sparky-name-question">{supportT("Que bom conhecer você,")}<strong>{targetText(draft?.name)}</strong>{supportT("! Me conta: falei seu nome do jeito certo?")}</p>
               <button className="secondary-button" disabled={busy || offline || audioState !== "ready" || pronunciation !== (draft?.namePronunciation ?? draft?.name)} onClick={speaking ? () => audio.current?.abort() : listen}>
                 {t(speaking ? "Parar áudio" : heardPronunciation ? "Ouvir de novo" : "Ouvir Sparky")}
               </button>
               {audioState !== "ready" && <button className="secondary-button" disabled={busy || offline || audioState === "loading"} onClick={() => void generateName()}>{t(audioState === "loading" ? "Preparando pronúncia…" : "Tentar preparar a pronúncia")}</button>}
-              {adjustingPronunciation && <><p>{t("Vamos acertar juntos. O Sparky vai usar a pronúncia brasileira. Escreva como seu nome soa: pode usar acentos ou separar as sílabas, como “An sél mo”. Essa escrita serve só para orientar a voz; seu nome no perfil continua igual.")}</p>
+              {adjustingPronunciation && <><p lang={getSupportLocale()}>{supportT("Vamos acertar juntos. O Sparky vai usar a pronúncia brasileira. Escreva como seu nome soa: pode usar acentos ou separar as sílabas, como “An sél mo”. Essa escrita serve só para orientar a voz; seu nome no perfil continua igual.")}</p>
               <form onSubmit={async event => {
                 event.preventDefault();
                 try { validateName(pronunciation); } catch (e) { setError((e as Error).message); return; }
@@ -353,7 +353,7 @@ export default function Onboarding({
                 <button className="secondary-button" disabled={busy || offline || audioState === "loading"}>{t("Salvar ajuste e gerar novamente")}</button>
               </form>
               </>}
-              {!heardPronunciation && <p>{t("Ouça a fala do Sparky para conferir.")}</p>}
+              {!heardPronunciation && <p lang={getSupportLocale()}>{supportT("Ouça a fala do Sparky para conferir.")}</p>}
               <button className="primary-button" disabled={busy || offline || !heardPronunciation || audioState !== "ready" || pronunciation !== (draft?.namePronunciation ?? draft?.name)} onClick={async () => {
                 const result = await request("confirm-pronunciation", { status: "confirmed" });
                 if (result?.profile?.onboardingCompleted && !result.draft) onComplete(result.profile);
@@ -388,7 +388,7 @@ export default function Onboarding({
           )}
           {step === "level" && (
             <>
-              <p>{t("Escolha seu ponto de partida. Isso não apaga lições nem bloqueia os outros níveis.")}</p>
+              <p lang={getSupportLocale()}>{supportT("Escolha seu ponto de partida. Isso não apaga lições nem bloqueia os outros níveis.")}</p>
               <div className="onboarding-choices">
                 {onboardingLevels.map((l, i) => (
                   <button
@@ -419,14 +419,14 @@ export default function Onboarding({
                   ? "Retomar diagnóstico"
                   : "Descobrir meu nível · 15–20 min")}
               </button>
-              <p>{t("Diagnóstico de recepção e uso da língua. Não certifica fluência oral ou escrita.")}</p>
+              <p lang={getSupportLocale()}>{supportT("Diagnóstico de recepção e uso da língua. Não certifica fluência oral ou escrita.")}</p>
             </>
           )}
           {step === "test" && snapshot.placement?.item && (
             <>
-              <p>
-                {t(snapshot.placement.count)}{t(" de até 28 respostas · Você pode fechar e retomar depois.")}</p>
-              <h2 className="placement-command">{t(snapshot.placement.item.prompt)}</h2>
+              <p lang={getSupportLocale()}>
+                {supportT(snapshot.placement.count)}{supportT(" de até 28 respostas · Você pode fechar e retomar depois.")}</p>
+              <h2 className="placement-command" lang="en">{targetText(snapshot.placement.item.prompt)}</h2>
               {snapshot.placement.item.audio && (
                 <audio
                   controls
@@ -442,7 +442,7 @@ export default function Onboarding({
                   }}
                 />
               )}
-              <div className="onboarding-answers" role="group" aria-label={localizeAttribute("Alternativas da questão")}>
+              <div className="onboarding-answers" lang="en" role="group" aria-label={localizeAttribute("Alternativas da questão")}>
                 {snapshot.placement.item.options.map((option, index) => (
                   <button
                     key={index}
@@ -450,11 +450,11 @@ export default function Onboarding({
                     aria-pressed={selectedAnswer?.id === snapshot.placement!.item!.id && selectedAnswer.answer === index}
                     onClick={() => setSelectedAnswer({ id: snapshot.placement!.item!.id, answer: index })}
                   >
-                    {t(option)}
+                    {targetText(option)}
                   </button>
                 ))}
               </div>
-              <p>{t("Você pode trocar de alternativa antes de confirmar. Depois do envio, a resposta não pode ser alterada.")}</p>
+              <p lang={getSupportLocale()}>{supportT("Você pode trocar de alternativa antes de confirmar. Depois do envio, a resposta não pode ser alterada.")}</p>
               <button className="primary-button" disabled={busy || offline || selectedAnswer?.id !== snapshot.placement.item.id} onClick={async () => {
                 if (!selectedAnswer || selectedAnswer.id !== snapshot.placement?.item?.id) return;
                 const result = await request("answer", { id: selectedAnswer.id, answer: selectedAnswer.answer });
@@ -464,14 +464,14 @@ export default function Onboarding({
           )}
           {step === "finish" && (
             <>
-              <h2>{t("Pronto,")}{t(draft?.name)}!</h2>
-              <p>{t("Seu ponto de partida: ")}<strong>{t(draft?.level)}</strong> ·{t(" ")}
-                {t(draft?.mascot === "pinky" ? "Pinky" : "Sparky")}{t(" acompanha suas lições.")}</p>
+              <h2>{t("Pronto,")}{targetText(draft?.name)}!</h2>
+              <p lang={getSupportLocale()}>{supportT("Seu ponto de partida: ")}<strong>{supportT(draft?.level)}</strong> ·{supportT(" ")}
+                {supportT(draft?.mascot === "pinky" ? "Pinky" : "Sparky")}{supportT(" acompanha suas lições.")}</p>
               {draft?.levelMethod === "placement" && (
-                <p>{t("Score interno: ")}{t(draft.score)}{t("/100. Evidência do diagnóstico:")}{t(" ")}
-                  {t(draft.confidence)}{t(". Esta estimativa não foi calibrada como exame oficial.")}</p>
+                <p lang={getSupportLocale()}>{supportT("Score interno: ")}{supportT(draft.score)}{supportT("/100. Evidência do diagnóstico:")}{supportT(" ")}
+                  {supportT(draft.confidence)}{supportT(". Esta estimativa não foi calibrada como exame oficial.")}</p>
               )}
-              <p>{t("O progresso e as compras que você já tinha continuam na sua conta.")}</p>
+              <p lang={getSupportLocale()}>{supportT("O progresso e as compras que você já tinha continuam na sua conta.")}</p>
               {audioState !== "ready" && draft?.namePronunciationStatus !== "text-only" && (
                 <button
                   className="secondary-button"

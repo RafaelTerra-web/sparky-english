@@ -1967,3 +1967,22 @@ html[data-palette] .install-instructions li>span{background:var(--primary);color
 .daily-plan-list{padding-left:20px;font-size:14px;line-height:1.7;margin:16px 0}.next-lesson .lesson-copy>p{line-height:1.5}.lesson-outcome details{margin:14px 0}.lesson-outcome summary{cursor:pointer;font-weight:600}.exam-lesson-recommendations article{margin-top:16px}.exam-lesson-recommendations article p{margin-bottom:8px}
 .guided-course .section-heading{gap:16px;flex-wrap:wrap}.guided-course .section-heading>span{color:var(--muted);font-size:13px}
 @media(max-width:720px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.competency-paths ol{grid-template-columns:1fr}.trail-current,.practice-context,.course-filters,.practice-module,.competency-paths,.lesson-outcome{padding:18px}.course-modes>button{flex:1;min-width:130px}.course-trail summary{padding:16px}.trail-module-body{padding:0 14px 16px}.guided-lesson .eyebrow{font-size:10px}}
+
+/* Language choices stay secondary to the lesson action and use theme tokens. */
+.learning-language-preferences { min-width: 0; margin-block: 1rem; }
+.learning-language-preferences .profile-setting { align-items: flex-start; flex-direction: column; gap: .6rem; }
+.learning-language-preferences select { width: 100%; min-width: 0; max-width: 100%; }
+.language-preference-note, .learning-language-preferences details p { font-size: .9rem; line-height: 1.6; }
+.learning-language-preferences summary, .lesson-language-help summary { cursor: pointer; }
+.lesson-language-help { margin-block: .5rem 1rem; }
+.lesson-language-help label { display: block; margin-block: .75rem .4rem; }
+.lesson-language-help select { max-width: 100%; }
+
+@media (max-width: 380px) {
+  .workspace-header { gap: 6px; }
+  .mobile-brand .brand { gap: 6px; font-size: 17px; }
+  .mobile-brand .brand-mark { width: 32px; height: 32px; }
+  .mobile-brand .brand-english { font-size: 10px; letter-spacing: 1.4px; }
+  .workspace-header .streak-badge { padding-inline: 6px; gap: 3px; }
+  .workspace-header .streak-badge > svg { display: none; }
+}

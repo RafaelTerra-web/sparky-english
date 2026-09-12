@@ -1,5 +1,5 @@
 "use client";
-import { t, localizeAttribute } from "@/lib/interface-language";
+import { t, targetText, supportT, localizeAttribute, getSupportLocale } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { practiceCatalog } from "@/lib/rewards-shared";
@@ -11,9 +11,9 @@ function Decision({ data, number }: { data: StoreMission["decisions"][number]; n
   const [choice, setChoice] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   return <fieldset className="mission-decision"><legend>{t(number)}. {t(data.question)}</legend>
-    <div className="mission-options">{data.options.map((option, index) => <button key={option} aria-pressed={choice === index} onClick={() => { setChoice(index); setChecked(false); }} lang="en">{t(option)}</button>)}</div>
+    <div className="mission-options">{data.options.map((option, index) => <button key={option} aria-pressed={choice === index} onClick={() => { setChoice(index); setChecked(false); }} lang="en">{targetText(option)}</button>)}</div>
     <button className="secondary-button" disabled={choice === null || checked} onClick={() => setChecked(true)}>{t("Conferir decisão")}</button>
-    {checked && <div className="mission-feedback" role="status"><strong>{t(choice === data.answer ? "Essa escolha atende ao contexto." : "Releia a pista e tente outra escolha.")}</strong><p>{t(data.explanation)}</p></div>}
+    {checked && <div className="mission-feedback" role="status"><strong>{t(choice === data.answer ? "Essa escolha atende ao contexto." : "Releia a pista e tente outra escolha.")}</strong><p lang={getSupportLocale()}>{supportT(data.explanation)}</p></div>}
   </fieldset>;
 }
 
@@ -24,18 +24,18 @@ function Mission({ data, userId, packId }: { data: StoreMission; userId: string;
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus(); }, []);
   return <article className="store-mission"><h3 ref={heading} tabIndex={-1}>{t(data.title)}</h3>
-    <p>{t("Leia a situação, tome duas decisões e crie uma resposta sua.")}</p>
-    <blockquote lang="en">{t(data.scene)}</blockquote>
+    <p lang={getSupportLocale()}>{supportT("Leia a situação, tome duas decisões e crie uma resposta sua.")}</p>
+    <blockquote lang="en">{targetText(data.scene)}</blockquote>
     {data.decisions.map((decision, index) => <Decision key={index} data={decision} number={index + 1} />)}
-    <section className="mission-writing"><h4>{t("Agora use suas palavras")}</h4><p>{t(data.writing)}</p>
+    <section className="mission-writing"><h4>{t("Agora use suas palavras")}</h4><p lang={getSupportLocale()}>{supportT(data.writing)}</p>
       <label htmlFor="mission-draft">{t("Seu rascunho da missão")}</label><textarea id="mission-draft" lang="en" rows={6} maxLength={6000} value={draft} onChange={event => {
         const text = event.target.value; setDraft(text);
         setSaveError(!updateWorkspace(userId, current => ({ ...current, writings: [...current.writings.filter(w => w.id !== writingId), { id: writingId, lessonId: writingId, text, createdAt: new Date().toISOString(), contentVersion }].slice(-100) })));
       }} />
-      <p role={saveError ? "alert" : undefined}>{t(saveError ? "O navegador não conseguiu salvar. Copie seu texto antes de sair." : "Rascunho salvo no Caderno deste navegador. Você pode fechar e retomar, exportar ou apagar pelo Caderno.")}</p>
-      <details className="learning-disclosure"><summary>{t("Ver uma resposta possível")}</summary><blockquote lang="en">{t(data.model)}</blockquote><p>{t("Use como referência e adapte ao seu objetivo. Nos textos longos, este é um trecho para começar.")}</p></details>
-      <h4>{t("Confira sua produção")}</h4><ul>{data.checklist.map(item => <li key={item}>{t(item)}</li>)}</ul>
-      <p>{t("Diga sua resposta em voz alta e depois reformule sem ler. Esta prática extra não atribui nota, moedas ou conclusão no curso principal.")}</p>
+      <p lang={getSupportLocale()} role={saveError ? "alert" : undefined}>{supportT(saveError ? "O navegador não conseguiu salvar. Copie seu texto antes de sair." : "Rascunho salvo no Caderno deste navegador. Você pode fechar e retomar, exportar ou apagar pelo Caderno.")}</p>
+      <details className="learning-disclosure"><summary>{t("Ver uma resposta possível")}</summary><blockquote lang="en">{targetText(data.model)}</blockquote><p lang={getSupportLocale()}>{supportT("Use como referência e adapte ao seu objetivo. Nos textos longos, este é um trecho para começar.")}</p></details>
+      <h4>{t("Confira sua produção")}</h4><ul>{data.checklist.map(item => <li lang={getSupportLocale()} key={item}>{supportT(item)}</li>)}</ul>
+      <p lang={getSupportLocale()}>{supportT("Diga sua resposta em voz alta e depois reformule sem ler. Esta prática extra não atribui nota, moedas ou conclusão no curso principal.")}</p>
     </section>
   </article>;
 }

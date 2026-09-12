@@ -1,5 +1,5 @@
 "use client";
-import { t, localizeAttribute } from "@/lib/interface-language";
+import { t, localizeAttribute, supportT, getSupportLocale, targetText } from "@/lib/interface-language";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { Mic, Square, Volume2 } from "lucide-react";
@@ -129,9 +129,9 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
     <section className="speech-practice speech-studio" aria-label={localizeAttribute("Ouvir e praticar fala")}>
       <div className="speech-mascot-heading">
         <Image src={initialMascot === "sparky" ? "/visuals/sparky-panda.png" : "/visuals/pinky-v2.png"} alt={localizeAttribute("")} width={64} height={64} />
-        <div><p className="eyebrow">{t("Prática guiada")}</p><h3>{t("Fale com")}{t(mascotName)}</h3><p>{t("Voz gerada por IA · inglês natural")}</p></div>
+        <div><p className="eyebrow">{t("Prática guiada")}</p><h3>{t("Fale com")}{t(mascotName)}</h3><p lang={getSupportLocale()}>{supportT("Voz gerada por IA · inglês natural")}</p></div>
       </div>
-      <p>{t("Ouça a frase, perceba o ritmo e tente repeti-la.")}{t(mascotName)}{t(" lê apenas o conteúdo da lição.")}</p>
+      <p lang={getSupportLocale()}>{supportT("Ouça a frase, perceba o ritmo e tente repeti-la.")}{supportT(mascotName)}{supportT(" lê apenas o conteúdo da lição.")}</p>
       <div className="speech-buttons">
         <button className="secondary-button" disabled={busy || (!source && !personalized)} onClick={() => speak(1)}>
           <Volume2 size={17} />{t(" Ouvir natural")}</button>
@@ -139,27 +139,27 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
           <Volume2 size={17} />{t(" Ouvir devagar")}</button>
         {busy && <button className="secondary-button" onClick={stop}><Square size={16} />{t(" Parar")}</button>}
       </div>
-      {nameVoiceOff ? <p className="speech-unavailable">{t("Você escolheu continuar sem o nome falado. Para ativar este áudio, ajuste a pronúncia do nome no Perfil. Você pode praticar a frase com o microfone.")}</p> : !source && !personalized && <p className="speech-unavailable">{t("O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.")}</p>}
+      {nameVoiceOff ? <p lang={getSupportLocale()} className="speech-unavailable">{supportT("Você escolheu continuar sem o nome falado. Para ativar este áudio, ajuste a pronúncia do nome no Perfil. Você pode praticar a frase com o microfone.")}</p> : !source && !personalized && <p lang={getSupportLocale()} className="speech-unavailable">{supportT("O áudio desta lição ainda não foi publicado. Você pode praticar a frase com o microfone.")}</p>}
       <details className="speech-consent">
         <summary>{t("Praticar com o microfone")}</summary>
-        <p>{t("O navegador pode enviar sua fala ao serviço de reconhecimento dele. O Sparky não guarda gravações nem transcrições. A escuta dura até 20 segundos; você pode parar quando quiser.")}</p>
+        <p lang={getSupportLocale()}>{supportT("O navegador pode enviar sua fala ao serviço de reconhecimento dele. O Sparky não guarda gravações nem transcrições. A escuta dura até 20 segundos; você pode parar quando quiser.")}</p>
         <label className="speech-checkbox" htmlFor={id}>
           <input id={id} type="checkbox" checked={consent} onChange={event => {
             setConsent(event.target.checked);
             if (!event.target.checked) { release(); setState("idle"); setTranscript(""); }
-          }} />{t(" Autorizo o microfone nesta prática.")}</label>
+          }} />{supportT(" Autorizo o microfone nesta prática.")}</label>
         <button className="primary-button" disabled={busy || !consent || !canRecognize} onClick={listen}>
           <Mic size={17} />{t(" Começar a falar")}</button>
-        {!canRecognize && <p>{t(recognitionMessage("not-supported"))}</p>}
+        {!canRecognize && <p lang={getSupportLocale()}>{supportT(recognitionMessage("not-supported"))}</p>}
       </details>
-      <p className="speech-live-status" role="status" aria-live="polite">
-        {t(state === "loading" ? "Carregando áudio…" : state === "speaking" ? `${mascotName} está falando ${playbackRate < 1 ? "devagar" : "em velocidade natural"}…` :
+      <p lang={getSupportLocale()} className="speech-live-status" role="status" aria-live="polite">
+        {supportT(state === "loading" ? "Carregando áudio…" : state === "speaking" ? `${mascotName} está falando ${playbackRate < 1 ? "devagar" : "em velocidade natural"}…` :
           state === "starting" ? "Aguardando o microfone…" : state === "listening" ? "Ouvindo você…" : message)}
       </p>
       {comparison && (
         <div className="speech-result">
-          <strong>{t("O serviço de voz entendeu:")}</strong><p lang="en">{t(transcript.slice(0, 2000))}</p>
-          <p>{t(comparison.limited ? "A fala ficou longa demais para esta frase. Repita apenas o exemplo." :
+          <strong>{t("O serviço de voz entendeu:")}</strong><p lang="en">{targetText(transcript.slice(0, 2000))}</p>
+          <p lang={getSupportLocale()}>{supportT(comparison.limited ? "A fala ficou longa demais para esta frase. Repita apenas o exemplo." :
             comparison.exact ? comparison.nameVariantAccepted ? "Frase reconhecida. A variação de escrita do nome foi aceita." : "A transcrição corresponde à frase." :
               "Ainda há diferenças. Confira as palavras destacadas e tente novamente.")}</p>
           <div className="speech-word-comparison" lang="en">
@@ -167,9 +167,9 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
               {t(word.word)}{t(!word.recognized && " (?)")}
             </span>)}
           </div>
-          {comparison.extraWords.length > 0 && <p>{t("Palavras adicionais:")}<span lang="en">{t(comparison.extraWords.join(" "))}</span></p>}
-          <p>{t("Ana e Anna, por exemplo, são aceitos como o mesmo nome. Palavras extras, mudanças de sentido e negações continuam contando como diferenças.")}</p>
-          <p>{t("Esta comparação é da transcrição, não uma nota de pronúncia. Não concede moedas nem conclui a lição.")}</p>
+          {comparison.extraWords.length > 0 && <p lang={getSupportLocale()}>{supportT("Palavras adicionais:")}<span lang="en">{targetText(comparison.extraWords.join(" "))}</span></p>}
+          <p lang={getSupportLocale()}>{supportT("Ana e Anna, por exemplo, são aceitos como o mesmo nome. Palavras extras, mudanças de sentido e negações continuam contando como diferenças.")}</p>
+          <p lang={getSupportLocale()}>{supportT("Esta comparação é da transcrição, não uma nota de pronúncia. Não concede moedas nem conclui a lição.")}</p>
           <button className="text-button" onClick={() => setTranscript("")}>{t("Apagar transcrição")}</button>
         </div>
       )}
