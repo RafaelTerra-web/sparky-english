@@ -47,7 +47,7 @@ import { PersonalSparkyMessage } from "./personal-sparky-message";
 import dynamic from "next/dynamic";
 import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
-const LessonPlayer = dynamic(() => import("./lesson-player"), { loading: () => <SectionLoading label="Abrindo a lição…" /> });
+import LessonPlayer from "./lesson-player";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const LearningNotebook = dynamic(() => import("./learning-notebook"), { loading: () => <SectionLoading /> });
 import {
@@ -167,7 +167,7 @@ export default function SparkyApp() {
     setTransitioning(true);
     setView(nextView);
     if (transitionTimer.current) window.clearTimeout(transitionTimer.current);
-    transitionTimer.current = window.setTimeout(() => setTransitioning(false), 480);
+    transitionTimer.current = window.setTimeout(() => setTransitioning(false), 180);
   }
   useEffect(() => () => {
     if (transitionTimer.current) window.clearTimeout(transitionTimer.current);

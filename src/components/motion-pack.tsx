@@ -7,27 +7,10 @@ import { isStreakMilestone, streakTargets } from "@/lib/streak-milestones";
 import { localizeAttribute, t, supportT, getSupportLocale } from "@/lib/interface-language";
 
 export function MotionLoader({ label }: { label: string }) {
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  useEffect(() => {
-    if (document.readyState === "complete") {
-      queueMicrotask(() => setPageLoaded(true));
-      return;
-    }
-    const ready = () => setPageLoaded(true);
-    window.addEventListener("load", ready, { once: true });
-    return () => window.removeEventListener("load", ready);
-  }, []);
-  return (
-    <div className="motion-loader" role="status" aria-live="polite" aria-busy="true">
-      <span className="motion-loader-orbit" aria-hidden="true">
-        {pageLoaded && !videoFailed && <video className={videoReady ? "ready" : ""} src="/motion/sparky-loader.webm" autoPlay muted loop playsInline onCanPlay={() => setVideoReady(true)} onError={() => setVideoFailed(true)} />}
-        {(!videoReady || videoFailed) && <><span className="motion-loader-sparky"><Image src="/icons/sparky-192-v2.png" width={34} height={34} alt="" /></span><i /></>}
-      </span>
-      <p lang={getSupportLocale()}>{supportT(label)}</p>
-    </div>
-  );
+  return <div className="motion-loader" role="status" aria-live="polite" aria-busy="true">
+    <span className="loading-dots" aria-hidden="true"><i /><i /><i /></span>
+    <p lang={getSupportLocale()}>{supportT(label)}</p>
+  </div>;
 }
 
 export function StreakBadge({ count, longest }: { count: number; longest: number }) {
@@ -69,15 +52,7 @@ export function StreakBadge({ count, longest }: { count: number; longest: number
 }
 
 export function MotionTransition({ active }: { active: boolean }) {
-  const [videoReady, setVideoReady] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  if (!active) return null;
-  return (
-    <div className="motion-transition" aria-hidden="true">
-      {!videoFailed && <video className={videoReady ? "ready" : ""} src="/motion/sparky-transition.webm" autoPlay muted playsInline onCanPlay={() => setVideoReady(true)} onError={() => setVideoFailed(true)} />}
-      {(!videoReady || videoFailed) && <><span className="motion-transition-fallback" /><span className="motion-transition-trail"><i /><i /><i /></span></>}
-    </div>
-  );
+  return active ? <div className="motion-transition" aria-hidden="true" /> : null;
 }
 
 export function StreakCelebration({ count, milestone, earned, onClose }: { count: number; milestone: boolean; earned: number; onClose: () => void }) {

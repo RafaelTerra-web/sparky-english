@@ -1,33 +1,19 @@
 .motion-loader { display: grid; justify-items: center; gap: 14px; color: var(--muted); }
 .motion-loader p { margin: 0; color: inherit; font-size: 14px; }
-.motion-loader-orbit { position: relative; display: grid; place-items: center; width: 72px; height: 72px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface-soft); }
-.motion-loader-orbit video { position: absolute; z-index: 2; width: 86px; height: 86px; object-fit: contain; opacity: 0; pointer-events: none; }
-.motion-loader-orbit video.ready { opacity: 1; }
-.motion-loader-orbit::after { content: ""; position: absolute; inset: 5px; border: 3px solid transparent; border-top-color: var(--accent); border-right-color: color-mix(in srgb,var(--accent) 35%,transparent); border-radius: 50%; animation: sparky-orbit 1.15s linear infinite; }
-.motion-loader-sparky { position: relative; display: grid; place-items: center; width: 34px; height: 34px; overflow: visible; border-radius: 11px; background: var(--accent); }
-.motion-loader-sparky::after { content: ""; position: absolute; z-index: 3; width: 86px; height: 86px; background: center/contain no-repeat url("/motion/sparky-loader.webp"); }
-.motion-loader-sparky img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.motion-loader-orbit i { position: absolute; width: 9px; height: 12px; top: 2px; left: 50%; border-radius: 60% 40% 65% 35%; background: #ff754f; box-shadow: inset 0 -4px #ffd96b; transform: translateX(-50%) rotate(45deg); animation: streak-flicker .7s ease-in-out infinite alternate; }
-@keyframes sparky-orbit { to { transform: rotate(360deg); } }
-@keyframes streak-flicker { to { transform: translateX(-50%) rotate(51deg) scale(.83,1.12); } }
+/* No video download, spinning mascot or layout change while loading. */
+.loading-dots { display: flex; align-items: center; justify-content: center; gap: 7px; width: 56px; height: 24px; }
+.loading-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: loading-breathe 1s ease-in-out infinite alternate; }
+.loading-dots i:nth-child(2) { animation-delay: .15s; }
+.loading-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes loading-breathe { from { opacity: .35; } to { opacity: 1; } }
 
 .streak-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 48px; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-soft); color: var(--foreground); font-variant-numeric: tabular-nums; }
 .streak-flame { display: grid; place-items: center; width: 24px; height: 24px; transform-origin: 50% 85%; filter: drop-shadow(0 3px 5px rgba(240,106,73,.28)); animation: flame-breathe 1.45s ease-in-out infinite; }
 .streak-flame img { width: 24px; height: 24px; object-fit: contain; }
 .streak-badge strong { font-size: 14px; }
 
-.motion-transition { position: fixed; z-index: 400; inset: 0; overflow: hidden; pointer-events: none; }
-.motion-transition::before { content: ""; position: absolute; inset: 0; background: color-mix(in srgb,var(--chrome) 34%,transparent); animation: transition-veil .46s ease both; }
-.motion-transition video { position: absolute; z-index: 2; top: 50%; left: -120px; width: 170px; height: 170px; object-fit: contain; opacity: 0; }
-.motion-transition video.ready { opacity: 1; animation: transition-video-flight .46s cubic-bezier(.55,.04,.22,1) both; }
-.motion-transition-fallback { position: absolute; z-index: 2; top: 50%; left: -120px; width: 170px; height: 170px; background: center/contain no-repeat url("/motion/sparky-transition.webp"); animation: transition-video-flight .46s cubic-bezier(.55,.04,.22,1) both; }
-.motion-transition-trail { position: absolute; left: -20%; top: 46%; width: 38%; height: 8px; border-radius: 99px; background: var(--accent); box-shadow: 0 0 20px color-mix(in srgb,var(--accent) 55%,transparent); animation: transition-flight .46s cubic-bezier(.55,.04,.22,1) both; }
-.motion-transition-trail::after { content: ""; position: absolute; right: -15px; top: -13px; width: 32px; height: 32px; border-radius: 60% 40% 62% 38%; background: #ff754f; box-shadow: inset -8px -8px #ffd96b; transform: rotate(45deg); }
-.motion-transition-trail i { position: absolute; right: 25%; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: .7; }
-.motion-transition-trail i:nth-child(1) { left: 18%; top: -14px; }.motion-transition-trail i:nth-child(2) { left: 5%; top: 14px; }.motion-transition-trail i:nth-child(3) { left: 42%; top: 17px; }
-@keyframes transition-flight { 0% { transform: translateX(0) scaleX(.4); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateX(340vw) scaleX(1.25); opacity: 0; } }
-@keyframes transition-video-flight { 0% { transform: translateY(-50%) translateX(0) rotate(-4deg) scale(.75); opacity: 0; } 18% { opacity: 1; } 100% { transform: translateY(-50%) translateX(calc(100vw + 230px)) rotate(4deg) scale(1); opacity: 0; } }
-@keyframes transition-veil { 0%,100% { opacity: 0; } 42%,62% { opacity: 1; } }
+.motion-transition { position: fixed; z-index: 400; inset: 0; pointer-events: none; background: var(--background); animation: screen-fade 180ms ease-out both; }
+@keyframes screen-fade { from { opacity: .12; } to { opacity: 0; } }
 
 .streak-celebration { position: fixed; z-index: 350; top: max(18px,env(safe-area-inset-top)); right: max(18px,env(safe-area-inset-right)); display: grid; grid-template-columns: 88px minmax(0,280px); align-items: center; gap: 14px; width: min(390px,calc(100vw - 36px)); padding: 14px 40px 14px 14px; border: 1px solid color-mix(in srgb,#f06a49 42%,var(--line)); border-radius: 22px; background: color-mix(in srgb,var(--surface) 94%,transparent); color: var(--foreground); box-shadow: 0 18px 50px rgba(0,0,0,.22); backdrop-filter: blur(16px); animation: streak-arrive .52s cubic-bezier(.2,.9,.2,1) both; }
 .streak-celebration strong { display: block; margin: 2px 0 4px; font-size: 20px; }
@@ -102,3 +88,15 @@ html[data-theme="dark"] .streak-celebration .eyebrow { color: #ff896a; }
  .streak-milestone-detail progress::-webkit-progress-value { transition: none; }
 }
 .streak-roadmap .streak-close { width: 44px; height: 44px; }
+
+/* The modal enters as one fixed-size surface, never by animating its dimensions. */
+.lesson-dialog[open] { animation: lesson-arrive 180ms cubic-bezier(.2,.7,.3,1) both; }
+.lesson-dialog[open]::backdrop { animation: lesson-backdrop 180ms ease-out both; }
+.lesson-dialog > .lesson-body { min-height: 0; flex: 1 1 0; }
+.lesson-dialog > footer { flex-shrink: 0; }
+.lesson-illustration img { animation: lesson-backdrop 160ms ease-out; }
+@keyframes lesson-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes lesson-backdrop { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .loading-dots i, .lesson-dialog[open], .lesson-dialog[open]::backdrop, .lesson-illustration img { animation: none; }
+}
