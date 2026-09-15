@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { musicBrowserOptions, musicBaseURL, musicSessionOptions } from './music-smoke-browser.mjs';
 
-const browser = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
+const browser = await chromium.launch(musicBrowserOptions);
 try {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' });
+  const page = await browser.newPage({ ...musicSessionOptions, viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' });
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
-  await page.goto('http://127.0.0.1:3221');
+  await page.goto(musicBaseURL);
   await page.getByRole('button', { name: 'Músicas', exact: true }).click();
   await page.getByRole('button', { name: /Abrir sessão/ }).click();
   const room = page.locator('dialog.listen-room');

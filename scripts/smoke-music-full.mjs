@@ -1,15 +1,16 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { buildMusicRounds } from '../src/lib/music-game.ts';
-const browser = await chromium.launch({ executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true });
+import { musicBrowserOptions, musicBaseURL, musicSessionOptions } from './music-smoke-browser.mjs';
+const browser = await chromium.launch(musicBrowserOptions);
 try {
-  const page=await browser.newPage({viewport:{width:390,height:844},serviceWorkers:'block'});
+  const page=await browser.newPage({...musicSessionOptions,viewport:{width:390,height:844},serviceWorkers:'block'});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{
     window.scratches=0;const start=AudioBufferSourceNode.prototype.start;
     AudioBufferSourceNode.prototype.start=function(...args){window.scratches++;return start.apply(this,args);};
   });
-  await page.goto('http://127.0.0.1:3221');
+  await page.goto(musicBaseURL);
   await page.getByRole('button',{name:'Músicas',exact:true}).click();
   await page.getByRole('button',{name:/Abrir sessão/}).click();
   const audio=page.locator('.listen-dock audio');

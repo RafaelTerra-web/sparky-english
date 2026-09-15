@@ -38,6 +38,21 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
     document.body.style.overflow = 'hidden'; el?.showModal();
     return () => { el?.close(); document.body.style.overflow = overflow; previous?.focus(); };
   }, []);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const el = dialog.current;
+    if (!viewport || !el) return;
+    const fit = () => {
+      // Mobile keyboards can shrink only the visual viewport, leaving dvh and
+      // height media queries unchanged. Fit the fixed room to the visible area.
+      el.style.height = `${viewport.height}px`;
+      el.style.top = `${viewport.offsetTop}px`;
+    };
+    fit();
+    viewport.addEventListener('resize', fit);
+    viewport.addEventListener('scroll', fit);
+    return () => { viewport.removeEventListener('resize', fit); viewport.removeEventListener('scroll', fit); };
+  }, []);
   const storageKey = `sparky-music:${userId}:${lesson.id}`;
   const [progress, setProgress] = useState(() => { try { return normalizeMusic(lesson, JSON.parse(localStorage.getItem(storageKey) || 'null')); } catch { return emptyMusicProgress(lesson); } });
   const [stage, setStage] = useState(progress.stage);
