@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { musicCatalog } from './music-catalog';
+import { musicReleases, musicAudioSource } from './music-release';
 import { emptyMusicProgress, normalizeMusic, validateMusic, type MusicLesson, type MusicProgress } from './music';
 
 const RELEASE_TIMING_VERSION = 'full-song-timing-2';
@@ -17,10 +18,12 @@ export async function getMusicCatalog() {
       catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'local-private', published: false }));
     } catch { /* An unavailable fixture must not expose filesystem information. */ }
   }
-  if (!localMusicMode()) {
+  for (const release of musicReleases) {
+    if (localMusicMode() && release.id === 'perfect-local') continue;
     try {
-      const data = JSON.parse(await readFile(join(process.cwd(), '.music-assets', 'manifest.json'), 'utf8')) as MusicLesson;
-      catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'user-provided', published: true }));
+      const data = JSON.parse(await readFile(join(process.cwd(), '.music-assets', release.manifest), 'utf8')) as MusicLesson;
+      if (data.id !== release.id) throw Error('invalid-release');
+      catalog.push(validateMusic({ ...data, version: release.version, source: musicAudioSource(release.id), rights: 'user-provided', published: true }));
     } catch { /* An absent release bundle is not a public filesystem error. */ }
   }
   return catalog;

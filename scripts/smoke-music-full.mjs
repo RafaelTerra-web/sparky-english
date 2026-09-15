@@ -12,7 +12,7 @@ try {
   });
   await page.goto(musicBaseURL);
   await page.getByRole('button',{name:'Músicas',exact:true}).click();
-  await page.getByRole('button',{name:/Abrir sessão/}).click();
+  await page.locator('.music-card[data-track-id="perfect-local"]').click();
   const audio=page.locator('.listen-dock audio');
   await page.waitForFunction(()=>document.querySelector('.listen-dock audio')?.readyState>=1);
   const lesson=await page.evaluate(async()=>(await(await fetch('/api/music')).json()).catalog[0]);

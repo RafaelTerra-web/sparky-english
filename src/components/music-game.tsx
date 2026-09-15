@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useReducer, useRef, useState, type RefObject } from 'react';
-import Image from 'next/image';
+import MusicScene from './music-scene';
 import { ArrowRight, Check, Headphones, Pause, Play, RotateCcw, Zap } from 'lucide-react';
 import type { MusicLesson } from '@/lib/music';
 import { buildMusicRounds, initialGame, musicGameReducer, type GameDifficulty } from '@/lib/music-game';
@@ -82,16 +82,17 @@ export default function MusicGame({ lesson, media, clock, playing, speed, onSpee
   }
   const completed = state.outcomes.length;
   const ambientIndex = ambientLyricIndex(lesson.lines, clock);
-  const ambientWaiting = state.phase === 'outro' || (beforeCountdown && !state.answered);
-  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase} data-playing={playing} data-difficulty={difficulty}>
+  const ambientWaiting = state.phase === 'outro' || ((beforeCountdown || counting) && !state.answered);
+  const tone = lesson.id === 'heartless-local' ? 'violet' : 'emerald';
+  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase} data-playing={playing} data-difficulty={difficulty} data-tone={tone}>
     <div className="clip-scorebar"><span><Headphones size={15} /> {state.phase === 'ready' ? 'ESCUTA ATIVA' : `${state.correct} / ${rounds.length} ACERTOS`}</span><span><Zap size={15} /> {state.streak} seguidas</span></div>
     <div className="clip-speed-control" role="group" aria-label="Velocidade do jogo"><span>Velocidade</span>{[1, .75, .5].map(value => <button key={value} aria-pressed={speed === value} onClick={() => onSpeed(value)}>{value === 1 ? '1×' : value === .75 ? '0,75×' : '0,5×'}</button>)}</div>
     <div className={'clip-media ' + (playing ? 'is-playing' : '')}>
-      <Image src="/visuals/sparky-music-session-v1.webp" alt="Sparky curtindo música com fones" fill sizes="(max-width: 480px) 100vw, 440px" priority className="clip-sparky-art" />
+      <MusicScene playing={playing} clock={clock} tone={tone} />
       <div className="clip-media-top"><span>SPARKY SESSIONS</span><span>NO SEU RITMO</span></div>
       <div className="clip-album-title" aria-hidden="true">{lesson.title}<span>{lesson.artist}</span></div>
       <div className="clip-wave" aria-hidden="true">{Array.from({ length: 35 }, (_, i) => <i key={i} style={{ height: `${10 + ((i * 17 + 7) % 34)}px`, animationDelay: `${i * -.09}s` }} />)}</div>
-      <div className="clip-media-bottom"><span>{playing ? 'REPRODUZINDO' : 'ÁUDIO LOCAL'}</span><span>{lesson.level} · {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')} · música completa</span></div>
+      <div className="clip-media-bottom"><span>{playing ? 'REPRODUZINDO' : 'PRONTO PARA O PLAY'}</span><span>{lesson.level} · {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')} · música completa</span></div>
       <div className="clip-track-progress" aria-hidden="true"><i style={{ transform: `scaleX(${Math.max(0, Math.min(1, clock / lesson.duration))})` }} /></div>
     </div>
     {state.phase === 'ready' ? <div className="clip-setup">

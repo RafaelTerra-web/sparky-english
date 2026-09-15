@@ -7,7 +7,7 @@ Base: `origin/codex/music-lab`, commits `2ae726b` e `15fc6cd`.
 - Capa e biblioteca reutilizam a arte aprovada do Sparky. A capa tem movimento lento somente durante a reprodução, um indicador decorativo de ritmo e progresso da faixa.
 - Contagem, entrada da frase e confirmação de resposta têm animações curtas sem alterar a geometria dos controles.
 - Lyrics ambientais mostram até três linhas já iniciadas pelo relógio corrigido, com opacidade de 30%, sem palavra destacada e sem interação. Não antecipam a próxima linha. Mantêm a última linha nas pausas instrumentais e acompanham seeks para trás.
-- O fundo aparece enquanto se aguarda o próximo desafio, depois da resposta e no final instrumental. Durante contagem e resposta ele não fornece pistas.
+- O fundo aparece enquanto se aguarda o próximo desafio, depois da resposta e no final instrumental. Na revisão seguinte, solicitada pelo usuário, a contagem também mantém a letra ambiental visível; somente a resposta ativa oculta esse fundo. Veja `music-observatory-review.md`.
 - A transcrição decorativa está fora da árvore de acessibilidade. A aba Letra mantém a versão interativa. Movimento reduzido desliga todas as novas animações.
 - A sala acompanha `visualViewport` e usa uma composição compacta quando o teclado reduz a área visível, inclusive em navegadores que mantêm a altura do layout.
 

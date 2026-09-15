@@ -3,13 +3,16 @@ import { join, resolve } from 'node:path';
 import { cookies } from 'next/headers';
 import { readSession, SESSION_COOKIE } from '@/lib/auth-session';
 import { localMusicMode } from '@/lib/music-server';
+import { musicRelease } from '@/lib/music-release';
 export async function GET(request: Request) {
   if (!await readSession((await cookies()).get(SESSION_COOKIE)?.value)) return new Response(null, { status: 401 });
+  const release = musicRelease(new URL(request.url).searchParams.get('trackId'));
+  if (!release) return new Response(null, { status: 404 });
   try {
     // Serve only the prepared quiet PCM copy. Never silently fall back to the
     // loud MP3 when the preparation is missing or belongs to another source.
-    let path = join(process.cwd(), '.music-assets', 'audio.mp3');
-    if (localMusicMode()) {
+    let path = join(process.cwd(), '.music-assets', release.audio);
+    if (localMusicMode() && release.id === 'perfect-local') {
       if (!process.env.SPARKY_MEDIA_DEV_AUDIO_PATH) return new Response(null, { status: 404 });
       const report = JSON.parse(await readFile(join(process.cwd(), '.music-lab', 'audio-report.json'), 'utf8'));
       if (resolve(report.source) !== resolve(process.env.SPARKY_MEDIA_DEV_AUDIO_PATH)) return new Response(null, { status: 503 });

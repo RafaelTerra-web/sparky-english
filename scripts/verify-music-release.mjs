@@ -3,11 +3,14 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-// Fingerprints of the reviewed release from dpl_A19hmuaCfqY5UHqqtt2mj9mwHWzv.
+// Perfect is unchanged from dpl_A19hmuaCfqY5UHqqtt2mj9mwHWzv. Heartless was
+// prepared separately from the user-provided video and reviewed locally.
 // This metadata contains no lyrics, audio, credentials or user progress.
 export const approvedMusicFiles = {
   'manifest.json': '8b65482a87c4b599e2e6ec1a906d4b841b5c802a1e0c53b76c41b460cd472081',
   'audio.mp3': '1ca15127f1a0bdb366a352101f8f79b268118df70d88e380df625f53e749a3b9',
+  'heartless/manifest.json': '135aba0aaeaf52e7ed7033b36f68d9e16193b5a87b7f0d959db20c3796483fb9',
+  'heartless/audio.mp3': '2eda9866ca57e321901d39378a4e29cafca7fc902933aaaef37daaa3cd158e9a',
 };
 
 export async function verifyMusicRelease(directory = '.music-assets') {

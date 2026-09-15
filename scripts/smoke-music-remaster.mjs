@@ -14,7 +14,7 @@ try {
   await page.goto(musicBaseURL);
   await page.getByRole('button',{name:'Músicas',exact:true}).click();
   await page.screenshot({path:`${screenshots}/library.png`});
-  await page.getByRole('button',{name:/Abrir sessão/}).click();
+  await page.locator('.music-card[data-track-id="perfect-local"]').click();
   const audio=page.locator('.listen-dock audio');
   await page.waitForFunction(()=>document.querySelector('.listen-dock audio')?.readyState>=1);
   const lesson=await page.evaluate(async()=>(await(await fetch('/api/music')).json()).catalog[0]);
@@ -58,7 +58,7 @@ try {
   await page.screenshot({path:`${screenshots}/ambient.png`});
   await page.emulateMedia({reducedMotion:'reduce'});
   assert.equal(await ambient.locator('p').first().evaluate(el=>getComputedStyle(el).animationName),'none');
-  assert.equal(await page.locator('.clip-sparky-art').evaluate(el=>getComputedStyle(el).animationName),'none');
+  assert.equal(await page.locator('.clip-media .music-scene').evaluate(el=>getComputedStyle(el).animationName),'none');
   await page.emulateMedia({reducedMotion:'no-preference'});
   for(const [width,height] of [[320,568],[390,844],[430,932],[1440,900]]) {
     await page.setViewportSize({width,height});
@@ -69,7 +69,7 @@ try {
   }
   // Fresh typing game, then a viewport sized like the area above a keyboard.
   await page.keyboard.press('Escape');
-  await page.getByRole('button',{name:/Abrir sessão/}).click();
+  await page.locator('.music-card[data-track-id="perfect-local"]').click();
   await page.getByRole('button',{name:/Sem pistas/}).click();
   await page.getByRole('button',{name:'Começar a jogar'}).click();
   const typedRounds=buildMusicRounds(lesson,'typing',Number(await page.locator('.clip-game').getAttribute('data-session-seed')));

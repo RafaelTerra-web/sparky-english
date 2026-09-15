@@ -9,7 +9,7 @@ try {
   page.on('pageerror', e => errors.push(e.message));
   await page.goto(musicBaseURL);
   await page.getByRole('button', { name: 'Músicas', exact: true }).click();
-  await page.getByRole('button', { name: /Abrir sessão/ }).click();
+  await page.locator('.music-card[data-track-id="perfect-local"]').click();
   const room = page.locator('dialog.listen-room');
   await room.waitFor({ state: 'visible' });
   assert.equal(await room.evaluate(el => el.matches(':modal')), true);
