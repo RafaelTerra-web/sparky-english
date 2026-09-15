@@ -1,11 +1,9 @@
-const CACHE_NAME = "sparky-public-v8";
+const CACHE_NAME = "sparky-public-v10";
 // Development chunk URLs are reused between edits. Never serve cached app code
 // on localhost; an installed worker must also migrate existing preview caches.
 const LOCAL_PREVIEW = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
 const SHELL = [
   "/offline.html",
-  "/visuals/sparky-panda.png",
-  "/visuals/pinky-v2.png",
   "/icons/sparky-192-v2.png",
   "/icons/sparky-512-v2.png",
   "/icons/sparky-maskable-512-v2.png",
@@ -32,8 +30,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(request).catch(async () => (await caches.match("/offline.html")) || Response.error()));
     return;
   }
-  const publicAsset = url.pathname.startsWith("/_next/static/") || SHELL.includes(url.pathname)
-    || (url.pathname === "/_next/image" && url.searchParams.get("url") === "/visuals/sparky-panda.png");
+  const publicAsset = url.pathname.startsWith("/_next/static/") || SHELL.includes(url.pathname);
   if (!publicAsset) return;
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
     if (response.ok && !/private|no-store/i.test(response.headers.get("cache-control") || "")) {

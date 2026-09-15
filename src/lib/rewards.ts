@@ -4,8 +4,11 @@ import { storeLedger } from "./store-ledger.ts";
 import {
   cosmeticCatalog,
   cosmeticSlots,
+  isCompatibleCosmetic,
+  legacyLookGrants,
   storeCatalog,
   retiredCosmeticPrices,
+  retiredScenePrices,
   type CosmeticSlot,
   type EquippedItems,
   type MascotId,
@@ -13,9 +16,11 @@ import {
 } from "./rewards-shared.ts";
 
 export type RewardState = {
-  version: 3;
-  wardrobeVersion: 2;
+  version: 5;
+  wardrobeVersion: 3;
   wardrobeRefund: number;
+  sceneRefund: number;
+  retiredRefundBits: string;
   coins: number;
   completedBits: string;
   moduleBits: string;
@@ -24,6 +29,9 @@ export type RewardState = {
   reviewDay: number;
   reviewBits: string;
   reviewCount: number;
+  streakDay: number;
+  streakCount: number;
+  longestStreak: number;
   ownedBits: string;
   mascot: MascotId;
   equipped: EquippedItems;
@@ -37,9 +45,11 @@ const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 
 export function emptyRewardState(): RewardState {
   return {
-    version: 3,
-    wardrobeVersion: 2,
+    version: 5,
+    wardrobeVersion: 3,
     wardrobeRefund: 0,
+    sceneRefund: 0,
+    retiredRefundBits: blankBits(storeBytes),
     coins: 0,
     completedBits: blankBits(lessonBytes),
     moduleBits: blankBits(moduleBytes),
@@ -48,6 +58,9 @@ export function emptyRewardState(): RewardState {
     reviewDay: 0,
     reviewBits: blankBits(lessonBytes),
     reviewCount: 0,
+    streakDay: 0,
+    streakCount: 0,
+    longestStreak: 0,
     ownedBits: blankBits(storeBytes),
     mascot: "sparky",
     equipped: { sparky: {}, pinky: {} },
@@ -91,39 +104,82 @@ function dayIso(day: number) {
 export function normalizeRewardState(input: unknown): RewardState {
   const blank = emptyRewardState();
   if (!input || typeof input !== "object") return blank;
-  const raw = input as Partial<Omit<RewardState, "version">> & { version?: number; owned?: unknown[] };
-  if (raw.version !== 1 && raw.version !== 3) return blank;
-  const ownedBits = raw.version === 3 ? decodeBits(raw.ownedBits, storeBytes) : Buffer.alloc(storeBytes);
+  const raw = input as Partial<Omit<RewardState, "version" | "wardrobeVersion" | "equipped">> & {
+    version?: number;
+    wardrobeVersion?: number;
+    owned?: unknown[];
+    equipped?: Record<string, Record<string, string>>;
+  };
+  if (raw.version !== 1 && raw.version !== 3 && raw.version !== 4 && raw.version !== 5) return blank;
+  const ownedBits = raw.version === 3 || raw.version === 4 || raw.version === 5
+    ? decodeBits(raw.ownedBits, storeBytes)
+    : Buffer.alloc(storeBytes);
   if (raw.version === 1 && Array.isArray(raw.owned)) {
     for (const id of raw.owned) {
       const index = storeLedger.indexOf(id as typeof storeLedger[number]);
       if (index >= 0) setBit(ownedBits, index);
     }
   }
-  const owned: string[] = storeLedger.filter((id, index) => hasBit(ownedBits, index) && storeCatalog.some(item => item.id === id));
   const mascot: MascotId = raw.mascot === "pinky" ? "pinky" : "sparky";
   const equipped: EquippedItems = { sparky: {}, pinky: {} };
   const validBalance = typeof raw.coins === "number" && Number.isSafeInteger(raw.coins) && raw.coins >= 0 && raw.coins <= 100000;
-  const refund = raw.version === 1 && raw.wardrobeVersion !== 2 && validBalance && Array.isArray(raw.owned)
+  const wardrobeRefund = raw.version === 1 && raw.wardrobeVersion !== 2 && validBalance && Array.isArray(raw.owned)
     ? [...new Set(raw.owned.filter(id => typeof id === "string"))].reduce((sum, id) => sum + (Object.hasOwn(retiredCosmeticPrices, id) ? retiredCosmeticPrices[id] : 0), 0) : 0;
+  const retiredRefundBits = decodeBits(raw.retiredRefundBits, storeBytes);
+  let newSceneRefund = 0;
+  for (const [id, price] of Object.entries(retiredScenePrices)) {
+    const index = storeLedger.indexOf(id as typeof storeLedger[number]);
+    if (index >= 0 && hasBit(ownedBits, index) && !hasBit(retiredRefundBits, index)) {
+      newSceneRefund += price;
+      setBit(retiredRefundBits, index);
+    }
+  }
+
+  const needsModularMigration = (raw.version !== 4 && raw.version !== 5) || raw.wardrobeVersion !== 3;
+  if (needsModularMigration) {
+    for (const [lookId, grants] of Object.entries(legacyLookGrants)) {
+      const lookIndex = storeLedger.indexOf(lookId as typeof storeLedger[number]);
+      if (lookIndex < 0 || !hasBit(ownedBits, lookIndex)) continue;
+      for (const grantId of grants) {
+        const grantIndex = storeLedger.indexOf(grantId as typeof storeLedger[number]);
+        if (grantIndex >= 0) setBit(ownedBits, grantIndex);
+      }
+    }
+  }
+  const owned: string[] = storeLedger.filter((id, index) => hasBit(ownedBits, index) && storeCatalog.some(item => item.id === id));
   for (const current of ["sparky", "pinky"] as const) {
+    const oldOutfit = raw.equipped?.[current]?.outfit ?? raw.equipped?.[current]?.style;
+    const outfitItem = cosmeticCatalog.find((entry) => entry.id === oldOutfit && entry.kind === "outfit" && entry.mascots.includes(current) && owned.includes(entry.id));
+    if (outfitItem) equipped[current].outfit = outfitItem.id;
     for (const slot of cosmeticSlots) {
+      if (slot === "outfit") continue;
       const id = raw.equipped?.[current]?.[slot];
       const item = cosmeticCatalog.find(
         (entry) =>
           entry.id === id &&
           entry.slot === slot &&
-          entry.mascots.includes(current) &&
+          isCompatibleCosmetic(entry, current, outfitItem?.id) &&
           owned.includes(entry.id),
       );
       if (item) equipped[current][slot] = item.id;
     }
+    if (needsModularMigration && outfitItem) {
+      for (const grantId of legacyLookGrants[outfitItem.id] ?? []) {
+        const grant = cosmeticCatalog.find((entry) => entry.id === grantId && entry.kind === "accessory");
+        if (grant && isCompatibleCosmetic(grant, current, outfitItem.id) && !equipped[current][grant.slot]) equipped[current][grant.slot] = grant.id;
+      }
+    }
   }
+  const streakDay = typeof raw.streakDay === "number" && Number.isSafeInteger(raw.streakDay) && raw.streakDay >= 0 && raw.streakDay <= 1000000 ? raw.streakDay : 0;
+  const streakCount = typeof raw.streakCount === "number" && Number.isSafeInteger(raw.streakCount) && raw.streakCount >= 0 && raw.streakCount <= 10000 ? raw.streakCount : 0;
+  const longestStreak = typeof raw.longestStreak === "number" && Number.isSafeInteger(raw.longestStreak) && raw.longestStreak >= 0 && raw.longestStreak <= 10000 ? raw.longestStreak : 0;
   return {
-    version: 3,
-    wardrobeVersion: 2,
-    wardrobeRefund: raw.wardrobeVersion === 2 && Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : refund,
-    coins: validBalance ? Math.min(100000, raw.coins! + refund) : 0,
+    version: 5,
+    wardrobeVersion: 3,
+    wardrobeRefund: Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : wardrobeRefund,
+    sceneRefund: Math.min(650, (Number.isSafeInteger(raw.sceneRefund) && raw.sceneRefund! >= 0 ? raw.sceneRefund! : 0) + newSceneRefund),
+    retiredRefundBits: retiredRefundBits.toString("base64url"),
+    coins: validBalance ? Math.min(100000, raw.coins! + wardrobeRefund + newSceneRefund) : 0,
     completedBits: decodeBits(raw.completedBits, lessonBytes).toString("base64url"),
     moduleBits: decodeBits(raw.moduleBits, moduleBytes).toString("base64url"),
     dueDays: Array.from({ length: lessonLedger.length }, (_, index) => {
@@ -148,6 +204,9 @@ export function normalizeRewardState(input: unknown): RewardState {
       raw.reviewCount <= 10
         ? raw.reviewCount
         : 0,
+    streakDay,
+    streakCount,
+    longestStreak: Math.max(streakCount, longestStreak),
     ownedBits: ownedBits.toString("base64url"),
     mascot,
     equipped,
@@ -167,6 +226,7 @@ export function publicRewardState(state: RewardState): PublicRewardState {
   });
   return {
     dailyReviews: { day: new Date(state.reviewDay * 86400000).toISOString().slice(0,10), count: state.reviewCount },
+    streak: { count: state.streakCount, longest: Math.max(state.streakCount, state.longestStreak), lastDay: state.streakDay ? dayIso(state.streakDay).slice(0, 10) : null },
     coins: state.coins,
     completed,
     reviews,
@@ -174,7 +234,22 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     mascot: state.mascot,
     equipped: state.equipped,
     wardrobeRefund: state.wardrobeRefund,
+    sceneRefund: state.sceneRefund,
   };
+}
+
+export function checkIn(current: RewardState, now = new Date()) {
+  const state = normalizeRewardState(current);
+  const today = dayNumber(now);
+  if (state.streakDay === today)
+    return { state, advanced: false, milestone: false, earned: 0 };
+  state.streakCount = state.streakDay === today - 1 ? state.streakCount + 1 : 1;
+  state.streakDay = today;
+  state.longestStreak = Math.max(state.longestStreak, state.streakCount);
+  const milestone = state.streakCount > 1 && state.streakCount % 7 === 0;
+  const earned = milestone ? 5 : 0;
+  state.coins = Math.min(100000, state.coins + earned);
+  return { state, advanced: true, milestone, earned };
 }
 
 export function completeStudy(
@@ -269,6 +344,12 @@ export function selectMascot(current: RewardState, mascot: MascotId) {
   return state;
 }
 
+export function resetLook(current: RewardState, mascot: MascotId) {
+  const state = normalizeRewardState(current);
+  state.equipped[mascot] = {};
+  return state;
+}
+
 export function equipCosmetic(
   current: RewardState,
   mascot: MascotId,
@@ -284,10 +365,15 @@ export function equipCosmetic(
     (entry) =>
       entry.id === itemId &&
       entry.slot === slot &&
-      entry.mascots.includes(mascot) &&
+      isCompatibleCosmetic(entry, mascot, state.equipped[mascot].outfit) &&
       publicRewardState(state).owned.includes(entry.id),
   );
   if (!item) throw new Error("item-not-owned-or-compatible");
+  if (item.kind === "outfit") {
+    const incompatible = cosmeticCatalog.some(entry => entry.kind === "accessory"
+      && state.equipped[mascot][entry.slot] === entry.id && !isCompatibleCosmetic(entry, mascot, item.id));
+    if (incompatible) throw new Error("item-not-owned-or-compatible");
+  }
   state.equipped[mascot][slot] = item.id;
   return state;
 }

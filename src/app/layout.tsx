@@ -5,8 +5,10 @@ import "./course.css";
 import "./learning.css";
 import "./shop.css";
 import "./interface.css";
+import "./performance.css";
 import "./study-remap.css";
 import "./music.css";
+import "./motion.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

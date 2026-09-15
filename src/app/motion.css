@@ -1,0 +1,102 @@
+.motion-loader { display: grid; justify-items: center; gap: 14px; color: var(--muted); }
+.motion-loader p { margin: 0; color: inherit; font-size: 14px; }
+/* No video download, spinning mascot or layout change while loading. */
+.loading-dots { display: flex; align-items: center; justify-content: center; gap: 7px; width: 56px; height: 24px; }
+.loading-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: loading-breathe 1s ease-in-out infinite alternate; }
+.loading-dots i:nth-child(2) { animation-delay: .15s; }
+.loading-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes loading-breathe { from { opacity: .35; } to { opacity: 1; } }
+
+.streak-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 48px; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-soft); color: var(--foreground); font-variant-numeric: tabular-nums; }
+.streak-flame { display: grid; place-items: center; width: 24px; height: 24px; transform-origin: 50% 85%; filter: drop-shadow(0 3px 5px rgba(240,106,73,.28)); animation: flame-breathe 1.45s ease-in-out infinite; }
+.streak-flame img { width: 24px; height: 24px; object-fit: contain; }
+.streak-badge strong { font-size: 14px; }
+
+.motion-transition { position: fixed; z-index: 400; inset: 0; pointer-events: none; background: var(--background); animation: screen-fade 180ms ease-out both; }
+@keyframes screen-fade { from { opacity: .12; } to { opacity: 0; } }
+
+.streak-celebration { position: fixed; z-index: 350; top: max(18px,env(safe-area-inset-top)); right: max(18px,env(safe-area-inset-right)); display: grid; grid-template-columns: 88px minmax(0,280px); align-items: center; gap: 14px; width: min(390px,calc(100vw - 36px)); padding: 14px 40px 14px 14px; border: 1px solid color-mix(in srgb,#f06a49 42%,var(--line)); border-radius: 22px; background: color-mix(in srgb,var(--surface) 94%,transparent); color: var(--foreground); box-shadow: 0 18px 50px rgba(0,0,0,.22); backdrop-filter: blur(16px); animation: streak-arrive .52s cubic-bezier(.2,.9,.2,1) both; }
+.streak-celebration strong { display: block; margin: 2px 0 4px; font-size: 20px; }
+.streak-celebration p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.streak-celebration .eyebrow { color: #a93a20; font-size: 10px; }
+html[data-theme="dark"] .streak-celebration .eyebrow { color: #ff896a; }
+.streak-close { position: absolute; right: 8px; top: 8px; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); }
+.streak-animation { position: relative; display: grid; place-items: center; width: 88px; height: 88px; overflow: hidden; border-radius: 18px; background: color-mix(in srgb,#f06a49 9%,var(--surface-soft)); }
+.streak-animation-flame { width: 82px; height: 82px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(240,106,73,.25)); animation: flame-breathe 1.35s ease-in-out infinite; transform-origin: 50% 85%; }
+@keyframes flame-breathe { 0%,100% { transform: translateY(1px) scale(.96); } 50% { transform: translateY(-2px) scale(1.04); } }
+@keyframes streak-arrive { from { opacity: 0; transform: translateY(-18px) scale(.95); } to { opacity: 1; transform: none; } }
+
+@media (max-width:700px) {
+  .streak-badge { height: 42px; min-width: 44px; padding-inline: 10px; }
+  .streak-celebration { top: max(12px,env(safe-area-inset-top)); right: 12px; grid-template-columns: 68px 1fr; width: calc(100vw - 24px); padding: 12px 38px 12px 12px; border-radius: 18px; }
+  .streak-animation { width: 68px; height: 68px; }
+  .streak-celebration strong { font-size: 17px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .motion-loader-orbit::after,.motion-loader-orbit i,.streak-flame,.streak-animation-flame { animation: none; }
+  .motion-loader-orbit video,.motion-transition video { display: none; }
+  .motion-loader-sparky::after,.motion-transition-fallback { background-image: none; }
+  .streak-animation-flame { width: 56px; height: 56px; }
+  .motion-transition { display: none; }
+  .streak-celebration { animation: none; }
+  .motion-loader-orbit video { display: none; }
+}
+
+/* Streak journey: compact trigger, touch-sized milestones and theme-aware surfaces. */
+.streak-badge { cursor: pointer; flex-shrink: 0; border-radius: 99px; border-color: color-mix(in srgb,#ee7845 35%,var(--line)); background: color-mix(in srgb,#ee7845 8%,var(--surface)); }
+.streak-badge:hover { background: color-mix(in srgb,#ee7845 16%,var(--surface)); }
+.streak-badge:focus-visible,.streak-targets button:focus-visible,.streak-close:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.streak-flame { animation: flame-breathe 1.45s ease-in-out 3; }
+.streak-roadmap { position: fixed; inset: 0; margin: auto; padding: 0; width: min(460px,calc(100vw - 28px)); max-height: calc(100dvh - 40px); overflow: auto; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); color: var(--foreground); box-shadow: 0 24px 80px #0005; }
+.streak-roadmap::backdrop { background: #0008; backdrop-filter: blur(5px); }
+.streak-roadmap-content { position: relative; padding: 28px 24px 22px; }
+.streak-roadmap-heading { display: flex; align-items: center; gap: 14px; padding-right: 15px; }
+.streak-roadmap-heading img { object-fit: contain; filter: drop-shadow(0 5px 10px #ef7b4533); }
+.streak-roadmap h2 { font-size: 25px; margin: 3px 0 0; }
+.streak-roadmap .eyebrow { color: var(--muted); font-size: 10px; margin: 0; }
+.streak-roadmap-stats { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.streak-roadmap-stats p { margin: 0; font-size: 14px; }
+.streak-roadmap-stats strong { font-size: 34px; font-variant-numeric: tabular-nums; }
+.streak-roadmap-stats > span { display: flex; gap: 5px; align-items: center; color: var(--muted); font-size: 12px; }
+.streak-roadmap-hint,.streak-roadmap-note { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.streak-targets { display: flex; gap: 8px; overflow-x: auto; padding: 10px 4px 16px; scrollbar-width: thin; scrollbar-color: var(--accent) var(--surface-soft); }
+.streak-targets button { position: relative; display: grid; justify-items: center; gap: 7px; flex: 0 0 52px; min-height: 65px; border: 0; border-radius: 12px; padding: 5px 3px; background: transparent; color: var(--muted); cursor: pointer; }
+.streak-targets button > span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-soft); font-weight: 700; font-size: 11px; }
+.streak-targets button small { font-size: 10px; white-space: nowrap; }
+.streak-targets button.achieved > span { background: var(--accent); color: var(--on-accent); }
+.streak-targets button[aria-pressed="true"] { background: var(--surface-soft); color: var(--foreground); }
+.streak-targets button[aria-pressed="true"] > span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.streak-milestone-detail { display: grid; gap: 9px; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-soft); }
+.streak-milestone-detail > strong { font-size: 20px; }
+.streak-milestone-detail > span,.streak-milestone-detail small { font-size: 13px; color: var(--muted); }
+.streak-milestone-detail progress { appearance: none; width: 100%; height: 9px; border: 0; border-radius: 99px; overflow: hidden; background: var(--line); }
+.streak-milestone-detail progress::-webkit-progress-bar { background: var(--line); border-radius: 99px; }
+.streak-milestone-detail progress::-webkit-progress-value { background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+.streak-milestone-detail progress::-moz-progress-bar { background: var(--accent); border-radius: 99px; }
+.streak-roadmap-note { font-size: 11px; margin: 16px 0 0; }
+.streak-special { border-width: 2px; overflow: hidden; background: var(--surface); }
+.streak-special .streak-animation { background: color-mix(in srgb,#f9b942 18%,var(--surface)); }
+.streak-special .streak-animation-flame { animation: streak-milestone-pop 1s ease both, flame-breathe 1.8s 1s ease-in-out 3; }
+.streak-sparks { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.streak-sparks i { position: absolute; top: -10px; width: 5px; height: 8px; border-radius: 2px; background: #ee8e32; animation: streak-spark-fall 1.8s ease-out both; }
+.streak-sparks i:nth-child(even) { background: var(--accent); }
+@keyframes streak-milestone-pop { 0% { transform: scale(.5) rotate(-12deg); } 65% { transform: scale(1.12) rotate(5deg); } 100% { transform: scale(1); } }
+@keyframes streak-spark-fall { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(220px) rotate(220deg); opacity: 0; } }
+@media (prefers-reduced-motion:reduce) {
+ .streak-badge .streak-flame,.streak-special .streak-animation-flame { animation: none; }
+ .streak-sparks { display: none; }
+ .streak-milestone-detail progress::-webkit-progress-value { transition: none; }
+}
+.streak-roadmap .streak-close { width: 44px; height: 44px; }
+
+/* The modal enters as one fixed-size surface, never by animating its dimensions. */
+.lesson-dialog[open] { animation: lesson-arrive 180ms cubic-bezier(.2,.7,.3,1) both; }
+.lesson-dialog[open]::backdrop { animation: lesson-backdrop 180ms ease-out both; }
+.lesson-dialog > .lesson-body { min-height: 0; flex: 1 1 0; }
+.lesson-dialog > footer { flex-shrink: 0; }
+.lesson-illustration img { animation: lesson-backdrop 160ms ease-out; }
+@keyframes lesson-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes lesson-backdrop { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .loading-dots i, .lesson-dialog[open], .lesson-dialog[open]::backdrop, .lesson-illustration img { animation: none; }
+}

@@ -87,6 +87,10 @@ const nameVariants = [
 const smallNumbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
 const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
 const spellingVariants: Record<string, string> = {
+  coloured: "colored", travelling: "traveling", travelled: "traveled",
+  emphasised: "emphasized", emphasise: "emphasize", emphasising: "emphasizing",
+  programme: "program", programmes: "programs", scepticism: "skepticism",
+  analyse: "analyze", analysed: "analyzed", analysing: "analyzing",
   colour:"color", colours:"colors", favourite:"favorite", favourites:"favorites",
   favour:"favor", favours:"favors", organisation:"organization", organisations:"organizations",
   judgement:"judgment", judgements:"judgments", centre:"center", centres:"centers",

@@ -11,13 +11,16 @@ import {
 } from "@/lib/auth-session";
 import {
   buyCosmetic,
+  checkIn,
   completeStudy,
   equipCosmetic,
   normalizeRewardState,
   publicRewardState,
+  resetLook,
   selectMascot,
 } from "@/lib/rewards";
 import {
+  cosmeticCatalog,
   cosmeticSlots,
   type CosmeticSlot,
   type MascotId,
@@ -85,8 +88,19 @@ export async function POST(request: Request) {
   let earned = 0;
   let spent = 0;
   let reason = "updated";
+  let streakAdvanced = false;
+  let streakMilestone = false;
+  let shouldPersist = true;
   try {
-    if (body.action === "complete") {
+    if (body.action === "check-in") {
+      const result = checkIn(state, new Date());
+      state = result.state;
+      earned = result.earned;
+      streakAdvanced = result.advanced;
+      streakMilestone = result.milestone;
+      shouldPersist = result.advanced;
+      reason = result.milestone ? "streak-milestone" : result.advanced ? "streak" : "already-checked-in";
+    } else if (body.action === "complete") {
       if (typeof body.lessonId !== "string" || typeof body.review !== "boolean")
         throw new Error("invalid-request");
       if (typeof body.receipt !== "string") throw new Error("study-incomplete");
@@ -102,10 +116,23 @@ export async function POST(request: Request) {
       state = result.state;
       spent = result.spent;
       reason = result.alreadyOwned ? "already-owned" : "purchased";
+    } else if (body.action === "buy-and-equip") {
+      if ((body.mascot !== "sparky" && body.mascot !== "pinky") || typeof body.itemId !== "string")
+        throw new Error("invalid-request");
+      const purchase = buyCosmetic(state, body.itemId);
+      const item = cosmeticCatalog.find((entry) => entry.id === body.itemId);
+      if (!item) throw new Error("item-not-found");
+      state = equipCosmetic(purchase.state, body.mascot as MascotId, item.slot, item.id);
+      spent = purchase.spent;
+      reason = purchase.alreadyOwned ? "equipped" : "purchased-and-equipped";
     } else if (body.action === "select-mascot") {
       if (body.mascot !== "sparky" && body.mascot !== "pinky")
         throw new Error("invalid-request");
       state = selectMascot(state, body.mascot);
+    } else if (body.action === "reset-look") {
+      if (body.mascot !== "sparky" && body.mascot !== "pinky")
+        throw new Error("invalid-request");
+      state = resetLook(state, body.mascot);
     } else if (body.action === "equip") {
       if (
         (body.mascot !== "sparky" && body.mascot !== "pinky") ||
@@ -126,14 +153,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: code }, { status });
   }
   try {
-    await persistRewards(value.user.id, state, value.revision);
-    if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
+    if (shouldPersist) {
+      await persistRewards(value.user.id, state, value.revision);
+      if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
+    }
   } catch (error) {
     const code = error instanceof Error ? error.message : "progress-unavailable";
     return NextResponse.json({ error: code }, { status: code === "progress-conflict" ? 409 : 503 });
   }
   return NextResponse.json(
-    { ...publicRewardState(state), earned, spent, reason, storage: value.storage },
+    { ...publicRewardState(state), earned, spent, reason, streakAdvanced, streakMilestone, storage: value.storage },
     { headers: { "cache-control": "private, no-store" } },
   );
 }

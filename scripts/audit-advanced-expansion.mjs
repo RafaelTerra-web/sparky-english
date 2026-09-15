@@ -6,6 +6,7 @@ import { modules, lessons } from '../src/lib/curriculum.ts';
 import { buildLesson } from '../src/lib/content/build.ts';
 import { isExercise } from '../src/lib/study.ts';
 import { listeningManifest, approvedListeningAsset } from '../src/lib/listening-manifest.ts';
+import { inspectWav } from './listening-audio-tools.mjs';
 
 const digest = text => createHash('sha256').update(text).digest('hex');
 const durationRanges = { B2: [75,120], C1: [120,180], C2: [150,240] };
@@ -26,6 +27,7 @@ for (const conversation of advancedConversations) {
       try {
         const file = await readFile(resolve('public', `.${asset.path}`));
         if (file.length < 1000 || digest(file) !== asset.sha256) problems.push('audio-file-integrity');
+        if (asset.path.endsWith('.wav') && Math.abs(inspectWav(file).durationSeconds - asset.durationSeconds) > 0.01) problems.push('audio-measured-duration-mismatch');
       } catch { problems.push('audio-file-missing'); }
     }
   }

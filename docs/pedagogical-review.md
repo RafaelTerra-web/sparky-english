@@ -1,5 +1,7 @@
 # Revisão da estrutura pedagógica — 7 de setembro de 2026
 
+Atualização: a [política de idiomas e apoio pedagógico de 12/09/2026](language-policy-2026-09-12.md) incorpora o relatório sobre a versão inglesa, separa interface de explicações e protege os estímulos de exercícios e simulados.
+
 Registro da primeira reorganização. A [revisão posterior do produto](product-review-2026-09-07.md) corrige as marcações automáticas de fala, a retomada apenas nominal e o apoio à produção. Variedade de textos gerados e de sequências não comprova diversidade pedagógica nem domínio do aluno. Este documento não representa uma revisão linguística individual das 168 lições.
 
 ## Diagnóstico do curso anterior

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sparky-academy-look",
+    "generatedAt": "2026-09-09T18:21:25.559Z",
+    "generator": "OpenAI GPT Image (built-in)",
+    "sourceSha256": "82ffeb42edf9d51ef10549b8e24d972c9238e6e69ec3709df3aa0222e66ee368",
+    "repair": "Restore solid dark anatomy and remove baked-in accessories while preserving the canonical pose.",
+    "processing": "Border-connected neutral background removal, preserving opaque dark fur; resize to 640px."
+  },
+  {
+    "id": "sparky-explorer-look",
+    "generatedAt": "2026-09-09T18:21:26.725Z",
+    "generator": "OpenAI GPT Image (built-in)",
+    "sourceSha256": "c10d419a3b9fe56872a7adae9de4cdbd969c7847c9e025dd305b5237233012a5",
+    "repair": "Restore solid dark anatomy and remove baked-in accessories while preserving the canonical pose.",
+    "processing": "Border-connected neutral background removal, preserving opaque dark fur; resize to 640px."
+  },
+  {
+    "id": "sparky-debate-captain",
+    "generatedAt": "2026-09-09T18:21:27.960Z",
+    "generator": "OpenAI GPT Image (built-in)",
+    "sourceSha256": "c732e9109b2c244bb671b0b2cc8434a6271d8cfbc932c338a31f9c1af99f1391",
+    "repair": "Restore solid dark anatomy and remove baked-in accessories while preserving the canonical pose.",
+    "processing": "Border-connected neutral background removal, preserving opaque dark fur; resize to 640px."
+  },
+  {
+    "id": "sparky-base",
+    "generatedAt": "2026-09-09T18:25:42.010Z",
+    "generator": "OpenAI GPT Image (built-in)",
+    "sourceSha256": "8dc9a302ca235f3e768453507544cd063da180fe6a5ad02a138b2cd7a2fb677d",
+    "repair": "Restore solid dark anatomy and remove baked-in accessories while preserving the canonical pose.",
+    "processing": "Border-connected neutral background removal, preserving opaque dark fur; resize to 640px."
+  }
+]

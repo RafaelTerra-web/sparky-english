@@ -7,6 +7,7 @@ export default defineConfig({
     command: "npm run dev -- --port 3211",
     url: "http://localhost:3211",
     reuseExistingServer: false,
+    env: { ...process.env, NEXT_PUBLIC_SPARKY_CALL_ENABLED: "true" },
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

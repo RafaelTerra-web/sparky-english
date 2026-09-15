@@ -15,7 +15,7 @@ Não foram alterados o motor das 24 rodadas, timestamps, volume, velocidades, ID
 
 ## Revisão do relatório de alinhamento
 
-Esta é uma **revisão dos dados e do método**, não aprovação por escuta do áudio. O áudio original e o bundle aprovado não vieram pelo Git.
+Esta é uma **revisão dos dados e do método**, não aprovação por escuta do áudio. O áudio original foi localizado em Downloads e o bundle foi recuperado da versão aprovada na Vercel. O MP3 publicado mantém os mesmos bytes e volume dessa versão.
 
 O relatório contém 49 linhas, 285 palavras, zero divergências de tokens e 58 palavras com algum limite divergente em mais de 300 ms. Medianas de início e fim: −20 ms. O maior desvio absoluto é 6,87 s.
 
@@ -35,15 +35,18 @@ O script força o alinhamento do texto conhecido em janelas recortadas entre lin
 
 ## Validação e limites
 
-- `npm test`: 108 testes; inclui regressões da linha ambiental em limites, silêncio, seek, pausa, velocidades e ajuste de latência.
+- `npm test`: 145 testes; inclui regressões da linha ambiental em limites, silêncio, seek, pausa, velocidades e ajuste de latência, além da sequência diária e migrações da loja.
 - TypeScript, ESLint e build otimizada verificados.
-- `smoke-music-room.mjs` e `smoke-music-full.mjs`: executados com fixture sintético local, 49 frases originais, 500 s de silêncio e 21 entradas de teste. Validam código e geometria, **não** o áudio real ou os 127 vocábulos aprovados.
+- `smoke-music-room.mjs` e `smoke-music-full.mjs`: executados novamente com a faixa real de 263,407 s, 49 linhas e 127 vocábulos. Conferem todas as linhas, 24 desafios, 1.000 agendas no smoke, áudio contínuo e geometria mobile.
 - `smoke-music-remaster.mjs`: verifica ausência de pistas durante desafios, fundo após resposta e no outro, seeks em 1×/0,75×/0,5×, pausa, movimento reduzido, 320×568, 390×844, 430×932, desktop e duas formas de redução da área visível no typing. O teclado do sistema ainda requer um dispositivo real.
 - `smoke-music-authenticated.mjs`: verifica versão, 49 linhas, 285 palavras, 127 vocábulos, Range 206 e escrita/leitura do progresso. A escrita reenvia o estado existente; apenas a revisão muda. Fixture sintético exige opt-in explícito e só é aceito em loopback.
+- 12 testes de navegador passaram após integrar `origin/main`: foguinho, marcos, movimento reduzido, contraste da loja, migração do guarda-roupa, navegação, abertura de lições e separação dos idiomas. As APIs de conta desses testes são fixtures; o smoke musical usa o backend isolado local.
 
 ## Retomada com a faixa real e candidato
 
-É necessário disponibilizar `.music-assets/manifest.json` e `.music-assets/audio.mp3` aprovados, sem regenerar áudio. Para o laboratório original também são necessários seu manifesto, `audio-soft.wav`, `audio-report.json` e a configuração coerente. Não usar os arquivos sintéticos de `.music-lab` para empacotar uma release.
+O pacote `.music-assets/manifest.json` e `.music-assets/audio.mp3` foi recuperado de `dpl_A19hmuaCfqY5UHqqtt2mj9mwHWzv`, sem regenerar o áudio publicado. `scripts/verify-music-release.mjs` verifica seus SHA-256 no prebuild da Vercel e impede deploys com pacote ausente ou diferente do aprovado. Os arquivos privados continuam fora do Git e entram somente no upload autorizado da release. Um deploy disparado apenas pelo Git falhará até receber esse pacote.
+
+Foram integrados os 12 commits de `origin/main` até `8195385`, restaurando o foguinho, as celebrações, o guarda-roupa e melhorias de navegação. O Caderno permanece removido. Bits antigos de compras, progresso musical e identificadores foram preservados.
 
 Os smokes aceitam `MUSIC_BASE_URL` e `MUSIC_STORAGE_STATE` (caminho local de uma sessão Playwright já autorizada). Nenhum script obtém cookies do perfil pessoal, cria sessão de produção ou contorna a proteção da Vercel. Não versionar arquivos de sessão.
 

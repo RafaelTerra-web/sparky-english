@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import sharp from "sharp";
-import { practiceCatalog, cosmeticCatalog } from "../src/lib/rewards-shared.ts";
+import { practiceCatalog, accessoryCatalog, outfitCatalog } from "../src/lib/rewards-shared.ts";
 import { storeMissions } from "../src/lib/content/store-missions.ts";
 
 test("every permanent practice pack has two usable original missions with explanation and production", () => {
@@ -22,13 +22,20 @@ test("every permanent practice pack has two usable original missions with explan
   }
 });
 
-test("all fitted outfits are real alpha sprites; scenes and looks occupy separate slots", async () => {
-  for (const item of cosmeticCatalog) {
-    if (item.category === "looks") {
-      assert.equal(item.slot, "style");
-      const picture = sharp(`public${item.assetPath}`);
-      assert.ok((await picture.metadata()).hasAlpha, item.id);
-      assert.equal((await picture.stats()).channels.at(-1).min, 0, item.id);
-    } else assert.equal(item.slot, "scene");
+test("all fitted outfits and accessory variants are real alpha sprites", async () => {
+  for (const item of outfitCatalog) {
+    assert.equal(item.slot, "outfit");
+    const picture = sharp(`public${item.assetPath}`);
+    assert.ok((await picture.metadata()).hasAlpha, item.id);
+    assert.equal((await picture.stats()).channels.at(-1).min, 0, item.id);
+  }
+  for (const item of accessoryCatalog) {
+    for (const mascot of item.mascots) {
+      for (const path of Object.values(item.assets[mascot]).filter(Boolean)) {
+        const picture = sharp(`public${path}`);
+        assert.ok((await picture.metadata()).hasAlpha, `${item.id}:${mascot}`);
+        assert.equal((await picture.stats()).channels.at(-1).min, 0, `${item.id}:${mascot}`);
+      }
+    }
   }
 });

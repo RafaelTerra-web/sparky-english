@@ -1,0 +1,182 @@
+.backdrop {
+  position: fixed;
+  z-index: 460;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  overflow: hidden;
+  background: color-mix(in srgb, var(--chrome) 68%, transparent);
+  backdrop-filter: blur(14px);
+  animation: reveal-backdrop 320ms ease both;
+}
+
+.card {
+  position: relative;
+  isolation: isolate;
+  width: min(470px, 100%);
+  overflow: hidden;
+  padding: 40px 34px 32px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% -12%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 47%),
+    var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .32);
+  text-align: center;
+  animation: reveal-card 520ms cubic-bezier(.2, .9, .22, 1.12) both;
+}
+
+.close {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface-soft) 88%, transparent);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.close:focus-visible,
+.continue:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  outline-offset: 3px;
+}
+
+.medal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  margin: 0 auto 22px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line));
+  border-radius: 38px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-soft));
+  color: var(--accent);
+  box-shadow: 0 14px 42px color-mix(in srgb, var(--accent) 24%, transparent);
+  transform: rotate(-3deg);
+  animation: medal-pop 720ms 180ms cubic-bezier(.2, .9, .2, 1.2) both;
+}
+
+.medal strong {
+  font-size: 34px;
+  letter-spacing: -.05em;
+}
+
+.medal svg {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent-strong, var(--accent));
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(29px, 8vw, 43px);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.message {
+  max-width: 35ch;
+  margin: 16px auto 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.path {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px auto 0;
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.path span:first-child {
+  color: var(--muted);
+}
+
+.continue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 26px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.confetti {
+  position: absolute;
+  z-index: -1;
+  top: -22px;
+  left: var(--x);
+  width: 9px;
+  height: 17px;
+  border-radius: 4px;
+  background: var(--confetti-color);
+  opacity: 0;
+  animation: confetti-fall var(--duration) var(--delay) ease-in both;
+}
+
+@keyframes reveal-backdrop {
+  from { opacity: 0; }
+}
+
+@keyframes reveal-card {
+  from { opacity: 0; transform: translateY(24px) scale(.94); }
+}
+
+@keyframes medal-pop {
+  from { opacity: 0; transform: rotate(-12deg) scale(.55); }
+}
+
+@keyframes confetti-fall {
+  0% { opacity: 0; transform: translate3d(0, -20px, 0) rotate(0); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--drift), 560px, 0) rotate(520deg); }
+}
+
+@media (max-width: 520px) {
+  .card { padding: 34px 22px 24px; border-radius: 24px; }
+  .medal { width: 96px; height: 96px; border-radius: 30px; }
+  .medal strong { font-size: 29px; }
+  .message { font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .card,
+  .medal { animation: none; }
+  .confetti { display: none; }
+}
