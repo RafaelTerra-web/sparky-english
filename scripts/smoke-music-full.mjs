@@ -40,8 +40,9 @@ try {
   await audio.evaluate(a=>{window.pauses=0;a.addEventListener('pause',()=>window.pauses++);});
   for(const [i,r] of rounds.entries()){
     await audio.evaluate((a,t)=>{a.currentTime=t;},r.countdownStart+.05);
-    await page.locator(`.clip-round[data-round="${i}"][data-state="countdown"]`).waitFor();
-    assert.match(await page.locator('.clip-countdown.is-visible').innerText(),/[123]/);
+    const opening = i === 0 && r.countdownStart + .05 < 3;
+    await page.locator(`.clip-round[data-round="${i}"][data-state="${opening ? 'countdown' : 'waiting'}"]`).waitFor();
+    assert.equal(await page.locator('.clip-countdown.is-visible').count(), opening ? 1 : 0);
     await audio.evaluate((a,t)=>{a.currentTime=t;},r.revealAt+.02);
     await page.locator(`.clip-round[data-round="${i}"] .clip-phrase.is-visible`).waitFor();
     assert.equal(await page.locator('.clip-options button').first().isDisabled(),true);

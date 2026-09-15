@@ -29,12 +29,12 @@ try {
   await page.screenshot({path:`${screenshots}/challenge.png`});
   await page.locator('.clip-options button').nth(first.options.indexOf(first.answer)).click();
   await page.locator('.clip-round[data-state=answered]').waitFor();
-  await page.locator('.clip-response-stage .clip-ambient[data-visible=true]').waitFor();
+  await page.locator('.clip-prompt-slot .clip-ambient[data-visible=true]').waitFor();
   await page.getByRole('button',{name:'Pausar jogo'}).click();
   await page.screenshot({path:`${screenshots}/answer.png`});
-  const pausedIndex=await page.locator('.clip-response-stage .clip-ambient').getAttribute('data-line');
+  const pausedIndex=await page.locator('.clip-prompt-slot .clip-ambient').getAttribute('data-line');
   await page.waitForTimeout(150);
-  assert.equal(await page.locator('.clip-response-stage .clip-ambient').getAttribute('data-line'),pausedIndex);
+  assert.equal(await page.locator('.clip-prompt-slot .clip-ambient').getAttribute('data-line'),pausedIndex);
 
   // The outro is always free of challenges. Seek there, then rewind into a
   // completed line to check background continuity independently of round state.
@@ -51,7 +51,8 @@ try {
       assert.equal(await ambient.getAttribute('aria-hidden'),'true');
       assert.equal(await ambient.locator('.spoken,.current-word,button').count(),0);
       assert.equal((await ambient.locator('p').allTextContents()).at(-1),lesson.lines[index].text);
-      assert.ok(Number(await ambient.evaluate(el=>getComputedStyle(el).opacity))<=.31);
+      await page.waitForTimeout(400);
+      assert.ok(Number(await ambient.evaluate(el=>getComputedStyle(el).opacity))<=.83);
     }
   }
   await page.waitForTimeout(800);

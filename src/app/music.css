@@ -450,3 +450,44 @@ dialog.clip-room{background:radial-gradient(ellipse at 50% 0,var(--surface-stron
 @media(max-height:740px){.clip-room .clip-album-title{font-size:30px!important}}
 @media(max-height:640px){.clip-game[data-phase=round] .clip-album-title,.clip-game[data-phase=outro] .clip-album-title{font-size:23px!important}}
 @media(prefers-reduced-motion:reduce){.music-library *,.clip-room *{transition:none!important;animation:none!important}}
+
+/* A continuous lyric stage. Editorial sections and measured audio energy drive
+   emphasis; the media clock remains the only source of timing. */
+.clip-game{--lyric-color:var(--accent);--lyric-halo:var(--accent-soft)}
+.clip-game[data-section=chorus]{--lyric-color:color-mix(in srgb,var(--foreground) 45%,#d8953e);--lyric-halo:#dba55826}
+.clip-game[data-tone=violet][data-section=chorus]{--lyric-color:color-mix(in srgb,var(--foreground) 45%,#bd78e0);--lyric-halo:#b576db24}
+.clip-prompt-slot::before{content:'';position:absolute;inset:-2px 8%;z-index:-1;border-radius:50%;background:radial-gradient(ellipse,var(--lyric-halo),transparent 72%);opacity:calc(.35 + var(--music-energy)*.35);transform:scaleX(calc(.8 + var(--music-energy)*.2));transition:background 1.2s,opacity .5s,transform .5s;pointer-events:none}
+.clip-game[data-section=chorus] .clip-prompt-slot::before{inset:-10px 0;opacity:.95}
+.clip-game .clip-ambient[data-visible=true]{opacity:.58;mask-image:linear-gradient(transparent,#000 12%,#000 94%,transparent)}
+.clip-game .clip-ambient[data-visible=false]{transition:none}
+.clip-game[data-section=chorus] .clip-ambient[data-visible=true]{opacity:.82}
+.clip-game[data-section=build] .clip-ambient[data-visible=true]{opacity:.68}
+.clip-game[data-moment=instrumental] .clip-ambient[data-visible=true],.clip-game[data-moment=outro] .clip-ambient[data-visible=true]{opacity:.38}
+.clip-game .clip-ambient p{top:34%;height:66%;font-size:clamp(17px,4.7vw,24px);line-height:1.3;font-weight:500}
+.clip-game[data-playing=false] .clip-ambient p{animation:none}
+.clip-ambient p[data-current=false]{opacity:.35}
+.clip-lyric-row{max-width:100%;display:block}
+.clip-lyric-word{white-space:pre-wrap;color:var(--foreground);background:linear-gradient(90deg,var(--lyric-color) var(--word-fill),var(--foreground) var(--word-fill));background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.clip-ambient p[data-current=false] .clip-lyric-word{background:none;-webkit-text-fill-color:var(--foreground)}
+.clip-lyric-word[data-singing=true]{text-shadow:0 0 18px var(--lyric-halo)}
+.clip-game[data-section=narrative] .clip-ambient p[data-current=true]{font-family:Georgia,serif;font-style:italic;letter-spacing:-.02em}
+.clip-game[data-section=chorus] .clip-ambient p[data-current=true]{font-weight:750;letter-spacing:-.035em}
+.clip-game[data-section=chorus] .clip-round-top .clip-eyebrow{color:var(--lyric-color)}
+.clip-game[data-section=chorus] .clip-phrase .spoken{color:var(--lyric-color);text-shadow:0 0 18px var(--lyric-halo)}
+.clip-section-art{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s}
+.clip-section-art.is-visible{opacity:1;visibility:visible}
+.clip-section-art>span{font-size:9px;letter-spacing:.19em;text-transform:uppercase;color:var(--muted)}
+.clip-energy-ribbon{display:flex;align-items:center;justify-content:center;height:36px;gap:5px;max-width:100%;opacity:.38}
+.clip-energy-ribbon i{display:block;width:3px;height:100%;border-radius:4px;background:var(--lyric-color);transform:scaleY(calc(.08 + var(--bar-shape)*var(--music-energy)*.8));transition:transform .35s,background 1s}
+.clip-game[data-section=chorus] .clip-energy-ribbon{opacity:.65}
+.clip-game[data-section=narrative] .clip-energy-ribbon i{width:2px}
+.clip-response-stage .clip-answer-receipt{justify-content:center}
+.clip-game .clip-countdown{inset:4px 0 auto auto;flex-direction:row;gap:6px;z-index:2}
+.clip-game .clip-countdown.is-visible strong{width:30px;height:30px;font-size:18px;background:transparent}
+.clip-game .clip-countdown.is-visible>span{font-size:8px;letter-spacing:.06em}
+.clip-game[data-section=intro] .clip-ambient{inset:28px 0 0}
+@media(prefers-reduced-motion:reduce){
+  .clip-prompt-slot::before{transform:none!important;opacity:.45!important;transition:none!important}
+  .clip-energy-ribbon i{transform:scaleY(.35)!important}
+  .clip-lyric-word{background:none;-webkit-text-fill-color:var(--foreground);text-shadow:none}
+}

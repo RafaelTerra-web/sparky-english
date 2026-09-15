@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useRef, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState, type RefObject, type CSSProperties } from 'react';
 import MusicScene from './music-scene';
 import { ArrowRight, Check, Headphones, Pause, Play, RotateCcw, Zap } from 'lucide-react';
 import type { MusicLesson } from '@/lib/music';
@@ -8,6 +8,9 @@ import { buildMusicRounds, initialGame, musicGameReducer, type GameDifficulty } 
 import { createMusicFeedback } from '@/lib/music-feedback';
 import { ambientLyricIndex } from '@/lib/music-ambience';
 import MusicAmbience from './music-ambience';
+import { musicEnergy } from '@/lib/music-energy';
+import { musicIntroCountdown, musicEnergyAt, musicSectionAt, musicVisualMoment } from '@/lib/music-visuals';
+import { t } from '@/lib/interface-language';
 
 type Props = { lesson: MusicLesson; media: RefObject<HTMLAudioElement | null>; clock: number; playing: boolean; speed: number; onSpeed: (speed: number) => void; onSeek: (time: number) => void; onPlay: () => void; onPause: () => void; onExplore: (line: number, word?: string) => void };
 const levels = [
@@ -31,10 +34,9 @@ export default function MusicGame({ lesson, media, clock, playing, speed, onSpee
   const round = rounds[state.index];
   const heard = state.phase === 'round' && clock >= round.opens && clock < round.closes;
   const showingError = errorFlash === state.index;
-  const beforeCountdown = clock < round.countdownStart;
-  const counting = clock >= round.countdownStart && clock < round.revealAt;
-  const revealed = clock >= round.revealAt;
-  const countdown = Math.max(1, Math.ceil(round.revealAt - clock));
+  const revealed = state.phase === 'round' && clock >= round.revealAt;
+  const countdown = musicIntroCountdown(clock, state.phase === 'round' && state.index === 0 && !state.answered);
+  const counting = countdown > 0;
   const answersVisible = revealed && (!state.answered || showingError);
   const remaining = Math.max(0, round.closes - clock) / speed;
   const windowProgress = Math.max(0, Math.min(1, (round.closes - clock) / (round.closes - round.opens)));
@@ -82,13 +84,16 @@ export default function MusicGame({ lesson, media, clock, playing, speed, onSpee
   }
   const completed = state.outcomes.length;
   const ambientIndex = ambientLyricIndex(lesson.lines, clock);
-  const ambientWaiting = state.phase === 'outro' || ((beforeCountdown || counting) && !state.answered);
+  const ambientWaiting = !revealed || state.answered;
+  const energy = musicEnergyAt(musicEnergy[lesson.id], clock);
+  const section = musicSectionAt(lesson.id, clock);
+  const moment = musicVisualMoment(lesson.lines, ambientIndex, clock, energy);
   const tone = lesson.id === 'heartless-local' ? 'violet' : 'emerald';
-  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase} data-playing={playing} data-difficulty={difficulty} data-tone={tone}>
+  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase} data-playing={playing} data-difficulty={difficulty} data-tone={tone} data-section={section.kind} data-moment={moment} style={{ '--music-energy': energy } as CSSProperties}>
     <div className="clip-scorebar"><span><Headphones size={15} /> {state.phase === 'ready' ? 'ESCUTA ATIVA' : `${state.correct} / ${rounds.length} ACERTOS`}</span><span><Zap size={15} /> {state.streak} seguidas</span></div>
     <div className="clip-speed-control" role="group" aria-label="Velocidade do jogo"><span>Velocidade</span>{[1, .75, .5].map(value => <button key={value} aria-pressed={speed === value} onClick={() => onSpeed(value)}>{value === 1 ? '1×' : value === .75 ? '0,75×' : '0,5×'}</button>)}</div>
     <div className={'clip-media ' + (playing ? 'is-playing' : '')}>
-      <MusicScene playing={playing} clock={clock} tone={tone} />
+      <MusicScene playing={playing} clock={clock} tone={tone} energy={energy} chorus={section.kind === 'chorus'} />
       <div className="clip-media-top"><span>SPARKY SESSIONS</span><span>NO SEU RITMO</span></div>
       <div className="clip-album-title" aria-hidden="true">{lesson.title}<span>{lesson.artist}</span></div>
       <div className="clip-wave" aria-hidden="true">{Array.from({ length: 35 }, (_, i) => <i key={i} style={{ height: `${10 + ((i * 17 + 7) % 34)}px`, animationDelay: `${i * -.09}s` }} />)}</div>
@@ -104,18 +109,19 @@ export default function MusicGame({ lesson, media, clock, playing, speed, onSpee
       <div className="clip-results"><div><strong>{state.correct}/{rounds.length}</strong><span>acertos</span></div><div><strong>{state.bestStreak}</strong><span>melhor sequência</span></div><div><strong>{state.missed}</strong><span>para revisar</span></div></div>
       {state.missed > 0 && <div className="clip-review"><h3>Vamos ouvir essas de novo?</h3>{state.outcomes.map((outcome, i) => outcome === 'missed' && <button key={rounds[i].line.id} onClick={() => onExplore(rounds[i].lineIndex, rounds[i].line.words[rounds[i].target].vocabularyId)}><span>{rounds[i].answer}</span><ArrowRight size={16} /></button>)}</div>}
       <button className="clip-primary" onClick={() => onExplore(round.lineIndex, round.line.words[round.target].vocabularyId)}>Explorar o último trecho <ArrowRight size={18} /></button><button className="clip-text" onClick={start}><RotateCcw size={16} /> Jogar novamente</button>
-    </div> : <div ref={game} className="clip-round" data-round={state.index} data-state={showingError ? 'incorrect' : state.answered ? 'answered' : counting ? 'countdown' : beforeCountdown ? 'waiting' : heard ? 'answering' : 'listening'}>
-      <div className="clip-round-top"><span className="clip-eyebrow">{!playing ? 'PAUSADO' : state.answered || beforeCountdown ? 'AO VIVO · OUVINDO' : counting ? `PRÓXIMO · ${countdown}` : heard ? 'AO VIVO · RESPONDA' : 'AO VIVO · ESCUTE'}</span><span>{String(state.index + 1).padStart(2, '0')} / {String(rounds.length).padStart(2, '0')}</span></div>
+    </div> : <div ref={game} className="clip-round" data-round={state.index} data-state={showingError ? 'incorrect' : state.answered ? 'answered' : counting ? 'countdown' : !revealed ? 'waiting' : heard ? 'answering' : 'listening'}>
+      <div className="clip-round-top"><span className="clip-eyebrow">{t(section.label)} · {!playing ? 'PAUSADO' : heard && !state.answered ? 'RESPONDA' : 'AO VIVO'}</span><span>{String(state.index + 1).padStart(2, '0')} / {String(rounds.length).padStart(2, '0')}</span></div>
       <div className="clip-prompt-slot">
-        <MusicAmbience lines={lesson.lines} index={ambientIndex} visible={ambientWaiting} />
-        <div className={'clip-countdown ' + (!state.answered && (counting || (beforeCountdown && ambientIndex < 0)) ? 'is-visible' : '')} aria-hidden={state.answered || (!counting && !(beforeCountdown && ambientIndex < 0))}>{counting ? <><strong key={countdown}>{countdown}</strong><span>Prepare-se</span></> : <><Headphones size={28} /><span>A música segue</span></>}</div>
+        <MusicAmbience lines={lesson.lines} index={ambientIndex} clock={clock} visible={ambientWaiting} />
+        <div className={'clip-countdown ' + (counting ? 'is-visible' : '')} aria-hidden={!counting}><strong key={countdown}>{countdown || 3}</strong><span>Prepare-se</span></div>
         <div className={'clip-phrase ' + (!state.answered && revealed ? 'is-visible' : '')} lang="en" aria-hidden={state.answered || !revealed}>{round.line.words.map((w, i) => i === round.target ? <span key={i} className="clip-gap"><span aria-label="palavra oculta">•••</span></span> : <span key={i} className={clock >= w.start && clock < w.end ? 'spoken' : ''}>{w.text} </span>)}</div>
-        <div className={'clip-answer-receipt ' + (state.answered && state.phase !== 'outro' ? 'is-visible ' : '') + (state.solved ? 'success' : '')} aria-hidden={!state.answered || state.phase === 'outro'}>{state.answered && <><span>{state.solved ? 'Acertou!' : 'A palavra era'}</span><strong lang="en">{round.answer}{state.solved && <Check size={20} />}</strong></>}</div>
       </div>
       <div className={'clip-time-window ' + (!state.answered && revealed ? 'is-visible' : '')}><span>{clock < round.opens ? 'Ouça a palavra até o fim' : 'Toque na palavra que ouviu'}</span><span>{heard ? Math.ceil(remaining) + 's' : 'Escutando…'}</span><div role="progressbar" aria-label="Tempo da resposta" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(windowProgress * 100)}><i style={{ transform: 'scaleX(' + windowProgress + ')' }} /></div></div>
       <div className="clip-dots" aria-label={completed + ' de ' + rounds.length + ' trechos percorridos'}>{rounds.map((r,i) => <span key={r.line.id} className={state.outcomes[i] === 'missed' ? 'missed' : state.outcomes[i] ? 'done' : i === state.index ? 'active' : ''} />)}</div>
-      <div ref={status} className={'clip-feedback ' + (state.solved ? 'success' : state.roundMistakes ? 'retry' : '')} role="status" tabIndex={-1}>{state.feedback || (!playing ? 'Toque em continuar para voltar ao ritmo.' : counting ? `Próximo desafio em ${countdown}` : heard ? 'Qual palavra você ouviu?' : revealed ? 'Acompanhe a voz…' : 'Continue ouvindo…')}</div>
-      <div className="clip-response-stage"><MusicAmbience lines={lesson.lines} index={ambientIndex} visible={state.answered && !showingError && state.phase !== 'outro'} />
+      <div ref={status} className={'clip-feedback ' + (state.solved ? 'success' : state.roundMistakes ? 'retry' : '')} role="status" tabIndex={-1}>{state.feedback || (!playing ? 'Toque em continuar para voltar ao ritmo.' : heard ? 'Qual palavra você ouviu?' : revealed ? 'Acompanhe a voz…' : t(section.story))}</div>
+      <div className="clip-response-stage">
+      <div className={'clip-section-art ' + (!answersVisible && (!state.answered || state.phase === 'outro') ? 'is-visible' : '')} aria-hidden="true"><div className="clip-energy-ribbon">{Array.from({ length: 25 }, (_, i) => <i key={i} style={{ '--bar-shape': .3 + .7 * Math.sin((i + 1) / 26 * Math.PI) ** 2 } as CSSProperties} />)}</div><span>{t(section.label)}</span></div>
+      <div className={'clip-answer-receipt ' + (state.answered && !showingError && state.phase !== 'outro' ? 'is-visible ' : '') + (state.solved ? 'success' : '')} aria-hidden={!state.answered || showingError || state.phase === 'outro'}>{state.answered && <><span>{state.solved ? 'Acertou!' : 'A palavra era'}</span><strong lang="en">{round.answer}{state.solved && <Check size={20} />}</strong></>}</div>
       <div className={'clip-response-slot ' + (answersVisible ? 'is-visible' : '')} aria-hidden={!answersVisible}>{difficulty === 'typing' ? <form className={'clip-type ' + (showingError ? 'incorrect' : '')} onSubmit={e => { e.preventDefault(); answer(typed, document.activeElement as HTMLElement); }}><input aria-label="Palavra que você ouviu" placeholder="Digite em inglês" autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} tabIndex={answersVisible ? 0 : -1} disabled={!playing || !heard || state.answered} value={typed} onChange={e => setDraft({ index: state.index, value: e.target.value })} /><button aria-label="Enviar palavra" tabIndex={answersVisible ? 0 : -1} disabled={!playing || !heard || state.answered || !typed.trim()}><ArrowRight size={20} /></button></form> : <div className="clip-options">{round.options.map((option, i) => <button key={option} tabIndex={answersVisible ? 0 : -1} className={showingError && state.rejected.includes(option) ? 'incorrect' : ''} disabled={!playing || !heard || state.answered} onClick={e => answer(option, e.currentTarget)}><span className="clip-option-key">{i + 1}</span>{option}</button>)}</div>}</div>
       </div>
       <div className="clip-live-footer"><span>{state.index > 0 && state.outcomes[state.index - 1] === 'missed' ? 'Anterior: ' + rounds[state.index - 1].answer + ' · guardada para revisar' : 'A música segue. Você segue junto.'}</span><button className="clip-mini-play" aria-label={playing ? 'Pausar jogo' : 'Continuar jogo'} onClick={() => playing ? onPause() : onPlay()}>{playing ? <Pause size={18} /> : <Play size={18} />}</button></div>

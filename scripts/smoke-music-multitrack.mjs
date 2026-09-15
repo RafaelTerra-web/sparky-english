@@ -68,9 +68,9 @@ try {
   const rounds = buildMusicRounds(lesson, 'challenge', Number(await page.locator('.clip-game').getAttribute('data-session-seed')));
   const round = rounds[1];
   await audio.evaluate((a, time) => { a.currentTime = time; a.pause(); }, round.countdownStart + .5);
-  await page.locator('.clip-round[data-state=countdown]').waitFor();
+  await page.locator('.clip-round[data-state=waiting]').waitFor();
   await page.locator('.clip-prompt-slot .clip-ambient[data-visible=true]').waitFor();
-  assert.ok(await page.locator('.clip-countdown.is-visible').isVisible());
+  assert.equal(await page.locator('.clip-countdown.is-visible').count(), 0);
   assert.ok(await page.locator('.clip-prompt-slot .clip-ambient p').count() > 0);
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${screenshots}/heartless-countdown.png` });
@@ -99,5 +99,5 @@ try {
   await page.waitForTimeout(300);
   assert.ok(await audio.evaluate(a => a.currentTime) > fallbackTime, 'Playback must survive loss of the decorative WebGL context');
   assert.deepEqual(errors, []);
-  console.log('PASS: two independent tracks, both Range 206, distinct saved progress, 24 rounds at all levels, Heartless full audio, lyrics behind countdown, three mobile sizes, reduced-motion GPU idle, WebGL fallback without audio interruption.');
+  console.log('PASS: two independent tracks, both Range 206, distinct saved progress, 24 rounds at all levels, Heartless full audio, no recurring countdown, continuous lyrics, three mobile sizes, reduced-motion GPU idle, WebGL fallback without audio interruption.');
 } finally { await browser.close(); }

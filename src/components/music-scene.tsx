@@ -3,11 +3,11 @@
 import { useEffect, useRef } from 'react';
 
 /** Decorative only: never connects to or modifies the audio graph. */
-export default function MusicScene({ playing, clock, tone = 'emerald' }: { playing: boolean; clock?: number; tone?: 'emerald' | 'violet' }) {
+export default function MusicScene({ playing, clock, tone = 'emerald', energy = .35, chorus = false }: { playing: boolean; clock?: number; tone?: 'emerald' | 'violet'; energy?: number; chorus?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
-  const motion = useRef({ playing, clock });
+  const motion = useRef({ playing, clock, energy, chorus });
   const synchronize = useRef<(() => void) | null>(null);
-  useEffect(() => { motion.current = { playing, clock }; synchronize.current?.(); }, [playing, clock]);
+  useEffect(() => { motion.current = { playing, clock, energy, chorus }; synchronize.current?.(); }, [playing, clock, energy, chorus]);
   useEffect(() => {
     const element = host.current;
     if (!element) return;
@@ -73,6 +73,12 @@ export default function MusicScene({ playing, clock, tone = 'emerald' }: { playi
         if (running && timestamp - lastFrame < 1000 / 30) return;
         lastFrame = timestamp;
         const time = reduced.matches ? 0 : (motion.current.clock ?? timestamp / 1000);
+        const intensity = reduced.matches ? .35 : motion.current.energy;
+        const refrain = motion.current.chorus ? .12 : 0;
+        orbit.scale.setScalar(1 + intensity * .06 + refrain);
+        orbitMaterial.opacity = .1 + intensity * .12 + refrain;
+        particles.material.opacity = .25 + intensity * .3 + refrain;
+        fill.intensity = 8 + intensity * 6;
         disc.rotation.set(.15 + Math.sin(time * .17) * .09, -.38, time * .09);
         orbit.rotation.z = -time * .035;
         particles.rotation.z = time * .014;
