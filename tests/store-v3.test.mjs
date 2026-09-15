@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { storeLedger } from '../src/lib/store-ledger.ts';
-import { storeCatalog, notebookThemeCatalog } from '../src/lib/rewards-shared.ts';
-import { emptyRewardState, normalizeRewardState, publicRewardState, buyCosmetic, equipNotebookTheme } from '../src/lib/rewards.ts';
+import { storeCatalog } from '../src/lib/rewards-shared.ts';
+import { emptyRewardState, normalizeRewardState, publicRewardState, buyCosmetic } from '../src/lib/rewards.ts';
 
 test('store bit identities are permanent, unique and cover every purchasable item', () => {
   assert.deepEqual(storeLedger.slice(0, 19), [
@@ -26,19 +26,11 @@ test('migration preserves purchases and equipment, then ignores legacy arrays in
   const shortOldBits = normalizeRewardState({ ...migrated, ownedBits: Buffer.from([16]).toString('base64url') });
   assert.deepEqual(publicRewardState(shortOldBits).owned, ['scene-garden']);
 });
-test('themes require ownership, never debit twice and can return to the free original', () => {
-  let state = { ...emptyRewardState(), coins: 500 };
-  assert.throws(() => equipNotebookTheme(state, 'notebook-midnight'), /not-owned/);
-  assert.throws(() => equipNotebookTheme(state, 'scene-garden'), /not-owned/);
-  for (const theme of notebookThemeCatalog) {
-    const balance = state.coins;
-    state = buyCosmetic(state, theme.id).state;
-    assert.equal(state.coins, balance - theme.price);
-    assert.equal(buyCosmetic(state, theme.id).spent, 0);
-    state = equipNotebookTheme(state, theme.id);
-    assert.equal(publicRewardState(normalizeRewardState(state)).notebookTheme, theme.id);
-  }
-  const balance = state.coins;
-  state = equipNotebookTheme(state, null);
-  assert.equal(state.notebookTheme, null); assert.equal(state.coins, balance);
+test('retired notebook themes cannot be bought and old purchase bits survive', () => {
+  const raw = { ...emptyRewardState(), coins: 99, ownedBits: Buffer.from([0,128,0]).toString('base64url') };
+  const next = normalizeRewardState(raw);
+  assert.equal(next.coins,99);
+  assert.equal(next.ownedBits,raw.ownedBits);
+  assert.equal('notebookTheme' in publicRewardState(next),false);
+  assert.throws(()=>buyCosmetic(next,'notebook-mint'), /item-not-found/);
 });

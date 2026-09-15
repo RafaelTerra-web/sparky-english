@@ -1,5 +1,7 @@
 # Sparky English
 
+Esta branch contém o [laboratório local de músicas](docs/music-lab.md), com conta de testes isolada. Não foi publicada em produção.
+
 PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback podem ser usados em PT-BR ou inglês, selecionados no Perfil; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
 
 ## Local development
@@ -22,7 +24,7 @@ Há 176 lições (170 autorais e as 6 originais), em 31 módulos: 38 lições em
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 
-Conclusões, revisões, moedas e roupas ficam em um cookie HttpOnly criptografado por até um ano no navegador atual. O Caderno mantém neste dispositivo a retomada da lição, tentativas, frases salvas, textos e preferências, separados pela conta. Ele permite exportar ou apagar esses dados locais. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação ou recompensas.
+Conclusões, revisões, moedas e roupas ficam em um cookie HttpOnly criptografado por até um ano no navegador atual. A retomada da lição, tentativas e preferências permanecem neste dispositivo, separados pela conta. O Caderno foi removido desta branch. O service worker armazena apenas assets públicos e uma página offline, nunca respostas de autenticação ou recompensas.
 
 O aluno precisa concluir os exercícios fechados na ordem para receber a recompensa. As respostas são validadas pelo servidor e um comprovante criptografado de até oito horas é vinculado à conta, à lição e ao modo de prática. Isso protege o fluxo normal do app, mas não transforma conteúdo público em uma avaliação certificada. Revisões independentes usam os intervalos de 3, 7, 14, 30 e 60 dias; uma tentativa com erro ou ajuda volta para três dias. A fila tem no máximo três revisões curtas por dia, intercaladas com lições novas.
 

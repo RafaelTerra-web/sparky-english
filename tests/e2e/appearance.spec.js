@@ -45,9 +45,9 @@ test('palettes, lesson readability and compact navigation',async({page},info)=>{
   failures.push(...(await audit(page)).map(x=>({palette,mode,screen:'lesson',...x})));
   if(palette==='beatrice'&&mode==='dark')await page.screenshot({path:info.outputPath('beatrice-lesson.png')});
     await page.locator('.lesson-dialog > header button').click();
-  for(const screen of ['Curso','Caderno','Loja']){
+  for(const screen of ['Curso','Músicas','Loja']){
    await page.getByRole('button',{name:screen,exact:true}).filter({visible:true}).click();
-   await page.locator(screen==='Curso'?'.catalog-levels':screen==='Caderno'?'.learning-notebook':'.shop-v2').waitFor({state:'visible'});
+   await page.locator(screen==='Curso'?'.catalog-levels':screen==='Músicas'?'.music-library':'.shop-v2').waitFor({state:'visible'});
    failures.push(...(await audit(page)).map(x=>({palette,mode,screen,...x})));
   }
   await page.getByRole('button',{name:'Abrir perfil de Ana'}).click();

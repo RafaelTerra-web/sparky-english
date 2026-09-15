@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lab:music": "node scripts/music-lab.mjs",
+    "audit:music": "node scripts/audit-music.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

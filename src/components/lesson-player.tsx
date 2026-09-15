@@ -69,7 +69,6 @@ export default function LessonPlayer({
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [storageError, setStorageError] = useState(false);
-  const [savedPhrase, setSavedPhrase] = useState(false);
   const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
   const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
   const step = steps[index];
@@ -124,7 +123,6 @@ export default function LessonPlayer({
     setContextVisible(previous?.contextVisible ?? false);
     setRevealed(previous?.revealed ?? false);
     setListened(previous?.listened ?? false);
-    setSavedPhrase(false);
   }
   function previous() {
     if (index === 0 || verifying || saving) return;
@@ -137,16 +135,6 @@ export default function LessonPlayer({
     const ok = updateWorkspace(userId, current => current.writings.some(w => w.lessonId === lesson.id && w.text === draft) ? current : ({ ...current,
       writings: [...current.writings, { id: crypto.randomUUID(), lessonId: lesson.id, text: draft, createdAt: new Date().toISOString(), contentVersion }].slice(-100),
     }));
-    if (!ok) setStorageError(true);
-  }
-  function savePhrase() {
-    if (!step.english) return;
-    const id = lesson.id + ":" + step.kind;
-    const ok = updateWorkspace(userId, current => ({ ...current, vocabulary: [
-      ...current.vocabulary.filter(item => item.id !== id),
-      { id, lessonId: lesson.id, english: step.english!, translation: step.translation || "" },
-    ].slice(-200) }));
-    setSavedPhrase(ok);
     if (!ok) setStorageError(true);
   }
   async function next() {
@@ -371,7 +359,6 @@ export default function LessonPlayer({
             {translation && <p>{t(step.translation)}</p>}
           </div>
         )}
-        {step.english && step.kind !== "summary" && !isExercise(step) && <button className="text-button" onClick={savePhrase}>{t(savedPhrase ? "Frase salva no Caderno" : "Guardar frase no Caderno")}</button>}
         {step.kind === "order_words" ? (
           <div className="word-exercise">
             <div className="word-answer" aria-label={localizeAttribute("Frase montada")}>

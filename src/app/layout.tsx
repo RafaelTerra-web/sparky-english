@@ -6,6 +6,7 @@ import "./learning.css";
 import "./shop.css";
 import "./interface.css";
 import "./study-remap.css";
+import "./music.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,7 +62,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/* Browser accessibility/translation extensions may annotate <body>
+          before React hydrates. Keep suppression scoped to this root element;
+          mismatches inside the application tree must still surface. */}
+      <body suppressHydrationWarning className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

@@ -16,7 +16,6 @@ export type PublicRewardState = {
   coins: number; completed: Record<string, string>; reviews: Record<string, string>;
   owned: string[]; mascot: MascotId; equipped: EquippedItems;
   wardrobeRefund?: number;
-  notebookTheme: string | null;
 };
 export const retiredCosmeticPrices: Record<string, number> = {
   "study-scarf": 60, "campus-cap": 80, "quiet-hoodie": 150,
@@ -42,14 +41,7 @@ export const practiceCatalog = [
   { id: "practice-team", name: "Inglês em equipe", level: "B1–B2", price: 60, description: "Duas missões: negociar um prazo e explicar uma mudança de plano." },
   { id: "practice-nuance", name: "Laboratório de nuances", level: "C1–C2", price: 80, description: "Duas missões: sintetizar evidências e adaptar uma mensagem delicada." },
 ] as const;
-export const notebookThemeCatalog = [
-  { id: "notebook-mint", kind: "notebook-theme", name: "Caderno menta", price: 25, className: "notebook-mint", description: "Verdes suaves e páginas claras para organizar suas próximas descobertas." },
-  { id: "notebook-midnight", kind: "notebook-theme", name: "Caderno meia-noite", price: 40, className: "notebook-midnight", description: "Páginas azul-escuras e texto claro para um caderno com clima noturno." },
-  { id: "notebook-classic", kind: "notebook-theme", name: "Caderno papel clássico", price: 55, className: "notebook-classic", description: "Papel creme e detalhes em castanho para suas frases, rascunhos e revisões." },
-  { id: "notebook-berry", kind: "notebook-theme", name: "Caderno frutas vermelhas", price: 70, className: "notebook-berry", description: "Tons de amora e rosa suave para dar outra aparência ao seu espaço de escrita." },
-] as const;
 export const storeCatalog = [
   ...cosmeticCatalog.map(item => ({ ...item, kind: item.category === "looks" ? "look" as const : "scene" as const })),
   ...practiceCatalog.map(item => ({ ...item, kind: "practice-pack" as const })),
-  ...notebookThemeCatalog,
 ];

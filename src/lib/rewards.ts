@@ -6,7 +6,6 @@ import {
   cosmeticSlots,
   storeCatalog,
   retiredCosmeticPrices,
-  notebookThemeCatalog,
   type CosmeticSlot,
   type EquippedItems,
   type MascotId,
@@ -26,7 +25,6 @@ export type RewardState = {
   reviewBits: string;
   reviewCount: number;
   ownedBits: string;
-  notebookTheme: string | null;
   mascot: MascotId;
   equipped: EquippedItems;
 };
@@ -51,7 +49,6 @@ export function emptyRewardState(): RewardState {
     reviewBits: blankBits(lessonBytes),
     reviewCount: 0,
     ownedBits: blankBits(storeBytes),
-    notebookTheme: null,
     mascot: "sparky",
     equipped: { sparky: {}, pinky: {} },
   };
@@ -152,7 +149,6 @@ export function normalizeRewardState(input: unknown): RewardState {
         ? raw.reviewCount
         : 0,
     ownedBits: ownedBits.toString("base64url"),
-    notebookTheme: notebookThemeCatalog.some(item => item.id === raw.notebookTheme && owned.includes(item.id)) ? raw.notebookTheme! : null,
     mascot,
     equipped,
   };
@@ -175,7 +171,6 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     completed,
     reviews,
     owned: storeLedger.filter((id, index) => hasBit(decodeBits(state.ownedBits, storeBytes), index) && storeCatalog.some(item => item.id === id)),
-    notebookTheme: state.notebookTheme,
     mascot: state.mascot,
     equipped: state.equipped,
     wardrobeRefund: state.wardrobeRefund,
@@ -294,14 +289,5 @@ export function equipCosmetic(
   );
   if (!item) throw new Error("item-not-owned-or-compatible");
   state.equipped[mascot][slot] = item.id;
-  return state;
-}
-
-export function equipNotebookTheme(current: RewardState, itemId: string | null) {
-  const state = normalizeRewardState(current);
-  if (itemId !== null && !notebookThemeCatalog.some(item => item.id === itemId && publicRewardState(state).owned.includes(item.id))) {
-    throw new Error("item-not-owned-or-compatible");
-  }
-  state.notebookTheme = itemId;
   return state;
 }
