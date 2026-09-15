@@ -48,6 +48,8 @@ O pacote `.music-assets/manifest.json` e `.music-assets/audio.mp3` foi recuperad
 
 Foram integrados os 12 commits de `origin/main` até `8195385`, restaurando o foguinho, as celebrações, o guarda-roupa e melhorias de navegação. O Caderno permanece removido. Bits antigos de compras, progresso musical e identificadores foram preservados.
 
+Na revisão adicional de 15/09, o histórico remoto não apresentou outras features faltantes. Login Google, onboarding, arquivos de performance, estilos e assets da loja e componente do foguinho coincidem com a versão mais recente da `main`. Passaram mais três verificações de navegador de aparência e performance no desktop/Android. A inspeção do login real revelou que o botão Google não acompanhava reduções de largura; um `ResizeObserver` agora redesenha somente o botão, preservando a preparação de autenticação e o foco. A regressão passou em desktop e Android.
+
 Os smokes aceitam `MUSIC_BASE_URL` e `MUSIC_STORAGE_STATE` (caminho local de uma sessão Playwright já autorizada). Nenhum script obtém cookies do perfil pessoal, cria sessão de produção ou contorna a proteção da Vercel. Não versionar arquivos de sessão.
 
-Antes de promover, executar os testes no URL **exato** do candidato com o bundle real e uma sessão autorizada. A build de código sem o bundle não é um candidato publicável. Não promover enquanto faltar essa validação.
+O usuário autorizou posteriormente a promoção direta após a revisão, mesmo sem a sessão de teste. A validação pública de produção confere login, configuração Google, assets restaurados e proteção dos endpoints. O smoke autenticado remoto e o teclado nativo continuam sem validação; os resultados do laboratório não devem ser apresentados como autenticação real em produção. A build sem o bundle continua bloqueada.
