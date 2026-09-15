@@ -6,19 +6,21 @@ import { createClient } from '@supabase/supabase-js';
 import { musicCatalog } from './music-catalog';
 import { emptyMusicProgress, normalizeMusic, validateMusic, type MusicLesson, type MusicProgress } from './music';
 
+const RELEASE_TIMING_VERSION = 'full-song-timing-2';
+
 export function localMusicMode() { return process.env.NODE_ENV === 'development' && process.env.SPARKY_MUSIC_LAB === 'true' && !process.env.VERCEL; }
 export async function getMusicCatalog() {
   const catalog = musicCatalog.filter(x => x.published);
   if (localMusicMode() && process.env.SPARKY_MEDIA_DEV_MANIFEST_PATH) {
     try {
       const data = JSON.parse(await readFile(process.env.SPARKY_MEDIA_DEV_MANIFEST_PATH, 'utf8')) as MusicLesson;
-      catalog.push(validateMusic({ ...data, source: '/api/music/audio', rights: 'local-private', published: false }));
+      catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'local-private', published: false }));
     } catch { /* An unavailable fixture must not expose filesystem information. */ }
   }
   if (!localMusicMode()) {
     try {
       const data = JSON.parse(await readFile(join(process.cwd(), '.music-assets', 'manifest.json'), 'utf8')) as MusicLesson;
-      catalog.push(validateMusic({ ...data, source: '/api/music/audio', rights: 'user-provided', published: true }));
+      catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'user-provided', published: true }));
     } catch { /* An absent release bundle is not a public filesystem error. */ }
   }
   return catalog;

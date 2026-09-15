@@ -1,4 +1,4 @@
-import type { MusicLesson } from './music';
+import type { MusicLesson, MusicLine } from './music';
 
 export type GameDifficulty = 'guided' | 'challenge' | 'typing';
 // Contrast close sounds/forms before falling back to other words in the lesson.
@@ -11,6 +11,8 @@ const contrasts: Record<string, string[]> = {
 export function normalizeAnswer(text: string) {
   return text.toLowerCase().replace(/[’‘]/g, "'").replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '').trim();
 }
+export const GAME_ROUND_COUNT = 24;
+export const COUNTDOWN_SECONDS = 3;
 export const RESPONSE_SECONDS = 3;
 function seededRandom(seed: number) {
   return () => {
@@ -20,25 +22,83 @@ function seededRandom(seed: number) {
     return ((n ^ n >>> 14) >>> 0) / 4294967296;
   };
 }
-export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty, seed = 1) {
+export type MusicRound = {
+  line: MusicLine;
+  lineIndex: number;
+  target: number;
+  answer: string;
+  options: string[];
+  countdownStart: number;
+  revealAt: number;
+  opens: number;
+  closes: number;
+  index: number;
+};
+
+type Candidate = Omit<MusicRound, 'answer' | 'options' | 'index'> & { score: number };
+
+export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty, seed = 1): MusicRound[] {
   const random = seededRandom(seed);
-  let available = 0;
-  return lesson.lines.map((line, index) => {
-    const target = Math.floor(random() * line.words.length);
+  const candidates: Candidate[] = lesson.lines.flatMap((line, lineIndex) =>
+    line.words.map((word, target) => ({
+      line,
+      lineIndex,
+      target,
+      countdownStart: Math.max(0, line.start - COUNTDOWN_SECONDS),
+      revealAt: line.start,
+      opens: word.end,
+      closes: word.end + RESPONSE_SECONDS,
+      score: random(),
+    })),
+  ).sort((a, b) => a.closes - b.closes || a.lineIndex - b.lineIndex || a.target - b.target);
+
+  // Weighted interval scheduling gives every session a seeded variation while
+  // guaranteeing that countdown, lyric and answer windows never overlap.
+  const previous = candidates.map((candidate, i) => {
+    let match = -1;
+    for (let j = i - 1; j >= 0; j--) {
+      if (candidates[j].closes <= candidate.countdownStart + 1e-9) { match = j; break; }
+    }
+    return match;
+  });
+  const requested = Math.min(GAME_ROUND_COUNT, lesson.lines.length);
+  const scores = Array.from({ length: candidates.length + 1 }, () => Array(requested + 1).fill(Number.NEGATIVE_INFINITY));
+  const took = Array.from({ length: candidates.length + 1 }, () => Array(requested + 1).fill(false));
+  scores[0][0] = 0;
+  for (let i = 1; i <= candidates.length; i++) {
+    const candidate = candidates[i - 1];
+    const before = previous[i - 1] + 1;
+    for (let count = 0; count <= requested; count++) {
+      scores[i][count] = scores[i - 1][count];
+      if (count > 0 && Number.isFinite(scores[before][count - 1])) {
+        const value = scores[before][count - 1] + candidate.score;
+        if (value > scores[i][count]) { scores[i][count] = value; took[i][count] = true; }
+      }
+    }
+  }
+  let count = requested;
+  while (count > 0 && !Number.isFinite(scores[candidates.length][count])) count--;
+  const selected: Candidate[] = [];
+  for (let i = candidates.length; i > 0 && count > 0;) {
+    if (!took[i][count]) { i--; continue; }
+    const candidate = candidates[i - 1];
+    selected.push(candidate);
+    i = previous[i - 1] + 1;
+    count--;
+  }
+  selected.reverse();
+
+  const pool = [...new Set(lesson.lines.flatMap(l => l.words.map(w => normalizeAnswer(w.text))))]
+    .filter(w => w && w.length >= 3);
+  return selected.map((candidate, index) => {
+    const { line, lineIndex, target, countdownStart, revealAt, opens, closes } = candidate;
     const answer = normalizeAnswer(line.words[target].text);
-    const pool = [...new Set(lesson.lines.flatMap(l => l.words.map(w => normalizeAnswer(w.text))))]
-      .filter(w => w && w !== answer && w.length >= 3);
-    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-    const alternatives = [...new Set([...(contrasts[answer] || []), ...pool])].filter(w => w !== answer).slice(0, difficulty === 'guided' ? 1 : 3);
+    const shuffled = pool.filter(w => w !== answer);
+    for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+    const alternatives = [...new Set([...(contrasts[answer] || []), ...shuffled])].filter(w => w !== answer).slice(0, difficulty === 'guided' ? 1 : 3);
     const options = [...alternatives];
     options.splice(Math.floor(random() * (alternatives.length + 1)), 0, answer);
-    // Every word receives the same full window after it has played. If a late
-    // word overlaps the next verse, queue that question without cutting time.
-    const appears = Math.max(line.start, available);
-    const opens = Math.max(line.words[target].end, appears);
-    const closes = opens + RESPONSE_SECONDS;
-    available = closes;
-    return { line, target, answer, options, opens, closes, appears, queued: appears > line.start, index };
+    return { line, lineIndex, target, countdownStart, revealAt, opens, closes, answer, options, index };
   });
 }
 

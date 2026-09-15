@@ -73,7 +73,7 @@ for line in lesson['lines']:
                 'usage': old['usage'] if old else line['tip'], 'example': line['text'],
             }
 lesson['vocabulary'] = sorted(vocabulary.values(), key=lambda v: v['word'].lower())
-lesson['version'] = 'full-song-vocabulary-1'
+lesson['version'] = 'full-song-timing-2'
 (lab / 'manifest.json').write_text(json.dumps(lesson, ensure_ascii=False, indent=2), encoding='utf-8')
 print(json.dumps({'seconds': lesson['duration'], 'verses': len(lesson['lines']),
                   'words': sum(len(l['words']) for l in lesson['lines']),

@@ -5,6 +5,8 @@ import MusicGame from './music-game';
 import { t } from '@/lib/interface-language';
 import { activeCue, canCompleteMusic, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
 
+const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
+
 export default function MusicLibrary({ userId, level }: { userId: string; level: string }) {
   const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
@@ -27,6 +29,10 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const [settings, setSettings] = useState(false);
   const [offset, setOffset] = useState(0);
   useEffect(() => {
+    const frame = requestAnimationFrame(() => { try { const saved = Number(localStorage.getItem(TIMING_OFFSET_STORAGE)); if (Number.isFinite(saved)) setOffset(Math.max(-1000, Math.min(1000, saved))); } catch { /* Device calibration is optional. */ } });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => {
     const el = dialog.current; const previous = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden'; el?.showModal();
@@ -43,9 +49,19 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const [vocabularyQuery, setVocabularyQuery] = useState('');
   const recorder = useRef<MediaRecorder | null>(null), stream = useRef<MediaStream | null>(null), recordingTimer = useRef<ReturnType<typeof setTimeout> | null>(null), recordedUrl = useRef(''), recordingGeneration = useRef(0);
   const studyEnd = lesson.duration;
-  const activeLine = activeCue(lesson.lines, time + offset / 1000), line = lesson.lines[selected];
+  const cueTime = time + offset / 1000;
+  const activeLine = activeCue(lesson.lines, cueTime), line = lesson.lines[selected];
   function update(delta: Partial<MusicProgress>) { const next = normalizeMusic(lesson, { ...progressRef.current, ...delta }); progressRef.current = next; setProgress(next); dirty.current = true; setSync('Sincronização pendente'); persist(next); }
   function persist(next: MusicProgress) { try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { setSync('O navegador bloqueou o salvamento. Mantenha esta sessão aberta.'); } }
+  function rememberPosition(position: number) {
+    const next = normalizeMusic(lesson, { ...progressRef.current, position, positionAt: Date.now() });
+    progressRef.current = next; dirty.current = true; persist(next);
+  }
+  function changeOffset(value: number) {
+    const next = Math.max(-1000, Math.min(1000, value));
+    setOffset(next);
+    try { localStorage.setItem(TIMING_OFFSET_STORAGE, String(next)); } catch { /* Device calibration is optional. */ }
+  }
   async function synchronize() {
     if (inFlight.current || !alive.current) return;
     inFlight.current = true;
@@ -95,7 +111,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       if (!loop && current >= studyEnd) { a.pause(); a.currentTime = studyEnd; current = studyEnd; }
       setTime(current);
       previousTime = current;
-      if (performance.now() - lastSave > 2000) { update({ position: current, positionAt: Date.now() }); lastSave = performance.now(); }
+      if (performance.now() - lastSave > 4000) { rememberPosition(current); lastSave = performance.now(); }
       frame = requestAnimationFrame(tick);
     }; frame = requestAnimationFrame(tick); return () => cancelAnimationFrame(frame);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,17 +154,17 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       <div className="listen-track"><div className="listen-art" aria-hidden="true">p<span>01</span></div><div><h1 id="music-room-title">{lesson.title}</h1><p>{lesson.artist}</p></div><span className="listen-level">{lesson.level}</span></div>
       {settings && <section className="listen-settings" aria-label="Ajustes de reprodução">
         <label><span><Volume2 size={16} /> Volume <output>{volume}%</output></span><input aria-label="Volume da música" type="range" min="0" max="100" value={volume} onChange={e => { const value = Number(e.target.value); setVolume(value); if (audio.current) audio.current.volume = value / 100; }} /></label>
-        <label><span>Ajuste fino da letra <output>{offset > 0 ? '+' : ''}{offset} ms</output></span><input aria-label="Ajuste fino da letra" type="range" min="-1000" max="1000" step="50" value={offset} onChange={e => setOffset(Number(e.target.value))} /></label>
+        <label><span>Ajuste fino da letra e do jogo <output>{offset > 0 ? '+' : ''}{offset} ms</output></span><input aria-label="Ajuste fino da letra e do jogo" type="range" min="-1000" max="1000" step="50" value={offset} onChange={e => changeOffset(Number(e.target.value))} /></label>
         <p>Valor positivo adianta a letra; negativo atrasa. Use para compensar o atraso do fone.</p><p role="status">{lab ? 'Teste local · ' : ''}{t(sync)}</p>
       </section>}
       <main className="listen-content">
-        {mode === 'game' && <MusicGame lesson={lesson} media={audio} time={time} playing={playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} />} 
+        {mode === 'game' && <MusicGame lesson={lesson} media={audio} clock={cueTime} playing={playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} />}
         <section className="listen-lyric-panel" hidden={mode !== 'lyrics'}>
           <div className="listen-caption"><span>{playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.'}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>Tradução</button></div>
           <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label="Letra do trecho de estudo em inglês">
-            {lesson.lines.map((cue, i) => <div data-line={i} key={cue.id} className={'music-line ' + (activeLine === i ? 'current ' : '') + (time + offset / 1000 >= cue.end ? 'past' : '')}>
+            {lesson.lines.map((cue, i) => <div data-line={i} key={cue.id} className={'music-line ' + (activeLine === i ? 'current ' : '') + (cueTime >= cue.end ? 'past' : '')}>
               <button className="music-line-time" aria-label={'Ouvir trecho ' + (i + 1)} onClick={() => { chooseLine(i); setFollow(true); void play(); }}>{String(i + 1).padStart(2, '0')}</button>
-              <div><p lang="en">{cue.words.map((w, j) => <button key={j} className={activeLine === i && time + offset / 1000 >= w.start && time + offset / 1000 < w.end ? 'current-word' : ''} onClick={() => { audio.current?.pause(); setSelected(i); setWord(w.vocabularyId || null); changeMode('learn'); if (w.vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, w.vocabularyId])] }); }}>{w.text}</button>)}</p>{translation && <p className="listen-translation" lang="pt-BR">{cue.translation}</p>}</div>
+              <div><p lang="en">{cue.words.map((w, j) => <button key={j} className={activeLine === i && cueTime >= w.start && cueTime < w.end ? 'current-word' : ''} onClick={() => { audio.current?.pause(); setSelected(i); setWord(w.vocabularyId || null); changeMode('learn'); if (w.vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, w.vocabularyId])] }); }}>{w.text}</button>)}</p>{translation && <p className="listen-translation" lang="pt-BR">{cue.translation}</p>}</div>
             </div>)}
           </div>
           <div className="listen-lyric-hint">{follow ? <span>Toque em uma palavra para explorar</span> : <button className="listen-link" onClick={() => setFollow(true)}>Voltar à voz <ArrowRight size={14} /></button>}</div>

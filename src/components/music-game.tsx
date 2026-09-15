@@ -7,29 +7,35 @@ import type { MusicLesson } from '@/lib/music';
 import { buildMusicRounds, initialGame, musicGameReducer, type GameDifficulty } from '@/lib/music-game';
 import { createMusicFeedback } from '@/lib/music-feedback';
 
-type Props = { lesson: MusicLesson; media: RefObject<HTMLAudioElement | null>; time: number; playing: boolean; speed: number; onSpeed: (speed: number) => void; onSeek: (time: number) => void; onPlay: () => void; onPause: () => void; onExplore: (line: number, word?: string) => void };
+type Props = { lesson: MusicLesson; media: RefObject<HTMLAudioElement | null>; clock: number; playing: boolean; speed: number; onSpeed: (speed: number) => void; onSeek: (time: number) => void; onPlay: () => void; onPause: () => void; onExplore: (line: number, word?: string) => void };
 const levels = [
   { id: 'guided', title: 'Guiado', hint: '2 alternativas · uma palavra por trecho', bars: 1 },
   { id: 'challenge', title: 'Desafio', hint: '4 alternativas · atenção aos sons', bars: 2 },
   { id: 'typing', title: 'Sem pistas', hint: 'Digite a palavra que você ouviu', bars: 3 },
 ] as const;
 
-export default function MusicGame({ lesson, media, time, playing, speed, onSpeed, onSeek, onPlay, onPause, onExplore }: Props) {
+export default function MusicGame({ lesson, media, clock, playing, speed, onSpeed, onSeek, onPlay, onPause, onExplore }: Props) {
   const [difficulty, setDifficulty] = useState<GameDifficulty>('challenge');
   const [seed, setSeed] = useState(1);
   const [state, dispatch] = useReducer(musicGameReducer, initialGame);
   const [draft, setDraft] = useState({ index: -1, value: '' });
   const [errorFlash, setErrorFlash] = useState<number | null>(null);
   const submitted = useRef<number | null>(null);
+  const game = useRef<HTMLDivElement>(null);
+  const status = useRef<HTMLDivElement>(null);
   const sound = useRef<ReturnType<typeof createMusicFeedback> | null>(null);
   const typed = draft.index === state.index ? draft.value : '';
   const rounds = useMemo(() => buildMusicRounds(lesson, difficulty, seed), [lesson, difficulty, seed]);
   const round = rounds[state.index];
-  const heard = state.phase === 'round' && time >= round.opens && time < round.closes;
+  const heard = state.phase === 'round' && clock >= round.opens && clock < round.closes;
   const showingError = errorFlash === state.index;
-  const waiting = (state.answered && !showingError) || time < round.appears;
-  const remaining = Math.max(0, round.closes - time) / speed;
-  const windowProgress = Math.max(0, Math.min(1, (round.closes - time) / (round.closes - round.opens)));
+  const beforeCountdown = clock < round.countdownStart;
+  const counting = clock >= round.countdownStart && clock < round.revealAt;
+  const revealed = clock >= round.revealAt;
+  const countdown = Math.max(1, Math.ceil(round.revealAt - clock));
+  const answersVisible = revealed && (!state.answered || showingError);
+  const remaining = Math.max(0, round.closes - clock) / speed;
+  const windowProgress = Math.max(0, Math.min(1, (round.closes - clock) / (round.closes - round.opens)));
   const deadlines = useMemo(() => rounds.map(r => r.closes), [rounds]);
   const pauseRef = useRef(onPause);
   useEffect(() => { pauseRef.current = onPause; }, [onPause]);
@@ -40,24 +46,32 @@ export default function MusicGame({ lesson, media, time, playing, speed, onSpeed
     const timer = setTimeout(() => setErrorFlash(null), 420);
     return () => clearTimeout(timer);
   }, [errorFlash]);
-  // The media clock is the only game clock. No pause or seek at a boundary.
+  // The corrected media clock received from the session is the only game clock.
   useEffect(() => {
     if (state.phase !== 'round' && state.phase !== 'outro') return;
-    let frame = 0;
-    const tick = () => { const audio = media.current; if (audio) dispatch({ type: 'tick', time: audio.ended || audio.currentTime >= lesson.duration - .02 ? lesson.duration : audio.currentTime, deadlines, finishAt: lesson.duration }); frame = requestAnimationFrame(tick); };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [state.phase, media, deadlines, lesson.duration]);
+    const ended = media.current?.ended || (media.current?.currentTime ?? 0) >= lesson.duration - .02;
+    dispatch({ type: 'tick', time: ended ? lesson.duration : Math.min(clock, lesson.duration - .021), deadlines, finishAt: lesson.duration });
+  }, [state.phase, clock, deadlines, lesson.duration, media]);
   function start() { sound.current ??= createMusicFeedback(); sound.current.prepare(); setSeed(crypto.getRandomValues(new Uint32Array(1))[0]); submitted.current = null; setErrorFlash(null); onSeek(0); dispatch({ type: 'start' }); setDraft({ index: -1, value: '' }); onPlay(); }
-  function answer(value: string) {
+  function answer(value: string, source?: HTMLElement | null) {
     const audio = media.current;
     if (!audio || audio.paused || submitted.current === state.index) return;
-    const action = { type: 'answer' as const, index: state.index, value, expected: round.answer, time: audio.currentTime, opens: round.opens, closes: round.closes };
+    const scroller = game.current?.closest<HTMLElement>('.listen-content');
+    const scrollTop = scroller?.scrollTop ?? 0;
+    const pageTop = window.scrollY;
+    const keyboard = source?.matches(':focus-visible') ?? false;
+    source?.blur();
+    const action = { type: 'answer' as const, index: state.index, value, expected: round.answer, time: clock, opens: round.opens, closes: round.closes };
     const next = musicGameReducer(state, action);
     if (next === state) return;
     // Lock this occurrence only; the same word in a later round is independent.
     submitted.current = state.index;
     dispatch(action);
+    requestAnimationFrame(() => {
+      if (scroller) scroller.scrollTop = scrollTop;
+      if (window.scrollY !== pageTop) window.scrollTo({ top: pageTop, behavior: 'auto' });
+      if (keyboard) status.current?.focus({ preventScroll: true });
+    });
     if (!next.solved) {
       setErrorFlash(state.index);
       sound.current ??= createMusicFeedback();
@@ -65,7 +79,7 @@ export default function MusicGame({ lesson, media, time, playing, speed, onSpeed
     }
   }
   const completed = state.outcomes.length;
-  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed}>
+  return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase}>
     <div className="clip-scorebar"><span><Headphones size={15} /> {state.phase === 'ready' ? 'ESCUTA ATIVA' : `${state.correct} / ${rounds.length} ACERTOS`}</span><span><Zap size={15} /> {state.streak} seguidas</span></div>
     <div className="clip-speed-control" role="group" aria-label="Velocidade do jogo"><span>Velocidade</span>{[1, .75, .5].map(value => <button key={value} aria-pressed={speed === value} onClick={() => onSpeed(value)}>{value === 1 ? '1×' : value === .75 ? '0,75×' : '0,5×'}</button>)}</div>
     <div className={'clip-media ' + (playing ? 'is-playing' : '')}>
@@ -82,21 +96,19 @@ export default function MusicGame({ lesson, media, time, playing, speed, onSpeed
     </div> : state.phase === 'result' ? <div className="clip-result" aria-live="polite">
       <div className="clip-result-icon"><Check size={30} /></div><span className="clip-eyebrow">MÚSICA CONCLUÍDA</span><h2>Deu ouvido ao inglês.</h2><p>Agora leve uma dessas frases para a sua voz.</p>
       <div className="clip-results"><div><strong>{state.correct}/{rounds.length}</strong><span>acertos</span></div><div><strong>{state.bestStreak}</strong><span>melhor sequência</span></div><div><strong>{state.missed}</strong><span>para revisar</span></div></div>
-      {state.missed > 0 && <div className="clip-review"><h3>Vamos ouvir essas de novo?</h3>{state.outcomes.map((outcome, i) => outcome === 'missed' && <button key={rounds[i].line.id} onClick={() => onExplore(i, rounds[i].line.words[rounds[i].target].vocabularyId)}><span>{rounds[i].answer}</span><ArrowRight size={16} /></button>)}</div>}
-      <button className="clip-primary" onClick={() => onExplore(state.index, round.line.words[round.target].vocabularyId)}>Explorar o último trecho <ArrowRight size={18} /></button><button className="clip-text" onClick={start}><RotateCcw size={16} /> Jogar novamente</button>
-    </div> : <div className="clip-round" data-round={state.index} data-state={showingError ? 'incorrect' : waiting ? 'waiting' : heard ? 'answering' : 'listening'}>
-      <div className="clip-round-top"><span className="clip-eyebrow">{!playing ? 'PAUSADO' : waiting ? 'AO VIVO · OUVINDO' : heard ? 'AO VIVO · RESPONDA' : 'AO VIVO · ESCUTE'}</span><span>{String(state.index + 1).padStart(2, '0')} / {String(rounds.length).padStart(2, '0')}</span></div>
-      {waiting ? <div className="clip-waiting" key={'waiting-' + round.line.id}>
-        <div className={'clip-answer-receipt ' + (state.solved ? 'success' : '')}>{state.answered ? <><span>{state.solved ? 'Acertou!' : 'A palavra era'}</span><strong lang="en">{round.answer}{state.solved && <Check size={20} />}</strong></> : <Headphones size={30} />}</div>
-        <h3>{state.answered && state.index === rounds.length - 1 ? 'Curtindo o final da música…' : state.answered ? 'Aguardando o próximo trecho…' : 'Entre no ritmo…'}</h3>
-        <p>{state.answered ? 'A música segue. Acompanhe a voz.' : 'O primeiro trecho aparece junto com a voz.'}</p>
-      </div> : <>
-      <div className="clip-phrase" key={round.line.id} lang="en">{round.line.words.map((w, i) => i === round.target ? <span key={i} className={'clip-gap ' + (state.solved ? 'solved' : '')}>{state.solved ? <>{w.text}<Check size={16} /></> : <span aria-label="palavra oculta">•••</span>}</span> : <span key={i} className={time >= w.start && time < w.end ? 'spoken' : ''}>{w.text} </span>)}</div>
-      <div className="clip-time-window"><span>{time < round.opens ? 'Ouça a palavra até o fim' : round.queued ? 'Sua vez · o tempo está garantido' : 'Toque na palavra que ouviu'}</span><span>{heard ? Math.ceil(remaining) + 's' : 'Escutando…'}</span><div role="progressbar" aria-label="Tempo da resposta" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(windowProgress * 100)}><i style={{ transform: 'scaleX(' + windowProgress + ')' }} /></div></div>
-      </>}
+      {state.missed > 0 && <div className="clip-review"><h3>Vamos ouvir essas de novo?</h3>{state.outcomes.map((outcome, i) => outcome === 'missed' && <button key={rounds[i].line.id} onClick={() => onExplore(rounds[i].lineIndex, rounds[i].line.words[rounds[i].target].vocabularyId)}><span>{rounds[i].answer}</span><ArrowRight size={16} /></button>)}</div>}
+      <button className="clip-primary" onClick={() => onExplore(round.lineIndex, round.line.words[round.target].vocabularyId)}>Explorar o último trecho <ArrowRight size={18} /></button><button className="clip-text" onClick={start}><RotateCcw size={16} /> Jogar novamente</button>
+    </div> : <div ref={game} className="clip-round" data-round={state.index} data-state={showingError ? 'incorrect' : state.answered ? 'answered' : counting ? 'countdown' : beforeCountdown ? 'waiting' : heard ? 'answering' : 'listening'}>
+      <div className="clip-round-top"><span className="clip-eyebrow">{!playing ? 'PAUSADO' : state.answered || beforeCountdown ? 'AO VIVO · OUVINDO' : counting ? `PRÓXIMO · ${countdown}` : heard ? 'AO VIVO · RESPONDA' : 'AO VIVO · ESCUTE'}</span><span>{String(state.index + 1).padStart(2, '0')} / {String(rounds.length).padStart(2, '0')}</span></div>
+      <div className="clip-prompt-slot">
+        <div className={'clip-countdown ' + (!state.answered && (beforeCountdown || counting) ? 'is-visible' : '')} aria-hidden={state.answered || (!beforeCountdown && !counting)}>{counting ? <><strong>{countdown}</strong><span>Prepare-se</span></> : <><Headphones size={28} /><span>A música segue</span></>}</div>
+        <div className={'clip-phrase ' + (!state.answered && revealed ? 'is-visible' : '')} lang="en" aria-hidden={state.answered || !revealed}>{round.line.words.map((w, i) => i === round.target ? <span key={i} className="clip-gap"><span aria-label="palavra oculta">•••</span></span> : <span key={i} className={clock >= w.start && clock < w.end ? 'spoken' : ''}>{w.text} </span>)}</div>
+        <div className={'clip-answer-receipt ' + (state.answered ? 'is-visible ' : '') + (state.solved ? 'success' : '')} aria-hidden={!state.answered}>{state.answered && <><span>{state.solved ? 'Acertou!' : 'A palavra era'}</span><strong lang="en">{round.answer}{state.solved && <Check size={20} />}</strong></>}</div>
+      </div>
+      <div className={'clip-time-window ' + (!state.answered && revealed ? 'is-visible' : '')}><span>{clock < round.opens ? 'Ouça a palavra até o fim' : 'Toque na palavra que ouviu'}</span><span>{heard ? Math.ceil(remaining) + 's' : 'Escutando…'}</span><div role="progressbar" aria-label="Tempo da resposta" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(windowProgress * 100)}><i style={{ transform: 'scaleX(' + windowProgress + ')' }} /></div></div>
       <div className="clip-dots" aria-label={completed + ' de ' + rounds.length + ' trechos percorridos'}>{rounds.map((r,i) => <span key={r.line.id} className={state.outcomes[i] === 'missed' ? 'missed' : state.outcomes[i] ? 'done' : i === state.index ? 'active' : ''} />)}</div>
-      <div className={'clip-feedback ' + (state.solved ? 'success' : state.roundMistakes ? 'retry' : '')} role="status">{state.feedback || (!playing ? 'Toque em continuar para voltar ao ritmo.' : heard ? 'Qual palavra você ouviu?' : 'Acompanhe a voz…')}</div>
-      {!waiting && (difficulty === 'typing' ? <form className={'clip-type ' + (showingError ? 'incorrect' : '')} onSubmit={e => { e.preventDefault(); answer(typed); }}><input aria-label="Palavra que você ouviu" placeholder="Digite em inglês" autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} disabled={!playing || !heard || state.answered} value={typed} onChange={e => setDraft({ index: state.index, value: e.target.value })} /><button aria-label="Enviar palavra" disabled={!playing || !heard || state.answered || !typed.trim()}><ArrowRight size={20} /></button></form> : <div className="clip-options" key={state.index}>{round.options.map((option, i) => <button key={option} className={showingError && state.rejected.includes(option) ? 'incorrect' : ''} disabled={!playing || !heard || state.answered} onClick={() => answer(option)}><span className="clip-option-key">{i + 1}</span>{option}</button>)}</div>)}
+      <div ref={status} className={'clip-feedback ' + (state.solved ? 'success' : state.roundMistakes ? 'retry' : '')} role="status" tabIndex={-1}>{state.feedback || (!playing ? 'Toque em continuar para voltar ao ritmo.' : counting ? `Próximo desafio em ${countdown}` : heard ? 'Qual palavra você ouviu?' : revealed ? 'Acompanhe a voz…' : 'Continue ouvindo…')}</div>
+      <div className={'clip-response-slot ' + (answersVisible ? 'is-visible' : '')} aria-hidden={!answersVisible}>{difficulty === 'typing' ? <form className={'clip-type ' + (showingError ? 'incorrect' : '')} onSubmit={e => { e.preventDefault(); answer(typed, document.activeElement as HTMLElement); }}><input aria-label="Palavra que você ouviu" placeholder="Digite em inglês" autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} tabIndex={answersVisible ? 0 : -1} disabled={!playing || !heard || state.answered} value={typed} onChange={e => setDraft({ index: state.index, value: e.target.value })} /><button aria-label="Enviar palavra" tabIndex={answersVisible ? 0 : -1} disabled={!playing || !heard || state.answered || !typed.trim()}><ArrowRight size={20} /></button></form> : <div className="clip-options">{round.options.map((option, i) => <button key={option} tabIndex={answersVisible ? 0 : -1} className={showingError && state.rejected.includes(option) ? 'incorrect' : ''} disabled={!playing || !heard || state.answered} onClick={e => answer(option, e.currentTarget)}><span className="clip-option-key">{i + 1}</span>{option}</button>)}</div>}</div>
       <div className="clip-live-footer"><span>{state.index > 0 && state.outcomes[state.index - 1] === 'missed' ? 'Anterior: ' + rounds[state.index - 1].answer + ' · guardada para revisar' : 'A música segue. Você segue junto.'}</span><button className="clip-mini-play" aria-label={playing ? 'Pausar jogo' : 'Continuar jogo'} onClick={() => playing ? onPause() : onPlay()}>{playing ? <Pause size={18} /> : <Play size={18} />}</button></div>
     </div>}
   </section>;
