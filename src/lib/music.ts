@@ -4,6 +4,7 @@ export type MusicLine = { id: string; start: number; end: number; text: string; 
 export type MusicLesson = {
   id: string; version: string; title: string; artist: string; level: string; topic: string; duration: number;
   source: string; rights: 'original' | 'licensed' | 'local-private' | 'user-provided'; published: boolean;
+  visualSource?: string;
   lines: MusicLine[];
   vocabulary: { id: string; word: string; meaning: string; ipa: string; usage: string; example: string }[];
   questions: { id: string; prompt: string; options: string[]; answer: number; explanation: string }[];
@@ -16,6 +17,7 @@ export function validateMusic(lesson: MusicLesson) {
   if (!/^[a-z0-9-]+$/.test(lesson.id) || !lesson.version || !(lesson.duration > 0) || lesson.duration > 900 || !lesson.lines.length || !lesson.questions.length || !lesson.vocabulary.length) throw Error('invalid-content');
   if (lesson.published && lesson.rights === 'local-private') throw Error('private-content');
   if (!lesson.source.startsWith('/') || lesson.source.startsWith('//')) throw Error('invalid-source');
+  if (lesson.visualSource && lesson.visualSource !== `/api/music/video?trackId=${encodeURIComponent(lesson.id)}`) throw Error('invalid-visual-source');
   for (const group of [lesson.lines, lesson.vocabulary, lesson.questions]) if (new Set(group.map(x => x.id)).size !== group.length) throw Error('duplicate-id');
   let end = 0;
   for (const line of lesson.lines) {

@@ -498,7 +498,7 @@ dialog.clip-room{background:radial-gradient(ellipse at 50% 0,var(--surface-stron
 .clip-game .clip-unified-lyrics p{top:50%;height:50%;font-family:Arial,sans-serif;font-style:normal;font-size:clamp(17px,4.5vw,23px);line-height:1.25;font-weight:600;letter-spacing:-.025em;transition:transform .55s cubic-bezier(.22,1,.36,1),opacity .45s}
 .clip-game .clip-unified-lyrics p[data-question=true]{opacity:1}
 .clip-game .clip-unified-lyrics[data-focus=true] p:not([data-question=true]){opacity:.45}
-.clip-game[data-section=narrative] .clip-unified-lyrics p{font-family:Georgia,serif;font-style:italic}
+.clip-game[data-section=narrative] .clip-unified-lyrics p{font-style:normal;font-weight:500}
 .clip-game[data-section=chorus] .clip-unified-lyrics p{font-weight:750}
 .clip-unified-lyrics .clip-lyric-word{position:relative;display:inline-block;white-space:pre}
 .clip-word-body{transition:color .3s}

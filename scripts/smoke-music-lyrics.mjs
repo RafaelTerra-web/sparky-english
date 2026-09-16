@@ -46,7 +46,7 @@ try {
     // exposing a future answer. Seeking back must not restart the count-in.
     await audio.evaluate((a,t) => { a.currentTime=t; }, rounds.at(-1).closes+.1);
     await page.locator('.clip-game[data-phase=outro]').waitFor();
-    const points = lesson.id === 'heartless-local' ? [6.5,31.5,85,100,127.2,166,181,217] : [5,33,63,101,162,198,210,251];
+    const points = lesson.id === 'heartless-local' ? [6.5,31.5,85,100,127.2,166,181,217] : lesson.id === 'stay-at-your-house-local' ? [5,33,65,101,132,166,181,212,244] : [5,33,63,101,162,198,210,251];
     for (const time of points) {
       await audio.evaluate((a,t) => { a.currentTime=t; }, time);
       const index = ambientLyricIndex(lesson.lines,time);
@@ -59,7 +59,8 @@ try {
       await page.waitForTimeout(450);
       const opacity = Number(await page.locator('.clip-ambient').evaluate(el=>getComputedStyle(el).opacity));
       if(section.kind === 'chorus') assert.ok(opacity>.75,'Chorus receives more emphasis');
-      if(section.kind === 'narrative') assert.match(await lyric.evaluate(el=>getComputedStyle(el).fontFamily),/Georgia/);
+      assert.doesNotMatch(await lyric.evaluate(el=>getComputedStyle(el).fontFamily),/Georgia|Times/);
+      if(section.kind === 'narrative') assert.match(await lyric.evaluate(el=>getComputedStyle(el).fontFamily),/Space Grotesk/);
       const word = lesson.lines[index].words.find(w=>time>=w.start&&time<w.end);
       if(word) assert.ok((await lyric.locator('[data-singing=true]').innerText()).includes(word.text));
       if(section.kind==='chorus'||section.kind==='narrative') await page.screenshot({path:`${folder}/${lesson.id}-${time}.png`});

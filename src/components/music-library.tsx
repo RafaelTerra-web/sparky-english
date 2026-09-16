@@ -132,7 +132,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   function exitRoom() { audio.current?.pause(); onClose(); }
   const vocab = lesson.vocabulary.find(v => v.id === word);
   const visibleVocabulary = lesson.vocabulary.filter(v => `${v.word} ${v.meaning}`.toLocaleLowerCase('pt-BR').includes(vocabularyQuery.toLocaleLowerCase('pt-BR')));
-  return <dialog ref={dialog} className="listen-room clip-room" data-mode={mode} aria-labelledby="music-room-title" onCancel={e => { e.preventDefault(); exitRoom(); }}>
+  return <dialog ref={dialog} className="listen-room clip-room" data-track={lesson.id} data-mode={mode} aria-labelledby="music-room-title" onCancel={e => { e.preventDefault(); exitRoom(); }}>
     <div className="listen-shell">
       <header className="listen-header">
         <button className="listen-icon" aria-label="Todas as músicas" onClick={exitRoom}><ChevronDown size={24} /></button>
@@ -145,8 +145,9 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
         <label><span>Ajuste fino da letra e do jogo <output>{offset > 0 ? '+' : ''}{offset} ms</output></span><input aria-label="Ajuste fino da letra e do jogo" type="range" min="-1000" max="1000" step="50" value={offset} onChange={e => changeOffset(Number(e.target.value))} /></label>
         <p>Valor positivo adianta a letra; negativo atrasa. Use para compensar o atraso do fone.</p><p role="status">{lab ? 'Teste local · ' : ''}{t(sync)}</p>
       </section>}
+      {mode !== 'game' && <button className="listen-link clip-back-result" onClick={() => changeMode('game')}>Voltar ao resultado</button>}
       <main className="listen-content">
-        {mode === 'game' && <MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} lesson={lesson} media={audio} clock={cueTime} playing={playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} />}
+        <div className="clip-game-mount" hidden={mode !== 'game'}><MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} onLyrics={() => changeMode('lyrics')} lesson={lesson} media={audio} clock={cueTime} playing={mode === 'game' && playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} /></div>
         <section className="listen-lyric-panel" hidden={mode !== 'lyrics'}>
           <div className="listen-caption"><span>{playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.'}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>Tradução</button></div>
           <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label="Letra do trecho de estudo em inglês">
@@ -173,7 +174,6 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon listen-speed" aria-label="Velocidade" onClick={() => changeSpeed(speed === 1 ? .75 : speed === .75 ? .5 : 1)}>{speed === 1 ? '1×' : speed === .75 ? '0,75×' : '0,5×'}</button>
         </div>
         {audioError && <div className="listen-error" role="alert">{audioError}<button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>Tentar novamente</button></div>}
-        <nav className="listen-tabs" aria-label="Área de estudo"><button aria-pressed={mode === 'game'} onClick={() => changeMode('game')}>Jogar</button><button aria-pressed={mode === 'lyrics'} onClick={() => changeMode('lyrics')}>Letra</button><button aria-pressed={mode === 'learn'} onClick={() => changeMode('learn')}>Palavras</button><button aria-pressed={mode === 'awards'} onClick={() => changeMode('awards')}>Conquistas</button></nav>
       </footer>
     </div>
   </dialog>;

@@ -1,0 +1,72 @@
+/* The visible viewport is the budget: lyrics and choices always take priority. */
+.clip-room{--music-lyric-font:var(--font-geist-sans),Arial,sans-serif}
+.clip-room[data-track=heartless-local]{--music-lyric-font:var(--font-music-grotesk),Arial,sans-serif}
+.clip-room[data-track=stay-at-your-house-local]{--music-lyric-font:var(--font-music-cyberpunk),Arial,sans-serif;--accent:#71e7ed;--primary:#61d9e3;--on-primary:#081722;--on-accent:#081722;--accent-soft:#71e7ed16;--surface:#141b30;--surface-strong:#242941;--surface-soft:#111a2c;--background:#090e1e;--foreground:#eff6fa;--muted:#b2bcd0;--line:#37425a;--success:#8ff3ce;--lyric-color:#83edf2;--lyric-halo:#72e4ed24;color-scheme:dark}
+.clip-room[data-track=stay-at-your-house-local] .listen-shell{background:radial-gradient(ellipse at 95% 15%,#b42e9920,transparent 55%),#090e1e}
+.clip-room[data-track=stay-at-your-house-local]{--disabled-surface:#19233a;--disabled-text:#bdc9df;--input-background:#10182c;--focus:#f0db6f;--success-soft:#16342f}
+.clip-room .clip-unified-lyrics p,.clip-room .music-line p,.clip-room .music-line p button,.clip-room .music-selected-text,.clip-room .clip-answer-receipt strong{font-family:var(--music-lyric-font)!important;font-style:normal}
+.clip-room[data-track=stay-at-your-house-local] .clip-unified-lyrics p{letter-spacing:.005em;font-weight:600;font-size:clamp(21px,5.6vw,29px)}
+.clip-room .clip-game-mount{flex:1;min-height:0;overflow:hidden}
+.clip-room[data-mode=game] .listen-dock,.clip-room[data-mode=awards] .listen-dock{padding:0;border:0;background:none}
+.clip-room[data-mode=game] .listen-dock:not(:has(.listen-error)),.clip-room[data-mode=awards] .listen-dock{height:0}
+.clip-room .clip-back-result{flex-shrink:0;min-height:44px}
+.clip-result-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.clip-game[data-phase=round],.clip-game[data-phase=outro]{padding-bottom:4px}
+.clip-game[data-phase=round] .clip-scorebar,.clip-game[data-phase=outro] .clip-scorebar{flex:0 0 40px;padding:4px 0}
+.clip-game[data-phase=round] .clip-speed-control,.clip-game[data-phase=outro] .clip-speed-control{flex:0 0 36px;margin:0 0 8px}
+.clip-game[data-phase=round]>.clip-media,.clip-game[data-phase=outro]>.clip-media{height:clamp(64px,15cqh,112px);padding:10px 14px;border-radius:16px}
+.clip-room .clip-game:is([data-phase=round],[data-phase=outro]) .clip-album-title{font:600 25px/1.1 var(--music-lyric-font)!important;letter-spacing:-.025em}
+.clip-game:is([data-phase=round],[data-phase=outro]) .clip-album-title>span{font-size:10px;margin-top:4px}
+.clip-game:is([data-phase=round],[data-phase=outro]) .clip-media-top{display:none}
+.clip-game .clip-round{padding-top:12px;flex:1;min-height:0}
+.clip-game .clip-round-top{flex:0 0 20px}
+.clip-game .clip-prompt-slot{flex:1 1 128px;min-height:88px;max-height:230px}
+.clip-game .clip-time-window{flex:0 0 34px;min-height:34px;padding-top:4px;gap:3px}
+.clip-game .clip-dots{flex:0 0 4px;margin:8px 0}
+.clip-game .clip-feedback{flex:0 0 32px;min-height:32px;padding:4px 0}
+.clip-game .clip-response-stage{flex:0 0 118px;min-height:118px}
+.clip-game .clip-response-slot{height:118px;min-height:118px}
+.clip-game .clip-options{gap:8px;margin:2px 0;grid-auto-rows:54px}
+.clip-room .clip-game .clip-options button{min-height:44px;height:54px;font-size:15px}
+.clip-game .clip-live-footer{flex:0 0 44px;min-height:44px;margin-top:auto}
+.clip-room .clip-mini-play{height:44px;width:44px}
+.clip-game[data-difficulty=typing] .clip-response-stage,.clip-game[data-difficulty=typing] .clip-response-slot{flex-basis:64px;min-height:64px;height:64px}
+.clip-room[data-mode=game] .listen-content{overflow:hidden}
+.music-video,.clip-city-scene{position:absolute;inset:0;z-index:-2;pointer-events:none;overflow:hidden;border-radius:18px}
+.music-video{z-index:-1;opacity:0;transition:opacity 1.6s ease;contain:strict}
+.music-video[data-active=true]{opacity:.3}
+.music-video video{height:100%;width:100%;object-fit:cover;object-position:50% 45%;filter:saturate(.85)}
+.music-video::after{content:'';position:absolute;inset:0;background:linear-gradient(#090e1eaa,transparent 30%,#090e1e99 70%,#090e1e),linear-gradient(90deg,#090e1e77,transparent,#090e1e77)}
+.clip-city-scene{opacity:.65;mask-image:linear-gradient(#000, #000 60%,transparent)}
+.clip-game[data-tone=cyberpunk] .clip-media{background:linear-gradient(100deg,#121a32c9,#30204577);border:1px solid #a7d9ef28}
+.clip-game[data-tone=cyberpunk] .clip-album-title{font:600 clamp(27px,7vw,38px)/1 var(--music-lyric-font)!important;max-width:95%;letter-spacing:0;color:#e9faff}
+.clip-game[data-tone=cyberpunk] .clip-prompt-slot::before{background:radial-gradient(ellipse,#793bc51a,transparent 70%)}
+.clip-game[data-tone=cyberpunk][data-section=chorus]{--lyric-color:#ffe875;--lyric-halo:#ffe87525}
+.clip-game[data-tone=cyberpunk][data-section=instrumental]{--lyric-color:#ffa0dd;--lyric-halo:#ffa0dd25}
+.clip-game[data-tone=cyberpunk] .clip-chorus-fx::before{background:radial-gradient(ellipse at 15% 20%,#ef40ba88,transparent 60%),radial-gradient(ellipse at 85% 55%,#47e9f588,transparent 65%)}
+.music-scene[data-tone=cyberpunk] .music-scene-fallback{inset:0;aspect-ratio:auto;width:auto;border:0;border-radius:0;transform:none;box-shadow:none;background:linear-gradient(0deg,#152443,transparent 45%),repeating-linear-gradient(90deg,transparent 0 27px,#31647455 28px 29px,transparent 30px 65px),radial-gradient(ellipse at 80% 20%,#d43eaa55,transparent 50%);clip-path:polygon(0 55%,10% 55%,10% 35%,20% 35%,20% 65%,30% 65%,30% 20%,40% 20%,40% 50%,50% 50%,50% 42%,60% 42%,60% 70%,70% 70%,70% 30%,80% 30%,80% 50%,90% 50%,90% 40%,100% 40%,100% 100%,0 100%)}
+.music-card[data-track-id=stay-at-your-house-local] .music-cover{background:repeating-linear-gradient(90deg,transparent 0 30px,#43e5ee22 31px 32px),linear-gradient(135deg,#111d35,#5b225b)}
+.music-card[data-track-id=stay-at-your-house-local] .music-card-disc{border-radius:8px;transform:rotate(-30deg);background:repeating-linear-gradient(0deg,#0a142b 0 10px,#56e8ee66 11px 12px);border-color:#fb66c3aa}
+.music-card[data-track-id=stay-at-your-house-local] .music-card-disc i{background:#f3e66c;inset:42%;border-radius:4px}
+@container music-room (max-height:640px){
+  .clip-room .listen-header{height:44px}
+  .clip-game:is([data-phase=round],[data-phase=outro]) .clip-media{height:44px;padding:6px 10px}
+  .clip-room .clip-game:is([data-phase=round],[data-phase=outro]) .clip-album-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-size:20px!important}
+  .clip-game:is([data-phase=round],[data-phase=outro]) .clip-media-bottom,.clip-game:is([data-phase=round],[data-phase=outro]) .clip-album-title>span{display:none}
+  .clip-game .clip-round{padding-top:6px}
+  .clip-game .clip-prompt-slot{min-height:76px;flex-basis:80px}
+  .clip-game .clip-feedback{flex-basis:28px;min-height:28px;font-size:10px}
+  .clip-game .clip-dots{margin:5px 0}
+  .clip-game .clip-unified-lyrics p{font-size:18px}
+}
+@container music-room (max-height:520px){
+  .clip-game:is([data-phase=round],[data-phase=outro])>.clip-media,.clip-game:is([data-phase=round],[data-phase=outro])>.clip-scorebar{display:none}
+  .clip-game .clip-round{padding-top:4px}
+  .clip-game .clip-prompt-slot{min-height:70px;flex-basis:70px}
+  .clip-game .clip-speed-control{flex-basis:32px;margin-bottom:2px}
+  .clip-game[data-difficulty=typing] .clip-feedback{display:none}
+  .clip-game .clip-unified-lyrics p{font-size:17px}
+  .clip-game .clip-live-footer>span{display:none}
+  .clip-game .clip-live-footer{justify-content:flex-end}
+}
+@media(prefers-reduced-motion:reduce){.music-video{display:none}.clip-city-scene{opacity:.6}}

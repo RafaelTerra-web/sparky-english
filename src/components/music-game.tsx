@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useReducer, useRef, useState, type RefObject, type CSSProperties } from 'react';
 import MusicScene from './music-scene';
+import MusicVideo from './music-video';
 import MusicChorusFx from './music-chorus-fx';
 import { ArrowRight, Check, Pause, Play, RotateCcw, Zap, Trophy } from 'lucide-react';
 import type { MusicLesson } from '@/lib/music';
@@ -14,14 +15,14 @@ import { musicIntroCountdown, musicEnergyAt, musicSectionAt, musicVisualMoment }
 import { t } from '@/lib/interface-language';
 import { MUSIC_POINTS_PER_HIT, musicRank, recordMusicPerformance, unlockedMusicAchievements, type MusicPerformance, type MusicDifficulty } from '@/lib/music-performance';
 
-type Props = { lesson: MusicLesson; performance: MusicPerformance; onPerformance: (mode: MusicDifficulty, correct: number, streak: number, finished: boolean) => void; onAchievements: () => void; media: RefObject<HTMLAudioElement | null>; clock: number; playing: boolean; speed: number; onSpeed: (speed: number) => void; onSeek: (time: number) => void; onPlay: () => void; onPause: () => void; onExplore: (line: number, word?: string) => void };
+type Props = { lesson: MusicLesson; performance: MusicPerformance; onPerformance: (mode: MusicDifficulty, correct: number, streak: number, finished: boolean) => void; onAchievements: () => void; onLyrics: () => void; media: RefObject<HTMLAudioElement | null>; clock: number; playing: boolean; speed: number; onSpeed: (speed: number) => void; onSeek: (time: number) => void; onPlay: () => void; onPause: () => void; onExplore: (line: number, word?: string) => void };
 const levels = [
   { id: 'guided', title: 'Guiado', hint: '2 alternativas · uma palavra por trecho', bars: 1 },
   { id: 'challenge', title: 'Desafio', hint: '4 alternativas · atenção aos sons', bars: 2 },
   { id: 'typing', title: 'Sem pistas', hint: 'Digite a palavra que você ouviu', bars: 3 },
 ] as const;
 
-export default function MusicGame({ lesson, performance, onPerformance, onAchievements, media, clock, playing, speed, onSpeed, onSeek, onPlay, onPause, onExplore }: Props) {
+export default function MusicGame({ lesson, performance, onPerformance, onAchievements, onLyrics, media, clock, playing, speed, onSpeed, onSeek, onPlay, onPause, onExplore }: Props) {
   const [difficulty, setDifficulty] = useState<GameDifficulty>('challenge');
   const [seed, setSeed] = useState(1);
   const [state, dispatch] = useReducer(musicGameReducer, initialGame);
@@ -105,13 +106,15 @@ export default function MusicGame({ lesson, performance, onPerformance, onAchiev
   const energy = musicEnergyAt(musicEnergy[lesson.id], clock);
   const section = musicSectionAt(lesson.id, clock);
   const moment = musicVisualMoment(lesson.lines, ambientIndex, clock, energy);
-  const tone = lesson.id === 'heartless-local' ? 'violet' : 'emerald';
+  const tone = lesson.id === 'stay-at-your-house-local' ? 'cyberpunk' : lesson.id === 'heartless-local' ? 'violet' : 'emerald';
   return <section className="clip-game" aria-label="Jogo de escuta" data-session-seed={seed} data-phase={state.phase} data-playing={playing} data-difficulty={difficulty} data-tone={tone} data-section={section.kind} data-moment={moment} style={{ '--music-energy': energy } as CSSProperties}>
     <MusicChorusFx active={section.kind === 'chorus' && state.phase !== 'ready'} clock={clock} energy={energy} />
+    {lesson.visualSource && <MusicVideo media={media} source={lesson.visualSource} clock={clock} playing={playing} speed={speed} active={state.phase !== 'ready' && state.phase !== 'result' && ['chorus', 'instrumental', 'outro'].includes(section.kind)} />}
+    {tone === 'cyberpunk' && <div className="clip-city-scene"><MusicScene playing={playing} clock={clock} tone={tone} energy={energy} chorus={section.kind === 'chorus'} /></div>}
     <div className="clip-scorebar"><div className="clip-score-points"><b className="music-rank" data-rank={rank.name} aria-label={`Rank ${rank.name}`}>{rank.name}</b><span><strong data-score={score}>{score.toLocaleString('pt-BR')} pts</strong><small>{state.correct}/{rounds.length} acertos</small></span></div><span><Zap size={15} /> {state.streak} seguidas</span></div>
     <div className="clip-speed-control" role="group" aria-label="Velocidade do jogo"><span>Velocidade</span>{[1, .75, .5].map(value => <button key={value} aria-pressed={speed === value} onClick={() => onSpeed(value)}>{value === 1 ? '1×' : value === .75 ? '0,75×' : '0,5×'}</button>)}</div>
     <div className={'clip-media ' + (playing ? 'is-playing' : '')}>
-      <MusicScene playing={playing} clock={clock} tone={tone} energy={energy} chorus={section.kind === 'chorus'} />
+      {tone !== 'cyberpunk' && <MusicScene playing={playing} clock={clock} tone={tone} energy={energy} chorus={section.kind === 'chorus'} />}
       <div className="clip-media-top"><span>SPARKY SESSIONS</span><span>NO SEU RITMO</span></div>
       <div className="clip-album-title" aria-hidden="true">{lesson.title}<span>{lesson.artist}</span></div>
       <div className="clip-wave" aria-hidden="true">{Array.from({ length: 35 }, (_, i) => <i key={i} style={{ height: `${10 + ((i * 17 + 7) % 34)}px`, animationDelay: `${i * -.09}s` }} />)}</div>
@@ -126,7 +129,7 @@ export default function MusicGame({ lesson, performance, onPerformance, onAchiev
       <div className="clip-result-rank music-rank" data-rank={rank.name}>{rank.name}</div><span className="clip-eyebrow">MÚSICA CONCLUÍDA</span><h2>Deu ouvido ao inglês.</h2><p className="clip-final-score">{score.toLocaleString('pt-BR')} <span>pontos</span></p>
       <div className="clip-results"><div><strong>{state.correct}/{rounds.length}</strong><span>acertos</span></div><div><strong>{state.bestStreak}</strong><span>melhor sequência</span></div><div><strong>{state.missed}</strong><span>para revisar</span></div></div>
       {state.missed > 0 && <details className="clip-review"><summary>{state.missed} palavras para revisar quando quiser</summary>{state.outcomes.map((outcome, i) => outcome === 'missed' && <button key={rounds[i].line.id} onClick={() => onExplore(rounds[i].lineIndex, rounds[i].line.words[rounds[i].target].vocabularyId)}><span>{rounds[i].answer}</span><ArrowRight size={16} /></button>)}</details>}
-      <button className="clip-primary" onClick={onAchievements}><Trophy size={18} /> Ver conquistas e recordes</button><button className="clip-text" onClick={start}><RotateCcw size={16} /> Jogar novamente</button>
+      <button className="clip-primary" onClick={onAchievements}><Trophy size={18} /> Ver conquistas e recordes</button><div className="clip-result-links"><button className="clip-text" onClick={onLyrics}>Revisar letra</button><button className="clip-text" onClick={() => onExplore(0)}>Explorar palavras</button></div><button className="clip-text" onClick={start}><RotateCcw size={16} /> Jogar novamente</button>
     </div> : <div ref={game} className="clip-round" data-round={state.index} data-state={showingError ? 'incorrect' : state.answered ? 'answered' : counting ? 'countdown' : !revealed ? 'waiting' : heard ? 'answering' : 'listening'}>
       <div className="clip-round-top"><span className="clip-eyebrow">{t(section.label)} · {!playing ? 'PAUSADO' : heard && !state.answered ? 'RESPONDA' : 'AO VIVO'}</span><span>{String(state.index + 1).padStart(2, '0')} / {String(rounds.length).padStart(2, '0')}</span></div>
       <div className="clip-prompt-slot">

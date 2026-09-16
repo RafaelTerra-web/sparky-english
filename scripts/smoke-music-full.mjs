@@ -84,7 +84,8 @@ try {
     const dock=await page.locator('.listen-dock').boundingBox();assert.ok(dock.y+dock.height<=height+1);
     assert.ok(answers.y+answers.height<=dock.y+1,'answers stay above the dock');
   }
-  await page.getByRole('button',{name:'Palavras',exact:true}).click();
+  await audio.evaluate(async(a,end)=>{a.currentTime=end-.1;await a.play();},lesson.duration);
+  await page.getByRole('button',{name:'Explorar palavras',exact:true}).click();
   await page.getByPlaceholder('Palavra ou significado').fill('angel');
   assert.equal(await page.locator('.music-vocabulary button').count(),1);
   await page.locator('.music-vocabulary button').click();

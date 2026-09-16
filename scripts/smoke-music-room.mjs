@@ -21,7 +21,10 @@ try {
   await page.getByRole('button', { name: 'Ajustes de reprodução' }).click();
   const catalog = await page.evaluate(async () => (await (await fetch('/api/music')).json()).catalog);
   const lesson = catalog[0];
-  await page.getByRole('button', { name: 'Letra', exact: true }).click();
+  assert.equal(await page.locator('.listen-tabs').count(), 0);
+  await page.getByRole('button', { name: 'Começar a jogar' }).click();
+  await page.locator('.listen-dock audio').evaluate(async (a, end) => { a.currentTime=end-.1; await a.play(); }, lesson.duration);
+  await page.getByRole('button', { name: 'Revisar letra', exact: true }).click();
   for (const [index, line] of lesson.lines.entries()) {
     const word = line.words[Math.min(1, line.words.length - 1)];
     const at = (word.start + word.end) / 2;
@@ -35,9 +38,11 @@ try {
     assert.equal(await room.evaluate(el => Math.round(el.getBoundingClientRect().width)), width);
   }
   assert.equal(await page.getByRole('button', { name: 'Minha voz', exact: true }).count(),0);
-  await page.getByRole('button', { name: 'Conquistas', exact: true }).click();
+  await page.getByRole('button', { name: 'Voltar ao resultado', exact: true }).click();
+  await page.getByRole('button', { name: 'Ver conquistas e recordes', exact: true }).click();
   await page.getByRole('heading', { name: 'Recordes e conquistas' }).waitFor();
-  await page.getByRole('button', { name: 'Letra', exact: true }).click();
+  await page.getByRole('button', { name: 'Voltar ao resultado', exact: true }).click();
+  await page.getByRole('button', { name: 'Revisar letra', exact: true }).click();
   // The old excerpt endpoint must no longer stop the full song.
   await page.locator('.listen-dock audio').evaluate(async a => { a.currentTime = 47.5; await a.play(); });
   await page.waitForFunction(() => document.querySelector('.listen-dock audio')?.currentTime > 48);

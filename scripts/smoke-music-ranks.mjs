@@ -61,15 +61,17 @@ try {
   await page.keyboard.press('Escape');await page.reload();
   await page.getByRole('button',{name:'Músicas',exact:true}).click();
   await page.locator('.music-card[data-track-id="heartless-local"]').click();
-  await page.getByRole('button',{name:'Conquistas',exact:true}).click();
+  await page.getByRole('button',{name:'Começar a jogar'}).click();
+  await audio.evaluate(async(a,end)=>{a.currentTime=end-.1;await a.play();},lesson.duration);
+  await page.getByRole('button',{name:'Ver conquistas e recordes'}).click();
   await page.locator('[data-achievement=perfect][data-unlocked=true]').waitFor();
   assert.equal(await page.locator('.music-records [data-rank=S]').count(),1);
   for(const [width,height] of [[320,568],[390,844],[430,932]]) {
     await page.setViewportSize({width,height});
     assert.ok(await page.locator('.listen-shell').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
   }
-  await page.getByRole('button',{name:'Jogar',exact:true}).click();
-  await page.getByRole('button',{name:'Começar a jogar'}).click();
+  await page.getByRole('button',{name:'Voltar ao resultado',exact:true}).click();
+  await page.getByRole('button',{name:'Jogar novamente'}).click();
   await audio.evaluate(a=>{a.currentTime=181;a.pause();});
   await page.locator('.clip-chorus-fx[data-active=true]').waitFor();
   assert.equal(await page.locator('.clip-chorus-fx i').count(),18);

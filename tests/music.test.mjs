@@ -9,6 +9,14 @@ test('timeline excludes gaps and end boundaries and rejects malformed word timin
   const copy=structuredClone(lesson);copy.lines[0].words[1].start=.5;assert.throws(()=>validateMusic(copy),/timing/);
   assert.throws(()=>validateMusic({...lesson,rights:'local-private'}),/private/);
 });
+test('visual media is optional and restricted to the authenticated track route',()=>{
+  assert.equal(validateMusic(lesson),lesson);
+  const visual={...lesson,visualSource:'/api/music/video?trackId=original-test'};
+  assert.equal(validateMusic(visual),visual);
+  for(const visualSource of ['https://example.com/video.mp4','//example.com/video.mp4','/api/music/video?trackId=other','/private/video.mp4'])
+    assert.throws(()=>validateMusic({...lesson,visualSource}),/invalid-visual-source/);
+});
+
 test('a completion requires learning steps and correct answers, not a microphone',()=>{
   const p=emptyMusicProgress(lesson);assert.equal(canCompleteMusic(lesson,p),false);
   const done={...p,stage:4,heard:['line'],explored:['again'],practiced:['line'],answers:{q:0},completed:true};

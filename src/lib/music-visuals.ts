@@ -4,6 +4,19 @@ type Section = { start: number; kind: 'intro' | 'verse' | 'build' | 'chorus' | '
 // Editorial section boundaries follow the existing approved lyric timestamps.
 // These affect presentation only and never reschedule words or challenges.
 const sections: Record<string, Section[]> = {
+  'stay-at-your-house-local': [
+    { start: 0, kind: 'intro', label: 'Introdução', story: 'Luzes acesas. Uma lembrança atravessa a cidade.' },
+    { start: .76, kind: 'verse', label: 'Verso 1', story: 'Entre a ausência e o desejo de ficar.' },
+    { start: 30, kind: 'build', label: 'Pré-refrão', story: 'A cidade acelera. A voz ganha espaço.' },
+    { start: 60, kind: 'chorus', label: 'Refrão', story: 'Um lugar para voltar, no meio do néon.' },
+    { start: 92, kind: 'instrumental', label: 'Interlúdio', story: 'As luzes continuam depois da voz.' },
+    { start: 100, kind: 'verse', label: 'Verso 2', story: 'A lembrança encontra as perguntas.' },
+    { start: 129, kind: 'chorus', label: 'Refrão', story: 'O desejo de ficar volta mais forte.' },
+    { start: 162, kind: 'instrumental', label: 'Ponte', story: 'A cidade respira antes da última virada.' },
+    { start: 176, kind: 'build', label: 'Pré-refrão final', story: 'As luzes se aproximam outra vez.' },
+    { start: 209.5, kind: 'chorus', label: 'Refrão final', story: 'A mesma cidade. Tudo parece diferente.' },
+    { start: 241, kind: 'outro', label: 'Final', story: 'Deixe a última luz ficar.' },
+  ],
   'perfect-local': [
     { start: 0, kind: 'intro', label: 'Introdução', story: 'Uma história começa pelo som.' },
     { start: 3.046, kind: 'verse', label: 'Verso 1', story: 'O encontro e a descoberta.' },

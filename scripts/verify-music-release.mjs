@@ -11,6 +11,10 @@ export const approvedMusicFiles = {
   'audio.mp3': '1ca15127f1a0bdb366a352101f8f79b268118df70d88e380df625f53e749a3b9',
   'heartless/manifest.json': '135aba0aaeaf52e7ed7033b36f68d9e16193b5a87b7f0d959db20c3796483fb9',
   'heartless/audio.mp3': '2eda9866ca57e321901d39378a4e29cafca7fc902933aaaef37daaa3cd158e9a',
+  'stay-at-your-house/manifest.json': '4daec8efd5c7c8eb21f91bf3cb9ed17a5a794a13f8a0599a835ce565e2159825',
+  'stay-at-your-house/audio.mp3': 'dd2058d8bb819fc3ec67a641d42430ee926362f4af4c8a1bd9927c3ff7902498',
+  'stay-at-your-house/video.mp4': 'd098996c0b4e495bb6361ed4a024cc47c2cac754f74dfbf6f38a0cccdb188e38',
+  'stay-at-your-house/background.mp4': '49525f327f5bcc19d56907e2a930d1fdcd1902cec271ad78beaeaa9eec27d1e5',
 };
 
 export async function verifyMusicRelease(directory = '.music-assets') {

@@ -22,6 +22,11 @@ test('narrative, dialogue, chorus and instrumental boundaries follow each song i
   assert.equal(musicSectionAt('perfect-local', 246.48).kind, 'outro');
   assert.equal(musicSectionAt('perfect-local', NaN).kind, 'intro');
   assert.equal(musicSectionAt('unknown', 40).kind, 'verse');
+  assert.equal(musicSectionAt('stay-at-your-house-local', 59.9).kind, 'build');
+  assert.equal(musicSectionAt('stay-at-your-house-local', 60).kind, 'chorus');
+  assert.equal(musicSectionAt('stay-at-your-house-local', 162).label, 'Ponte');
+  assert.equal(musicSectionAt('stay-at-your-house-local', 210).label, 'Refrão final');
+  assert.equal(musicSectionAt('stay-at-your-house-local', 18).kind, 'verse');
 });
 
 test('visual energy is bounded, follows seeks and never uses wall time or playback speed', () => {
@@ -31,7 +36,7 @@ test('visual energy is bounded, follows seeks and never uses wall time or playba
   assert.equal(musicEnergyAt(envelope, 0), 0);
   for (const clock of [-1, NaN, 50]) assert.equal(musicEnergyAt(envelope, clock), 0);
   assert.equal(musicEnergyAt(undefined, .2), 0);
-  for (const [id, duration] of [['perfect-local',263.407],['heartless-local',223.237]]) {
+  for (const [id, duration] of [['perfect-local',263.407],['heartless-local',223.237],['stay-at-your-house-local',247.989]]) {
     const data = musicEnergy[id];
     assert.ok(Math.abs(data.values.length * data.step - duration) <= data.step);
     assert.ok(data.values.every(n => Number.isInteger(n) && n >= 0 && n <= 100));

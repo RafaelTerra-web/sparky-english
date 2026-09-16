@@ -24,7 +24,7 @@ try {
   await page.getByRole('button', { name: 'Músicas', exact: true }).click();
   await page.locator('.music-card[data-track-id="heartless-local"]').waitFor();
   const catalog = await page.evaluate(async () => (await (await fetch('/api/music')).json()).catalog);
-  assert.equal(catalog.length, 2);
+  assert.equal(catalog.length, 3);
   for (const [id, version, lines, words, vocabulary] of [
     ['perfect-local', 'full-song-timing-2', 49, 285, 127],
     ['heartless-local', 'heartless-timing-1', 84, 435, 196],
