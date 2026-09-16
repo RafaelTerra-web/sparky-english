@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
-import { Volume2, ChevronDown, SkipBack, SkipForward, SlidersHorizontal, Headphones, ArrowRight, Play, Pause, RotateCcw, Mic, Square, Bookmark, Check, } from 'lucide-react';
+import { Volume2, ChevronDown, SkipBack, SkipForward, SlidersHorizontal, Headphones, ArrowRight, Play, Pause, RotateCcw, Bookmark, } from 'lucide-react';
 import MusicGame from './music-game';
 import MusicScene from './music-scene';
+import MusicAchievements from './music-achievements';
+import { recordMusicPerformance } from '@/lib/music-performance';
 import { t } from '@/lib/interface-language';
-import { activeCue, canCompleteMusic, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
+import { activeCue, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
 
 const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
@@ -25,7 +27,7 @@ export default function MusicLibrary({ userId, level }: { userId: string; level:
 
 function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson: MusicLesson; lab: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [mode, setMode] = useState<'game' | 'lyrics' | 'learn' | 'practice'>('game');
+  const [mode, setMode] = useState<'game' | 'lyrics' | 'learn' | 'awards'>('game');
   const [volume, setVolume] = useState(60);
   const [settings, setSettings] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -56,14 +58,12 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   }, []);
   const storageKey = `sparky-music:${userId}:${lesson.id}`;
   const [progress, setProgress] = useState(() => { try { return normalizeMusic(lesson, JSON.parse(localStorage.getItem(storageKey) || 'null')); } catch { return emptyMusicProgress(lesson); } });
-  const [stage, setStage] = useState(progress.stage);
   const progressRef = useRef(progress), dirty = useRef(false), inFlight = useRef(false), alive = useRef(true);
   const [sync, setSync] = useState('Carregando progresso…');
-  const audio = useRef<HTMLAudioElement>(null), selfAudio = useRef<HTMLAudioElement>(null), lyrics = useRef<HTMLDivElement>(null);
+  const audio = useRef<HTMLAudioElement>(null), lyrics = useRef<HTMLDivElement>(null);
   const [time, setTime] = useState(progress.position), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(1), [loop, setLoop] = useState(false), [selected, setSelected] = useState(0), [translation, setTranslation] = useState(false), [follow, setFollow] = useState(true), [audioError, setAudioError] = useState('');
-  const [word, setWord] = useState<string | null>(null), [consent, setConsent] = useState(false), [recording, setRecording] = useState(false), [requesting, setRequesting] = useState(false), [recorded, setRecorded] = useState(''), [recordError, setRecordError] = useState('');
+  const [word, setWord] = useState<string | null>(null);
   const [vocabularyQuery, setVocabularyQuery] = useState('');
-  const recorder = useRef<MediaRecorder | null>(null), stream = useRef<MediaStream | null>(null), recordingTimer = useRef<ReturnType<typeof setTimeout> | null>(null), recordedUrl = useRef(''), recordingGeneration = useRef(0);
   const studyEnd = lesson.duration;
   const cueTime = time + offset / 1000;
   const activeLine = activeCue(lesson.lines, cueTime), line = lesson.lines[selected];
@@ -100,20 +100,11 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   useEffect(() => { alive.current = true; void synchronize(); const timer = setInterval(() => { void synchronize(); }, 5000); const online = () => { void synchronize(); }; window.addEventListener('online', online); return () => { alive.current = false; clearInterval(timer); window.removeEventListener('online', online); }; /* Initial account snapshot; mutations are read from refs. */
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  function discardRecording() {
-    recordingGeneration.current++;
-    if (recordingTimer.current) clearTimeout(recordingTimer.current);
-    if (recorder.current) { recorder.current.ondataavailable = null; recorder.current.onstop = null; if (recorder.current.state !== 'inactive') recorder.current.stop(); }
-    stream.current?.getTracks().forEach(x => x.stop()); stream.current = null;
-    selfAudio.current?.pause();
-    if (recordedUrl.current) URL.revokeObjectURL(recordedUrl.current);
-    recordedUrl.current = ''; setRecorded(''); setRecording(false); setRequesting(false);
-  }
   useEffect(() => {
     const element = audio.current;
-    const hide = () => { if (document.hidden) { element?.pause(); discardRecording(); } };
+    const hide = () => { if (document.hidden) { element?.pause(); } };
     document.addEventListener('visibilitychange', hide);
-    return () => { element?.pause(); discardRecording(); document.removeEventListener('visibilitychange', hide); };
+    return () => { element?.pause(); document.removeEventListener('visibilitychange', hide); };
   }, []);
   useEffect(() => {
     if (!playing) return;
@@ -134,30 +125,11 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   }, [playing, loop, selected]);
   useEffect(() => { if (follow && mode === 'lyrics' && activeLine >= 0) { const element = lyrics.current?.querySelector<HTMLElement>(`[data-line="${activeLine}"]`); if (element && lyrics.current) lyrics.current.scrollTo({ top: element.offsetTop - lyrics.current.clientHeight * 0.3, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); } }, [activeLine, follow, mode]);
   function seek(value: number) { value = Math.max(0, Math.min(studyEnd, value)); if (audio.current) { audio.current.currentTime = value; setTime(value); update({ position: value, positionAt: Date.now() }); } }
-  async function play() { discardRecordingIfActive(); selfAudio.current?.pause(); setAudioError(''); if (audio.current && audio.current.currentTime >= studyEnd - 0.05) seek(lesson.lines[0].start); try { await audio.current?.play(); } catch { setAudioError('Toque novamente para iniciar o áudio.'); } }
-  function discardRecordingIfActive() { if (recording || requesting) discardRecording(); }
+  async function play() { setAudioError(''); if (audio.current && audio.current.currentTime >= studyEnd - 0.05) seek(lesson.lines[0].start); try { await audio.current?.play(); } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) setAudioError('Toque novamente para iniciar o áudio.'); } }
   function changeSpeed(value: number) { setSpeed(value); if (audio.current) { audio.current.playbackRate = value; audio.current.preservesPitch = true; } }
-  function chooseLine(index: number) { discardRecording(); setSelected(index); setTranslation(false); setWord(null); seek(lesson.lines[index].start); }
-  async function record() {
-    if (!consent || requesting || recording) return;
-    audio.current?.pause(); discardRecording(); setRecordError(''); setRequesting(true);
-    const generation = recordingGeneration.current;
-    try {
-      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') throw Error('unsupported');
-      const input = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (generation !== recordingGeneration.current || !alive.current || document.hidden) { input.getTracks().forEach(x => x.stop()); return; }
-      stream.current = input;
-      const mimeType = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(x => MediaRecorder.isTypeSupported(x));
-      const rec = new MediaRecorder(input, mimeType ? { mimeType } : undefined), chunks: Blob[] = [];
-      recorder.current = rec;
-      rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
-      rec.onerror = () => { discardRecording(); setRecordError('Não foi possível gravar. Você pode repetir sem microfone.'); };
-      rec.onstop = () => { input.getTracks().forEach(x => x.stop()); if (recordingTimer.current) clearTimeout(recordingTimer.current); if (generation !== recordingGeneration.current) return; setRecording(false); if (chunks.length) { recordedUrl.current = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType })); setRecorded(recordedUrl.current); } };
-      rec.start(); setRequesting(false); setRecording(true); recordingTimer.current = setTimeout(() => { if (rec.state !== 'inactive') rec.stop(); }, 15000);
-    } catch { stream.current?.getTracks().forEach(x => x.stop()); setRequesting(false); setRecordError('Microfone indisponível. Você pode repetir sem gravar e continuar.'); }
-  }
-  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'practice') { audio.current?.pause(); setLoop(false); discardRecording(); setMode(value); const step = value === 'learn' ? 2 : value === 'practice' ? 3 : 1; setStage(step); update({ stage: Math.max(progressRef.current.stage, step) }); }
-  function exitRoom() { audio.current?.pause(); discardRecording(); onClose(); }
+  function chooseLine(index: number) { setSelected(index); setTranslation(false); setWord(null); seek(lesson.lines[index].start); }
+  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'awards') { audio.current?.pause(); setLoop(false); setMode(value); const step = value === 'learn' ? 2 : 1; update({ stage: Math.max(progressRef.current.stage, step) }); }
+  function exitRoom() { audio.current?.pause(); onClose(); }
   const vocab = lesson.vocabulary.find(v => v.id === word);
   const visibleVocabulary = lesson.vocabulary.filter(v => `${v.word} ${v.meaning}`.toLocaleLowerCase('pt-BR').includes(vocabularyQuery.toLocaleLowerCase('pt-BR')));
   return <dialog ref={dialog} className="listen-room clip-room" data-mode={mode} aria-labelledby="music-room-title" onCancel={e => { e.preventDefault(); exitRoom(); }}>
@@ -174,7 +146,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
         <p>Valor positivo adianta a letra; negativo atrasa. Use para compensar o atraso do fone.</p><p role="status">{lab ? 'Teste local · ' : ''}{t(sync)}</p>
       </section>}
       <main className="listen-content">
-        {mode === 'game' && <MusicGame lesson={lesson} media={audio} clock={cueTime} playing={playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} />}
+        {mode === 'game' && <MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} lesson={lesson} media={audio} clock={cueTime} playing={playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} />}
         <section className="listen-lyric-panel" hidden={mode !== 'lyrics'}>
           <div className="listen-caption"><span>{playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.'}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>Tradução</button></div>
           <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label="Letra do trecho de estudo em inglês">
@@ -185,12 +157,10 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           </div>
           <div className="listen-lyric-hint">{follow ? <span>Toque em uma palavra para explorar</span> : <button className="listen-link" onClick={() => setFollow(true)}>Voltar à voz <ArrowRight size={14} /></button>}</div>
         </section>
-        <div className="listen-study" hidden={mode === 'lyrics' || mode === 'game'}>      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={t('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i}>{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução' : 'Mostrar tradução')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><p>{t(line.tip)}</p><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
+        <div className="listen-study" hidden={mode !== 'learn'}>      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={t('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i}>{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução' : 'Mostrar tradução')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><p>{t(line.tip)}</p><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
       <section className="music-panel" hidden={mode !== 'learn'}><h2>{t('Palavras em contexto')}</h2><label className="music-vocabulary-search">Buscar nas {lesson.vocabulary.length} palavras<input value={vocabularyQuery} onChange={e => setVocabularyQuery(e.target.value)} placeholder="Palavra ou significado" /></label><div className="music-vocabulary">{visibleVocabulary.map(v => <button key={v.id} aria-pressed={word === v.id} onClick={() => { setWord(v.id); update({ explored: [...new Set([...progress.explored, v.id])] }); }}>{v.word}{progress.saved.includes(v.id) ? <Bookmark size={13} /> : null}</button>)}</div>{vocab && <div className="music-definition"><h3 lang="en">{vocab.word} <small>{vocab.ipa}</small></h3><p>{t(vocab.meaning)}</p><p>{t(vocab.usage)}</p><p lang="en">{vocab.example}</p><button className="listen-link" disabled={progress.saved.includes(vocab.id)} onClick={() => update({ saved: [...progress.saved, vocab.id] })}><Bookmark size={14} />{t(progress.saved.includes(vocab.id) ? 'Palavra salva nesta música' : 'Salvar nesta música')}</button></div>}</section>
-{mode === 'practice' && <section className="music-panel"><h2>{t('Agora, a sua voz')}</h2><p>{t('Ouça o trecho, pause e repita. Você pode gravar até 15 segundos para se comparar com o original.')}</p><label className="music-consent"><input type="checkbox" checked={consent} onChange={e => { setConsent(e.target.checked); if (!e.target.checked) discardRecording(); }} />{t('Permitir gravação só nesta prática. O áudio fica nesta aba e será descartado ao sair.')}</label><div className="music-controls"><button className="listen-action" disabled={!consent || recording || requesting} onClick={() => void record()}><Mic size={15} />{t(requesting ? 'Aguardando microfone…' : 'Gravar minha voz')}</button>{(recording || requesting) && <button className="listen-action" onClick={() => { if (requesting) discardRecording(); else if (recorder.current?.state === 'recording') recorder.current.stop(); }}><Square size={15} />{t('Parar')}</button>}</div>{recording && <p role="status">{t('Gravando… até 15 segundos.')}</p>}{recordError && <p role="alert">{t(recordError)}</p>}{recorded && <><audio ref={selfAudio} controls src={recorded} onPlay={() => audio.current?.pause()} aria-label={t('Sua gravação')} /><button className="listen-link" onClick={discardRecording}>{t('Descartar gravação')}</button></>}<button className="listen-action" onClick={() => update({ practiced: [...new Set([...progress.practiced, line.id])] })}>{t(progress.practiced.includes(line.id) ? 'Trecho praticado ✓' : 'Pratiquei este trecho')}</button><p className="music-muted">{t('Observe ritmo, ligações e clareza. Esta prática não atribui nota de pronúncia.')}</p></section>}
-          {mode === 'practice' && stage !== 4 && <button className="listen-primary" disabled={!progress.heard.length || !progress.explored.length || !progress.practiced.length} onClick={() => { setStage(4); update({ stage: 4 }); }}>Testar o que aprendi <ArrowRight size={16} /></button>}
-          {stage === 4 && mode === 'practice' && <section className="music-panel"><h2>{t('Leve a letra para o dia a dia')}</h2>{lesson.questions.map(q => <fieldset className="music-question" key={q.id}><legend>{t(q.prompt)}</legend>{q.options.map((option, i) => <label key={option}><input type="radio" name={q.id} checked={progress.answers[q.id] === i} onChange={() => update({ answers: { ...progress.answers, [q.id]: i } })} />{option}</label>)}{progress.answers[q.id] !== undefined && <p role="status">{t(progress.answers[q.id] === q.answer ? 'Isso mesmo!' : 'Tente novamente.')} {t(q.explanation)}</p>}</fieldset>)}<button className="listen-primary" disabled={!canCompleteMusic(lesson, progress)} onClick={() => update({ completed: true })}>{progress.completed ? <Check size={17} /> : null}{t(progress.completed ? 'Sessão concluída' : 'Concluir sessão')}</button>{progress.completed && <p role="status">{t('Você ouviu, explorou e praticou. Volte quando quiser repetir com mais confiança.')}</p>}</section>}
         </div>
+        {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
       <footer className="listen-dock">
         <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) update({ position: audio.current.currentTime, positionAt: Date.now() }); }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
@@ -203,7 +173,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon listen-speed" aria-label="Velocidade" onClick={() => changeSpeed(speed === 1 ? .75 : speed === .75 ? .5 : 1)}>{speed === 1 ? '1×' : speed === .75 ? '0,75×' : '0,5×'}</button>
         </div>
         {audioError && <div className="listen-error" role="alert">{audioError}<button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>Tentar novamente</button></div>}
-        <nav className="listen-tabs" aria-label="Área de estudo"><button aria-pressed={mode === 'game'} onClick={() => changeMode('game')}>Jogar</button><button aria-pressed={mode === 'lyrics'} onClick={() => changeMode('lyrics')}>Letra</button><button aria-pressed={mode === 'learn'} onClick={() => changeMode('learn')}>Palavras</button><button aria-pressed={mode === 'practice'} onClick={() => changeMode('practice')}>Minha voz</button></nav>
+        <nav className="listen-tabs" aria-label="Área de estudo"><button aria-pressed={mode === 'game'} onClick={() => changeMode('game')}>Jogar</button><button aria-pressed={mode === 'lyrics'} onClick={() => changeMode('lyrics')}>Letra</button><button aria-pressed={mode === 'learn'} onClick={() => changeMode('learn')}>Palavras</button><button aria-pressed={mode === 'awards'} onClick={() => changeMode('awards')}>Conquistas</button></nav>
       </footer>
     </div>
   </dialog>;

@@ -78,7 +78,8 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
         orbit.scale.setScalar(1 + intensity * .06 + refrain);
         orbitMaterial.opacity = .1 + intensity * .12 + refrain;
         particles.material.opacity = .25 + intensity * .3 + refrain;
-        fill.intensity = 8 + intensity * 6;
+        particles.material.size = .018 + (motion.current.chorus ? .018 : 0);
+        fill.intensity = 8 + intensity * 6 + (motion.current.chorus ? 5 : 0);
         disc.rotation.set(.15 + Math.sin(time * .17) * .09, -.38, time * .09);
         orbit.rotation.z = -time * .035;
         particles.rotation.z = time * .014;

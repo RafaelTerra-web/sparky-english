@@ -32,9 +32,9 @@ try {
     const round = rounds[1];
     await audio.evaluate((a,t) => { a.currentTime=t; }, round.opens+.05);
     await page.locator('.clip-round[data-state=answering]').waitFor();
-    assert.equal(await page.locator('.clip-ambient[data-visible=true]').count(),0);
-    assert.equal(await page.locator('.clip-ambient').evaluate(el=>getComputedStyle(el).visibility),'hidden','A fade must not reveal the target line');
-    assert.equal(await page.locator('.clip-gap').innerText(),'•••');
+    assert.equal(await page.locator('.clip-ambient[data-visible=true]').count(),1);
+    assert.equal(await page.locator('[data-masked=true] .clip-word-body').evaluate(el=>getComputedStyle(el).visibility),'hidden','A fade must not reveal the target');
+    assert.equal(await page.locator('.clip-word-mask').innerText(),'•••');
     await audio.evaluate(a => a.play());
     await page.locator('.clip-options button').nth(round.options.indexOf(round.answer)).click();
     await page.locator('.clip-prompt-slot .clip-ambient[data-visible=true]').waitFor();

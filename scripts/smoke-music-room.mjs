@@ -34,8 +34,9 @@ try {
     assert.ok(await room.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `room overflow at ${width}`);
     assert.equal(await room.evaluate(el => Math.round(el.getBoundingClientRect().width)), width);
   }
-  await page.getByRole('button', { name: 'Minha voz', exact: true }).click();
-  await page.getByRole('heading', { name: 'Agora, a sua voz' }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Minha voz', exact: true }).count(),0);
+  await page.getByRole('button', { name: 'Conquistas', exact: true }).click();
+  await page.getByRole('heading', { name: 'Recordes e conquistas' }).waitFor();
   await page.getByRole('button', { name: 'Letra', exact: true }).click();
   // The old excerpt endpoint must no longer stop the full song.
   await page.locator('.listen-dock audio').evaluate(async a => { a.currentTime = 47.5; await a.play(); });
@@ -49,5 +50,5 @@ try {
   await room.waitFor({ state: 'detached' });
   assert.equal(await page.evaluate(() => document.body.style.overflow), '');
   assert.deepEqual(errors, []);
-  console.log(`PASS: modal isolation, safe gain, all ${lesson.lines.length} line/word cues, responsive widths, voice tab, playback beyond 48s through full track, Escape cleanup`);
+  console.log(`PASS: modal isolation, safe gain, all ${lesson.lines.length} line/word cues, responsive widths, achievements replace voice tab, playback beyond 48s through full track, Escape cleanup`);
 } finally { await browser.close(); }

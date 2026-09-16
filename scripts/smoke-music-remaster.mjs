@@ -24,7 +24,7 @@ try {
   const first=rounds[0];
   await audio.evaluate((a,t)=>{a.currentTime=t;},first.opens+.05);
   await page.locator('.clip-round[data-state=answering]').waitFor();
-  assert.equal(await page.locator('.clip-ambient[data-visible=true]').count(),0,'background must disappear during challenges');
+  assert.equal(await page.locator('.clip-ambient [data-masked=true]').count(),1,'only the target is masked');
   await page.waitForTimeout(350);
   await page.screenshot({path:`${screenshots}/challenge.png`});
   await page.locator('.clip-options button').nth(first.options.indexOf(first.answer)).click();
@@ -48,7 +48,7 @@ try {
       const time=lesson.lines[index].start+.05;
       await audio.evaluate((a,t)=>{a.currentTime=t;},time);
       await page.waitForFunction(i=>document.querySelector('.clip-prompt-slot .clip-ambient')?.getAttribute('data-line')===String(i),ambientLyricIndex(lesson.lines,time));
-      assert.equal(await ambient.getAttribute('aria-hidden'),'true');
+      assert.equal(await ambient.getAttribute('aria-label'),'Letra sincronizada');
       assert.equal(await ambient.locator('.spoken,.current-word,button').count(),0);
       assert.equal((await ambient.locator('p').allTextContents()).at(-1),lesson.lines[index].text);
       await page.waitForTimeout(400);

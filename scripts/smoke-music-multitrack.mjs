@@ -92,7 +92,7 @@ try {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await audio.evaluate((a, time) => { a.currentTime = time; }, round.opens + .05);
   await page.locator('.clip-round[data-state=answering]').waitFor();
-  assert.equal(await page.locator('.clip-ambient[data-visible=true]').count(), 0, 'Active answer must not expose the hidden word');
+  assert.equal(await page.locator('.clip-ambient [data-masked=true] .clip-word-body').evaluate(el=>getComputedStyle(el).visibility), 'hidden', 'Active answer must not expose the hidden word');
   await page.locator('.clip-media canvas').evaluate(canvas => canvas.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
   await page.locator('.clip-media .music-scene[data-renderer=static]').waitFor();
   const fallbackTime = await audio.evaluate(a => { void a.play(); return a.currentTime; });

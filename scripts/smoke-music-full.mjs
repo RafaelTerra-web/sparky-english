@@ -44,7 +44,7 @@ try {
     await page.locator(`.clip-round[data-round="${i}"][data-state="${opening ? 'countdown' : 'waiting'}"]`).waitFor();
     assert.equal(await page.locator('.clip-countdown.is-visible').count(), opening ? 1 : 0);
     await audio.evaluate((a,t)=>{a.currentTime=t;},r.revealAt+.02);
-    await page.locator(`.clip-round[data-round="${i}"] .clip-phrase.is-visible`).waitFor();
+    await page.locator(`.clip-round[data-round="${i}"] .clip-ambient [data-question=true]`).waitFor();
     assert.equal(await page.locator('.clip-options button').first().isDisabled(),true);
     await audio.evaluate((a,t)=>{a.currentTime=t;},r.opens+.05);
     await page.locator(`.clip-round[data-round="${i}"][data-state="answering"]`).waitFor();

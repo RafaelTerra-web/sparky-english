@@ -4,7 +4,7 @@
 
 A biblioteca passa a ter um disco 3D em Three.js, órbitas luminosas e partículas. Perfect usa tons esmeralda; Heartless usa violeta. As capas mostram a duração completa e cada faixa abre seu próprio progresso.
 
-A contagem de três segundos aparece somente entre 0 e 3 segundos de cada partida. A preparação interna entre desafios continua preservando as mesmas janelas, mas não mostra contagem. A letra permanece no mesmo palco antes e depois das respostas; somente uma frase com lacuna substitui a letra livre durante um desafio ativo. O motor mantém 24 rodadas e as velocidades 1×, 0,75× e 0,5×.
+A contagem de três segundos aparece somente entre 0 e 3 segundos de cada partida. A preparação interna entre desafios continua preservando as mesmas janelas, mas não mostra contagem. A letra permanece no mesmo palco antes e depois das respostas. Na revisão seguinte, a frase com lacuna passou a usar a própria linha da letra, sem substituição de camada; veja `music-ranks-review.md`. O motor mantém 24 rodadas e as velocidades 1×, 0,75× e 0,5×.
 
 As seções editoriais distinguem versos, pré-refrões, narrativa/diálogo, refrões, interlúdios e finais. As fronteiras vêm dos timestamps existentes; não alteram o catálogo. Narrativa usa itálico serifado; refrão ganha peso, cor e opacidade de 82%, frente a 58% nos versos e 38% nas pausas instrumentais. Um breve texto em português acompanha o arco da história, com tradução da interface disponível em inglês. O preenchimento das palavras acompanha seus tempos; a palavra pedida nunca aparece na letra livre antes da resposta.
 
