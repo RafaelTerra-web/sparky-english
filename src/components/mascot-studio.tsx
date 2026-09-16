@@ -2,13 +2,12 @@
 import { t, localizeAttribute, translate, supportT, getSupportLocale } from "@/lib/interface-language";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { BookOpen, Check, Coins, Compass, Eye, RotateCcw, ShoppingBag } from "lucide-react";
+import { Check, Coins, Compass, Eye, RotateCcw, ShoppingBag } from "lucide-react";
 import {
   accessoryCatalog,
   cosmeticCatalog,
   isCompatibleCosmetic,
   isCosmeticItem,
-  notebookThemeCatalog,
   outfitCatalog,
   storeCatalog,
   wardrobeBaseAssets,
@@ -22,7 +21,6 @@ import { StorePractice } from "./store-practice";
 export type RewardAction =
   | { action: "buy"; itemId: string }
   | { action: "buy-and-equip"; mascot: MascotId; itemId: string }
-  | { action: "notebook-theme"; itemId: string | null }
   | { action: "select-mascot"; mascot: MascotId }
   | { action: "reset-look"; mascot: MascotId }
   | { action: "equip"; mascot: MascotId; slot: CosmeticSlot; itemId: string | null };
@@ -64,15 +62,13 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
   onAction: (action: RewardAction) => Promise<boolean>;
   onStudy: () => void;
 }) {
-  const [filter, setFilter] = useState<"outfits" | "accessories" | "missions" | "themes" | "owned">("outfits");
+  const [filter, setFilter] = useState<"outfits" | "accessories" | "missions" | "owned">("outfits");
   const [accessoryFilter, setAccessoryFilter] = useState<AccessorySlot | "all">("all");
-  const [themePreview, setThemePreview] = useState<string | null>(null);
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [pack, setPack] = useState<string | null>(null);
   const previewHeading = useRef<HTMLHeadingElement>(null);
   const purchaseConfirmation = useRef<HTMLElement>(null);
-  const notebookPreview = useRef<HTMLElement>(null);
   const mascot = reward.mascot;
   const name = mascot === "pinky" ? "Pinky" : "Sparky";
   const currentOutfit = reward.equipped[mascot].outfit;
@@ -82,7 +78,6 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
     if (isCosmeticItem(item) && !item.mascots.includes(mascot)) return false;
     if (filter === "owned") return reward.owned.includes(item.id);
     if (filter === "missions") return item.kind === "practice-pack";
-    if (filter === "themes") return item.kind === "notebook-theme";
     if (filter === "outfits") return item.kind === "outfit";
     return item.kind === "accessory" && (accessoryFilter === "all" || item.slot === accessoryFilter);
   });
@@ -101,17 +96,10 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
     previewHeading.current?.scrollIntoView({ block: "start", behavior: "instant" });
     previewHeading.current?.focus({ preventScroll: true });
   }
-  function tryTheme(id: string) {
-    setThemePreview(id);
-    requestAnimationFrame(() => {
-      notebookPreview.current?.focus({ preventScroll: true });
-      notebookPreview.current?.scrollIntoView({ block: "center" });
-    });
-  }
 
   return <section className="mascot-studio shop-v2" aria-labelledby="mascot-studio-title">
     <header className="studio-header"><div><p className="eyebrow">{t("Aprenda · conquiste · combine")}</p><h2 id="mascot-studio-title">{t("Loja de descobertas")}</h2></div><span className="coin-balance" aria-label={localizeAttribute(`${reward.coins} moedas`)}><Coins size={20} /> {reward.coins}</span></header>
-    <p lang={getSupportLocale()} className="shop-intro">{supportT("Transforme seu estudo em trajes, acessórios, temas de caderno e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.")}</p>
+    <p lang={getSupportLocale()} className="shop-intro">{supportT("Transforme seu estudo em trajes, acessórios e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.")}</p>
     {!!reward.sceneRefund && <details className="shop-refund"><summary>{reward.sceneRefund}{t(" moedas devolvidas pelos cenários retirados")}</summary><p lang={getSupportLocale()}>{supportT("Os cenários foram descontinuados. Todas as compras foram reembolsadas integralmente uma única vez.")}</p></details>}
     {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund}{t(" moedas devolvidas pela atualização anterior")}</summary><p lang={getSupportLocale()}>{supportT("Esse reembolso já foi incluído no seu saldo. Você pode combinar os novos acessórios com os trajes disponíveis.")}</p></details>}
 
@@ -156,35 +144,27 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
     })()}
 
     <div className="wardrobe-filters" role="group" aria-label={localizeAttribute("Categorias da loja")}>
-      {([ ["outfits", "Trajes"], ["accessories", "Acessórios"], ["missions", "Missões"], ["themes", "Cadernos"], ["owned", "Meus itens"] ] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setConfirmId(null); setThemePreview(null); }}>{t(label)}</button>)}
+      {([ ["outfits", "Trajes"], ["accessories", "Acessórios"], ["missions", "Missões"], ["owned", "Meus itens"] ] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setConfirmId(null); }}>{t(label)}</button>)}
     </div>
     {filter === "accessories" && <div className="accessory-filters" role="group" aria-label={localizeAttribute("Tipos de acessório")}>
       {([ ["all", "Todos"], ["head", "Cabeça"], ["face", "Rosto"], ["neck", "Pescoço"], ["back", "Bolsas"] ] as const).map(([id, label]) => <button key={id} aria-pressed={accessoryFilter === id} onClick={() => setAccessoryFilter(id)}>{t(label)}</button>)}
     </div>}
-    {filter === "themes" && <p lang={getSupportLocale()} className="shop-explanation">{supportT("Os temas mudam as cores do Caderno sem alterar seus textos ou atividades.")}</p>}
-    {themePreview && (() => { const theme = notebookThemeCatalog.find((item) => item.id === themePreview); if (!theme) return null; return <section ref={notebookPreview} tabIndex={-1} className={`notebook-theme-preview ${theme.className}`} aria-label={localizeAttribute(`${translate("Prévia")}: ${translate(theme.name)}`)}>
-      <p className="eyebrow">{t("Prévia gratuita")}</p><h3>{t(theme.name)}</h3><p lang="en">Small steps today. Clearer ideas tomorrow.</p><p lang={getSupportLocale()}>{supportT("Suas frases, novas versões e um espaço para aprender com os erros.")}</p>
-      <button className="secondary-button" onClick={() => setThemePreview(null)}>{t("Fechar prévia")}</button>
-    </section>; })()}
     {filter === "missions" && <p lang={getSupportLocale()} className="shop-explanation">{supportT("Cada pacote inclui situações, decisões explicadas e propostas de escrita. O curso A1–C2 continua acessível sem compras.")}</p>}
     {items.length === 0 && <p lang={getSupportLocale()} className="shop-empty">{supportT("Nenhum item desta categoria está disponível para")}{supportT(name)}.</p>}
     <div className="shop-grid">{items.map((item) => {
       const cosmetic = isCosmeticItem(item);
       const owned = reward.owned.includes(item.id);
-      const theme = item.kind === "notebook-theme";
-      const equipped = cosmetic ? reward.equipped[mascot][item.slot] === item.id : theme && reward.notebookTheme === item.id;
+      const equipped = cosmetic ? reward.equipped[mascot][item.slot] === item.id : false;
       const shortfall = Math.max(0, item.price - reward.coins);
       const compatible = !cosmetic || isCompatibleCosmetic(item, mascot, currentOutfit);
       const shown = cosmetic ? { ...reward.equipped, [mascot]: { ...reward.equipped[mascot], [item.slot]: item.id } } : reward.equipped;
       return <article className="shop-card" key={item.id} data-item={item.id}>
-        <div className={`shop-card-art ${theme ? `notebook-theme-art ${item.className}` : ""}`}>{cosmetic ? <MascotFigure mascot={mascot} equipped={shown} decorative /> : theme ? <><BookOpen size={48} aria-hidden="true" /><strong>{t("My English notebook")}</strong><span>{t("Frases · ideias · novas versões")}</span></> : <><Compass size={46} /><strong>{item.level}</strong><span>{t("2 missões de prática")}</span></>}</div>
-        <div className="shop-card-copy"><p className="eyebrow">{t(owned ? equipped ? "Em uso" : "Adquirido" : cosmetic ? slotLabels[item.slot] : theme ? "Tema de caderno" : "Pacote permanente")}</p><h3>{t(item.name)}</h3><p lang={getSupportLocale()}>{supportT(item.description)}</p></div>
+        <div className="shop-card-art">{cosmetic ? <MascotFigure mascot={mascot} equipped={shown} decorative /> : <><Compass size={46} /><strong>{item.level}</strong><span>{t("2 missões de prática")}</span></>}</div>
+        <div className="shop-card-copy"><p className="eyebrow">{t(owned ? equipped ? "Em uso" : "Adquirido" : cosmetic ? slotLabels[item.slot] : "Pacote permanente")}</p><h3>{t(item.name)}</h3><p lang={getSupportLocale()}>{supportT(item.description)}</p></div>
         <div className="shop-card-actions">
           {!compatible && <p lang={getSupportLocale()}>{supportT("Esta peça não combina com o traje atual. Troque o traje para experimentar.")}</p>}
           {cosmetic && <button className="text-button" disabled={busy || !compatible} onClick={() => tryItem(item.id)}><Eye size={16} /> {t(compatible ? "Experimentar" : "Incompatível")}</button>}
-          {theme && <button className="text-button" onClick={() => tryTheme(item.id)}><Eye size={16} /> {t("Ver prévia")}</button>}
           {owned ? cosmetic ? <button className="secondary-button" disabled={busy || !compatible} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: item.slot, itemId: equipped ? null : item.id })) clearPreview(); }}>{t(equipped ? "Remover" : "Usar")}</button>
-            : theme ? <button className="secondary-button" disabled={busy} onClick={() => onAction({ action: "notebook-theme", itemId: equipped ? null : item.id })}>{t(equipped ? "Usar tema original" : "Usar no caderno")}</button>
             : <button className="primary-button" onClick={() => setPack(item.id)}>{t("Abrir missões")}</button>
             : <><span className="shop-price"><Coins size={16} /> {item.price}{t(" moedas")}</span>
               {shortfall > 0 ? <><p lang={getSupportLocale()} className="shop-shortfall">{supportT("Faltam")}{shortfall}{supportT(" moedas")}</p><button className="secondary-button" disabled={busy} onClick={onStudy}>{t("Continuar estudando")}</button></> : <button className="secondary-button" disabled={busy || !compatible} onClick={() => requestPurchase(item.id)}><ShoppingBag size={16} /> {t("Adquirir")}</button>}

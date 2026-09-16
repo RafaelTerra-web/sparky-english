@@ -44,9 +44,9 @@ test('layout fits narrow screens and lesson transitions start at the top', async
   await account(page);
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({width,height:800});
-    for (const screen of ['Hoje','Curso','Caderno','Loja']) {
+    for (const screen of ['Hoje','Curso','Músicas','Loja']) {
       await page.getByRole('button',{name:screen,exact:true}).filter({visible:true}).click();
-      await page.locator(screen==='Curso'?'.course-trail':screen==='Caderno'?'.learning-notebook':screen==='Loja'?'.shop-v2':'.next-lesson').waitFor();
+      await page.locator(screen==='Curso'?'.course-trail':screen==='Músicas'?'.music-library':screen==='Loja'?'.shop-v2':'.next-lesson').waitFor();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${screen} at ${width}px`).toBe(true);
       if(width===390 || width===1440) await page.screenshot({path:info.outputPath(`${screen}-${width}.png`)});
       if(width<=700) {

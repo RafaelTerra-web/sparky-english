@@ -47,3 +47,6 @@ next-env.d.ts
 .vercel
 
 .release-work/
+.music-lab/
+.music-assets/
+.next-build-check/

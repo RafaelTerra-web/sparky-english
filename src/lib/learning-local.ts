@@ -24,12 +24,12 @@ export type Checkpoint = {
   revealed: boolean; listened: boolean;
 };
 export type Writing = { id: string; lessonId: string; text: string; createdAt: string; contentVersion: string };
-export type Notebook = { id: string; english: string; translation: string; lessonId: string };
+export type LegacySavedPhrase = { id: string; english: string; translation: string; lessonId: string };
 export type LearningWorkspace = {
   discipline: Discipline | "all"; examFocus?: ExamFocus;
   studyDay: string; newLessonsToday: number; recommendation: "balanced" | "new";
   version: 1; checkpoints: Record<string, Checkpoint>; attempts: Attempt[];
-  writings: Writing[]; vocabulary: Notebook[]; goal: string; minutes: number;
+  writings: Writing[]; vocabulary: LegacySavedPhrase[]; goal: string; minutes: number;
 };
 export const blankWorkspace = (): LearningWorkspace => ({ discipline: "all", studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
 export const workspaceKey = (userId: string) => `sparky-learning:${userId}`;

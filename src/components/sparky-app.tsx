@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
+  Music2,
   Check,
   ChevronRight,
   Clock3,
@@ -49,7 +50,7 @@ import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 import LessonPlayer from "./lesson-player";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
-const LearningNotebook = dynamic(() => import("./learning-notebook"), { loading: () => <SectionLoading /> });
+const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
 import {
   MascotFigure,
   MascotStudio,
@@ -65,7 +66,7 @@ const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
-type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "notebook" | "shop";
+type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "music" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -77,7 +78,6 @@ const emptyRewards: PublicRewardState = {
   completed: {},
   reviews: {},
   owned: [],
-  notebookTheme: null,
   mascot: "sparky",
   equipped: { sparky: {}, pinky: {} },
   streak: { count: 0, longest: 0, lastDay: null },
@@ -87,7 +87,7 @@ const navigation = [
   { id: "course" as View, label: "Curso", icon: BookOpen },
   { id: "review" as View, label: "Revisão", icon: RotateCcw },
   { id: "exams" as View, label: "Simulados", icon: ClipboardCheck },
-  { id: "notebook" as View, label: "Caderno", icon: GraduationCap },
+  { id: "music" as View, label: "Músicas", icon: Music2 },
   { id: "shop" as View, label: "Loja", icon: ShoppingBag },
   { id: "profile" as View, label: "Perfil", icon: Settings2 },
 ];
@@ -387,8 +387,6 @@ export default function SparkyApp() {
             ? "Visual básico restaurado. Seus itens continuam no inventário."
           : action.action === "equip"
           ? "Visual atualizado."
-          : action.action === "notebook-theme"
-            ? "Tema do caderno atualizado. Seus textos foram preservados."
           : `${action.mascot === "pinky" ? "Pinky" : "Sparky"} agora acompanha suas lições.`,
     );
     return true;
@@ -738,7 +736,7 @@ export default function SparkyApp() {
           </>
         )}
         {view === "classroom" && <EnglishClassroom level={progress.level} />}
-        {view === "notebook" && <LearningNotebook userId={user.id} workspace={workspace} onOpen={open} themeId={reward.notebookTheme} />}
+        {view === "music" && <MusicLibrary userId={user.id} level={progress.level} />}
         {view === "exams" && <><button className="text-button" onClick={() => navigate("course")}>{t("← Voltar ao Curso")}</button><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
@@ -815,7 +813,7 @@ export default function SparkyApp() {
                     ? "Suas lições concluídas, sequência, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
                     : "Suas conclusões, sequência, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
                 </p>
-                <p lang={getSupportLocale()}>{supportT("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. Você pode exportá-los pelo Caderno. A aparência é sincronizada quando há conexão.")}</p>
+                <p lang={getSupportLocale()}>{supportT("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. A aparência é sincronizada quando há conexão.")}</p>
                 <p lang={getSupportLocale()}>
                   {supportT(voiceEnabled
                     ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."

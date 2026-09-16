@@ -15,7 +15,7 @@ button > svg { flex-shrink: 0; }
 html[data-palette] body :is(.lesson-card,.study-summary,.profile-card,.profile-note,.review-card,.shop-card,.mock-intro,.mock-report) {
   box-shadow: 0 4px 16px var(--shadow-color);
 }
-html[data-palette] body :is(.recall-card,.writing-plan,.vocabulary-cards>div,.speech-studio,.lesson-identity-card,.conversation-tip,.conversation-listening,.shop-earning,.notebook-section) {
+html[data-palette] body :is(.recall-card,.writing-plan,.vocabulary-cards>div,.speech-studio,.lesson-identity-card,.conversation-tip,.conversation-listening,.shop-earning) {
   box-shadow: none;
 }
 html[data-palette] body .learning-note {

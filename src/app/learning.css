@@ -80,37 +80,8 @@
 .install-instructions li > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #315846; color: white; font-size: 11px; font-weight: 750; }
 .install-instructions li p { margin: 3px 0 0; color: #41594d; font-size: 12px; line-height: 1.55; }
 .install-browser-note { margin: 0 0 13px; padding-bottom: 12px; border-bottom: 1px solid #d2ddcc; color: #6c4b31; font-size: 12px; line-height: 1.55; }
-.notebook-section summary { cursor: pointer; padding: 12px 0; min-height: 44px; }
-.notebook-section { margin: 22px 0; }
-.notebook-section h2 { font-family: Georgia, serif; font-size: 25px; margin-bottom: 12px; }
-.notebook-section h3 { margin: 18px 0 10px; }
-.notebook-section p { margin: 12px 0; line-height: 1.7; overflow-wrap: anywhere; }
-.notebook-section > label { display: block; margin: 18px 0 8px; font-weight: 600; }
-.notebook-section input, .notebook-section select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: white; color: var(--foreground); }
-.notebook-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 16px; margin-top: 16px; }
-.notebook-list article { padding: 18px; border: 1px solid var(--line); border-radius: 14px; min-width: 0; }
-.notebook-list article h4 { font-weight: 650; }
-.notebook-list article .secondary-button { margin-top: 12px; }
 
-/* The same palette is used by shop previews and the real notebook. */
-.notebook-mint { --notebook-paper: #edf7ef; --notebook-ink: #173f35; --notebook-muted: #36594b; --notebook-line: #91b8a0; --notebook-input: #fcfffc; --notebook-accent: #205541; }
-.notebook-midnight { --notebook-paper: #182a3c; --notebook-ink: #f2f5fc; --notebook-muted: #c1d0e3; --notebook-line: #73879e; --notebook-input: #22384e; --notebook-accent: #b8dfcf; }
-.notebook-classic { --notebook-paper: #fbf1da; --notebook-ink: #433322; --notebook-muted: #64503a; --notebook-line: #b59b74; --notebook-input: #fffbef; --notebook-accent: #664528; }
-.notebook-berry { --notebook-paper: #fff0f5; --notebook-ink: #54223d; --notebook-muted: #75405d; --notebook-line: #c594ac; --notebook-input: #fffafd; --notebook-accent: #7b3053; }
-.notebook-theme-preview, .notebook-theme-art { color: var(--notebook-ink, var(--foreground)); }
-.learning-notebook[class*="notebook-"] { --line: var(--notebook-line); }
-.learning-notebook[class*="notebook-"] .notebook-section { background: var(--notebook-paper); color: var(--notebook-ink); border-color: var(--notebook-line); }
-.learning-notebook[class*="notebook-"] .notebook-section :is(h2, h3, h4, p, label, summary, small) { color: var(--notebook-ink); }
-.learning-notebook[class*="notebook-"] .notebook-section :is(input, select, textarea) { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
-.learning-notebook[class*="notebook-"] .notebook-section .secondary-button { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
-.learning-notebook[class*="notebook-"] .notebook-section .text-button { color: var(--notebook-accent); }
-.notebook-theme-preview { padding: 26px; border-radius: 18px; border: 1px solid var(--notebook-line); background: var(--notebook-paper); margin-bottom: 22px; scroll-margin-top: 24px; }
-.notebook-theme-preview h3 { font: 26px Georgia, serif; margin: 12px 0; }
-.notebook-theme-preview p { line-height: 1.8; margin: 12px 0; }
-.notebook-theme-preview .eyebrow { color: var(--notebook-muted); }
-.notebook-theme-preview .secondary-button { background: var(--notebook-input); color: var(--notebook-ink); border-color: var(--notebook-line); }
-.shop-card-art.notebook-theme-art { background: var(--notebook-paper); color: var(--notebook-ink); border-bottom: 1px solid var(--notebook-line); }
-.shop-card-art.notebook-theme-art strong { font: 18px Georgia, serif; text-align: center; }
+
 .preserve-lines { white-space: pre-wrap; }
 input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .review-guidance, .review-empty {
@@ -183,7 +154,6 @@ input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3p
   .lesson-dialog > footer button { min-height: 48px; font-size: 14px; }
   .mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .mobile-nav button { min-width: 0; }
-  .notebook-section { padding: 20px; }
   .review-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
   .review-section-heading h2 { font-size: 21px; }
   .review-guidance, .review-empty { padding: 16px; }

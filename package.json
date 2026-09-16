@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "lab:music": "node scripts/music-lab.mjs",
+    "audit:music": "node scripts/audit-music.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -14,7 +16,7 @@
     "voice:generate": "node scripts/generate-voices.mjs",
     "voice:generate-tips": "node scripts/generate-tip-audio.mjs",
     "audit:coverage": "node scripts/audit-course-coverage.mjs",
-    "prebuild": "node scripts/audit-course-coverage.mjs"
+    "prebuild": "node scripts/verify-music-release.mjs && node scripts/audit-course-coverage.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
@@ -25,6 +27,7 @@
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "three": "^0.186.0",
     "ws": "^8.21.3",
     "zod": "^4.6.2"
   },
@@ -34,6 +37,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "@types/ws": "^8.18.1",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",

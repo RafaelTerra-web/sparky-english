@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 import "./course.css";
 import "./learning.css";
@@ -7,6 +7,8 @@ import "./shop.css";
 import "./interface.css";
 import "./performance.css";
 import "./study-remap.css";
+import "./music.css";
+import "./music-immersive.css";
 import "./motion.css";
 
 const geistSans = Geist({
@@ -18,6 +20,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const musicGrotesk = Space_Grotesk({ variable: '--font-music-grotesk', subsets: ['latin'], preload: false });
+const musicCyberpunk = Chakra_Petch({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -54,7 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${musicGrotesk.variable} ${musicCyberpunk.variable} h-full antialiased`}
     >
       <head>
         <script
@@ -63,7 +67,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/* Browser accessibility/translation extensions may annotate <body>
+          before React hydrates. Keep suppression scoped to this root element;
+          mismatches inside the application tree must still surface. */}
+      <body suppressHydrationWarning className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

@@ -1,7 +1,13 @@
-.voice-qa
+.git
 .env*
+.music-lab
+.next
+.next-build-check
+.release-work
+.voice-qa
 test-results
 playwright-report
-.git
-
-.release-work
+node_modules
+# The release-only authenticated media bundle is intentionally uploaded.
+!.music-assets
+!.music-assets/**

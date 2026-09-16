@@ -32,7 +32,7 @@ function Mission({ data, userId, packId }: { data: StoreMission; userId: string;
         const text = event.target.value; setDraft(text);
         setSaveError(!updateWorkspace(userId, current => ({ ...current, writings: [...current.writings.filter(w => w.id !== writingId), { id: writingId, lessonId: writingId, text, createdAt: new Date().toISOString(), contentVersion }].slice(-100) })));
       }} />
-      <p lang={getSupportLocale()} role={saveError ? "alert" : undefined}>{supportT(saveError ? "O navegador não conseguiu salvar. Copie seu texto antes de sair." : "Rascunho salvo no Caderno deste navegador. Você pode fechar e retomar, exportar ou apagar pelo Caderno.")}</p>
+      <p lang={getSupportLocale()} role={saveError ? "alert" : undefined}>{supportT(saveError ? "O navegador não conseguiu salvar. Copie seu texto antes de sair." : "Rascunho salvo neste navegador. Você pode fechar e retomar esta missão depois.")}</p>
       <details className="learning-disclosure"><summary>{t("Ver uma resposta possível")}</summary><blockquote lang="en">{targetText(data.model)}</blockquote><p lang={getSupportLocale()}>{supportT("Use como referência e adapte ao seu objetivo. Nos textos longos, este é um trecho para começar.")}</p></details>
       <h4>{t("Confira sua produção")}</h4><ul>{data.checklist.map(item => <li lang={getSupportLocale()} key={item}>{supportT(item)}</li>)}</ul>
       <p lang={getSupportLocale()}>{supportT("Diga sua resposta em voz alta e depois reformule sem ler. Esta prática extra não atribui nota, moedas ou conclusão no curso principal.")}</p>

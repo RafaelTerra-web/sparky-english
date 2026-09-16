@@ -1,0 +1,2574 @@
+{
+  "summary": {
+    "audio": "C:\\Users\\rpta\\Downloads\\Ed Sheeran - Perfect [Official Lyric Video].mp3",
+    "lines": 49,
+    "words": 285,
+    "alignedLines": 49,
+    "tokenMismatches": 0,
+    "medianStartDelta": -0.02,
+    "medianEndDelta": -0.02,
+    "maxAbsoluteDelta": 6.87,
+    "outliersOver300ms": 58,
+    "largestOutliers": [
+      {
+        "line": "full-41",
+        "word": "Baby,",
+        "startDelta": -6.87,
+        "endDelta": -1.63
+      },
+      {
+        "line": "full-40",
+        "word": "tonight",
+        "startDelta": -0.3,
+        "endDelta": 4.68
+      },
+      {
+        "line": "verse-1",
+        "word": "I",
+        "startDelta": -3.046,
+        "endDelta": -0.147
+      },
+      {
+        "line": "full-20",
+        "word": "Well,",
+        "startDelta": -1.71,
+        "endDelta": 2.17
+      },
+      {
+        "line": "verse-1",
+        "word": "love",
+        "startDelta": 0.012,
+        "endDelta": -1.833
+      },
+      {
+        "line": "verse-1",
+        "word": "for",
+        "startDelta": -1.833,
+        "endDelta": -0.835
+      },
+      {
+        "line": "verse-2",
+        "word": "Darling,",
+        "startDelta": -1.505,
+        "endDelta": -0.309
+      },
+      {
+        "line": "full-29",
+        "word": "time",
+        "startDelta": -0.02,
+        "endDelta": -1.36
+      },
+      {
+        "line": "verse-8",
+        "word": "time",
+        "startDelta": -0.173,
+        "endDelta": -1.359
+      },
+      {
+        "line": "full-33",
+        "word": "I'm",
+        "startDelta": 0.26,
+        "endDelta": 1.22
+      },
+      {
+        "line": "full-11",
+        "word": "mine",
+        "startDelta": 0.0,
+        "endDelta": -1.14
+      },
+      {
+        "line": "full-12",
+        "word": "I'm",
+        "startDelta": -0.98,
+        "endDelta": 0.42
+      }
+    ]
+  },
+  "lines": [
+    {
+      "id": "verse-1",
+      "window": [
+        0,
+        8.96
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 0.0,
+          "end": 3.08,
+          "startDelta": -3.046,
+          "endDelta": -0.147
+        },
+        {
+          "text": "found",
+          "start": 3.08,
+          "end": 3.48,
+          "startDelta": -0.147,
+          "endDelta": -0.148
+        },
+        {
+          "text": "a",
+          "start": 3.48,
+          "end": 3.72,
+          "startDelta": -0.148,
+          "endDelta": 0.012
+        },
+        {
+          "text": "love",
+          "start": 3.72,
+          "end": 4.28,
+          "startDelta": 0.012,
+          "endDelta": -1.833
+        },
+        {
+          "text": "for",
+          "start": 4.28,
+          "end": 6.42,
+          "startDelta": -1.833,
+          "endDelta": -0.835
+        },
+        {
+          "text": "me",
+          "start": 6.42,
+          "end": 7.6,
+          "startDelta": -0.835,
+          "endDelta": 0.144
+        }
+      ]
+    },
+    {
+      "id": "verse-2",
+      "window": [
+        8.96,
+        12.988
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Darling,",
+          "start": 8.96,
+          "end": 10.82,
+          "startDelta": -1.505,
+          "endDelta": -0.309
+        },
+        {
+          "text": "just",
+          "start": 11.14,
+          "end": 11.3,
+          "startDelta": 0.011,
+          "endDelta": -0.13
+        },
+        {
+          "text": "dive",
+          "start": 11.3,
+          "end": 11.82,
+          "startDelta": -0.13,
+          "endDelta": -0.274
+        },
+        {
+          "text": "right",
+          "start": 11.82,
+          "end": 12.34,
+          "startDelta": -0.274,
+          "endDelta": -0.216
+        },
+        {
+          "text": "in",
+          "start": 12.34,
+          "end": 12.96,
+          "startDelta": -0.216,
+          "endDelta": 0.344
+        }
+      ]
+    },
+    {
+      "id": "verse-3",
+      "window": [
+        12.988,
+        16.629
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "And",
+          "start": 12.988,
+          "end": 14.248,
+          "startDelta": -0.372,
+          "endDelta": 0.003
+        },
+        {
+          "text": "follow",
+          "start": 14.248,
+          "end": 14.648,
+          "startDelta": 0.003,
+          "endDelta": -0.221
+        },
+        {
+          "text": "my",
+          "start": 14.648,
+          "end": 15.108,
+          "startDelta": -0.221,
+          "endDelta": -0.123
+        },
+        {
+          "text": "lead",
+          "start": 15.108,
+          "end": 15.968,
+          "startDelta": -0.123,
+          "endDelta": -0.47
+        }
+      ]
+    },
+    {
+      "id": "verse-4",
+      "window": [
+        16.629,
+        24.319
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Well,",
+          "start": 16.629,
+          "end": 18.009,
+          "startDelta": -0.191,
+          "endDelta": -0.195
+        },
+        {
+          "text": "I",
+          "start": 18.029,
+          "end": 18.289,
+          "startDelta": -0.175,
+          "endDelta": -0.115
+        },
+        {
+          "text": "found",
+          "start": 18.289,
+          "end": 18.689,
+          "startDelta": -0.115,
+          "endDelta": -0.096
+        },
+        {
+          "text": "a",
+          "start": 18.689,
+          "end": 18.909,
+          "startDelta": -0.096,
+          "endDelta": 0.004
+        },
+        {
+          "text": "girl,",
+          "start": 18.909,
+          "end": 19.789,
+          "startDelta": 0.004,
+          "endDelta": -0.179
+        },
+        {
+          "text": "beautiful",
+          "start": 20.369,
+          "end": 22.449,
+          "startDelta": 0.401,
+          "endDelta": -0.827
+        },
+        {
+          "text": "and",
+          "start": 22.449,
+          "end": 23.389,
+          "startDelta": -0.827,
+          "endDelta": -0.248
+        },
+        {
+          "text": "sweet",
+          "start": 23.389,
+          "end": 23.909,
+          "startDelta": -0.248,
+          "endDelta": -0.029
+        }
+      ]
+    },
+    {
+      "id": "verse-5",
+      "window": [
+        24.319,
+        31.199
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Oh,",
+          "start": 24.319,
+          "end": 25.539,
+          "startDelta": -0.381,
+          "endDelta": -0.204
+        },
+        {
+          "text": "I",
+          "start": 25.559,
+          "end": 25.799,
+          "startDelta": -0.184,
+          "endDelta": -0.105
+        },
+        {
+          "text": "never",
+          "start": 25.799,
+          "end": 26.119,
+          "startDelta": -0.105,
+          "endDelta": -0.386
+        },
+        {
+          "text": "knew",
+          "start": 26.119,
+          "end": 26.819,
+          "startDelta": -0.386,
+          "endDelta": -0.388
+        },
+        {
+          "text": "you",
+          "start": 26.819,
+          "end": 27.379,
+          "startDelta": -0.388,
+          "endDelta": -0.129
+        },
+        {
+          "text": "were",
+          "start": 27.379,
+          "end": 27.959,
+          "startDelta": -0.129,
+          "endDelta": -0.131
+        },
+        {
+          "text": "the",
+          "start": 27.959,
+          "end": 28.259,
+          "startDelta": -0.131,
+          "endDelta": -0.132
+        },
+        {
+          "text": "someone",
+          "start": 28.259,
+          "end": 28.899,
+          "startDelta": -0.132,
+          "endDelta": -0.515
+        },
+        {
+          "text": "waiting",
+          "start": 28.899,
+          "end": 29.719,
+          "startDelta": -0.515,
+          "endDelta": -0.297
+        },
+        {
+          "text": "for",
+          "start": 29.719,
+          "end": 30.259,
+          "startDelta": -0.297,
+          "endDelta": -0.158
+        },
+        {
+          "text": "me",
+          "start": 30.259,
+          "end": 30.659,
+          "startDelta": -0.158,
+          "endDelta": 0.102
+        }
+      ]
+    },
+    {
+      "id": "verse-6",
+      "window": [
+        31.199,
+        36.681
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "'Cause",
+          "start": 31.199,
+          "end": 32.179,
+          "startDelta": -0.642,
+          "endDelta": -0.083
+        },
+        {
+          "text": "we",
+          "start": 32.179,
+          "end": 32.499,
+          "startDelta": -0.083,
+          "endDelta": -0.063
+        },
+        {
+          "text": "were",
+          "start": 32.499,
+          "end": 32.759,
+          "startDelta": -0.063,
+          "endDelta": -0.144
+        },
+        {
+          "text": "just",
+          "start": 32.759,
+          "end": 33.099,
+          "startDelta": -0.144,
+          "endDelta": -0.104
+        },
+        {
+          "text": "kids",
+          "start": 33.099,
+          "end": 33.439,
+          "startDelta": -0.104,
+          "endDelta": -0.165
+        },
+        {
+          "text": "when",
+          "start": 33.439,
+          "end": 33.779,
+          "startDelta": -0.165,
+          "endDelta": -0.086
+        },
+        {
+          "text": "we",
+          "start": 33.779,
+          "end": 34.019,
+          "startDelta": -0.086,
+          "endDelta": -0.086
+        },
+        {
+          "text": "fell",
+          "start": 34.019,
+          "end": 34.679,
+          "startDelta": -0.086,
+          "endDelta": -0.809
+        },
+        {
+          "text": "in",
+          "start": 34.679,
+          "end": 35.919,
+          "startDelta": -0.809,
+          "endDelta": -0.13
+        },
+        {
+          "text": "love",
+          "start": 35.919,
+          "end": 36.239,
+          "startDelta": -0.13,
+          "endDelta": -0.111
+        }
+      ]
+    },
+    {
+      "id": "verse-7",
+      "window": [
+        36.681,
+        40.581
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Not",
+          "start": 36.681,
+          "end": 37.241,
+          "startDelta": -0.33,
+          "endDelta": -0.091
+        },
+        {
+          "text": "knowing",
+          "start": 37.241,
+          "end": 37.781,
+          "startDelta": -0.091,
+          "endDelta": -0.213
+        },
+        {
+          "text": "what",
+          "start": 37.781,
+          "end": 38.821,
+          "startDelta": -0.213,
+          "endDelta": -0.677
+        },
+        {
+          "text": "it",
+          "start": 38.821,
+          "end": 39.321,
+          "startDelta": -0.677,
+          "endDelta": -0.558
+        },
+        {
+          "text": "was",
+          "start": 39.321,
+          "end": 40.181,
+          "startDelta": -0.558,
+          "endDelta": -0.019
+        }
+      ]
+    },
+    {
+      "id": "verse-8",
+      "window": [
+        40.581,
+        47.76
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 40.581,
+          "end": 41.041,
+          "startDelta": -0.381,
+          "endDelta": -0.081
+        },
+        {
+          "text": "will",
+          "start": 41.041,
+          "end": 41.321,
+          "startDelta": -0.081,
+          "endDelta": -0.142
+        },
+        {
+          "text": "not",
+          "start": 41.321,
+          "end": 41.661,
+          "startDelta": -0.142,
+          "endDelta": -0.103
+        },
+        {
+          "text": "give",
+          "start": 41.661,
+          "end": 42.341,
+          "startDelta": -0.103,
+          "endDelta": -0.366
+        },
+        {
+          "text": "you",
+          "start": 42.341,
+          "end": 43.641,
+          "startDelta": -0.366,
+          "endDelta": -0.289
+        },
+        {
+          "text": "up",
+          "start": 43.641,
+          "end": 44.301,
+          "startDelta": -0.289,
+          "endDelta": -0.291
+        },
+        {
+          "text": "this",
+          "start": 44.301,
+          "end": 45.341,
+          "startDelta": -0.291,
+          "endDelta": -0.173
+        },
+        {
+          "text": "time",
+          "start": 45.341,
+          "end": 46.261,
+          "startDelta": -0.173,
+          "endDelta": -1.359
+        }
+      ]
+    },
+    {
+      "id": "full-09",
+      "window": [
+        47.76,
+        51.38
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Darling,",
+          "start": 47.76,
+          "end": 48.72,
+          "startDelta": -0.14,
+          "endDelta": 0.06
+        },
+        {
+          "text": "just",
+          "start": 49.2,
+          "end": 49.2,
+          "startDelta": 0.08,
+          "endDelta": -0.02
+        },
+        {
+          "text": "kiss",
+          "start": 49.2,
+          "end": 49.7,
+          "startDelta": -0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "me",
+          "start": 49.7,
+          "end": 50.7,
+          "startDelta": -0.04,
+          "endDelta": -0.02
+        },
+        {
+          "text": "slow",
+          "start": 50.7,
+          "end": 51.36,
+          "startDelta": -0.02,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-10",
+      "window": [
+        51.38,
+        55.38
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Your",
+          "start": 51.38,
+          "end": 52.36,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "heart",
+          "start": 52.36,
+          "end": 52.78,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "is",
+          "start": 52.78,
+          "end": 53.02,
+          "startDelta": -0.02,
+          "endDelta": -0.06
+        },
+        {
+          "text": "all",
+          "start": 53.02,
+          "end": 53.76,
+          "startDelta": -0.06,
+          "endDelta": -0.12
+        },
+        {
+          "text": "I",
+          "start": 53.76,
+          "end": 54.54,
+          "startDelta": -0.12,
+          "endDelta": -0.24
+        },
+        {
+          "text": "own",
+          "start": 54.54,
+          "end": 55.26,
+          "startDelta": -0.24,
+          "endDelta": -0.12
+        }
+      ]
+    },
+    {
+      "id": "full-11",
+      "window": [
+        55.38,
+        61.66
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "And",
+          "start": 55.38,
+          "end": 56.24,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "in",
+          "start": 56.24,
+          "end": 56.56,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "your",
+          "start": 56.56,
+          "end": 56.86,
+          "startDelta": -0.02,
+          "endDelta": 0.02
+        },
+        {
+          "text": "eyes,",
+          "start": 56.86,
+          "end": 57.72,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "you're",
+          "start": 58.3,
+          "end": 58.74,
+          "startDelta": 0.56,
+          "endDelta": -0.02
+        },
+        {
+          "text": "holding",
+          "start": 58.74,
+          "end": 59.58,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "mine",
+          "start": 59.58,
+          "end": 60.52,
+          "startDelta": 0.0,
+          "endDelta": -1.14
+        }
+      ]
+    },
+    {
+      "id": "full-12",
+      "window": [
+        61.66,
+        68.74
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Baby,",
+          "start": 61.66,
+          "end": 63.46,
+          "startDelta": 0.0,
+          "endDelta": 0.18
+        },
+        {
+          "text": "I'm",
+          "start": 63.5,
+          "end": 66.8,
+          "startDelta": -0.98,
+          "endDelta": 0.42
+        },
+        {
+          "text": "dancing",
+          "start": 66.8,
+          "end": 66.8,
+          "startDelta": 0.42,
+          "endDelta": -0.06
+        },
+        {
+          "text": "in",
+          "start": 66.8,
+          "end": 67.84,
+          "startDelta": -0.06,
+          "endDelta": 0.02
+        },
+        {
+          "text": "the",
+          "start": 67.84,
+          "end": 68.16,
+          "startDelta": 0.02,
+          "endDelta": 0.02
+        },
+        {
+          "text": "dark",
+          "start": 68.16,
+          "end": 68.64,
+          "startDelta": 0.02,
+          "endDelta": -0.1
+        }
+      ]
+    },
+    {
+      "id": "full-13",
+      "window": [
+        68.74,
+        72.82
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "With",
+          "start": 68.74,
+          "end": 70.02,
+          "startDelta": 0.0,
+          "endDelta": 0.04
+        },
+        {
+          "text": "you",
+          "start": 70.02,
+          "end": 70.62,
+          "startDelta": 0.04,
+          "endDelta": 0.0
+        },
+        {
+          "text": "between",
+          "start": 70.62,
+          "end": 71.26,
+          "startDelta": 0.0,
+          "endDelta": -0.1
+        },
+        {
+          "text": "my",
+          "start": 71.26,
+          "end": 71.98,
+          "startDelta": -0.1,
+          "endDelta": 0.0
+        },
+        {
+          "text": "arms",
+          "start": 71.98,
+          "end": 72.62,
+          "startDelta": 0.0,
+          "endDelta": -0.2
+        }
+      ]
+    },
+    {
+      "id": "full-14",
+      "window": [
+        72.82,
+        77.12
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Barefoot",
+          "start": 72.82,
+          "end": 74.84,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "on",
+          "start": 74.84,
+          "end": 75.38,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "the",
+          "start": 75.38,
+          "end": 75.7,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "grass",
+          "start": 75.7,
+          "end": 76.44,
+          "startDelta": 0.0,
+          "endDelta": -0.12
+        }
+      ]
+    },
+    {
+      "id": "full-15",
+      "window": [
+        77.12,
+        80.5
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Listening",
+          "start": 77.12,
+          "end": 78.4,
+          "startDelta": -0.56,
+          "endDelta": 0.12
+        },
+        {
+          "text": "to",
+          "start": 78.4,
+          "end": 78.94,
+          "startDelta": 0.12,
+          "endDelta": -0.04
+        },
+        {
+          "text": "our",
+          "start": 78.94,
+          "end": 79.44,
+          "startDelta": -0.04,
+          "endDelta": -0.06
+        },
+        {
+          "text": "favorite",
+          "start": 79.44,
+          "end": 79.9,
+          "startDelta": -0.06,
+          "endDelta": -0.02
+        },
+        {
+          "text": "song",
+          "start": 79.9,
+          "end": 80.48,
+          "startDelta": -0.02,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-16",
+      "window": [
+        80.5,
+        83.82
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "When",
+          "start": 80.5,
+          "end": 81.06,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "you",
+          "start": 81.06,
+          "end": 81.32,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "said",
+          "start": 81.32,
+          "end": 81.82,
+          "startDelta": 0.0,
+          "endDelta": -0.06
+        },
+        {
+          "text": "you",
+          "start": 81.82,
+          "end": 82.3,
+          "startDelta": -0.06,
+          "endDelta": 0.0
+        },
+        {
+          "text": "looked",
+          "start": 82.3,
+          "end": 82.98,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "a",
+          "start": 82.98,
+          "end": 83.28,
+          "startDelta": -0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "mess",
+          "start": 83.28,
+          "end": 83.74,
+          "startDelta": -0.02,
+          "endDelta": -0.08
+        }
+      ]
+    },
+    {
+      "id": "full-17",
+      "window": [
+        83.82,
+        87.7
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 83.82,
+          "end": 84.56,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "whispered",
+          "start": 84.56,
+          "end": 85.02,
+          "startDelta": -0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "underneath",
+          "start": 85.02,
+          "end": 86.02,
+          "startDelta": -0.04,
+          "endDelta": -0.54
+        },
+        {
+          "text": "my",
+          "start": 86.02,
+          "end": 87.06,
+          "startDelta": -0.54,
+          "endDelta": -0.04
+        },
+        {
+          "text": "breath",
+          "start": 87.06,
+          "end": 87.38,
+          "startDelta": -0.04,
+          "endDelta": -0.32
+        }
+      ]
+    },
+    {
+      "id": "full-18",
+      "window": [
+        87.7,
+        90.94
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "But",
+          "start": 87.7,
+          "end": 87.7,
+          "startDelta": 0.0,
+          "endDelta": -0.42
+        },
+        {
+          "text": "you",
+          "start": 87.7,
+          "end": 88.34,
+          "startDelta": -0.42,
+          "endDelta": -0.08
+        },
+        {
+          "text": "heard",
+          "start": 88.34,
+          "end": 89.5,
+          "startDelta": -0.08,
+          "endDelta": -0.2
+        },
+        {
+          "text": "it,",
+          "start": 89.5,
+          "end": 90.56,
+          "startDelta": -0.2,
+          "endDelta": 0.04
+        },
+        {
+          "text": "darling",
+          "start": 90.8,
+          "end": 90.8,
+          "startDelta": 0.28,
+          "endDelta": -0.14
+        }
+      ]
+    },
+    {
+      "id": "full-19",
+      "window": [
+        90.94,
+        96.53
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "You",
+          "start": 90.94,
+          "end": 91.6,
+          "startDelta": 0.0,
+          "endDelta": -0.12
+        },
+        {
+          "text": "look",
+          "start": 91.6,
+          "end": 92.32,
+          "startDelta": -0.12,
+          "endDelta": 0.06
+        },
+        {
+          "text": "perfect",
+          "start": 92.32,
+          "end": 93.54,
+          "startDelta": 0.06,
+          "endDelta": -0.4
+        },
+        {
+          "text": "tonight",
+          "start": 93.54,
+          "end": 94.84,
+          "startDelta": -0.4,
+          "endDelta": 0.02
+        }
+      ]
+    },
+    {
+      "id": "full-20",
+      "window": [
+        96.53,
+        103.18
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Well,",
+          "start": 96.53,
+          "end": 101.37,
+          "startDelta": -1.71,
+          "endDelta": 2.17
+        },
+        {
+          "text": "I",
+          "start": 101.49,
+          "end": 101.57,
+          "startDelta": 0.01,
+          "endDelta": 0.01
+        },
+        {
+          "text": "found",
+          "start": 101.57,
+          "end": 102.01,
+          "startDelta": 0.01,
+          "endDelta": -0.01
+        },
+        {
+          "text": "a",
+          "start": 102.01,
+          "end": 102.31,
+          "startDelta": -0.01,
+          "endDelta": -0.01
+        },
+        {
+          "text": "woman",
+          "start": 102.31,
+          "end": 103.03,
+          "startDelta": -0.01,
+          "endDelta": -0.15
+        }
+      ]
+    },
+    {
+      "id": "full-21",
+      "window": [
+        103.18,
+        108.17
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Stronger",
+          "start": 103.18,
+          "end": 105.86,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "than",
+          "start": 105.86,
+          "end": 106.0,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "anyone",
+          "start": 106.0,
+          "end": 106.68,
+          "startDelta": 0.0,
+          "endDelta": -0.3
+        },
+        {
+          "text": "I",
+          "start": 106.68,
+          "end": 107.34,
+          "startDelta": -0.3,
+          "endDelta": 0.0
+        },
+        {
+          "text": "know",
+          "start": 107.34,
+          "end": 107.7,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-22",
+      "window": [
+        108.17,
+        110.44
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "She",
+          "start": 108.17,
+          "end": 109.11,
+          "startDelta": -0.45,
+          "endDelta": 0.01
+        },
+        {
+          "text": "shares",
+          "start": 109.11,
+          "end": 109.43,
+          "startDelta": 0.01,
+          "endDelta": -0.05
+        },
+        {
+          "text": "my",
+          "start": 109.43,
+          "end": 109.79,
+          "startDelta": -0.05,
+          "endDelta": -0.01
+        },
+        {
+          "text": "dreams",
+          "start": 109.79,
+          "end": 110.31,
+          "startDelta": -0.01,
+          "endDelta": -0.13
+        }
+      ]
+    },
+    {
+      "id": "full-23",
+      "window": [
+        110.44,
+        115.42
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 110.44,
+          "end": 110.78,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "hope",
+          "start": 110.78,
+          "end": 111.34,
+          "startDelta": -0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "that",
+          "start": 111.34,
+          "end": 111.64,
+          "startDelta": -0.04,
+          "endDelta": -0.04
+        },
+        {
+          "text": "someday",
+          "start": 111.64,
+          "end": 112.28,
+          "startDelta": -0.04,
+          "endDelta": -0.02
+        },
+        {
+          "text": "I'll",
+          "start": 112.28,
+          "end": 113.18,
+          "startDelta": -0.02,
+          "endDelta": 0.2
+        },
+        {
+          "text": "share",
+          "start": 113.18,
+          "end": 113.22,
+          "startDelta": 0.2,
+          "endDelta": 0.0
+        },
+        {
+          "text": "her",
+          "start": 113.22,
+          "end": 113.7,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "home",
+          "start": 113.7,
+          "end": 114.64,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-24",
+      "window": [
+        115.42,
+        118.34
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 115.42,
+          "end": 116.64,
+          "startDelta": -0.76,
+          "endDelta": -0.02
+        },
+        {
+          "text": "found",
+          "start": 116.64,
+          "end": 117.1,
+          "startDelta": -0.02,
+          "endDelta": 0.02
+        },
+        {
+          "text": "a",
+          "start": 117.1,
+          "end": 117.3,
+          "startDelta": 0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "love",
+          "start": 117.3,
+          "end": 117.96,
+          "startDelta": -0.04,
+          "endDelta": -0.38
+        }
+      ]
+    },
+    {
+      "id": "full-25",
+      "window": [
+        118.34,
+        123.62
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "To",
+          "start": 118.34,
+          "end": 120.92,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "carry",
+          "start": 120.92,
+          "end": 121.2,
+          "startDelta": 0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "more",
+          "start": 121.2,
+          "end": 121.8,
+          "startDelta": 0.0,
+          "endDelta": -0.04
+        },
+        {
+          "text": "than",
+          "start": 121.8,
+          "end": 122.18,
+          "startDelta": -0.04,
+          "endDelta": -0.06
+        },
+        {
+          "text": "just",
+          "start": 122.18,
+          "end": 122.76,
+          "startDelta": -0.06,
+          "endDelta": 0.02
+        },
+        {
+          "text": "my",
+          "start": 122.76,
+          "end": 123.04,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "secrets",
+          "start": 123.04,
+          "end": 123.36,
+          "startDelta": -0.02,
+          "endDelta": -0.26
+        }
+      ]
+    },
+    {
+      "id": "full-26",
+      "window": [
+        123.62,
+        130.38
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "To",
+          "start": 123.62,
+          "end": 124.76,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "carry",
+          "start": 124.76,
+          "end": 125.04,
+          "startDelta": 0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "love,",
+          "start": 125.04,
+          "end": 125.66,
+          "startDelta": -0.04,
+          "endDelta": -0.02
+        },
+        {
+          "text": "to",
+          "start": 126.02,
+          "end": 126.32,
+          "startDelta": -0.08,
+          "endDelta": 0.0
+        },
+        {
+          "text": "carry",
+          "start": 126.32,
+          "end": 126.62,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "children",
+          "start": 126.62,
+          "end": 127.5,
+          "startDelta": -0.02,
+          "endDelta": -0.08
+        },
+        {
+          "text": "of",
+          "start": 127.5,
+          "end": 128.5,
+          "startDelta": -0.08,
+          "endDelta": 0.0
+        },
+        {
+          "text": "our",
+          "start": 128.5,
+          "end": 128.88,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "own",
+          "start": 128.88,
+          "end": 129.58,
+          "startDelta": -0.02,
+          "endDelta": -0.8
+        }
+      ]
+    },
+    {
+      "id": "full-27",
+      "window": [
+        130.38,
+        135.12
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "We",
+          "start": 130.38,
+          "end": 131.02,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "are",
+          "start": 131.02,
+          "end": 131.26,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "still",
+          "start": 131.26,
+          "end": 131.56,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "kids",
+          "start": 131.56,
+          "end": 132.0,
+          "startDelta": -0.02,
+          "endDelta": 0.04
+        },
+        {
+          "text": "but",
+          "start": 132.0,
+          "end": 132.28,
+          "startDelta": 0.04,
+          "endDelta": 0.02
+        },
+        {
+          "text": "we're",
+          "start": 132.28,
+          "end": 132.56,
+          "startDelta": 0.02,
+          "endDelta": -0.12
+        },
+        {
+          "text": "so",
+          "start": 132.56,
+          "end": 132.94,
+          "startDelta": -0.12,
+          "endDelta": 0.0
+        },
+        {
+          "text": "in",
+          "start": 132.94,
+          "end": 134.36,
+          "startDelta": 0.0,
+          "endDelta": 0.04
+        },
+        {
+          "text": "love,",
+          "start": 134.36,
+          "end": 134.88,
+          "startDelta": 0.04,
+          "endDelta": -0.1
+        }
+      ]
+    },
+    {
+      "id": "full-28",
+      "window": [
+        135.12,
+        138.86
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Fighting",
+          "start": 135.12,
+          "end": 136.06,
+          "startDelta": -0.14,
+          "endDelta": 0.04
+        },
+        {
+          "text": "against",
+          "start": 136.06,
+          "end": 137.16,
+          "startDelta": 0.04,
+          "endDelta": -0.04
+        },
+        {
+          "text": "all",
+          "start": 137.16,
+          "end": 138.18,
+          "startDelta": -0.04,
+          "endDelta": 0.0
+        },
+        {
+          "text": "odds",
+          "start": 138.18,
+          "end": 138.84,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-29",
+      "window": [
+        138.86,
+        145.84
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 138.86,
+          "end": 139.58,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "know",
+          "start": 139.58,
+          "end": 139.9,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "we'll",
+          "start": 139.9,
+          "end": 140.42,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "be",
+          "start": 140.42,
+          "end": 140.8,
+          "startDelta": 0.0,
+          "endDelta": -0.26
+        },
+        {
+          "text": "alright,",
+          "start": 140.8,
+          "end": 142.44,
+          "startDelta": -0.26,
+          "endDelta": 0.0
+        },
+        {
+          "text": "this",
+          "start": 142.44,
+          "end": 143.88,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "time",
+          "start": 143.88,
+          "end": 144.48,
+          "startDelta": -0.02,
+          "endDelta": -1.36
+        }
+      ]
+    },
+    {
+      "id": "full-30",
+      "window": [
+        145.84,
+        150.08
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Darling,",
+          "start": 145.84,
+          "end": 147.34,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "just",
+          "start": 147.72,
+          "end": 147.72,
+          "startDelta": 0.14,
+          "endDelta": -0.02
+        },
+        {
+          "text": "hold",
+          "start": 147.72,
+          "end": 148.2,
+          "startDelta": -0.02,
+          "endDelta": -0.16
+        },
+        {
+          "text": "my",
+          "start": 148.2,
+          "end": 149.46,
+          "startDelta": -0.16,
+          "endDelta": 0.04
+        },
+        {
+          "text": "hand",
+          "start": 149.46,
+          "end": 149.98,
+          "startDelta": 0.04,
+          "endDelta": -0.1
+        }
+      ]
+    },
+    {
+      "id": "full-31",
+      "window": [
+        150.08,
+        153.72
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Be",
+          "start": 150.08,
+          "end": 150.54,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "my",
+          "start": 150.54,
+          "end": 150.96,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "girl,",
+          "start": 150.96,
+          "end": 151.34,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "I'll",
+          "start": 151.34,
+          "end": 152.0,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "be",
+          "start": 152.0,
+          "end": 152.26,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "your",
+          "start": 152.26,
+          "end": 153.12,
+          "startDelta": 0.0,
+          "endDelta": 0.06
+        },
+        {
+          "text": "man",
+          "start": 153.12,
+          "end": 153.7,
+          "startDelta": 0.06,
+          "endDelta": 0.06
+        }
+      ]
+    },
+    {
+      "id": "full-32",
+      "window": [
+        153.72,
+        160.1
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 153.72,
+          "end": 154.66,
+          "startDelta": -0.08,
+          "endDelta": -0.06
+        },
+        {
+          "text": "see",
+          "start": 154.66,
+          "end": 154.98,
+          "startDelta": -0.06,
+          "endDelta": 0.02
+        },
+        {
+          "text": "my",
+          "start": 154.98,
+          "end": 155.28,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "future",
+          "start": 155.28,
+          "end": 156.44,
+          "startDelta": -0.02,
+          "endDelta": -0.14
+        },
+        {
+          "text": "in",
+          "start": 156.44,
+          "end": 157.98,
+          "startDelta": -0.14,
+          "endDelta": 0.04
+        },
+        {
+          "text": "your",
+          "start": 157.98,
+          "end": 158.54,
+          "startDelta": 0.04,
+          "endDelta": 0.0
+        },
+        {
+          "text": "eyes",
+          "start": 158.54,
+          "end": 159.7,
+          "startDelta": 0.0,
+          "endDelta": -0.4
+        }
+      ]
+    },
+    {
+      "id": "full-33",
+      "window": [
+        160.1,
+        167.57
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Baby,",
+          "start": 160.1,
+          "end": 161.74,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "I'm",
+          "start": 162.02,
+          "end": 165.06,
+          "startDelta": 0.26,
+          "endDelta": 1.22
+        },
+        {
+          "text": "Dancing",
+          "start": 165.06,
+          "end": 165.44,
+          "startDelta": 0.18,
+          "endDelta": 0.0
+        },
+        {
+          "text": "in",
+          "start": 165.44,
+          "end": 166.42,
+          "startDelta": 0.0,
+          "endDelta": 0.04
+        },
+        {
+          "text": "the",
+          "start": 166.42,
+          "end": 166.66,
+          "startDelta": 0.04,
+          "endDelta": -0.02
+        },
+        {
+          "text": "dark",
+          "start": 166.66,
+          "end": 167.28,
+          "startDelta": -0.02,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-34",
+      "window": [
+        167.57,
+        171.56
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "With",
+          "start": 167.57,
+          "end": 168.63,
+          "startDelta": -0.27,
+          "endDelta": -0.03
+        },
+        {
+          "text": "you",
+          "start": 168.63,
+          "end": 169.19,
+          "startDelta": -0.03,
+          "endDelta": 0.03
+        },
+        {
+          "text": "between",
+          "start": 169.19,
+          "end": 169.75,
+          "startDelta": 0.03,
+          "endDelta": -0.07
+        },
+        {
+          "text": "my",
+          "start": 169.75,
+          "end": 170.49,
+          "startDelta": -0.07,
+          "endDelta": -0.01
+        },
+        {
+          "text": "arms",
+          "start": 170.49,
+          "end": 171.43,
+          "startDelta": -0.01,
+          "endDelta": -0.13
+        }
+      ]
+    },
+    {
+      "id": "full-35",
+      "window": [
+        171.56,
+        174.86
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Barefoot",
+          "start": 171.56,
+          "end": 173.36,
+          "startDelta": 0.0,
+          "endDelta": 0.06
+        },
+        {
+          "text": "on",
+          "start": 173.36,
+          "end": 173.9,
+          "startDelta": 0.06,
+          "endDelta": 0.0
+        },
+        {
+          "text": "the",
+          "start": 173.9,
+          "end": 174.28,
+          "startDelta": 0.0,
+          "endDelta": 0.04
+        },
+        {
+          "text": "grass",
+          "start": 174.28,
+          "end": 174.56,
+          "startDelta": 0.04,
+          "endDelta": -0.3
+        }
+      ]
+    },
+    {
+      "id": "full-36",
+      "window": [
+        174.86,
+        179.02
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Listening",
+          "start": 174.86,
+          "end": 176.94,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "to",
+          "start": 176.94,
+          "end": 177.52,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "our",
+          "start": 177.52,
+          "end": 178.0,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "favorite",
+          "start": 178.0,
+          "end": 178.42,
+          "startDelta": 0.0,
+          "endDelta": -0.04
+        },
+        {
+          "text": "song",
+          "start": 178.42,
+          "end": 179.0,
+          "startDelta": -0.04,
+          "endDelta": -0.02
+        }
+      ]
+    },
+    {
+      "id": "full-37",
+      "window": [
+        179.02,
+        182.4
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "When",
+          "start": 179.02,
+          "end": 179.58,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "I",
+          "start": 179.58,
+          "end": 179.88,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "saw",
+          "start": 179.88,
+          "end": 180.32,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "you",
+          "start": 180.32,
+          "end": 180.86,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "in",
+          "start": 180.86,
+          "end": 181.5,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "that",
+          "start": 181.5,
+          "end": 181.8,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "dress",
+          "start": 181.8,
+          "end": 182.18,
+          "startDelta": 0.0,
+          "endDelta": -0.22
+        }
+      ]
+    },
+    {
+      "id": "full-38",
+      "window": [
+        182.4,
+        184.9
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Looking",
+          "start": 182.4,
+          "end": 183.24,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "so",
+          "start": 183.24,
+          "end": 183.7,
+          "startDelta": 0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "beautiful",
+          "start": 183.7,
+          "end": 184.38,
+          "startDelta": 0.0,
+          "endDelta": -0.52
+        }
+      ]
+    },
+    {
+      "id": "full-39",
+      "window": [
+        184.9,
+        188.96
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 184.9,
+          "end": 185.64,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "don't",
+          "start": 185.64,
+          "end": 186.66,
+          "startDelta": -0.02,
+          "endDelta": 0.16
+        },
+        {
+          "text": "deserve",
+          "start": 186.66,
+          "end": 187.76,
+          "startDelta": 0.16,
+          "endDelta": -0.14
+        },
+        {
+          "text": "this",
+          "start": 187.76,
+          "end": 188.84,
+          "startDelta": -0.14,
+          "endDelta": -0.12
+        }
+      ]
+    },
+    {
+      "id": "full-40",
+      "window": [
+        188.96,
+        200.73
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Darling,",
+          "start": 188.96,
+          "end": 189.48,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "you",
+          "start": 190.06,
+          "end": 190.26,
+          "startDelta": 0.34,
+          "endDelta": -0.02
+        },
+        {
+          "text": "look",
+          "start": 190.26,
+          "end": 190.8,
+          "startDelta": -0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "perfect",
+          "start": 190.8,
+          "end": 192.2,
+          "startDelta": -0.02,
+          "endDelta": -0.3
+        },
+        {
+          "text": "tonight",
+          "start": 192.2,
+          "end": 198.54,
+          "startDelta": -0.3,
+          "endDelta": 4.68
+        }
+      ]
+    },
+    {
+      "id": "full-41",
+      "window": [
+        200.73,
+        213.02
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Baby,",
+          "start": 200.73,
+          "end": 207.23,
+          "startDelta": -6.87,
+          "endDelta": -1.63
+        },
+        {
+          "text": "I'm",
+          "start": 208.19,
+          "end": 210.19,
+          "startDelta": -0.67,
+          "endDelta": 0.07
+        },
+        {
+          "text": "dancing",
+          "start": 210.19,
+          "end": 210.81,
+          "startDelta": 0.07,
+          "endDelta": -0.13
+        },
+        {
+          "text": "in",
+          "start": 210.81,
+          "end": 211.87,
+          "startDelta": -0.13,
+          "endDelta": -0.05
+        },
+        {
+          "text": "the",
+          "start": 211.87,
+          "end": 212.17,
+          "startDelta": -0.05,
+          "endDelta": 0.01
+        },
+        {
+          "text": "dark",
+          "start": 212.17,
+          "end": 212.75,
+          "startDelta": 0.01,
+          "endDelta": -0.27
+        }
+      ]
+    },
+    {
+      "id": "full-42",
+      "window": [
+        213.02,
+        217.39
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "With",
+          "start": 213.02,
+          "end": 214.08,
+          "startDelta": 0.0,
+          "endDelta": -0.04
+        },
+        {
+          "text": "you",
+          "start": 214.08,
+          "end": 214.64,
+          "startDelta": -0.04,
+          "endDelta": 0.02
+        },
+        {
+          "text": "between",
+          "start": 214.64,
+          "end": 215.24,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "my",
+          "start": 215.24,
+          "end": 216.08,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "arms",
+          "start": 216.08,
+          "end": 216.62,
+          "startDelta": 0.0,
+          "endDelta": -0.3
+        }
+      ]
+    },
+    {
+      "id": "full-43",
+      "window": [
+        217.39,
+        221.09
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Barefoot",
+          "start": 217.39,
+          "end": 218.83,
+          "startDelta": -0.47,
+          "endDelta": 0.05
+        },
+        {
+          "text": "on",
+          "start": 218.83,
+          "end": 219.37,
+          "startDelta": 0.05,
+          "endDelta": -0.01
+        },
+        {
+          "text": "the",
+          "start": 219.37,
+          "end": 219.73,
+          "startDelta": -0.01,
+          "endDelta": -0.01
+        },
+        {
+          "text": "grass",
+          "start": 219.73,
+          "end": 220.31,
+          "startDelta": -0.01,
+          "endDelta": -0.17
+        }
+      ]
+    },
+    {
+      "id": "full-44",
+      "window": [
+        221.09,
+        224.46
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Listening",
+          "start": 221.09,
+          "end": 222.41,
+          "startDelta": -0.61,
+          "endDelta": 0.15
+        },
+        {
+          "text": "to",
+          "start": 222.41,
+          "end": 222.97,
+          "startDelta": 0.15,
+          "endDelta": 0.01
+        },
+        {
+          "text": "our",
+          "start": 222.97,
+          "end": 223.45,
+          "startDelta": 0.01,
+          "endDelta": -0.07
+        },
+        {
+          "text": "favorite",
+          "start": 223.45,
+          "end": 223.91,
+          "startDelta": -0.07,
+          "endDelta": -0.07
+        },
+        {
+          "text": "song",
+          "start": 223.91,
+          "end": 224.43,
+          "startDelta": -0.07,
+          "endDelta": -0.03
+        }
+      ]
+    },
+    {
+      "id": "full-45",
+      "window": [
+        224.46,
+        227.74
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 224.46,
+          "end": 225.08,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "have",
+          "start": 225.08,
+          "end": 225.36,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "faith",
+          "start": 225.36,
+          "end": 225.9,
+          "startDelta": 0.0,
+          "endDelta": -0.08
+        },
+        {
+          "text": "in",
+          "start": 225.9,
+          "end": 226.36,
+          "startDelta": -0.08,
+          "endDelta": 0.0
+        },
+        {
+          "text": "what",
+          "start": 226.36,
+          "end": 226.82,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "I",
+          "start": 226.82,
+          "end": 227.18,
+          "startDelta": 0.02,
+          "endDelta": -0.02
+        },
+        {
+          "text": "see",
+          "start": 227.18,
+          "end": 227.64,
+          "startDelta": -0.02,
+          "endDelta": -0.1
+        }
+      ]
+    },
+    {
+      "id": "full-46",
+      "window": [
+        227.74,
+        234.16
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "Now",
+          "start": 227.74,
+          "end": 228.56,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "I",
+          "start": 228.56,
+          "end": 228.88,
+          "startDelta": -0.02,
+          "endDelta": 0.0
+        },
+        {
+          "text": "know",
+          "start": 228.88,
+          "end": 229.16,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "I",
+          "start": 229.16,
+          "end": 229.74,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "have",
+          "start": 229.74,
+          "end": 230.1,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "met",
+          "start": 230.1,
+          "end": 230.8,
+          "startDelta": 0.0,
+          "endDelta": -0.02
+        },
+        {
+          "text": "an",
+          "start": 230.8,
+          "end": 231.22,
+          "startDelta": -0.02,
+          "endDelta": 0.02
+        },
+        {
+          "text": "angel",
+          "start": 231.22,
+          "end": 232.24,
+          "startDelta": 0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "in",
+          "start": 232.24,
+          "end": 233.0,
+          "startDelta": -0.04,
+          "endDelta": 0.02
+        },
+        {
+          "text": "person",
+          "start": 233.0,
+          "end": 233.78,
+          "startDelta": 0.02,
+          "endDelta": -0.38
+        }
+      ]
+    },
+    {
+      "id": "full-47",
+      "window": [
+        234.16,
+        237.75
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "And",
+          "start": 234.16,
+          "end": 234.82,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "she",
+          "start": 234.82,
+          "end": 235.58,
+          "startDelta": 0.0,
+          "endDelta": 0.06
+        },
+        {
+          "text": "looks",
+          "start": 235.58,
+          "end": 236.28,
+          "startDelta": 0.06,
+          "endDelta": -0.1
+        },
+        {
+          "text": "perfect",
+          "start": 236.28,
+          "end": 237.52,
+          "startDelta": -0.1,
+          "endDelta": -0.12
+        }
+      ]
+    },
+    {
+      "id": "full-48",
+      "window": [
+        237.75,
+        242.08
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "I",
+          "start": 237.75,
+          "end": 238.07,
+          "startDelta": -0.11,
+          "endDelta": -0.49
+        },
+        {
+          "text": "don't",
+          "start": 238.07,
+          "end": 239.15,
+          "startDelta": -0.49,
+          "endDelta": -0.35
+        },
+        {
+          "text": "deserve",
+          "start": 239.15,
+          "end": 241.07,
+          "startDelta": -0.35,
+          "endDelta": -0.09
+        },
+        {
+          "text": "this",
+          "start": 241.07,
+          "end": 241.93,
+          "startDelta": -0.09,
+          "endDelta": -0.15
+        }
+      ]
+    },
+    {
+      "id": "full-49",
+      "window": [
+        242.08,
+        263.407
+      ],
+      "status": "aligned",
+      "words": [
+        {
+          "text": "You",
+          "start": 242.08,
+          "end": 243.08,
+          "startDelta": 0.0,
+          "endDelta": 0.0
+        },
+        {
+          "text": "look",
+          "start": 243.08,
+          "end": 243.86,
+          "startDelta": 0.0,
+          "endDelta": 0.02
+        },
+        {
+          "text": "perfect",
+          "start": 243.86,
+          "end": 245.56,
+          "startDelta": 0.02,
+          "endDelta": -0.04
+        },
+        {
+          "text": "tonight",
+          "start": 245.56,
+          "end": 246.52,
+          "startDelta": -0.04,
+          "endDelta": 0.04
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: process.env.SPARKY_BUILD_CHECK === 'true' ? '.next-build-check' : '.next',
+  outputFileTracingIncludes: {
+    '/api/music': ['./.music-assets/**/manifest.json'],
+    '/api/media-progress': ['./.music-assets/**/manifest.json'],
+    '/api/music/audio': ['./.music-assets/**/*.mp3'],
+    '/api/music/video': ['./.music-assets/stay-at-your-house/background.mp4'],
+  },
+  outputFileTracingExcludes: {
+    '/*': ['./.music-lab/**/*', './.music-assets/stay-at-your-house/video.mp4'],
+    '/api/music': ['./.music-assets/**/*.mp3', './.music-assets/**/*.mp4'],
+    '/api/media-progress': ['./.music-assets/**/*.mp3', './.music-assets/**/*.mp4'],
+    '/api/music/audio': ['./.music-assets/**/*.mp4', './.music-assets/**/manifest.json'],
+    '/api/music/video': ['./.music-assets/**/*.mp3', './.music-assets/**/manifest.json'],
+  },
   async headers() {
     return [
       { source: "/audio/classes/:file", headers: [{ key: "Cache-Control", value: "public, max-age=86400" }] },

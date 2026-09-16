@@ -14,7 +14,6 @@ import {
   checkIn,
   completeStudy,
   equipCosmetic,
-  equipNotebookTheme,
   normalizeRewardState,
   publicRewardState,
   resetLook,
@@ -126,9 +125,6 @@ export async function POST(request: Request) {
       state = equipCosmetic(purchase.state, body.mascot as MascotId, item.slot, item.id);
       spent = purchase.spent;
       reason = purchase.alreadyOwned ? "equipped" : "purchased-and-equipped";
-    } else if (body.action === "notebook-theme") {
-      if (typeof body.itemId !== "string" && body.itemId !== null) throw new Error("invalid-request");
-      state = equipNotebookTheme(state, body.itemId as string | null);
     } else if (body.action === "select-mascot") {
       if (body.mascot !== "sparky" && body.mascot !== "pinky")
         throw new Error("invalid-request");

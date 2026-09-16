@@ -1792,7 +1792,7 @@ html[data-palette] body{background-color:var(--background);background-image:radi
 html[data-palette] :is(.secondary-button,.account-chip,.theme-quick-toggle,.google-button){background:var(--surface);border-color:var(--line);color:var(--foreground)}
 html[data-palette] :is(.secondary-button,.theme-quick-toggle,.nav-item):hover{background:var(--surface-strong)}
 html[data-palette] :is(.language-chip,.nav-item.active,.mobile-nav button.active,.card-number,.verified-label,.listening-reveal,.repeat-ladder li,.note-icon,.icon-button){background:var(--surface-strong);color:var(--foreground);border-color:var(--line)}
-html[data-palette] :is(.lesson-card,.study-summary,.learning-note,.course-module,.profile-card,.profile-note,.empty-state,.review-card,.review-guidance,.review-empty,.review-retrieval-note,.notebook-section,.recall-card,.writing-plan,.vocabulary-cards>div,.speech-studio,.speech-forms>div,.lesson-identity-card,.conversation-tip,.conversation-listening,.shop-card,.shop-earning,.shop-confirm,.shop-empty,.install-prompt,.mock-intro,.mock-session,.mock-report,.mock-loading){background:var(--surface);border-color:var(--line);color:var(--foreground);box-shadow:0 18px 54px var(--shadow-color)}
+html[data-palette] :is(.lesson-card,.study-summary,.learning-note,.course-module,.profile-card,.profile-note,.empty-state,.review-card,.review-guidance,.review-empty,.review-retrieval-note,.recall-card,.writing-plan,.vocabulary-cards>div,.speech-studio,.speech-forms>div,.lesson-identity-card,.conversation-tip,.conversation-listening,.shop-card,.shop-earning,.shop-confirm,.shop-empty,.install-prompt,.mock-intro,.mock-session,.mock-report,.mock-loading){background:var(--surface);border-color:var(--line);color:var(--foreground);box-shadow:0 18px 54px var(--shadow-color)}
 html[data-palette] :is(.catalog-module,.catalog-lesson,.cosmetic-card,.reward-rules,.production-workspace,.pronunciation-lab,.usage-contrast>div,.contrast-drill,.oral-challenge,.english-example,.translation-block p,.word-answer,.word-bank button,.answer-options button,.onboarding-body,.onboarding-choices button,.onboarding-answers button,.conversation-transcript li,.store-practice-dialog,.store-practice-dialog>header,.mission-tabs button,.mission-options button,.mission-feedback,.store-mission blockquote,.mock-passage,.mock-question label,.mock-skill-grid article){background:var(--surface-soft);border-color:var(--line);color:var(--foreground)}
 html[data-palette] :is(input,select,textarea){background:var(--input-background);color:var(--foreground);border-color:var(--line)}
 html[data-palette] :is(input,textarea)::placeholder{color:var(--muted);opacity:1}
@@ -1847,7 +1847,7 @@ html[data-palette] :is(.learning-disclosure summary,.microtrain-instruction,.spe
 html[data-palette] .learning-disclosure summary{color:var(--accent)}
 html[data-palette] :is(.recall-card blockquote,.writing-model blockquote){background:var(--surface-soft);color:var(--foreground);border-left-color:var(--accent)}
 html[data-palette] :is(.learning-disclosure,.conversation-translation,.mission-writing){border-color:var(--line)}
-html[data-palette] :is(.shop-v2 .mascot-preview,.shop-card-art:not(.notebook-theme-art),.shop-refund,.catalog-toolbar,.catalog-filters,.notebook-empty){background:var(--surface-soft);color:var(--foreground);border-color:var(--line)}
+html[data-palette] :is(.shop-v2 .mascot-preview,.shop-card-art,.shop-refund,.catalog-toolbar,.catalog-filters){background:var(--surface-soft);color:var(--foreground);border-color:var(--line)}
 html[data-palette] :is(.shop-earning h3,.reward-rules strong,.catalog-toolbar h2){color:var(--foreground)}
 html[data-palette] :is(.mascot-selector button,.wardrobe-filters button,.catalog-filters button){background:var(--surface);color:var(--foreground);border-color:var(--line)}
 html[data-palette] :is(.mascot-selector button,.wardrobe-filters button,.mission-tabs button)[aria-pressed="true"]{background:var(--accent-soft);color:var(--foreground);border-color:var(--accent)}
@@ -1862,7 +1862,6 @@ html[data-theme="dark"] :is(.page-heading h1,.progress-number){font-family:var(-
 html[data-theme="dark"] .progress-number{color:var(--accent)}
 html[data-palette] .progress-number span{color:var(--muted)}
 html[data-theme="dark"] .mascot-figure>img{filter:drop-shadow(0 1px 2px #ffffff24)}
-html[data-palette] .learning-notebook[class*="notebook-"] .notebook-section{--foreground:var(--notebook-ink);--muted:var(--notebook-muted);--surface:var(--notebook-paper);--surface-soft:var(--notebook-input);--input-background:var(--notebook-input);--accent:var(--notebook-accent)}
 @media(max-width:700px){
   .workspace-header{gap:10px}.theme-quick-toggle{min-width:44px;min-height:44px}
   .workspace{padding-bottom:calc(92px + env(safe-area-inset-bottom))}

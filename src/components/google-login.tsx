@@ -41,6 +41,8 @@ export function GoogleLogin() {
   useEffect(() => {
     if (!ready) return;
     const controller = new AbortController();
+    let observer: ResizeObserver | undefined;
+    let frame = 0;
     async function prepare() {
       try {
         const response = await fetch("/api/auth/google", {
@@ -48,6 +50,7 @@ export function GoogleLogin() {
           signal: controller.signal,
         });
         const config = await response.json();
+        if (controller.signal.aborted) return;
         if (!response.ok) throw new Error(config.error);
         const identity = window.google?.accounts?.id;
         if (!identity || !button.current)
@@ -80,16 +83,31 @@ export function GoogleLogin() {
             }
           },
         });
-        button.current.replaceChildren();
-        identity.renderButton(button.current, {
-          type: "standard",
-          theme: "outline",
-          size: "large",
-          text: "signin_with",
-          shape: "pill",
-          width: Math.min(360, button.current.clientWidth || 280),
-          locale: "pt-BR",
+        const container = button.current;
+        let renderedWidth = 0;
+        function renderButton() {
+          const width = Math.min(360, container.clientWidth);
+          if (controller.signal.aborted || width < 1 || width === renderedWidth) return;
+          renderedWidth = width;
+          const restoreFocus = container.contains(document.activeElement);
+          container.replaceChildren();
+          identity!.renderButton(container, {
+            type: "standard",
+            theme: "outline",
+            size: "large",
+            text: "signin_with",
+            shape: "pill",
+            width,
+            locale: "pt-BR",
+          });
+          if (restoreFocus) container.querySelector<HTMLElement>('iframe, [role="button"], button')?.focus({ preventScroll: true });
+        }
+        renderButton();
+        observer = new ResizeObserver(() => {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(renderButton);
         });
+        observer.observe(container);
         setStatus("");
       } catch (cause) {
         if (!controller.signal.aborted) {
@@ -103,7 +121,11 @@ export function GoogleLogin() {
       }
     }
     void prepare();
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      observer?.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [ready, attempt]);
 
   return (
