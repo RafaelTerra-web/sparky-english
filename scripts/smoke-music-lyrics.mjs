@@ -52,6 +52,9 @@ try {
       const index = ambientLyricIndex(lesson.lines,time);
       const section = musicSectionAt(lesson.id,time);
       await page.locator(`.clip-game[data-section="${section.kind}"] .clip-ambient[data-line="${index}"][data-visible=true]`).waitFor();
+      assert.doesNotMatch(await page.locator('.clip-round').innerText(), /AO VIVO|A música segue|Acompanhe a voz|Toque em continuar para voltar ao ritmo/);
+      if (section.story) assert.ok(!(await page.locator('.clip-round').innerText()).includes(section.story), 'No editorial filler over the lyrics');
+      assert.equal(await page.locator('.clip-section-art>span').count(), 0, 'Section label is not duplicated below the lyrics');
       assert.equal(await page.locator('.clip-countdown.is-visible').count(),0);
       const lyric = page.locator('.clip-ambient p[data-current=true]');
       assert.equal(await lyric.innerText(),lesson.lines[index].words.map(w=>w.text).join(' '));

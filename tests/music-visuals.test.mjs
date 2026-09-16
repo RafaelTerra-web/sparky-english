@@ -22,6 +22,7 @@ test('narrative, dialogue, chorus and instrumental boundaries follow each song i
   assert.equal(musicSectionAt('perfect-local', 246.48).kind, 'outro');
   assert.equal(musicSectionAt('perfect-local', NaN).kind, 'intro');
   assert.equal(musicSectionAt('unknown', 40).kind, 'verse');
+  assert.equal(musicSectionAt('unknown', 40).label, 'Música');
   assert.equal(musicSectionAt('stay-at-your-house-local', 59.9).kind, 'build');
   assert.equal(musicSectionAt('stay-at-your-house-local', 60).kind, 'chorus');
   assert.equal(musicSectionAt('stay-at-your-house-local', 162).label, 'Ponte');

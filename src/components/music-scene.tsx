@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
+import { createNightCity } from './music-night-city';
 
 /** Decorative only: never connects to or modifies the audio graph. */
 export default function MusicScene({ playing, clock, tone = 'emerald', energy = .35, chorus = false }: { playing: boolean; clock?: number; tone?: 'emerald' | 'violet' | 'cyberpunk'; energy?: number; chorus?: boolean }) {
@@ -64,38 +65,10 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
       particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       const particles = new THREE.Points(particleGeometry, material(new THREE.PointsMaterial({ color: accent, size: .018, transparent: true, opacity: .55, depthWrite: false })));
       scene.add(particles);
-      const city = new THREE.Group();
-      const windows = material(new THREE.MeshBasicMaterial({ color: 0x50e8ee, transparent: true, opacity: .5 }));
-      const magenta = material(new THREE.MeshBasicMaterial({ color: 0xfc56b8, transparent: true, opacity: .6 }));
+      const city = cyberpunk ? createNightCity(THREE) : null;
       if (cyberpunk) {
         disc.visible = false; orbit.visible = false;
-        scene.add(city);
-        const towerGeometry = geometry(new THREE.BoxGeometry(1, 1, 1));
-        const towerMaterial = material(new THREE.MeshStandardMaterial({ color: 0x10152c, metalness: .45, roughness: .7 }));
-        const lightGeometry = geometry(new THREE.PlaneGeometry(1, 1));
-        const towers = new THREE.InstancedMesh(towerGeometry, towerMaterial, 32);
-        const cyanWindows = new THREE.InstancedMesh(lightGeometry, windows, 126);
-        const pinkWindows = new THREE.InstancedMesh(lightGeometry, magenta, 66);
-        const transform = new THREE.Object3D();
-        let cyanIndex = 0, pinkIndex = 0;
-        for (let i = 0; i < 32; i++) {
-          const width = .15 + (i % 4) * .045, height = .45 + ((i * 13) % 17) * .09;
-          const x = (i % 16 - 7.5) * .31, z = i < 16 ? -.8 : -1.8;
-          transform.scale.set(width, height, .22); transform.position.set(x, -1.45 + height / 2, z); transform.updateMatrix();
-          towers.setMatrixAt(i, transform.matrix);
-          for (let j = 0; j < 6; j++) {
-            transform.scale.set(width * .65, .014, 1); transform.position.set(x, -1.4 + height * (j + 1) / 7, z + .12); transform.updateMatrix();
-            if (i % 3) cyanWindows.setMatrixAt(cyanIndex++, transform.matrix);
-            else pinkWindows.setMatrixAt(pinkIndex++, transform.matrix);
-          }
-        }
-        city.add(towers, cyanWindows, pinkWindows);
-        const road = new THREE.GridHelper(12, 24, 0x9166e8, 0x203b52);
-        road.position.set(0, -1.5, -2); city.add(road);
-        geometries.push(road.geometry);
-        if (Array.isArray(road.material)) materials.push(...road.material); else materials.push(road.material);
-        const moon = new THREE.Mesh(geometry(new THREE.RingGeometry(.46, .48, 64)), magenta);
-        moon.position.set(1.05, .75, -2.5); city.add(moon);
+        scene.add(city!.group);
       }
       scene.add(new THREE.AmbientLight(0xffffff, 2));
       const key = new THREE.DirectionalLight(0xffffff, 4); key.position.set(-2, 3, 4); scene.add(key);
@@ -118,11 +91,10 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
         orbit.rotation.z = -time * .035;
         particles.rotation.z = time * .014;
         if (cyberpunk) {
-          city.position.x = Math.sin(time * .045) * .08;
-          windows.opacity = .3 + intensity * .25 + refrain;
-          magenta.opacity = .3 + intensity * .3 + refrain;
+          city?.update(time, intensity, motion.current.chorus);
           particles.rotation.z = time * -.006;
           particles.position.y = Math.sin(time * .06) * .1;
+          particles.material.opacity = .08 + (motion.current.chorus ? .18 : 0);
         }
         renderer.render(scene, camera);
       }
@@ -137,6 +109,7 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
         const { width, height } = element.getBoundingClientRect();
         if (width < 1 || height < 1) return;
         renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
+        city?.resize(camera.aspect);
         lastFrame = 0; draw(performance.now());
       });
       resize.observe(element);
@@ -151,7 +124,7 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
         synchronize.current = null; renderer.setAnimationLoop(null); resize.disconnect(); visibility.disconnect();
         document.removeEventListener('visibilitychange', sync); reduced.removeEventListener('change', sync);
         renderer.domElement.removeEventListener('webglcontextlost', contextLost);
-        scene.traverse(object => { if (object instanceof THREE.InstancedMesh) object.dispose(); });
+        city?.dispose();
         geometries.forEach(value => value.dispose()); materials.forEach(value => value.dispose());
         renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
       };

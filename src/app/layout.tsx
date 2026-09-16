@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Space_Grotesk, Rajdhani } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 import "./course.css";
 import "./learning.css";
@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 const musicGrotesk = Space_Grotesk({ variable: '--font-music-grotesk', subsets: ['latin'], preload: false });
-const musicCyberpunk = Rajdhani({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
+const musicCyberpunk = Chakra_Petch({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(

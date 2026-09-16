@@ -46,7 +46,7 @@ const sections: Record<string, Section[]> = {
 
 export function musicSectionAt(trackId: string, clock: number): Section {
   const track = sections[trackId];
-  if (!track) return { start: 0, kind: 'verse', label: 'Ao vivo', story: 'A música segue. Você segue junto.' };
+  if (!track) return { start: 0, kind: 'verse', label: 'Música', story: '' };
   let current = track[0];
   for (const section of track) { if (section.start > clock || !Number.isFinite(clock)) break; current = section; }
   return current;

@@ -1,6 +1,8 @@
 # Cyberpunk music session
 
-The listening game now prioritizes lyrics and answers within the visible mobile viewport. The permanent bottom navigation is removed for every track; the completed result opens lyrics, vocabulary and achievements. Returning from a review preserves the result. Perfect uses Geist, Heartless uses Space Grotesk and the Cyberpunk session uses Rajdhani, including narrative lyrics.
+The listening game prioritizes lyrics and answers within the visible mobile viewport. The permanent bottom navigation is removed for every track; the completed result opens lyrics, vocabulary and achievements. Returning from a review preserves the result. Perfect uses Geist, Heartless uses Space Grotesk and the Cyberpunk session uses Chakra Petch, including narrative lyrics.
+
+The Night City revision adds 72 buildings across three depth layers, small facade windows, a split-crown landmark, atmospheric light, elevated traffic, rain and lower reflections. Architecture uses instancing, and weather/traffic follow corrected media time so pause and backward seeks remain deterministic. Lyrics retain a dark central contrast mask. Decorative narrative sentences, repeated section labels and the “Ao vivo” status are removed from gameplay for all tracks; functional challenge and achievement feedback remains.
 
 ## Media and editorial preparation
 

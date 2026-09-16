@@ -98,7 +98,7 @@ try {
     const box = await page.locator('.clip-options').boundingBox();
     assert.ok(box.y >= 0 && box.y + box.height <= height, `answers clipped ${width}x${height}`);
     assert.ok(await page.locator('.listen-content').evaluate(e => e.scrollHeight <= e.clientHeight + 1));
-    assert.equal(await page.locator('.clip-unified-lyrics p').last().evaluate(e => getComputedStyle(e).fontFamily.includes('Rajdhani')), true);
+    assert.equal(await page.locator('.clip-unified-lyrics p').last().evaluate(e => getComputedStyle(e).fontFamily.includes('Chakra Petch')), true);
     await page.screenshot({path:`${folder}/question-${width}.png`});
   }
   await audio.evaluate(async(a,end) => { a.currentTime=end-.1; await a.play(); },lesson.duration);
