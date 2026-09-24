@@ -5,9 +5,9 @@
 1. Aplique `supabase/migrations/20260924000100_push_subscriptions.sql` no projeto Supabase do Sparky.
 2. Gere um par VAPID com `npx web-push generate-vapid-keys` e configure `SPARKY_VAPID_PUBLIC_KEY`, `SPARKY_VAPID_PRIVATE_KEY` e `SPARKY_VAPID_SUBJECT` no servidor. Guarde a chave privada apenas como segredo; mantenha o mesmo par entre publicações para não invalidar as assinaturas.
 3. Configure `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` e `CRON_SECRET`. O endpoint `/api/push/reminder` exige o segredo do cron e envia no máximo um lembrete a cada 20 horas por aparelho inscrito. O cron está agendado para 15:00 UTC.
-4. Publique em HTTPS. No Perfil, o usuário toca em **Permitir notificações** para abrir o diálogo do sistema. No iPhone/iPad, instale primeiro a PWA na Tela de Início e abra pelo ícone. O botão **Desativar notificações** cancela a assinatura deste aparelho. Sair da conta também a cancela.
+4. Publique em HTTPS. Ao entrar, a pessoa vê um card que explica o lembrete diário. Ao tocar em **Continuar**, o app solicita a permissão ao sistema e registra este aparelho. **Agora não** adia o convite por 30 dias. No iPhone/iPad, instale primeiro a PWA na Tela de Início e abra pelo ícone; o card mostra essa orientação quando necessário. A permissão pode ser revogada nos ajustes do aparelho. Sair da conta cancela a assinatura deste aparelho.
 
-Se as chaves ou o banco não estiverem configurados, o Perfil informa que notificações estão indisponíveis e não solicita permissão. O service worker recebe o evento push, mostra uma notificação visível e reabre o Sparky ao toque. Os lembretes são genéricos; não incluem dados de progresso ou identidade.
+Se as chaves ou o banco não estiverem configurados, o card não aparece e o app não solicita permissão. O service worker recebe o evento push, mostra uma notificação visível e reabre o Sparky ao toque. Os lembretes são genéricos; não incluem dados de progresso ou identidade.
 
 ## Reprodução e atualização no celular
 

@@ -53,7 +53,7 @@ test('Android pull gesture refreshes data with Sparky animation and keeps the pa
   await expect(page.getByRole('button', { name: 'Abrir perfil de Ana' })).toBeVisible();
 });
 
-test('notification control asks permission on tap and stores the subscription', async ({ page }, info) => {
+test('entry card explains notifications before requesting system permission', async ({ page }, info) => {
   test.skip(info.project.name !== 'android');
   await page.addInitScript(() => {
     const subscription = { endpoint: 'https://fcm.googleapis.com/fcm/send/test', keys: { p256dh: 'A'.repeat(65), auth: 'B'.repeat(22) } };
@@ -68,10 +68,28 @@ test('notification control asks permission on tap and stores the subscription', 
   });
   await page.route('**/api/push', route => route.fulfill({ json: route.request().method() === 'GET' ? { available: true, publicKey: 'A'.repeat(87) } : { subscribed: true } }));
   await account(page);
-  await page.getByRole('button', { name: 'Abrir perfil de Ana' }).click();
-  const button = page.getByRole('button', { name: 'Permitir notificações' });
-  await expect(button).toBeVisible();
-  await button.click();
-  await expect(page.getByRole('button', { name: 'Desativar notificações' })).toBeVisible();
+  const card = page.getByRole('region', { name: 'Faça do inglês um hábito leve.' });
+  await expect(card).toBeVisible();
+  expect(await page.evaluate(() => (window as typeof window & { pushPrompted?: boolean }).pushPrompted)).toBeUndefined();
+  await card.getByRole('button', { name: 'Continuar' }).click();
+  await expect(card).toHaveCount(0);
   expect(await page.evaluate(() => (window as typeof window & { pushPrompted?: boolean }).pushPrompted)).toBe(true);
+});
+
+test('notification card can be deferred without opening system permission', async ({ page }, info) => {
+  test.skip(info.project.name !== 'android');
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'Notification', { configurable: true, value: { permission: 'default', requestPermission: async () => { (window as typeof window & { pushPrompted?: boolean }).pushPrompted = true; return 'granted'; } } });
+    Object.defineProperty(window, 'PushManager', { configurable: true, value: class PushManager {} });
+    Object.defineProperty(navigator, 'serviceWorker', { configurable: true, value: { register: async () => undefined, ready: Promise.resolve({ pushManager: { getSubscription: async () => null } }) } });
+  });
+  await page.route('**/api/push', route => route.fulfill({ json: { available: true, publicKey: 'A'.repeat(87) } }));
+  await account(page);
+  const card = page.getByRole('region', { name: 'Faça do inglês um hábito leve.' });
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: 'Agora não' }).click();
+  await expect(card).toHaveCount(0);
+  await page.reload();
+  await expect(card).toHaveCount(0);
+  expect(await page.evaluate(() => (window as typeof window & { pushPrompted?: boolean }).pushPrompted)).toBeUndefined();
 });

@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Bell, BellOff } from 'lucide-react';
+import { Bell, ArrowRight } from 'lucide-react';
 import { t } from '@/lib/interface-language';
 
 type PushState = 'loading' | 'unavailable' | 'install' | 'ready' | 'active' | 'denied';
 type WebNavigator = Navigator & { standalone?: boolean };
+const SNOOZE_MS = 30 * 24 * 60 * 60 * 1000;
 
 function installed() {
   return matchMedia('(display-mode: standalone)').matches || (navigator as WebNavigator).standalone === true;
@@ -26,63 +27,77 @@ export async function disablePushForCurrentDevice() {
   await subscription.unsubscribe();
 }
 
-export default function PushNotifications() {
+export default function PushNotifications({ userId }: { userId: string }) {
   const [state, setState] = useState<PushState>('loading');
   const [publicKey, setPublicKey] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [snoozed, setSnoozed] = useState(true);
+  const snoozeKey = `sparky-push:snooze:${userId}`;
+
   useEffect(() => {
     let alive = true;
     const load = async () => {
-      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) { setState('unavailable'); return; }
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !installed()) { setState('install'); return; }
+      try {
+        const until = Number(localStorage.getItem(snoozeKey));
+        if (alive) setSnoozed(Number.isFinite(until) && until > Date.now());
+      } catch { if (alive) setSnoozed(false); }
+      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) { if (alive) setState('unavailable'); return; }
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !installed()) { if (alive) setState('install'); return; }
       try {
         const response = await fetch('/api/push', { cache: 'no-store' });
         const data = await response.json();
         if (!alive) return;
         if (!response.ok || !data.available || typeof data.publicKey !== 'string') { setState('unavailable'); return; }
         setPublicKey(data.publicKey);
+        if (Notification.permission === 'denied') { setState('denied'); return; }
         const registration = await navigator.serviceWorker.ready;
         const subscription = await registration.pushManager.getSubscription();
-        if (alive) setState(Notification.permission === 'denied' ? 'denied' : subscription ? 'active' : 'ready');
+        if (!alive) return;
+        if (subscription) {
+          const saved = await fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(subscription.toJSON()) });
+          if (alive) setState(saved.ok ? 'active' : 'ready');
+        } else setState('ready');
       } catch { if (alive) setState('unavailable'); }
     };
     void load();
     return () => { alive = false; };
-  }, []);
+  }, [snoozeKey]);
 
-  async function enable() {
+  function later() {
+    try { localStorage.setItem(snoozeKey, String(Date.now() + SNOOZE_MS)); } catch { /* The current visit can still dismiss the card. */ }
+    setSnoozed(true);
+  }
+
+  async function continueToPermission() {
     setMessage('');
     setBusy(true);
     try {
-      // Keep this call directly inside the click handler for iOS user activation.
+      // The native request must run directly from this user gesture on iOS.
       const permission = await Notification.requestPermission();
-      if (permission !== 'granted') { setState(permission === 'denied' ? 'denied' : 'ready'); return; }
+      if (permission !== 'granted') { setState(permission === 'denied' ? 'denied' : 'ready'); later(); return; }
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription() ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: applicationServerKey(publicKey) });
       const response = await fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(subscription.toJSON()) });
       if (!response.ok) throw Error('save');
       setState('active');
-      setMessage('Lembretes ativados neste aparelho.');
     } catch { setMessage('Não foi possível ativar agora. Tente novamente.'); }
     finally { setBusy(false); }
   }
 
-  async function disable() {
-    setBusy(true); setMessage('');
-    try { await disablePushForCurrentDevice(); setState('ready'); setMessage('Lembretes desativados neste aparelho.'); }
-    catch { setMessage('Não foi possível desativar agora. Tente novamente.'); }
-    finally { setBusy(false); }
-  }
-
-  return <section className="push-preference" aria-labelledby="push-title">
-    <div className="push-preference-heading"><Bell size={20} /><div><h3 id="push-title">{t('Lembretes de estudo')}</h3><p>{t('Um convite diário para praticar inglês. Você pode desligar quando quiser.')}</p></div></div>
-    {state === 'loading' && <p role="status">{t('Verificando notificações…')}</p>}
-    {state === 'unavailable' && <p>{t('Notificações indisponíveis neste aparelho ou nesta instalação.')}</p>}
-    {state === 'install' && <p>{t('No iPhone, adicione o Sparky à Tela de Início, abra o ícone instalado e volte aqui para ativar.')}</p>}
-    {state === 'denied' && <p>{t('As notificações estão bloqueadas. Libere o Sparky nos ajustes do aparelho para ativá-las.')}</p>}
-    {state === 'ready' && <button type="button" className="secondary-button" disabled={busy} onClick={() => void enable()}><Bell size={16} />{t(busy ? 'Ativando…' : 'Permitir notificações')}</button>}
-    {state === 'active' && <button type="button" className="secondary-button" disabled={busy} onClick={() => void disable()}><BellOff size={16} />{t(busy ? 'Desativando…' : 'Desativar notificações')}</button>}
-    {message && <p role="status">{t(message)}</p>}
+  if (snoozed || !['ready', 'install'].includes(state)) return null;
+  return <section className="push-intro-card" aria-labelledby="push-intro-title">
+    <div className="push-intro-icon" aria-hidden="true"><Bell size={24} /></div>
+    <div className="push-intro-copy">
+      <span className="eyebrow">{t('UM LEMBRETE GENTIL')}</span>
+      <h2 id="push-intro-title">{t('Faça do inglês um hábito leve.')}</h2>
+      <p>{t('Receba um lembrete diário para voltar à sua prática e manter seu ritmo. Você decide se quer receber notificações.')}</p>
+      {state === 'install' && <p className="push-intro-hint">{t('No iPhone, adicione o Sparky à Tela de Início e abra pelo ícone para receber notificações.')}</p>}
+      {message && <p role="status" className="push-intro-error">{t(message)}</p>}
+      <div className="push-intro-actions">
+        {state === 'ready' && <button type="button" className="primary-button" disabled={busy} onClick={() => void continueToPermission()}>{t(busy ? 'Preparando…' : 'Continuar')}<ArrowRight size={17} /></button>}
+        <button type="button" className="text-button" onClick={later}>{t('Agora não')}</button>
+      </div>
+    </div>
   </section>;
 }
