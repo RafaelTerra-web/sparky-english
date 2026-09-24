@@ -121,7 +121,7 @@ function readProgress(userId: string): Progress {
 function clearPrivateStorage() {
   for (const storage of [sessionStorage, localStorage]) {
     for (const key of Object.keys(storage))
-      if (key.startsWith("sparky-") && !key.startsWith("sparky-learning:") && !key.startsWith("sparky-progress:")) storage.removeItem(key);
+      if (key.startsWith("sparky-") && key !== "sparky-opening-seen-v2" && !key.startsWith("sparky-learning:") && !key.startsWith("sparky-progress:")) storage.removeItem(key);
   }
 }
 
