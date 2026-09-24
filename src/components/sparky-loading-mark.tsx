@@ -33,7 +33,7 @@ export default function SparkyLoadingMark() {
         <path className="pinky-mark-muzzle" d="M28 83C31 75 40 72 48 76C55 80 65 80 72 76C80 72 89 75 92 83C95 96 79 105 60 105C41 105 25 96 28 83Z" />
         <ellipse className="pinky-mark-blush" cx="34" cy="82" rx="5" ry="4" />
         <ellipse className="pinky-mark-blush" cx="86" cy="82" rx="5" ry="4" />
-        <path className="pinky-mark-mouth" d="M35 62C38 59 41 59 44 60M76 60C79 59 82 59 85 62" strokeWidth="2" strokeLinecap="round" />
+        <path className="pinky-mark-brow" d="M35 62C38 59 41 59 44 60M76 60C79 59 82 59 85 62" strokeWidth="2" strokeLinecap="round" />
         <g className="sparky-loading-eyes pinky-loading-eyes">
           <ellipse className="pinky-mark-eye" cx="44" cy="72" rx="5.5" ry="7.5" />
           <ellipse className="pinky-mark-eye" cx="76" cy="72" rx="5.5" ry="7.5" />
@@ -41,7 +41,6 @@ export default function SparkyLoadingMark() {
           <circle className="pinky-mark-eye-light" cx="77.5" cy="69" r="1.2" />
         </g>
         <ellipse className="pinky-mark-nose" cx="60" cy="84" rx="4.5" ry="3.5" />
-        <path className="pinky-mark-mouth" d="M44 91C51 99 67 100 78 90" strokeWidth="1.25" strokeLinecap="round" />
       </svg>
       <span className="sparky-loading-name sparky-loading-name--sparky">sparky</span>
       <span className="sparky-loading-name sparky-loading-name--pinky">pinky</span>

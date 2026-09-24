@@ -71,7 +71,7 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 .pinky-mark-eye { fill: var(--pinky-ink); }
 .pinky-mark-eye-light { fill: var(--pinky-ear-inner); }
 .pinky-mark-nose { fill: var(--pinky-nose); }
-.pinky-mark-mouth { stroke: var(--pinky-ink); }
+.pinky-mark-brow { stroke: var(--pinky-ink); }
 .sparky-loading-name {
   margin-top: 6px;
   color: var(--foreground);
