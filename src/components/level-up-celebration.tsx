@@ -11,6 +11,8 @@ import {
 } from "@/lib/level-progression";
 import type { Level } from "@/lib/levels";
 import styles from "./level-up-celebration.module.css";
+import MascotMoment from "./mascot-moment";
+import type { MascotId } from "@/lib/rewards-shared";
 
 type Promotion = { from: Level; to: Level };
 
@@ -48,11 +50,13 @@ export function LevelUpCelebration({
   currentLevel,
   completed,
   learnerName,
+  mascot,
 }: {
   userId: string;
   currentLevel: Level;
   completed: Record<string, string>;
   learnerName?: string | null;
+  mascot: MascotId;
 }) {
   const reachedLevel = useMemo(
     () => reachedCourseLevel(currentLevel, completed),
@@ -149,6 +153,7 @@ export function LevelUpCelebration({
         >
           <X size={19} />
         </button>
+        <MascotMoment mascot={mascot} mood="celebrate" className={styles.celebrationMascot} />
         <div className={styles.medal} aria-hidden="true">
           <strong>{promotion.to}</strong>
           <Sparkles size={25} />

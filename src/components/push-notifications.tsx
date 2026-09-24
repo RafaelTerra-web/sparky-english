@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bell, ArrowRight } from 'lucide-react';
 import { t } from '@/lib/interface-language';
+import type { MascotId } from '@/lib/rewards-shared';
+import MascotMoment from './mascot-moment';
 
 type PushState = 'loading' | 'unavailable' | 'install' | 'ready' | 'active' | 'denied';
 type WebNavigator = Navigator & { standalone?: boolean };
@@ -27,13 +29,15 @@ export async function disablePushForCurrentDevice() {
   await subscription.unsubscribe();
 }
 
-export default function PushNotifications({ userId }: { userId: string }) {
+export default function PushNotifications({ userId, mascot }: { userId: string; mascot: MascotId }) {
+  const dialog = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<PushState>('loading');
   const [publicKey, setPublicKey] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [snoozed, setSnoozed] = useState(true);
   const snoozeKey = `sparky-push:snooze:${userId}`;
+  const visible = !snoozed && (state === 'ready' || state === 'install');
 
   useEffect(() => {
     let alive = true;
@@ -64,6 +68,21 @@ export default function PushNotifications({ userId }: { userId: string }) {
     return () => { alive = false; };
   }, [snoozeKey]);
 
+  useEffect(() => {
+    if (!visible || !dialog.current) return;
+    const element = dialog.current;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    element.showModal();
+    document.body.style.overflow = 'hidden';
+    element.querySelector<HTMLButtonElement>('.primary-button, .text-button')?.focus({ preventScroll: true });
+    return () => {
+      if (element.open) element.close();
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus({ preventScroll: true });
+    };
+  }, [visible]);
+
   function later() {
     try { localStorage.setItem(snoozeKey, String(Date.now() + SNOOZE_MS)); } catch { /* The current visit can still dismiss the card. */ }
     setSnoozed(true);
@@ -85,13 +104,14 @@ export default function PushNotifications({ userId }: { userId: string }) {
     finally { setBusy(false); }
   }
 
-  if (snoozed || !['ready', 'install'].includes(state)) return null;
-  return <section className="push-intro-card" aria-labelledby="push-intro-title">
-    <div className="push-intro-icon" aria-hidden="true"><Bell size={24} /></div>
+  if (!visible) return null;
+  return <dialog ref={dialog} className="push-intro-dialog" aria-labelledby="push-intro-title" aria-describedby="push-intro-description" onCancel={event => { event.preventDefault(); if (!busy) later(); }}>
+    <div className="push-intro-card">
+    <div className="push-intro-art"><MascotMoment mascot={mascot} mood="invite" className="push-intro-mascot" /><span className="push-intro-icon" aria-hidden="true"><Bell size={22} /></span></div>
     <div className="push-intro-copy">
       <span className="eyebrow">{t('UM LEMBRETE GENTIL')}</span>
       <h2 id="push-intro-title">{t('Faça do inglês um hábito leve.')}</h2>
-      <p>{t('Receba um lembrete diário para voltar à sua prática e manter seu ritmo. Você decide se quer receber notificações.')}</p>
+      <p id="push-intro-description">{t('Receba um lembrete diário para voltar à sua prática e manter seu ritmo. Você decide se quer receber notificações.')}</p>
       {state === 'install' && <p className="push-intro-hint">{t('No iPhone, adicione o Sparky à Tela de Início e abra pelo ícone para receber notificações.')}</p>}
       {message && <p role="status" className="push-intro-error">{t(message)}</p>}
       <div className="push-intro-actions">
@@ -99,5 +119,6 @@ export default function PushNotifications({ userId }: { userId: string }) {
         <button type="button" className="text-button" onClick={later}>{t('Agora não')}</button>
       </div>
     </div>
-  </section>;
+    </div>
+  </dialog>;
 }

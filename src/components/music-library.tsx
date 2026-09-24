@@ -9,11 +9,13 @@ import { musicArtwork } from '@/lib/music-art';
 import styles from './music-shelf.module.css';
 import { musicSpeeds, musicSpeedLabel } from '@/lib/music-game';
 import { t } from '@/lib/interface-language';
+import type { MascotId } from '@/lib/rewards-shared';
+import MascotMoment from './mascot-moment';
 import { activeCue, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
 
 const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
-export default function MusicLibrary({ userId, level }: { userId: string; level: string }) {
+export default function MusicLibrary({ userId, level, mascot }: { userId: string; level: string; mascot: MascotId }) {
   const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -38,7 +40,7 @@ export default function MusicLibrary({ userId, level }: { userId: string; level:
   return <><section className={styles.shelf} aria-labelledby="music-heading">
     <header className={styles.heading}>
       <div><p className={styles.overline}><Headphones size={17} /> {t('Inglês pela escuta')}</p><h1 id="music-heading">Music Lab<span aria-hidden="true">.</span></h1><p>{t('Reconheça palavras nas músicas que você gosta. Uma frase de cada vez.')}</p></div>
-      <div className={styles.method}><span>01 <strong>{t('Ouça a frase')}</strong></span><span>02 <strong>{t('Complete a letra')}</strong></span><span>03 <strong>{t('Descubra o sentido')}</strong></span></div>
+      <div className={styles.headingVisual}><MascotMoment mascot={mascot} mood="listen" className={styles.mascot} /><div className={styles.method}><span>01 <strong>{t('Ouça a frase')}</strong></span><span>02 <strong>{t('Complete a letra')}</strong></span><span>03 <strong>{t('Descubra o sentido')}</strong></span></div></div>
     </header>
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
     <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={t('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>

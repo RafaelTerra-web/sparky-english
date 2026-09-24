@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { ArrowRight, Check, Search } from 'lucide-react';
 import { t, localizeAttribute } from '@/lib/interface-language';
 import type { Lesson, Level } from '@/lib/curriculum';
@@ -7,6 +8,7 @@ import type { LearningWorkspace } from '@/lib/learning-local';
 import { levels } from '@/lib/levels';
 import { disciplines, skills, functions, languageTopics, stages, competencyPaths } from '@/lib/course-metadata';
 import { courseModules, emptyFilters, filterCourse, lessonById, lessonMetadata, moduleObjective, nextInTrail, prerequisiteFor, statusNames, type CourseFilters } from '@/lib/course-guide';
+import { lessonIllustrationId } from '@/lib/lesson-illustrations';
 
 type Mode='guided'|'practice';
 export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOpen,onExams}:{level:Level;completed:Record<string,string>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
@@ -16,7 +18,7 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
  const due=useMemo(()=>new Set(dueIds),[dueIds]);
  const results=useMemo(()=>filterCourse(filters,completed,inProgress,due),[filters,completed,inProgress,due]);
  const [openedModules,setOpenedModules]=useState<Set<string>>(()=>new Set());
- const rememberOpen=(id:string,open:boolean)=>{if(open)setOpenedModules(current=>current.has(id)?current:new Set(current).add(id));};
+ const toggleModule=(id:string)=>setOpenedModules(current=>{const next=new Set(current);if(next.has(id))next.delete(id);else next.add(id);return next;});
  const setFilter=<K extends keyof CourseFilters>(key:K,value:CourseFilters[K])=>setFilters(f=>({...f,[key]:value}));
  const currentModule=courseModules.find(m=>m.id===next?.moduleId);
  const remainingModules=courseModules.filter(m=>levels.indexOf(m.level)>=levels.indexOf(level));
@@ -28,7 +30,7 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
    <button aria-pressed={mode==='practice'} className={mode==='practice'?'primary-button':'secondary-button'} onClick={()=>onMode('practice')}>{t('Treinar por disciplina')}</button>
   </div>
   {mode==='guided'?<>
-   <section className="trail-current" aria-labelledby="trail-heading"><p className="eyebrow">{t('Você está aqui')} · {t(level)}</p><h2 id="trail-heading">{t(currentModule?.title??'Trilha concluída')}</h2>
+   <section className="trail-current" aria-labelledby="trail-heading">{next && <Image className="trail-current-art" src={`/lesson-images/${lessonIllustrationId(next)}.png`} alt="" width={960} height={720} sizes="(max-width: 700px) 120px, 210px" />}<p className="eyebrow">{t('Você está aqui')} · {t(level)}</p><h2 id="trail-heading">{t(currentModule?.title??'Trilha concluída')}</h2>
     {currentModule&&<p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(currentModule.id))}.</p>}
     {next?<><p><strong>{t('Próxima lição:')}</strong>{t(next.title)}</p><p>{t('Seguimos a sequência do seu nível recomendado e aproveitamos as conclusões já registradas.')}</p><button className="primary-button" onClick={()=>onOpen(next,false,'guided')}>{t(inProgress.has(next.id)?'Retomar lição':'Continuar meu curso')}<ArrowRight size={17}/></button></>:<p>{t('Você concluiu a sequência a partir do nível recomendado. Explore outra disciplina ou pratique uma revisão disponível.')}</p>}
    </section>
@@ -36,13 +38,12 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
    <ol className="course-trail">{remainingModules.map(m=>{
     const done=m.lessons.filter(l=>completed[l.id]).length,pre=prerequisiteFor(m.id),isCurrent=m.id===currentModule?.id;
     const renderBody=isCurrent||openedModules.has(m.id);
-    return <li key={m.id} className={isCurrent?'is-current':''}><details open={isCurrent} onToggle={event=>rememberOpen(m.id,event.currentTarget.open)}>
-     <summary><span>{t(m.level)} · {t(m.title)}{isCurrent&&<b>{t('Você está aqui')}</b>}</span><span>{done===m.lessons.length?<Check size={18}/>:null}{done}/{m.lessons.length}</span></summary>
-     {renderBody&&<div className="trail-module-body"><p><strong>{t('Ao terminar este módulo, você conseguirá:')}</strong>{t(moduleObjective(m.id))}.</p>
+    return <li key={m.id} className={isCurrent?'is-current':''}><button type="button" className="trail-module-toggle" aria-expanded={renderBody} aria-controls={`trail-module-${m.id}`} onClick={()=>{if(!isCurrent)toggleModule(m.id);}}><span>{t(m.level)} · {t(m.title)}{isCurrent&&<b>{t('Você está aqui')}</b>}</span><span>{done===m.lessons.length?<Check size={18}/>:null}{done}/{m.lessons.length}</span></button>
+     {renderBody&&<div id={`trail-module-${m.id}`} className="trail-module-body"><p><strong>{t('Ao terminar este módulo, você conseguirá:')}</strong>{t(moduleObjective(m.id))}.</p>
       <p>{t(done===m.lessons.length?'Módulo concluído. A consolidação continua nas revisões.':isCurrent?'Em desenvolvimento':'Competência que vem depois')}</p>
       {pre&&<p className="prerequisite-note">{t('Base recomendada:')}<button className="text-button" onClick={()=>onOpen(pre.lessons.find(l=>!completed[l.id])??pre.lessons[0],false,'practice')}>{t(pre.title)}</button></p>}
       <div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,false,'guided')}/>)}</div>
-     </div>}</details></li>;
+     </div>}</li>;
    })}</ol>
    <section className="competency-paths"><h2>{t('Competências que crescem com você')}</h2><p>{t('Retome a base ou avance para uma aplicação mais exigente. As etapas conectam níveis diferentes.')}</p>
     {competencyPaths.map(p=><details key={p.id}><summary>{t(p.title)}<span>{p.steps.filter(s=>completed[s.lessonId]).length}/{p.steps.length}</span></summary><ol>{p.steps.map(s=>{const l=lessonById.get(s.lessonId)!;return <li key={s.lessonId}><span className="eyebrow">{t(stages[s.stage])} · {l.level}</span><button className="text-button" onClick={()=>onOpen(l,false,'practice')}>{completed[l.id]&&<Check size={15}/>} {t(l.title)}<ArrowRight size={15}/></button><p lang="en">{s.task}</p></li>;})}</ol></details>)}

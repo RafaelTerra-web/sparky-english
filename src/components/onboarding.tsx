@@ -2,6 +2,7 @@
 import { t, targetText, localizeAttribute, useSupportLanguage, supportT, getSupportLocale } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { MascotFigure } from "./mascot-studio";
+import MascotMoment from "./mascot-moment";
 import {
   onboardingLevels,
   onboardingSteps,
@@ -216,11 +217,7 @@ export default function Onboarding({
     <main className="onboarding" aria-busy={busy}>
       {editing && <button className="text-button" onClick={onCancel}>← {t("Perfil")}</button>}
       <div className={`onboarding-mascot ${speaking ? "is-speaking" : ""}`}>
-        <MascotFigure
-          mascot="sparky"
-          equipped={{ sparky: {}, pinky: {} }}
-          size="large"
-        />
+        <MascotMoment mascot={draft?.mascot ?? "sparky"} mood={step === "finish" ? "celebrate" : speaking ? "listen" : "invite"} className="onboarding-expression" />
       </div>
       <p className="eyebrow">{t("Seu começo com o Sparky ·")}{t(" ")}
         {t(Math.min(onboardingSteps.indexOf(step) + 1, onboardingSteps.length))}{t(" de")}{t(onboardingSteps.length)}

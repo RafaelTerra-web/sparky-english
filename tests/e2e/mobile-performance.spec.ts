@@ -6,7 +6,7 @@ async function openAccount(page: Page) {
   await page.route("**/api/onboarding", route => route.fulfill({ json: { enabled: false } }));
   await page.route("**/api/appearance", route => route.fulfill({ json: { preference: { palette: "sparky", mode: "light" }, storage: "account" } }));
   await page.goto("/");
-  await expect(page.getByRole("button", { name: /Começar meu plano|Continuar de onde parei/, exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Começar lição|Continuar de onde parei|Revisar agora/, exact: true })).toBeVisible();
 }
 
 test("mobile navigation stays on one row and closed course modules are mounted on demand", async ({ page }, info) => {
@@ -21,8 +21,11 @@ test("mobile navigation stays on one row and closed course modules are mounted o
   await expect(page.locator(".course-trail")).toBeVisible();
   await expect(page.locator(".trail-module-body")).toHaveCount(1);
 
-  const nextModule = page.locator(".course-trail > li details").nth(1);
-  await nextModule.locator("summary").click();
+  const nextModule = page.locator(".course-trail > li").nth(1);
+  const toggle = nextModule.getByRole("button", { name: /Pessoas e objetos/ });
+  await toggle.evaluate(element => { const r=element.getBoundingClientRect(); window.scrollTo(0, window.scrollY+r.top-innerHeight/2); });
+  await expect.poll(() => toggle.evaluate(element => { const r = element.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; })).toBe(true);
+  await toggle.click();
   await expect(nextModule.locator(".trail-module-body")).toHaveCount(1);
   await expect(page.locator(".trail-module-body")).toHaveCount(2);
 

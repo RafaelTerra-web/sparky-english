@@ -65,6 +65,7 @@
   transform: rotate(-3deg);
   animation: medal-pop 720ms 180ms cubic-bezier(.2, .9, .2, 1.2) both;
 }
+.celebrationMascot { position: absolute; left: 14px; top: 50px; width: 112px; height: 112px; object-fit: contain; filter: drop-shadow(0 8px 14px #143b3940); }
 
 .medal strong {
   font-size: 34px;
@@ -169,6 +170,7 @@
 
 @media (max-width: 520px) {
   .card { padding: 34px 22px 24px; border-radius: 24px; }
+  .celebrationMascot { width: 82px; height: 82px; left: 4px; top: 61px; }
   .medal { width: 96px; height: 96px; border-radius: 30px; }
   .medal strong { font-size: 29px; }
   .message { font-size: 15px; }

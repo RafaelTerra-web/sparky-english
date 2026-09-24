@@ -20,7 +20,6 @@ import {
   ClipboardCheck,
   Globe2,
   GraduationCap,
-  Headphones,
   Home,
   Languages,
   LockKeyhole,
@@ -49,6 +48,7 @@ import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 import LessonPlayer from "./lesson-player";
 import PushNotifications, { disablePushForCurrentDevice } from "./push-notifications";
+import MascotMoment from "./mascot-moment";
 import NativeRefresh from "./native-refresh";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
@@ -509,7 +509,7 @@ export default function SparkyApp() {
       <MotionTransition active={transitioning} />
       <NativeRefresh onRefresh={refreshAppData} />
       {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
-      <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} />
+      <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} mascot={reward.mascot} />
       <aside className="sidebar">
         <Brand />
         <nav aria-label={localizeAttribute("Navegação principal")}>
@@ -578,7 +578,7 @@ export default function SparkyApp() {
             </button>
           </div>
         )}
-        {view !== 'call' && <PushNotifications userId={user.id} />}
+        {view === 'today' && !active && <PushNotifications userId={user.id} mascot={reward.mascot} />}
         {view === "today" && (
           <div className="today-overview">
             <div className="page-heading">
@@ -661,7 +661,7 @@ export default function SparkyApp() {
             {learnerProfile && voiceEnabled && !active && <PersonalSparkyMessage key={`${learnerProfile.name}-${learnerProfile.namePronunciation}`} profile={learnerProfile} occasion="welcome" onPronunciation={() => void editNamePronunciation()} />}
             <InstallAppPrompt />
             {callEnabled && <section className="call-invite">
-              <span className="call-invite-icon" aria-hidden="true"><Headphones size={24} /></span>
+              <MascotMoment mascot={reward.mascot} mood="listen" className="call-invite-mascot" />
               <div><p className="eyebrow">{t("CALL DE CONVERSAÇÃO · 10 MIN")}</p><h2>{t(`Fale com ${reward.mascot === "pinky" ? "a Pinky" : "o Sparky"}`)}</h2><p>{t("Pratique uma situação real no seu nível e receba feedback ao terminar.")}</p></div>
               <button className="primary-button" onClick={() => navigate("call")}>{t("Praticar conversação")}<ArrowRight size={17}/></button>
             </section>}
@@ -699,6 +699,7 @@ export default function SparkyApp() {
             </div>
             {studied.length === 0 ? (
               <section className="empty-state">
+                <MascotMoment mascot={reward.mascot} mood="invite" className="review-mascot" />
                 <RotateCcw size={32} />
                 <h2>{t("Sua revisão começa depois da primeira lição")}</h2>
                 <p>{t("As expressões que você estudar aparecerão aqui para praticar novamente.")}</p>
@@ -728,6 +729,7 @@ export default function SparkyApp() {
                   </section>
                 ) : (
                   <section className="review-empty" aria-labelledby="available-review-heading">
+                    <MascotMoment mascot={reward.mascot} mood="celebrate" className="review-mascot" />
                     <h2 id="available-review-heading">{t("Nenhuma revisão pendente agora")}</h2>
                     <p>{t("Continue com uma lição nova. As próximas revisões aparecerão aqui.")}</p>
                   </section>
@@ -753,7 +755,7 @@ export default function SparkyApp() {
           </>
         )}
         {view === "classroom" && <EnglishClassroom level={progress.level} />}
-        {view === "music" && <MusicLibrary userId={user.id} level={progress.level} />}
+        {view === "music" && <MusicLibrary userId={user.id} level={progress.level} mascot={reward.mascot} />}
         {view === "exams" && <><button className="text-button" onClick={() => navigate("course")}>{t("← Voltar ao Curso")}</button><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
@@ -822,6 +824,7 @@ export default function SparkyApp() {
                 </button>
               </section>
               <aside className="profile-note">
+                <MascotMoment mascot={reward.mascot} mood="celebrate" className="profile-mascot" />
                 <Globe2 size={24} />
                 <h2>{supportT("Sobre seu progresso")}</h2>
                 <p lang={getSupportLocale()}><strong>{supportT(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
@@ -917,13 +920,7 @@ function LoginScreen() {
                   <span>{t("eu sou")}</span>
                 </div>
               </div>
-              <Image
-                src="/visuals/sparky-panda.png"
-                alt={localizeAttribute("Sparky, seu guia nas lições")}
-                width={280}
-                height={280}
-                priority
-              />
+              <MascotMoment mascot="sparky" mood="invite" alt={localizeAttribute("Sparky, seu guia nas lições")} loading="eager" />
             </div>
             <div className="login-levels">
               <span><strong>{t("A1–A2")}</strong>{t(" Primeiras conversas")}</span>

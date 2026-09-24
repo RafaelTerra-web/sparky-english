@@ -46,7 +46,7 @@ test("ELTiS practice starts, keeps answers private and resumes", async ({ page }
 
   await page.goto("/");
   await page.getByRole("button", { name: "Curso", exact: true }).click();
-  await page.getByRole("button", { name: /Simulados ·/ }).click();
+  await page.locator('.guided-course').getByRole("button", { name: "Simulados", exact: true }).click();
   const installDismiss = page.getByRole("button", { name: "Fechar convite de instalação" });
   if (await installDismiss.isVisible()) await installDismiss.click();
   await expect(page.getByRole("heading", { name: "Simulado ELTiS" })).toBeVisible();
@@ -70,7 +70,7 @@ test("ELTiS practice starts, keeps answers private and resumes", async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.reload();
   await page.getByRole("button", { name: "Curso", exact: true }).click();
-  await page.getByRole("button", { name: /Simulados ·/ }).click();
+  await page.locator('.guided-course').getByRole("button", { name: "Simulados", exact: true }).click();
   await expect(page.getByText("Questão 2 de 24")).toBeVisible();
   await expect(confirm).toBeDisabled();
 });
