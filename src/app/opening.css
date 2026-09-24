@@ -3,8 +3,8 @@
   display: grid;
   place-items: center;
   min-height: 100dvh;
-  background: #101d35;
-  color: #fff6ea;
+  background: var(--background);
+  color: var(--foreground);
 }
 
 .opening-scene {
@@ -21,6 +21,8 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
 .opening-scene.is-leaving { opacity: 0; pointer-events: none; }
 
 .sparky-loading-mark {
+  --sparky-mark-face: var(--surface);
+  --sparky-mark-ink: var(--foreground);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,10 +32,23 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   text-align: center;
 }
 
+html[data-theme="dark"] .sparky-loading-mark {
+  --sparky-mark-face: var(--foreground);
+  --sparky-mark-ink: var(--background);
+}
+
 .sparky-loading-face { width: 112px; height: 112px; overflow: visible; }
+.sparky-mark-ear { fill: var(--primary); }
+.sparky-mark-ear-inner { fill: var(--accent-soft); }
+.sparky-mark-face, .sparky-mark-sclera { fill: var(--sparky-mark-face); }
+.sparky-mark-head { stroke: var(--line); stroke-width: .8px; }
+.sparky-mark-patch, .sparky-mark-pupil { fill: var(--sparky-mark-ink); }
+.sparky-mark-mouth { stroke: var(--sparky-mark-ink); }
+.sparky-mark-scarf-line { stroke: var(--accent); }
+.sparky-mark-scarf { fill: var(--accent); }
 .sparky-loading-name {
   margin-top: 6px;
-  color: #fff6ea;
+  color: var(--foreground);
   font-family: var(--font-music-grotesk), Arial, sans-serif;
   font-size: 29px;
   font-weight: 700;
@@ -42,7 +57,7 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
 }
 .sparky-loading-subname {
   margin-top: 9px;
-  color: #f3c49d;
+  color: var(--accent);
   font-family: var(--font-geist-sans), Arial, sans-serif;
   font-size: 9px;
   font-weight: 700;
@@ -80,13 +95,13 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid #fff6ea66;
+  border: 1px solid var(--line);
   border-radius: 50%;
-  background: #fff6ea14;
-  color: #fff6ea;
+  background: var(--surface);
+  color: var(--foreground);
   cursor: pointer;
 }
-.opening-sound:focus-visible { outline: 2px solid #f3c49d; outline-offset: 3px; }
+.opening-sound:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
   .opening-scene { transition: none; }
