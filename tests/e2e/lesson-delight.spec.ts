@@ -4,7 +4,7 @@ import { contentVersion } from '../../src/lib/content/build';
 
 const lesson = lessons.find(item => item.id === 'a1-1-1')!;
 
-async function visit(page: Page, options: { checkpoint?: number; dueReview?: boolean; complete?: (respond: (earned: number, independent: boolean) => Promise<void>) => Promise<void> } = {}) {
+async function visit(page: Page, options: { checkpoint?: number; dueReview?: boolean; mascot?: 'sparky' | 'pinky'; complete?: (respond: (earned: number, independent: boolean) => Promise<void>) => Promise<void> } = {}) {
   const userId = options.checkpoint === undefined ? 'lesson-delight-start' : 'lesson-delight-resume';
   if (options.checkpoint !== undefined) await page.addInitScript(({ checkpoint, userId, contentVersion }) => {
     const state = { lessonId: 'a1-1-1', review: false, index: checkpoint, furthestIndex: checkpoint, answer: '', tokens: [], checked: false, correct: false, translation: false, assisted: false, contextVisible: false, receipt: 'existing-receipt', draft: '', updatedAt: new Date().toISOString(), contentVersion, revealed: false, listened: false };
@@ -13,7 +13,7 @@ async function visit(page: Page, options: { checkpoint?: number; dueReview?: boo
   await page.route('**/api/session', route => route.fulfill({ json: { authenticated: true, user: { id: userId, email: 'test@example.com', name: 'Ana' } } }));
   await page.route('**/api/onboarding', route => route.fulfill({ json: { enabled: false } }));
   await page.route('**/api/appearance', route => route.fulfill({ json: { preference: null, storage: 'account' } }));
-  const base = { storage: 'account', coins: 0, completed: options.dueReview ? { [lesson.id]: new Date(Date.now() - 7 * 86_400_000).toISOString() } : {}, reviews: options.dueReview ? { [lesson.id]: new Date(Date.now() - 86_400_000).toISOString() } : {}, owned: [], mascot: 'sparky', equipped: { sparky: {}, pinky: {} }, streak: { count: 0, longest: 0, lastDay: null } };
+  const base = { storage: 'account', coins: 0, completed: options.dueReview ? { [lesson.id]: new Date(Date.now() - 7 * 86_400_000).toISOString() } : {}, reviews: options.dueReview ? { [lesson.id]: new Date(Date.now() - 86_400_000).toISOString() } : {}, owned: [], mascot: options.mascot ?? 'sparky', equipped: { sparky: {}, pinky: {} }, streak: { count: 0, longest: 0, lastDay: null } };
   await page.route('**/api/rewards', async route => {
     if (route.request().method() === 'POST') {
       const action = JSON.parse(route.request().postData() ?? '{}').action;
@@ -62,7 +62,7 @@ test('a due review opens from the review list', async ({ page }) => {
   await expect(page.locator('.lesson-dialog header')).toContainText('Revisão');
 });
 
-test('the completion card appears only after the server confirms the actual reward', async ({ page }) => {
+test('the full-screen celebration appears only after the server confirms the actual reward', async ({ page }) => {
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
   let requests = 0;
@@ -75,9 +75,31 @@ test('the completion card appears only after the server confirms the actual rewa
   await expect(page.locator('.lesson-completion-moment')).toBeVisible();
   await expect(page.locator('.lesson-completion-moment')).toContainText('Você conseguiu sem ajuda.');
   await expect(page.locator('.lesson-completion-moment')).toContainText('+10 moedas');
+  await expect(page.locator('.lesson-completion-mascot')).toHaveAttribute('data-mascot', 'sparky');
+  await expect(page.locator('.lesson-completion-mascot img')).toHaveAttribute('src', /lesson-complete-sparky\.png/);
+  await expect(page.locator('#lesson-completion-title')).toBeFocused();
+  const bounds = await page.locator('.lesson-completion-moment').boundingBox();
+  expect(bounds?.width).toBeGreaterThanOrEqual((page.viewportSize()?.width ?? 0) - 1);
+  expect(bounds?.height).toBeGreaterThanOrEqual((page.viewportSize()?.height ?? 0) - 1);
+  if (test.info().project.name === 'iphone') {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await expect(page.getByRole('button', { name: 'OK', exact: true })).toBeInViewport();
+  }
   expect(requests).toBe(1);
-  await page.getByRole('button', { name: 'Dispensar conclusão' }).click();
+  await page.getByRole('button', { name: 'OK', exact: true }).click();
   await expect(page.locator('.lesson-completion-moment')).toHaveCount(0);
+});
+
+test('Pinky has original completion art and reduced motion stops the entrance animation', async ({ page }) => {
+  await visit(page, { checkpoint: lesson.steps.length - 1, mascot: 'pinky', complete: async respond => respond(10, true) });
+  await page.getByRole('button', { name: 'Continuar de onde parei', exact: true }).click();
+  await page.getByRole('button', { name: 'Concluir', exact: true }).click();
+  const mascot = page.locator('.lesson-completion-mascot');
+  await expect(mascot).toHaveAttribute('data-mascot', 'pinky');
+  await expect(mascot.locator('img')).toHaveAttribute('src', /lesson-complete-pinky\.png/);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(mascot.locator('video')).toHaveCount(0);
+  expect(await mascot.locator('img').evaluate(node => getComputedStyle(node).animationName)).toBe('none');
 });
 
 test('a confirmed repeat remains positive and shows no extra coins', async ({ page }) => {
@@ -112,7 +134,7 @@ test('an incorrect answer keeps its explanation, then a corrected answer gets on
   await expect(page.locator('.answer-feedback.is-fresh')).toHaveCount(0);
 });
 
-test('a failed completion keeps the lesson and never shows the confirmed card', async ({ page }) => {
+test('a failed completion keeps the lesson and never shows the celebration', async ({ page }) => {
   await visit(page, { checkpoint: lesson.steps.length - 1 });
   await page.route('**/api/rewards', async route => {
     if (route.request().method() === 'POST' && JSON.parse(route.request().postData() ?? '{}').action === 'complete')

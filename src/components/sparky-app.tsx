@@ -52,6 +52,7 @@ import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 import LessonPlayer from "./lesson-player";
 import PushNotifications, { disablePushForCurrentDevice } from "./push-notifications";
 import MascotMoment from "./mascot-moment";
+import { LessonCompletionCelebration, type CompletionMoment } from "./lesson-completion-celebration";
 import NativeRefresh from "./native-refresh";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
@@ -71,7 +72,6 @@ const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
 type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "music" | "shop";
-type CompletionMoment = { review: boolean; earned: number; independent: boolean; outcome: string; nextReview?: string; nextTitle: string };
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -439,6 +439,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       if (result) {
         if (!active.review && !progress.completed[active.lesson.id]) updateWorkspace(user!.id, current => ({...current,studyDay:studyDay(now),newLessonsToday:(current.studyDay===studyDay(now)?current.newLessonsToday:0)+1}));
         setCompletionMoment({
+          mascot: result.mascot,
           review: active.review,
           earned: result.earned ?? 0,
           independent: result.independent === true,
@@ -532,6 +533,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <MotionTransition active={transitioning} />
       <NativeRefresh onRefresh={refreshAppData} />
+      {completionMoment && <LessonCompletionCelebration moment={completionMoment} onClose={() => setCompletionMoment(null)} />}
       {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} mascot={reward.mascot} />
       <aside className="sidebar">
@@ -613,20 +615,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               <span className="language-chip">
                 <Languages size={15} />{t("Português ")}<ArrowRight size={12} />{t(" Inglês")}</span>
             </div>
-            {completionMoment && <section className="lesson-completion-moment" role="status" aria-live="polite">
-              <span className="lesson-completion-symbol" aria-hidden="true"><Check size={22} /></span>
-              <div className="lesson-completion-copy">
-                <p className="eyebrow">{t(completionMoment.review ? "REVISÃO CONCLUÍDA" : "LIÇÃO CONCLUÍDA")}</p>
-                <h2>{t(completionMoment.independent ? "Você conseguiu sem ajuda." : "Você praticou, corrigiu e avançou.")}</h2>
-                <p lang={getSupportLocale()}>{supportT("Agora você consegue")} {supportT(completionMoment.outcome)}{/[.!?]$/.test(completionMoment.outcome.trim()) ? "" : "."}</p>
-                <div className="lesson-completion-details">
-                  {completionMoment.earned > 0 && <strong>+{completionMoment.earned} {t("moedas")}</strong>}
-                  {completionMoment.nextReview && <span>{t("Próxima revisão:")} {new Intl.DateTimeFormat(getInterfaceLocale(), { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" }).format(new Date(completionMoment.nextReview))}</span>}
-                  <span>{t("Próximo passo:")} {t(completionMoment.nextTitle)}</span>
-                </div>
-              </div>
-              <button className="lesson-completion-close" type="button" onClick={() => setCompletionMoment(null)} aria-label={localizeAttribute("Dispensar conclusão")}><X size={18} /></button>
-            </section>}
             <div className="today-layout">
               <section className="next-lesson">
                 <div className="lesson-copy">
