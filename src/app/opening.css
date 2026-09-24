@@ -21,15 +21,19 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
 .opening-scene.is-leaving { opacity: 0; pointer-events: none; }
 
 .sparky-loading-mark {
-  --sparky-mark-face: var(--surface);
-  --sparky-mark-ink: var(--foreground);
-  --pinky-fur: color-mix(in srgb, #efa1b8 80%, var(--accent) 20%);
-  --pinky-ear: color-mix(in srgb, var(--pinky-fur) 72%, var(--foreground) 28%);
-  --pinky-ear-inner: color-mix(in srgb, var(--pinky-fur) 35%, var(--surface) 65%);
-  --pinky-muzzle: color-mix(in srgb, var(--surface) 84%, var(--pinky-fur) 16%);
-  --pinky-blush: color-mix(in srgb, #ed6d91 60%, var(--accent) 40%);
-  --pinky-nose: color-mix(in srgb, #9f3d67 85%, var(--accent) 15%);
-  --pinky-ink: var(--foreground);
+  --sparky-mark-face: #fff4e6;
+  --sparky-mark-ink: #292b33;
+  --sparky-mark-ear: #303139;
+  --sparky-mark-ear-inner: #ff7055;
+  --sparky-mark-outline: #e7d9c9;
+  --sparky-mark-scarf: #ff7055;
+  --pinky-fur: #f28cab;
+  --pinky-ear: #bb647d;
+  --pinky-ear-inner: #ffd4d3;
+  --pinky-muzzle: #ffe0dc;
+  --pinky-blush: #f29db0;
+  --pinky-nose: #9f3d67;
+  --pinky-ink: #33212f;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,30 +43,20 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   text-align: center;
 }
 
-html[data-theme="dark"] .sparky-loading-mark {
-  --sparky-mark-face: var(--foreground);
-  --sparky-mark-ink: var(--background);
-  --pinky-fur: color-mix(in srgb, #f6acc3 80%, var(--accent) 20%);
-  --pinky-ear: color-mix(in srgb, var(--pinky-fur) 72%, var(--background) 28%);
-  --pinky-ear-inner: color-mix(in srgb, var(--pinky-fur) 50%, var(--foreground) 50%);
-  --pinky-muzzle: color-mix(in srgb, var(--foreground) 82%, var(--pinky-fur) 18%);
-  --pinky-ink: var(--background);
-}
-
 .sparky-loading-face { width: 112px; height: 112px; overflow: visible; }
 .sparky-loading-face--pinky, .sparky-loading-name--pinky { display: none; }
 html[data-opening-mascot="pinky"] .sparky-loading-face--sparky,
 html[data-opening-mascot="pinky"] .sparky-loading-name--sparky { display: none; }
 html[data-opening-mascot="pinky"] .sparky-loading-face--pinky { display: block; }
 html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline; }
-.sparky-mark-ear { fill: var(--primary); }
-.sparky-mark-ear-inner { fill: var(--accent-soft); }
+.sparky-mark-ear { fill: var(--sparky-mark-ear); }
+.sparky-mark-ear-inner { fill: var(--sparky-mark-ear-inner); }
 .sparky-mark-face, .sparky-mark-sclera { fill: var(--sparky-mark-face); }
-.sparky-mark-head { stroke: var(--line); stroke-width: .8px; }
+.sparky-mark-head { stroke: var(--sparky-mark-outline); stroke-width: .8px; }
 .sparky-mark-patch, .sparky-mark-pupil { fill: var(--sparky-mark-ink); }
 .sparky-mark-mouth { stroke: var(--sparky-mark-ink); }
-.sparky-mark-scarf-line { stroke: var(--accent); }
-.sparky-mark-scarf { fill: var(--accent); }
+.sparky-mark-scarf-line { stroke: var(--sparky-mark-scarf); }
+.sparky-mark-scarf { fill: var(--sparky-mark-scarf); }
 .pinky-mark-ear { fill: var(--pinky-ear); }
 .pinky-mark-ear-inner { fill: var(--pinky-ear-inner); }
 .pinky-mark-fur { fill: var(--pinky-fur); }
