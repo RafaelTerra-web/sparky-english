@@ -10,7 +10,7 @@ import numpy as np
 
 root = Path(__file__).resolve().parent.parent
 tracks = {}
-for track, name in [('perfect-local', 'audio.mp3'), ('heartless-local', 'heartless/audio.mp3'), ('stay-at-your-house-local', 'stay-at-your-house/audio.mp3')]:
+for track, name in [('perfect-local', 'audio.mp3'), ('heartless-local', 'heartless/audio.mp3'), ('stay-at-your-house-local', 'stay-at-your-house/audio.mp3'), ('buttercup-local', 'buttercup-local/audio.mp3')]:
     with av.open(str(root / '.music-assets' / name)) as source:
         resampler = av.AudioResampler(format='fltp', layout='mono', rate=8000)
         frames = [f.to_ndarray().ravel() for frame in source.decode(audio=0) for f in resampler.resample(frame)]

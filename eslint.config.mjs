@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     ".next-build-check/**",
     ".release-work/**",
+    ".music-lab/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

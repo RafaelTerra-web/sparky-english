@@ -1,6 +1,6 @@
 /* Shared layout refinements, loaded after feature styles. Colors stay in the theme tokens. */
 html { scrollbar-gutter: stable; }
-html[data-palette] body { background-repeat: no-repeat; background-size: 100% 100vh; }
+html[data-palette] body { background-image: none; }
 html[data-palette] body {
   background-color: var(--surface-canvas);
   color: var(--text-primary);

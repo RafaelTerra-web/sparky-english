@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { musicIntroCountdown, musicEnergyAt, musicSectionAt, musicVisualMoment, musicWordFill } from '../src/lib/music-visuals.ts';
+import { musicIntroCountdown, musicBeatAt, musicEnergyAt, musicSectionAt, musicVisualMoment, musicWordFill } from '../src/lib/music-visuals.ts';
 import { musicEnergy } from '../src/lib/music-energy.ts';
 
 test('count-in belongs only to the opening three media seconds, never a later round', () => {
@@ -28,6 +28,9 @@ test('narrative, dialogue, chorus and instrumental boundaries follow each song i
   assert.equal(musicSectionAt('stay-at-your-house-local', 162).label, 'Ponte');
   assert.equal(musicSectionAt('stay-at-your-house-local', 210).label, 'Refrão final');
   assert.equal(musicSectionAt('stay-at-your-house-local', 18).kind, 'verse');
+  assert.equal(musicSectionAt('buttercup-local', 48.18).kind, 'chorus');
+  assert.equal(musicSectionAt('buttercup-local', 82).label, 'Verso 2');
+  assert.equal(musicSectionAt('buttercup-local', 136).kind, 'instrumental');
 });
 
 test('visual energy is bounded, follows seeks and never uses wall time or playback speed', () => {
@@ -37,7 +40,8 @@ test('visual energy is bounded, follows seeks and never uses wall time or playba
   assert.equal(musicEnergyAt(envelope, 0), 0);
   for (const clock of [-1, NaN, 50]) assert.equal(musicEnergyAt(envelope, clock), 0);
   assert.equal(musicEnergyAt(undefined, .2), 0);
-  for (const [id, duration] of [['perfect-local',263.407],['heartless-local',223.237],['stay-at-your-house-local',247.989]]) {
+  assert.ok(musicBeatAt(envelope, .25) > musicBeatAt(envelope, 0));
+  for (const [id, duration] of [['perfect-local',263.407],['heartless-local',223.237],['stay-at-your-house-local',247.989],['buttercup-local',208.144]]) {
     const data = musicEnergy[id];
     assert.ok(Math.abs(data.values.length * data.step - duration) <= data.step);
     assert.ok(data.values.every(n => Number.isInteger(n) && n >= 0 && n <= 100));

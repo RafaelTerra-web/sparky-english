@@ -24,7 +24,14 @@ export async function PATCH(request: Request) {
     const clean = normalizeMusic(lesson, body.state);
     const state = body.state;
     const allowed = Object.keys(clean);
-    if (state.performance !== undefined && JSON.stringify(state.performance) !== JSON.stringify(clean.performance)) return json({ error: 'invalid-performance' }, 400);
+    if (state.performance !== undefined) {
+      if (!state.performance || typeof state.performance !== 'object' || Array.isArray(state.performance)) return json({ error: 'invalid-performance' }, 400);
+      // Older clients omit the new levels; validate every supplied record while
+      // the merge below preserves records from either generation.
+      for (const [mode, record] of Object.entries(state.performance)) {
+        if (!(mode in clean.performance) || JSON.stringify(record) !== JSON.stringify(clean.performance[mode as keyof typeof clean.performance])) return json({ error: 'invalid-performance' }, 400);
+      }
+    }
     if (Object.keys(state).some(k => !allowed.includes(k)) || ['heard','explored','saved','practiced'].some(k => JSON.stringify(state[k]) !== JSON.stringify(clean[k as keyof typeof clean])) || JSON.stringify(state.answers) !== JSON.stringify(clean.answers) || state.stage !== clean.stage || state.position !== clean.position || state.completed !== clean.completed) return json({ error: 'invalid-state' }, 400);
     const current = await readMusicProgress(user.id, lesson);
     if (current.revision !== body.baseRevision) return json({ error: 'progress-conflict', current }, 409);

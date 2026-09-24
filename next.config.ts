@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     '/api/music': ['./.music-assets/**/manifest.json'],
     '/api/media-progress': ['./.music-assets/**/manifest.json'],
     '/api/music/audio': ['./.music-assets/**/*.mp3'],
-    '/api/music/video': ['./.music-assets/stay-at-your-house/background.mp4'],
+    '/api/music/video': ['./.music-assets/stay-at-your-house/background.mp4', './.music-assets/buttercup-local/video.mp4'],
   },
   outputFileTracingExcludes: {
     '/*': ['./.music-lab/**/*', './.music-assets/stay-at-your-house/video.mp4'],

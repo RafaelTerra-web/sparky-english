@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Clock3,
   ClipboardCheck,
-  Coins,
   Globe2,
   GraduationCap,
   Headphones,
@@ -492,7 +491,7 @@ export default function SparkyApp() {
     <div className="app-frame">
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <MotionTransition active={transitioning} />
-      {streakCelebration && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
+      {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} />
       <aside className="sidebar">
         <Brand />
@@ -583,7 +582,7 @@ export default function SparkyApp() {
                     <Clock3 size={15} />
                     {t(recommendedReview ? 2 : recommended.minutes)} {t("min")}<span>·</span>{t(recommendedReview ? "Revisão" : "Explicação + prática")}</div>
                   <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
-                    {t(resume ? "Continuar de onde parei" : "Começar meu plano")}
+                    {t(resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar lição")}
                     <ArrowRight size={17} />
                   </button>
                   <p className="level-progress-note" role="status">{levelProgressText}</p>
@@ -605,7 +604,7 @@ export default function SparkyApp() {
                   {t(reward.mascot === "pinky" ? "PINKY" : "SPARKY")}{t(" / SEU GUIA DE ESTUDO")}</div>
               </section>
               <aside className="study-summary">
-                <p className="eyebrow">{t("Seu progresso no curso")}</p>
+                <p className="eyebrow">{t("Seu caminho até aqui")}</p>
                 <div className="summary-progress">
                 <div className="progress-number">
                   {t(completed)}
@@ -630,8 +629,8 @@ export default function SparkyApp() {
                   <strong>{t(due)}</strong>
                 </div>
                 <div className="stat-row coin-stat">
-                  <span>{t("Moedas")}</span>
-                  <strong><Coins size={16} /> {t(reward.coins)}</strong>
+                  <span>{t("Meta diária")}</span>
+                  <strong>{workspace.minutes} {t("min")}</strong>
                 </div>
                 </div>
                 <button
@@ -651,7 +650,7 @@ export default function SparkyApp() {
             <section className="learning-note"><span className="note-icon"><Languages size={22}/></span><div><h2>{t('Objetivo do módulo')}</h2><p>{supportT(moduleObjective(next.moduleId!))}.</p><button className="text-button" onClick={()=>{setCourseMode('guided');navigate('course');}}>{t('Ver minha trilha')}<ArrowRight size={15}/></button></div></section>
             <section className="complementary-practice"><div className="section-heading"><div><p className="eyebrow">{t('Opcional')}</p><h2>{t('Treino complementar')}</h2></div><button className="text-button" onClick={()=>{setCourseMode('practice');navigate('course');}}>{t('Treinar por disciplina')}<ArrowRight size={15}/></button></div>
              <p>{t('Escolha uma prática extra sem perder o próximo passo do curso.')}</p>
-             <div className="lesson-cards">{complementary.map(({lesson,reason})=><div key={lesson.id}><LessonCard lesson={lesson} number={lessons.findIndex(l=>l.id===lesson.id)+1} done={Boolean(progress.completed[lesson.id])} onOpen={()=>open(lesson,false,'practice')}/><p className="recommendation-reason">{t(reason)}</p></div>)}</div>
+             <div className="lesson-cards">{complementary.map(({lesson})=><div key={lesson.id}><LessonCard lesson={lesson} number={lessons.findIndex(l=>l.id===lesson.id)+1} done={Boolean(progress.completed[lesson.id])} onOpen={()=>open(lesson,false,'practice')}/></div>)}</div>
             </section>
           </div>
         )}
@@ -670,7 +669,7 @@ export default function SparkyApp() {
           </>
         )}
         {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => navigate("today")} />}
-        {(view === "course" || view === "today") && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
+        {view === "course" && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "review" && (
           <>
             <div className="page-heading">

@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 const musicGrotesk = Space_Grotesk({ variable: '--font-music-grotesk', subsets: ['latin'], preload: false });
 const musicCyberpunk = Chakra_Petch({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
 
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${musicGrotesk.variable} ${musicCyberpunk.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${musicGrotesk.variable} ${musicCyberpunk.variable}`}
     >
       <head>
         <script
@@ -70,7 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {/* Browser accessibility/translation extensions may annotate <body>
           before React hydrates. Keep suppression scoped to this root element;
           mismatches inside the application tree must still surface. */}
-      <body suppressHydrationWarning className="min-h-full flex flex-col">{children}</body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }
