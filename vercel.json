@@ -1,1 +1,1 @@
-{"crons":[{"path":"/api/onboarding/cleanup","schedule":"0 4 * * *"},{"path":"/api/push/reminder","schedule":"0 15 * * *"}]}
+{"ignoreCommand":"node scripts/skip-missing-media.mjs","crons":[{"path":"/api/onboarding/cleanup","schedule":"0 4 * * *"},{"path":"/api/push/reminder","schedule":"0 15 * * *"}]}

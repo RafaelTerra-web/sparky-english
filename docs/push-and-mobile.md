@@ -1,5 +1,9 @@
 # Mobile e notificações
 
+## Publicação
+
+O pacote `.music-assets` é privado e ignorado pelo Git. O `ignoreCommand` da Vercel ignora builds automáticos sem esse pacote; publique pela CLI a partir de uma cópia local que passou em `node scripts/verify-music-release.mjs --required`, usando `npx vercel deploy --prod --yes`. Um push no GitHub preserva o código-fonte, mas não substitui essa publicação.
+
 ## Ativação do Web Push
 
 1. Aplique `supabase/migrations/20260924000100_push_subscriptions.sql` no projeto Supabase do Sparky.
