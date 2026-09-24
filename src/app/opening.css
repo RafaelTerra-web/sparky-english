@@ -28,6 +28,7 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   --pinky-ear-inner: color-mix(in srgb, var(--pinky-fur) 35%, var(--surface) 65%);
   --pinky-muzzle: color-mix(in srgb, var(--surface) 84%, var(--pinky-fur) 16%);
   --pinky-blush: color-mix(in srgb, #ed6d91 60%, var(--accent) 40%);
+  --pinky-nose: color-mix(in srgb, #9f3d67 85%, var(--accent) 15%);
   --pinky-ink: var(--foreground);
   display: flex;
   flex-direction: column;
@@ -69,6 +70,7 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 .pinky-mark-blush { fill: var(--pinky-blush); opacity: .45; }
 .pinky-mark-eye { fill: var(--pinky-ink); }
 .pinky-mark-eye-light { fill: var(--pinky-ear-inner); }
+.pinky-mark-nose { fill: var(--pinky-nose); }
 .pinky-mark-mouth { stroke: var(--pinky-ink); }
 .sparky-loading-name {
   margin-top: 6px;
