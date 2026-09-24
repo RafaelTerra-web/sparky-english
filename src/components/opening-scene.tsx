@@ -25,8 +25,8 @@ export default function OpeningScene({ leaving }: { leaving: boolean }) {
     <section className={`opening-scene${leaving ? " is-leaving" : ""}${ended ? " is-complete" : ""}`} data-phase={phase} aria-hidden={leaving} aria-label="Abrindo o Sparky English">
       <div className="opening-backdrop" aria-hidden="true" />
       <div className="opening-stage" aria-hidden="true">
-        <Image className="opening-still opening-start" src={START} alt="" fill priority sizes="(max-width: 720px) 100vw, 65vh" />
-        <Image className="opening-still opening-finish" src={FINISH} alt="" fill sizes="(max-width: 720px) 100vw, 65vh" />
+        <Image className="opening-still opening-start" src={START} alt="" fill priority sizes="(max-width: 720px) 100vw, 75vh" />
+        <Image className="opening-still opening-finish" src={FINISH} alt="" fill sizes="(max-width: 720px) 100vw, 75vh" />
         {!videoFailed && (
           <video
             className="opening-video"

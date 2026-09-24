@@ -24,7 +24,7 @@
 .opening-stage {
   position: absolute;
   height: 100%;
-  width: min(100%, 66.67dvh);
+  width: min(100%, 75dvh);
   left: 50%;
   transform: translateX(-50%);
   overflow: hidden;
