@@ -41,7 +41,7 @@ export default function SparkyLoadingMark() {
           <circle className="pinky-mark-eye-light" cx="77.5" cy="69" r="1.2" />
         </g>
         <ellipse className="pinky-mark-nose" cx="60" cy="84" rx="4.5" ry="3.5" />
-        <path className="pinky-mark-mouth" d="M42 88C46 96 53 99 60 99C67 99 74 96 78 88" strokeWidth="2.6" strokeLinecap="round" />
+        <path className="pinky-mark-mouth" d="M44 91C51 99 67 100 78 90" strokeWidth="1.25" strokeLinecap="round" />
       </svg>
       <span className="sparky-loading-name sparky-loading-name--sparky">sparky</span>
       <span className="sparky-loading-name sparky-loading-name--pinky">pinky</span>
