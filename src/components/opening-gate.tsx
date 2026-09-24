@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import SparkyApp from "./sparky-app";
 import OpeningScene from "./opening-scene";
 
-const OPENING_SEEN_KEY = "sparky-opening-seen-v2";
+const OPENING_SEEN_KEY = "sparky-opening-seen-v3";
 
 export default function OpeningGate() {
   const [visible, setVisible] = useState(true);
@@ -32,7 +32,7 @@ export default function OpeningGate() {
 
   const onReplay = useCallback(() => {
     if (fallbackTimer.current !== null) window.clearTimeout(fallbackTimer.current);
-    fallbackTimer.current = window.setTimeout(onIntroFinished, 7000);
+    fallbackTimer.current = window.setTimeout(onIntroFinished, 5000);
   }, [onIntroFinished]);
 
   const onReady = useCallback(() => {
@@ -53,7 +53,7 @@ export default function OpeningGate() {
       const skipTimer = window.setTimeout(() => setVisible(false), 0);
       return () => window.clearTimeout(skipTimer);
     }
-    fallbackTimer.current = window.setTimeout(onIntroFinished, 7000);
+    fallbackTimer.current = window.setTimeout(onIntroFinished, 5000);
     return () => {
       if (fallbackTimer.current !== null) window.clearTimeout(fallbackTimer.current);
     };

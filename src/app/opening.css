@@ -6,125 +6,39 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 50% 48%, #12264a 0, #0a1732 58%, #081229 100%);
-  color: #fff8ed;
+  background: #081732;
   opacity: 1;
-  transition: opacity 360ms ease, transform 360ms ease;
+  transition: opacity 280ms ease;
 }
 
 html[data-opening-seen="true"] .opening-scene { display: none; }
-.opening-scene.is-leaving { opacity: 0; transform: scale(1.035); pointer-events: none; }
+.opening-scene.is-leaving { opacity: 0; pointer-events: none; }
 
-.opening-content {
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: max(30px, env(safe-area-inset-top)) 24px max(28px, env(safe-area-inset-bottom));
-}
-
-.opening-brand {
-  align-self: flex-start;
-  color: #e9e3d9;
-  font: 700 12px var(--font-geist-sans), sans-serif;
-  letter-spacing: .2em;
-}
-
-.opening-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(24px, 3vw, 44px);
-  transform: translateY(18px);
-}
-
-.opening-word {
-  position: relative;
-  width: max-content;
-  padding-right: .22em;
-  font: 600 clamp(76px, 18vw, 148px)/1 var(--font-music-grotesk), var(--font-geist-sans), sans-serif;
-  letter-spacing: -.075em;
-}
-
-.opening-letters {
+.opening-video {
   display: block;
-  clip-path: inset(0 100% 0 0);
-  animation: opening-write 1.65s cubic-bezier(.3,.05,.15,1) .55s both;
-}
-
-.opening-dot {
-  position: absolute;
-  left: -.02em;
-  bottom: .13em;
-  width: .13em;
-  height: .13em;
-  border-radius: 50%;
-  background: #ff947d;
-  box-shadow: 0 0 18px #ff947d55;
-  animation: opening-trace 1.65s cubic-bezier(.3,.05,.15,1) .55s both, opening-land .45s cubic-bezier(.2,1.6,.4,1) 2.2s both;
-}
-
-.opening-underline {
-  position: absolute;
-  left: .04em;
-  right: .16em;
-  bottom: -.14em;
-  height: 2px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #d8ab67, #ffe1a9);
-  transform-origin: left center;
-  animation: opening-line .9s cubic-bezier(.16,1,.3,1) 2.55s both;
-}
-
-.opening-translation {
-  color: #e8c99d;
-  font: 500 16px var(--font-geist-sans), sans-serif;
-  letter-spacing: .08em;
-  animation: opening-reveal .6s ease 3.25s both;
-}
-
-.opening-footer {
-  color: #d5dbe5;
-  font: 500 13px var(--font-geist-sans), sans-serif;
-  letter-spacing: .02em;
-  animation: opening-reveal .7s ease 3.45s both;
+  width: min(88vw, 49.5vh);
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: contain;
 }
 
 .opening-sound {
   position: absolute;
-  top: max(22px, env(safe-area-inset-top));
-  right: max(22px, env(safe-area-inset-right));
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 12px;
-  border: 1px solid #ffe6ae70;
-  border-radius: 999px;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #fff8ed77;
+  border-radius: 50%;
   background: #12264ac4;
   color: #fff8ed;
-  font: 600 12px var(--font-geist-sans), sans-serif;
   backdrop-filter: blur(10px);
   cursor: pointer;
 }
 .opening-sound:focus-visible { outline: 2px solid #ffe6ae; outline-offset: 3px; }
 
-@keyframes opening-write { to { clip-path: inset(0 0 0 0); } }
-@keyframes opening-trace { from { left: -.02em; } to { left: calc(100% - .14em); } }
-@keyframes opening-land { 50% { transform: translateY(-.16em) scale(1.15); } to { transform: translateY(0) scale(1); } }
-@keyframes opening-line { from { transform: scaleX(0); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
-@keyframes opening-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-@media (max-width: 720px) {
-  .opening-brand { font-size: 10px; }
-  .opening-sound { top: max(60px, calc(env(safe-area-inset-top) + 48px)); right: 18px; }
-  .opening-word { font-size: clamp(72px, 20vw, 112px); }
-  .opening-footer { font-size: 12px; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .opening-scene { transition: none; }
-  .opening-letters, .opening-dot, .opening-underline, .opening-translation, .opening-footer { animation: none; }
-  .opening-letters { clip-path: none; }
 }

@@ -6,9 +6,10 @@ test('first opening completes once and later visits enter directly', async ({ pa
   await page.goto('/');
   const opening = page.locator('.opening-scene');
   await expect(opening).toBeVisible();
-  await expect(opening.locator('.opening-letters')).toHaveText('hello');
-  await expect(opening).toHaveCount(0, { timeout: 8000 });
-  expect(await page.evaluate(() => localStorage.getItem('sparky-opening-seen-v2'))).toBe('1');
+  await expect(opening.locator('video')).toHaveAttribute('src', '/visuals/intro/sparky-opening.mp4');
+  await expect(opening).not.toContainText('Uma palavra abre caminhos');
+  await expect(opening).toHaveCount(0, { timeout: 6000 });
+  expect(await page.evaluate(() => localStorage.getItem('sparky-opening-seen-v3'))).toBe('1');
   await page.reload();
   await expect(opening).toHaveCount(0);
 });
@@ -19,5 +20,5 @@ test('reduced motion skips the opening', async ({ page }, info) => {
   await page.route('**/api/session', route => route.fulfill({ json: { authenticated: false } }));
   await page.goto('/');
   await expect(page.locator('.opening-scene')).toHaveCount(0);
-  expect(await page.evaluate(() => localStorage.getItem('sparky-opening-seen-v2'))).toBe('1');
+  expect(await page.evaluate(() => localStorage.getItem('sparky-opening-seen-v3'))).toBe('1');
 });
