@@ -15,6 +15,9 @@ export const approvedMusicFiles = {
   'stay-at-your-house/audio.mp3': 'dd2058d8bb819fc3ec67a641d42430ee926362f4af4c8a1bd9927c3ff7902498',
   'stay-at-your-house/video.mp4': 'd098996c0b4e495bb6361ed4a024cc47c2cac754f74dfbf6f38a0cccdb188e38',
   'stay-at-your-house/background.mp4': '49525f327f5bcc19d56907e2a930d1fdcd1902cec271ad78beaeaa9eec27d1e5',
+  'buttercup-local/manifest.json': '0b18d240926a837330b84b4eb6b11e5cdec87d09ebec5f5819743f83c3784993',
+  'buttercup-local/audio.mp3': '7161652e352f0e722160bcf296775844d6d8e5574af45fa5663eb7465e43616e',
+  'buttercup-local/video.mp4': '7a2a587272d61eece75fe857b6be4a46160385d224abbbfd79f9fabecb791bfc',
 };
 
 export async function verifyMusicRelease(directory = '.music-assets') {

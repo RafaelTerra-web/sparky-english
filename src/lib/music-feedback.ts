@@ -1,3 +1,10 @@
+/** One brief tap per accepted correct answer. Browsers cannot set motor strength. */
+export function vibrateMusicSuccess() {
+  if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
+  if (document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  try { navigator.vibrate(12); } catch { /* Optional feedback must never interrupt an answer. */ }
+}
+
 // A quiet, synthetic vinyl scratch. The song never enters this audio graph.
 export function createMusicFeedback() {
   let context: AudioContext | null = null;

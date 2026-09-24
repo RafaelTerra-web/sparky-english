@@ -1,5 +1,3 @@
-@import "tailwindcss";
-
 :root {
   --background: #f6f3ed;
   --foreground: #213934;
@@ -50,15 +48,20 @@
   --feedback-error-bg: var(--danger-soft);
   --feedback-error-text: var(--danger);
 }
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+  border: 0 solid;
 }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; tab-size: 4; }
+body { min-height: 100dvh; }
+button, input, select, textarea { color: inherit; }
+button { background: transparent; }
+img, svg, video, canvas { vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+dialog { margin: auto; }
+ol, ul { margin: 0; padding: 0; list-style: none; }
+a { text-decoration: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 body {
   margin: 0;
   background: var(--background);
@@ -69,7 +72,8 @@ body {
 }
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 button,
@@ -267,7 +271,7 @@ progress::-moz-progress-bar {
   overflow: hidden;
 }
 .login-page::before {
-  content: "";
+  content: none;
   width: 900px;
   height: 900px;
   border: 1px solid #57716455;
@@ -278,7 +282,7 @@ progress::-moz-progress-bar {
   pointer-events: none;
 }
 .login-page::after {
-  content: "";
+  content: none;
   width: 650px;
   height: 650px;
   background: #446b4d22;
@@ -323,10 +327,10 @@ progress::-moz-progress-bar {
   padding: 7px 12px;
 }
 .login-intro h1 {
-  font-family: Georgia, serif;
+  font-family: var(--font-geist-sans), sans-serif;
   font-size: clamp(38px, 4.4vw, 61px);
   letter-spacing: -1.6px;
-  font-weight: 400;
+  font-weight: 650;
   line-height: 1.08;
   margin: 22px 0;
 }
@@ -349,10 +353,10 @@ progress::-moz-progress-bar {
   background: #f4ecdb;
   color: #244337;
   width: 320px;
-  border-radius: 4px 22px 22px 22px;
+  border-radius: 6px;
   padding: 23px 26px;
-  transform: rotate(-3deg);
-  box-shadow: 0 15px 35px #00100b30;
+  transform: none;
+  border-left: 3px solid #bd744d;
 }
 .sample-note > span {
   font-size: 9px;
@@ -402,14 +406,11 @@ progress::-moz-progress-bar {
   margin-right: 4px;
 }
 .login-island {
-  border: 1px solid #ffffff22;
-  border-radius: 32px;
-  background: linear-gradient(130deg, #35584888, #081f1bb3);
+  border: 1px solid #ffffff26;
+  border-radius: 10px;
+  background: #183c33;
   padding: 42px 34px;
-  backdrop-filter: blur(24px);
-  box-shadow:
-    0 30px 70px #00150d50,
-    inset 0 1px 0 #ffffff14;
+  box-shadow: none;
 }
 .login-icon {
   width: 54px;
@@ -502,6 +503,7 @@ progress::-moz-progress-bar {
 /* The study workspace */
 .app-frame {
   display: flex;
+  width: 100%;
   min-height: 100dvh;
   max-width: 1600px;
   margin: auto;

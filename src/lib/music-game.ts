@@ -1,6 +1,12 @@
 import type { MusicLesson, MusicLine } from './music';
 
-export type GameDifficulty = 'guided' | 'challenge' | 'typing';
+export type GameDifficulty = 'level1' | 'level2' | 'level3' | 'level4' | 'quick' | 'guided' | 'challenge' | 'typing';
+export const levelRoundCounts = { level1: 12, level2: 20, level3: 28, level4: 32 } as const;
+// A short lead-in makes the next phrase legible without giving away the beat.
+export const LYRIC_PREVIEW_SECONDS = .7;
+export const ANSWER_LEAD_SECONDS = .25;
+export const musicSpeeds = [.5, .75, 1, 1.5, 2] as const;
+export const musicSpeedLabel = (speed: number) => `${String(speed).replace('.', ',')}×`;
 // Contrast close sounds/forms before falling back to other words in the lesson.
 const contrasts: Record<string, string[]> = {
   found: ['sound', 'round', 'bound'], dive: ['drive', 'hide', 'ride'],
@@ -26,7 +32,9 @@ export type MusicRound = {
   line: MusicLine;
   lineIndex: number;
   target: number;
+  targets: number[];
   answer: string;
+  answers: string[];
   options: string[];
   countdownStart: number;
   revealAt: number;
@@ -35,22 +43,41 @@ export type MusicRound = {
   index: number;
 };
 
-type Candidate = Omit<MusicRound, 'answer' | 'options' | 'index'> & { score: number };
+export function musicAnswerOpens(round: MusicRound, speed = 1) {
+  return Math.max(round.revealAt, round.line.words[round.targets[0]].start - ANSWER_LEAD_SECONDS * speed, 0);
+}
+
+type Candidate = Omit<MusicRound, 'answer' | 'answers' | 'options' | 'index'> & { score: number };
 
 export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty, seed = 1): MusicRound[] {
   const random = seededRandom(seed);
-  const candidates: Candidate[] = lesson.lines.flatMap((line, lineIndex) =>
-    line.words.map((word, target) => ({
-      line,
-      lineIndex,
-      target,
-      countdownStart: Math.max(0, line.start - COUNTDOWN_SECONDS),
-      revealAt: line.start,
-      opens: word.end,
-      closes: word.end + RESPONSE_SECONDS,
-      score: random(),
-    })),
-  ).sort((a, b) => a.closes - b.closes || a.lineIndex - b.lineIndex || a.target - b.target);
+  const modern = difficulty in levelRoundCounts || difficulty === 'quick';
+  const candidates: Candidate[] = lesson.lines.flatMap((line, lineIndex) => {
+    const groups = difficulty === 'quick'
+      ? [line.words.map((_, target) => target)]
+      : line.words.map((_, target) => {
+          const pair = line.words.length > 1 && (difficulty === 'level4' || (difficulty === 'level3' && (lineIndex + target + seed) % 3 === 0));
+          if (!pair) return [target];
+          const companion = target < line.words.length - 1 ? target + 1 : target - 1;
+          return [target, companion].sort((a, b) => a - b);
+        });
+    const seen = new Set<string>();
+    return groups.filter(targets => {
+      const key = targets.join(':');
+      if (!targets.length || seen.has(key)) return false;
+      seen.add(key); return true;
+    }).map(targets => {
+      const first = line.words[targets[0]], last = line.words[targets.at(-1)!];
+      return {
+        line, lineIndex, target: targets[0], targets,
+        countdownStart: Math.max(0, line.start - (modern ? LYRIC_PREVIEW_SECONDS : COUNTDOWN_SECONDS)),
+        revealAt: modern ? Math.max(0, line.start - LYRIC_PREVIEW_SECONDS) : line.start,
+        opens: modern ? Math.max(0, first.start - ANSWER_LEAD_SECONDS) : last.end,
+        closes: last.end + (difficulty === 'level4' ? 2 : difficulty === 'quick' ? 1.2 : RESPONSE_SECONDS),
+        score: random(),
+      };
+    });
+  }).sort((a, b) => a.closes - b.closes || a.lineIndex - b.lineIndex || a.target - b.target);
 
   // Weighted interval scheduling gives every session a seeded variation while
   // guaranteeing that countdown, lyric and answer windows never overlap.
@@ -61,7 +88,7 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
     }
     return match;
   });
-  const requested = Math.min(GAME_ROUND_COUNT, lesson.lines.length);
+  const requested = Math.min(difficulty === 'quick' ? lesson.lines.length : levelRoundCounts[difficulty as keyof typeof levelRoundCounts] ?? GAME_ROUND_COUNT, lesson.lines.length);
   const scores = Array.from({ length: candidates.length + 1 }, () => Array(requested + 1).fill(Number.NEGATIVE_INFINITY));
   const took = Array.from({ length: candidates.length + 1 }, () => Array(requested + 1).fill(false));
   scores[0][0] = 0;
@@ -87,18 +114,52 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
     count--;
   }
   selected.reverse();
+  // Level 4 increases the frequency of double blanks without turning every
+  // phrase into the same pattern. Its candidates are scheduled with the wider
+  // two-word window first, so reducing alternating rounds to one word cannot
+  // introduce timing collisions.
+  if (difficulty === 'level4') selected.forEach((candidate, index) => {
+    if (index % 2 === 0) candidate.targets = [candidate.target];
+  });
+  if (difficulty === 'level3' && selected.length > 1 && selected.every(candidate => candidate.targets.length > 1)) {
+    selected[0].targets = [selected[0].target];
+  }
 
   const pool = [...new Set(lesson.lines.flatMap(l => l.words.map(w => normalizeAnswer(w.text))))]
     .filter(w => w && w.length >= 3);
   return selected.map((candidate, index) => {
-    const { line, lineIndex, target, countdownStart, revealAt, opens, closes } = candidate;
-    const answer = normalizeAnswer(line.words[target].text);
-    const shuffled = pool.filter(w => w !== answer);
+    const { line, lineIndex, target, targets, countdownStart, revealAt, opens, closes } = candidate;
+    const answers = targets.map(wordIndex => normalizeAnswer(line.words[wordIndex].text));
+    const answer = answers.join(' · ');
+    const shuffled = pool.filter(w => !answers.includes(w));
     for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
-    const alternatives = [...new Set([...(contrasts[answer] || []), ...shuffled])].filter(w => w !== answer).slice(0, difficulty === 'guided' ? 1 : 3);
+    const alternatives: string[] = [];
+    const add = (words: string[]) => { const value = words.join(' · '); if (value !== answer && !alternatives.includes(value)) alternatives.push(value); };
+    if (difficulty === 'quick') {
+      for (const other of lesson.lines) {
+        add(other.words.map(word => normalizeAnswer(word.text)));
+        if (alternatives.length >= 3) break;
+      }
+      if (alternatives.length < 3) add([...answers].reverse());
+      if (alternatives.length < 3) add([...answers.slice(1), answers[0]]);
+      if (alternatives.length < 3 && answers.length > 1) add(answers.map(() => answers[0]));
+      if (alternatives.length < 3 && answers.length > 1) add(answers.map(() => answers.at(-1)!));
+    }
+    for (let attempt = 0; alternatives.length < (difficulty === 'guided' ? 1 : 3) && attempt < 40; attempt++) {
+      if (answers.length === 1) {
+        const replacement = [...(contrasts[answers[0]] || []), ...shuffled][attempt];
+        if (replacement) add([replacement]);
+      } else {
+        add(answers.map((word, slot) => {
+          const replacements = shuffled.filter(value => value !== word);
+          return replacements[(attempt + slot * 3) % Math.max(1, replacements.length)] ?? word;
+        }));
+      }
+    }
     const options = [...alternatives];
     options.splice(Math.floor(random() * (alternatives.length + 1)), 0, answer);
-    return { line, lineIndex, target, countdownStart, revealAt, opens, closes, answer, options, index };
+    const extendedClose = modern ? Math.min(closes + 1.7, selected[index + 1]?.countdownStart ?? lesson.duration, lesson.duration) : closes;
+    return { line, lineIndex, target, targets, countdownStart, revealAt, opens, closes: extendedClose, answer, answers, options, index };
   });
 }
 

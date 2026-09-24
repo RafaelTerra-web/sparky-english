@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="Buttercup — Jack Stauber">
+  <rect width="1200" height="1200" fill="#f1dfa3"/>
+  <path d="M-80 315C161 121 379 153 538 300s311 211 742-3v521c-180 117-368 121-566-8S308 738-80 1007Z" fill="#513d71"/>
+  <path d="M-45 236C193 369 372 357 539 208s356-209 705 36" fill="none" stroke="#dd6d43" stroke-width="104"/>
+  <path d="M-56 897c194-151 389-151 579 1s398 157 722-16" fill="none" stroke="#6eaa9c" stroke-width="82"/>
+  <circle cx="740" cy="464" r="193" fill="#f6c939"/>
+  <circle cx="740" cy="464" r="93" fill="#d55c3d"/>
+  <circle cx="740" cy="464" r="25" fill="#2c2834"/>
+  <text x="74" y="155" fill="#2c2834" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" letter-spacing="11">JACK STAUBER</text>
+  <text x="68" y="1066" fill="#fff8e7" font-family="Arial, Helvetica, sans-serif" font-size="174" font-weight="900" letter-spacing="-11">BUTTER</text>
+  <text x="68" y="1175" fill="#fff8e7" font-family="Arial, Helvetica, sans-serif" font-size="174" font-weight="900" letter-spacing="-11">CUP</text>
+</svg>

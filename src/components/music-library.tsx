@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Volume2, ChevronDown, SkipBack, SkipForward, SlidersHorizontal, Headphones, ArrowRight, Play, Pause, RotateCcw, Bookmark, } from 'lucide-react';
 import MusicGame from './music-game';
-import MusicScene from './music-scene';
 import MusicAchievements from './music-achievements';
 import { recordMusicPerformance } from '@/lib/music-performance';
+import { musicArtwork } from '@/lib/music-art';
+import styles from './music-shelf.module.css';
+import { musicSpeeds, musicSpeedLabel } from '@/lib/music-game';
 import { t } from '@/lib/interface-language';
 import { activeCue, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
 
@@ -31,12 +34,16 @@ export default function MusicLibrary({ userId, level }: { userId: string; level:
   function openSession(lesson: MusicLesson) { try { localStorage.setItem(`sparky-music:active:${userId}`, lesson.id); } catch {} setActive(lesson); }
   function closeSession() { try { localStorage.removeItem(`sparky-music:active:${userId}`); } catch {} setActive(null); }
   const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic}`.toLowerCase().includes(query.toLowerCase()));
-  return <><section className="music-library">
-    <div className="music-hero music-observatory">{!active && <MusicScene playing />}<div className="music-hero-copy"><span className="music-kicker"><Headphones size={16} /> SPARKY · MUSIC LAB</span><h1>{t('Ouça. Sinta.')}<br /><em>{t('Aprenda.')}</em></h1><p>{t('Música inteira, letra viva e pequenas descobertas. Entre no inglês pelo som.')}</p><div className="music-hero-tags"><span>{t('No seu ritmo')}</span><span>{t('Letra sincronizada')}</span><span>{t('24 desafios')}</span></div></div><span className="music-hero-edition" aria-hidden="true">THE LISTENING ROOM · VOL. 01</span></div>
+
+  return <><section className={styles.shelf} aria-labelledby="music-heading">
+    <header className={styles.heading}>
+      <div><p className={styles.overline}><Headphones size={17} /> {t('Inglês pela escuta')}</p><h1 id="music-heading">Music Lab<span aria-hidden="true">.</span></h1><p>{t('Reconheça palavras nas músicas que você gosta. Uma frase de cada vez.')}</p></div>
+      <div className={styles.method}><span>01 <strong>{t('Ouça a frase')}</strong></span><span>02 <strong>{t('Complete a letra')}</strong></span><span>03 <strong>{t('Descubra o sentido')}</strong></span></div>
+    </header>
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
-    <div className="music-toolbar"><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={t('Música, artista ou tema')} /></label><label>{t('Nível')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
-    <div className="music-collection-heading"><div><span className="music-kicker">{t('SUA SELEÇÃO')}</span><h2>{t('Escolha o próximo play.')}</h2></div><p className="music-muted">{t('Seu nível sugerido:')} {level}</p></div>
-    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p>{t('Nenhuma música disponível neste filtro.')}</p> : <div className="music-grid">{visible.map((lesson, index) => <button key={lesson.id} className="music-card" data-track-id={lesson.id} data-tone={lesson.id === 'heartless-local' ? 'violet' : 'emerald'} onClick={() => openSession(lesson)}><div className="music-cover"><span className="music-cover-number" aria-hidden="true">{String(index + 1).padStart(2, '0')} / SESSIONS</span><div className="music-card-disc" aria-hidden="true"><i /></div><span>{lesson.level}</span><span className="music-cover-play" aria-hidden="true"><Play size={20} fill="currentColor" /></span></div><div className="music-card-copy"><p className="music-muted">{lesson.artist} · {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</p><h2>{lesson.title}</h2><p>{t(lesson.topic)}</p><strong>{t('Abrir sessão')} <ArrowRight size={16} /></strong></div></button>)}</div>}
+    <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={t('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
+    <div className={styles.collection}><h2>{t('Escolha uma música')}</h2><p>{t('Seu nível:')} <strong>{level}</strong></p></div>
+    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p role="status">{t('Nenhuma música disponível neste filtro.')}</p> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>}
   </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={closeSession} />}</>;
 }
 
@@ -193,7 +200,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon" aria-label="Trecho anterior" onClick={() => { chooseLine(Math.max(0, (activeLine >= 0 ? activeLine : selected) - 1)); setFollow(true); }}><SkipBack size={24} /></button>
           <button className="listen-play" aria-label={playing ? 'Pausar música' : 'Tocar música'} onClick={() => playing ? audio.current?.pause() : void play()}>{playing ? <Pause size={27} fill="currentColor" /> : <Play size={27} fill="currentColor" />}</button>
           <button className="listen-icon" aria-label="Próximo trecho" onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
-          <button className="listen-icon listen-speed" aria-label="Velocidade" onClick={() => changeSpeed(speed === 1 ? .75 : speed === .75 ? .5 : 1)}>{speed === 1 ? '1×' : speed === .75 ? '0,75×' : '0,5×'}</button>
+          <button className="listen-icon listen-speed" aria-label={`Velocidade ${musicSpeedLabel(speed)}`} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
         </div>
         {audioError && <div className="listen-error" role="alert">{audioError}<button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>Tentar novamente</button></div>}
       </footer>

@@ -23,7 +23,7 @@ test('iPhone restores the music room after reload and keeps mobile visuals light
   test.skip(info.project.name !== 'iphone');
   await account(page);
   await page.getByRole('navigation', { name: 'Navegação no celular' }).getByRole('button', { name: 'Músicas' }).click();
-  await page.getByRole('button', { name: /Abrir sessão/ }).click();
+  await page.getByRole('button', { name: /Praticar com Test Song/ }).click();
   const room = page.getByRole('dialog', { name: 'Test Song' });
   await expect(room).toBeVisible();
   await expect(room.locator('.music-scene')).toHaveAttribute('data-renderer', 'static');

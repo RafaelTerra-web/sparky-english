@@ -14,6 +14,13 @@ export function pushAccountKey(userId: string) {
   return createHash('sha256').update(`google:${userId}`).digest('hex');
 }
 
+// Push records share the existing service-role-only store so activation does
+// not depend on a new database migration being applied after deployment.
+export const PUSH_TRACK_PREFIX = 'push-sub-';
+export function pushTrackId(endpoint: string) {
+  return `${PUSH_TRACK_PREFIX}${createHash('sha256').update(endpoint).digest('hex')}`;
+}
+
 export function pushDatabase() {
   if (!pushConfigured()) throw Error('push-unavailable');
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });

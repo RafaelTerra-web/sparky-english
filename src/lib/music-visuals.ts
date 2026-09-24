@@ -42,6 +42,17 @@ const sections: Record<string, Section[]> = {
     { start: 180.36, kind: 'chorus', label: 'Refrão final', story: 'A virada da história.' },
     { start: 213.06, kind: 'outro', label: 'Final', story: 'Deixe o último som ficar.' },
   ],
+  'buttercup-local': [
+    { start: 0, kind: 'intro', label: 'Introdução', story: 'Um recorte lo-fi antes da primeira frase.' },
+    { start: 18.24, kind: 'verse', label: 'Verso 1', story: 'A voz entra em frases curtas e elásticas.' },
+    { start: 34.76, kind: 'build', label: 'Pré-refrão', story: 'A repetição ganha tensão, palavra por palavra.' },
+    { start: 48.18, kind: 'chorus', label: 'Refrão', story: 'O pulso abre espaço para a frase central.' },
+    { start: 82, kind: 'verse', label: 'Verso 2', story: 'A canção volta com outra imagem e o mesmo balanço.' },
+    { start: 97.86, kind: 'build', label: 'Pré-refrão', story: 'O refrão se aproxima outra vez.' },
+    { start: 112.52, kind: 'chorus', label: 'Refrão final', story: 'Mantenha o ritmo e deixe a última repetição assentar.' },
+    { start: 136, kind: 'instrumental', label: 'Instrumental', story: 'A letra sai de cena e a textura fica.' },
+    { start: 190, kind: 'outro', label: 'Final', story: 'O som se dissolve, sem interromper o clima.' },
+  ],
 };
 
 export function musicSectionAt(trackId: string, clock: number): Section {
@@ -64,6 +75,13 @@ export function musicEnergyAt(envelope: { step: number; values: number[] } | und
   const current = envelope.values[index] ?? 0;
   const next = envelope.values[index + 1] ?? current;
   return Math.max(0, Math.min(1, (current + (next - current) * (position - index)) / 100));
+}
+
+export function musicBeatAt(envelope: { step: number; values: number[] } | undefined, clock: number) {
+  if (!envelope || !Number.isFinite(clock)) return 0;
+  const energy = musicEnergyAt(envelope, clock);
+  const previous = musicEnergyAt(envelope, Math.max(0, clock - envelope.step * 1.5));
+  return Math.max(0, Math.min(1, (energy - previous) * 4.5 + energy * .16));
 }
 
 export function musicVisualMoment(lines: Pick<MusicLine, 'start' | 'end'>[], index: number, clock: number, energy: number) {

@@ -25,7 +25,7 @@ function key() {
   return createHash("sha256").update(secret).digest();
 }
 function invitedEmails() {
-  return [process.env.SPARKY_ALLOWED_EMAILS, process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS, process.env.SPARKY_INVITED_EMAILS]
+  return [process.env.SPARKY_ALLOWED_EMAILS, process.env.SPARKY_ADDITIONAL_ALLOWED_EMAILS, process.env.SPARKY_INVITED_EMAILS, process.env.SPARKY_ACCESS_EMAILS]
     .filter(Boolean).join(",").split(",").map(item => item.trim().toLowerCase()).filter(Boolean);
 }
 export function googleConfigured() {
