@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { OPENING_MASCOT_KEY } from "@/lib/opening-mascot";
 import { Geist, Geist_Mono, Space_Grotesk, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 import "./course.css";
@@ -66,7 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{document.documentElement.dataset.openingSeen=localStorage.getItem('sparky-opening-seen-v4')==='1'?'true':'false'}catch(e){document.documentElement.dataset.openingSeen='false'}})()`,
+            __html: `(function(){try{document.documentElement.dataset.openingSeen=localStorage.getItem('sparky-opening-seen-v4')==='1'?'true':'false';document.documentElement.dataset.openingMascot=localStorage.getItem('${OPENING_MASCOT_KEY}')==='pinky'?'pinky':'sparky'}catch(e){document.documentElement.dataset.openingSeen='false';document.documentElement.dataset.openingMascot='sparky'}})()`,
           }}
         />
         <script

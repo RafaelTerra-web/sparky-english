@@ -34,6 +34,7 @@ import type { SparkyUser } from "@/lib/auth-session";
 import { ThemePreferenceControl, ThemeQuickToggle, resetAppearanceSession } from "./theme-preference";
 import { MotionTransition, StreakBadge, StreakCelebration } from "./motion-pack";
 import SparkyLoadingMark from "./sparky-loading-mark";
+import { rememberOpeningMascot, resetOpeningMascot } from "@/lib/opening-mascot";
 import { LevelUpCelebration } from "./level-up-celebration";
 import { levels, levelDescriptions } from "@/lib/levels";
 import {
@@ -215,6 +216,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               if (latestResponse.ok) rewards = await latestResponse.json() as PublicRewardState;
             }
             setReward(rewards);
+            rememberOpeningMascot(rewards.mascot);
             setProgress({
               level: local.level,
               completed: rewards.completed,
@@ -239,6 +241,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           } catch {
             /* Storage may be blocked by the browser. */
           }
+          resetOpeningMascot();
         }
       })
       .catch(() => {
@@ -311,6 +314,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       if (response.ok) {
         const fresh = await response.json() as PublicRewardState;
         setReward(fresh);
+        rememberOpeningMascot(fresh.mascot);
         setProgress(current => ({ ...current, completed: fresh.completed, reviews: fresh.reviews }));
       }
     } finally { window.dispatchEvent(new Event('sparky:refresh')); }
@@ -328,6 +332,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       } catch {
         /* Private data is also removed from memory below. */
       }
+      resetOpeningMascot();
       try {
         if ("caches" in window)
           await Promise.all(
@@ -376,6 +381,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         return null;
       }
       setReward(data);
+      if (data.mascot === "sparky" || data.mascot === "pinky") rememberOpeningMascot(data.mascot);
       save({
         level: progress.level,
         completed: data.completed,
@@ -460,7 +466,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   if (!user) return <LoginScreen />;
   if (needsOnboarding) return <Onboarding editing={Boolean(learnerProfile?.onboardingCompleted)} onCancel={() => { if (!learnerProfile?.onboardingCompleted) { void logout(); return; } void fetch("/api/onboarding", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"cancel-edit"})}).then(r=>{if(r.ok)setNeedsOnboarding(false);else setNotice("Não foi possível fechar o ajuste.");}); }} onComplete={profile => {
     setLearnerProfile(profile); setProgress(current => ({...current,level:profile.level}));
-    setReward(current => ({...current,mascot:profile.mascot}));setNeedsOnboarding(false);
+    setReward(current => ({...current,mascot:profile.mascot}));rememberOpeningMascot(profile.mascot);setNeedsOnboarding(false);
   }} />;
 
   const completed = Object.keys(progress.completed).length;

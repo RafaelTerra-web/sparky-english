@@ -23,6 +23,12 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
 .sparky-loading-mark {
   --sparky-mark-face: var(--surface);
   --sparky-mark-ink: var(--foreground);
+  --pinky-fur: color-mix(in srgb, #efa1b8 80%, var(--accent) 20%);
+  --pinky-ear: color-mix(in srgb, var(--pinky-fur) 72%, var(--foreground) 28%);
+  --pinky-ear-inner: color-mix(in srgb, var(--pinky-fur) 35%, var(--surface) 65%);
+  --pinky-muzzle: color-mix(in srgb, var(--surface) 84%, var(--pinky-fur) 16%);
+  --pinky-blush: color-mix(in srgb, #ed6d91 60%, var(--accent) 40%);
+  --pinky-ink: var(--foreground);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,9 +41,19 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
 html[data-theme="dark"] .sparky-loading-mark {
   --sparky-mark-face: var(--foreground);
   --sparky-mark-ink: var(--background);
+  --pinky-fur: color-mix(in srgb, #f6acc3 80%, var(--accent) 20%);
+  --pinky-ear: color-mix(in srgb, var(--pinky-fur) 72%, var(--background) 28%);
+  --pinky-ear-inner: color-mix(in srgb, var(--pinky-fur) 50%, var(--foreground) 50%);
+  --pinky-muzzle: color-mix(in srgb, var(--foreground) 82%, var(--pinky-fur) 18%);
+  --pinky-ink: var(--background);
 }
 
 .sparky-loading-face { width: 112px; height: 112px; overflow: visible; }
+.sparky-loading-face--pinky, .sparky-loading-name--pinky { display: none; }
+html[data-opening-mascot="pinky"] .sparky-loading-face--sparky,
+html[data-opening-mascot="pinky"] .sparky-loading-name--sparky { display: none; }
+html[data-opening-mascot="pinky"] .sparky-loading-face--pinky { display: block; }
+html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline; }
 .sparky-mark-ear { fill: var(--primary); }
 .sparky-mark-ear-inner { fill: var(--accent-soft); }
 .sparky-mark-face, .sparky-mark-sclera { fill: var(--sparky-mark-face); }
@@ -46,6 +62,14 @@ html[data-theme="dark"] .sparky-loading-mark {
 .sparky-mark-mouth { stroke: var(--sparky-mark-ink); }
 .sparky-mark-scarf-line { stroke: var(--accent); }
 .sparky-mark-scarf { fill: var(--accent); }
+.pinky-mark-ear { fill: var(--pinky-ear); }
+.pinky-mark-ear-inner { fill: var(--pinky-ear-inner); }
+.pinky-mark-fur { fill: var(--pinky-fur); }
+.pinky-mark-muzzle { fill: var(--pinky-muzzle); }
+.pinky-mark-blush { fill: var(--pinky-blush); opacity: .45; }
+.pinky-mark-eye { fill: var(--pinky-ink); }
+.pinky-mark-eye-light { fill: var(--pinky-ear-inner); }
+.pinky-mark-mouth { stroke: var(--pinky-ink); }
 .sparky-loading-name {
   margin-top: 6px;
   color: var(--foreground);
@@ -69,22 +93,33 @@ html[data-theme="dark"] .sparky-loading-mark {
 .sparky-loading-eyes {
   transform-box: view-box;
   transform-origin: 60px 62px;
-  animation: sparky-loading-blink 2.6s ease-in-out infinite;
+  animation: sparky-loading-blink 1.8s ease-in-out infinite;
 }
+.pinky-loading-eyes { transform-origin: 60px 72px; }
 .sparky-loading-scarf {
   transform-box: view-box;
   transform-origin: 77px 98px;
-  animation: sparky-loading-scarf 2.6s ease-in-out infinite;
+  animation: sparky-loading-scarf 1.8s ease-in-out infinite;
+}
+.pinky-loading-ear-right {
+  transform-box: view-box;
+  transform-origin: 77px 59px;
+  animation: pinky-loading-ear 1.8s ease-in-out infinite;
 }
 
 @keyframes sparky-loading-blink {
-  0%, 32%, 39%, 100% { transform: scaleY(1); }
-  35% { transform: scaleY(.08); }
+  0%, 18%, 31%, 100% { transform: scaleY(1); }
+  24% { transform: scaleY(.08); }
 }
 @keyframes sparky-loading-scarf {
-  0%, 20%, 65%, 100% { transform: rotate(0deg); }
-  40% { transform: rotate(-9deg); }
-  54% { transform: rotate(3deg); }
+  0%, 18%, 60%, 100% { transform: rotate(0deg); }
+  32% { transform: rotate(-9deg); }
+  45% { transform: rotate(3deg); }
+}
+@keyframes pinky-loading-ear {
+  0%, 18%, 60%, 100% { transform: rotate(0deg); }
+  32% { transform: rotate(6deg); }
+  45% { transform: rotate(-2deg); }
 }
 
 .opening-sound {
@@ -105,5 +140,5 @@ html[data-theme="dark"] .sparky-loading-mark {
 
 @media (prefers-reduced-motion: reduce) {
   .opening-scene { transition: none; }
-  .sparky-loading-eyes, .sparky-loading-scarf { animation: none; }
+  .sparky-loading-eyes, .sparky-loading-scarf, .pinky-loading-ear-right { animation: none; }
 }

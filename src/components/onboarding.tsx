@@ -3,6 +3,7 @@ import { t, targetText, localizeAttribute, useSupportLanguage, supportT, getSupp
 import { useEffect, useRef, useState } from "react";
 import { MascotFigure } from "./mascot-studio";
 import MascotMoment from "./mascot-moment";
+import { rememberOpeningMascot } from "@/lib/opening-mascot";
 import {
   onboardingLevels,
   onboardingSteps,
@@ -98,6 +99,7 @@ export default function Onboarding({
         return null;
       }
       setSnapshot(next);
+      if (next.draft?.mascot === "sparky" || next.draft?.mascot === "pinky") rememberOpeningMascot(next.draft.mascot);
       return next as Snapshot;
     } catch (e) {
       setError(
@@ -130,6 +132,7 @@ export default function Onboarding({
         }
         if (active) {
           setSnapshot(data);
+          if (data.draft?.mascot === "sparky" || data.draft?.mascot === "pinky") rememberOpeningMascot(data.draft.mascot);
           setName(data.draft?.name ?? "");
           setAge(data.draft?.age?.toString() ?? "");
           setConsent(data.draft?.guardianConsent ?? false);
