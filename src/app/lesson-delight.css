@@ -1,0 +1,130 @@
+/* Small responses that make learning progress tangible without delaying navigation. */
+html[data-palette] .today-overview .next-lesson .lesson-start-button {
+  position: relative;
+  overflow: hidden;
+  min-height: 52px;
+  border: 1px solid color-mix(in srgb, var(--accent) 76%, var(--on-accent));
+  border-radius: 12px;
+  padding: 13px 20px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  line-height: 1.25;
+  box-shadow: inset 0 1px color-mix(in srgb, var(--on-accent) 28%, transparent), 0 4px 0 color-mix(in srgb, var(--accent) 72%, #17121b), 0 10px 22px var(--shadow-color);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+}
+html[data-palette] .today-overview .next-lesson .lesson-start-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(125deg, color-mix(in srgb, var(--on-accent) 16%, transparent), transparent 42%);
+  opacity: .55;
+}
+html[data-palette] .today-overview .next-lesson .lesson-start-button > svg {
+  flex: none;
+  transition: transform 170ms ease-out;
+}
+html[data-palette] .today-overview .next-lesson .lesson-start-button:is(:hover, :focus-visible) > svg { transform: translateX(4px); }
+html[data-palette] .today-overview .next-lesson .lesson-start-button:active {
+  transform: translateY(3px) scale(.985);
+  box-shadow: inset 0 1px color-mix(in srgb, var(--on-accent) 20%, transparent), 0 1px 0 color-mix(in srgb, var(--accent) 72%, #17121b), 0 4px 10px var(--shadow-color);
+}
+html[data-palette] .today-overview .next-lesson .lesson-start-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 5px;
+}
+
+.lesson-native-progress {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.lesson-progress-track {
+  display: block;
+  width: 100%;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-strong);
+}
+.lesson-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 260ms cubic-bezier(.2, .7, .25, 1);
+}
+.answer-feedback.correct.is-fresh { animation: lesson-correct-glow 520ms ease-out both; }
+@keyframes lesson-correct-glow {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 28%, transparent); }
+  55% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 12%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.lesson-completion-moment {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 44px;
+  align-items: start;
+  gap: 13px;
+  margin: 0 0 18px;
+  padding: 17px 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 10px 30px var(--shadow-color);
+  animation: lesson-moment-appear 280ms ease-out both;
+}
+.lesson-completion-symbol {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--success-soft);
+  color: var(--success);
+}
+.lesson-completion-copy { min-width: 0; }
+.lesson-completion-copy h2 { margin: 4px 0 5px; font-size: clamp(18px, 2.2vw, 23px); line-height: 1.22; }
+.lesson-completion-copy > p:not(.eyebrow) { color: var(--muted); line-height: 1.45; }
+.lesson-completion-details { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 10px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.lesson-completion-details strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+.lesson-completion-close { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: transparent; color: var(--muted); }
+.lesson-completion-close:hover { background: var(--surface-soft); color: var(--foreground); }
+.lesson-completion-close:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+@keyframes lesson-moment-appear {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.interface-sound-setting { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: center; cursor: pointer; }
+.interface-sound-setting > span { font-weight: 600; }
+.interface-sound-setting > input { width: 22px; height: 22px; margin: 0 auto; accent-color: var(--accent); cursor: pointer; }
+.interface-sound-setting > input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.interface-sound-setting > small { grid-column: 1 / -1; color: var(--muted); line-height: 1.4; }
+
+@media (max-width: 600px) {
+  html[data-palette] .today-overview .next-lesson .lesson-start-button { width: 100%; }
+  .lesson-completion-moment { grid-template-columns: 32px minmax(0, 1fr) 44px; gap: 9px; padding: 14px 10px; }
+  .lesson-completion-symbol { width: 32px; height: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-palette] .today-overview .next-lesson .lesson-start-button,
+  html[data-palette] .today-overview .next-lesson .lesson-start-button > svg,
+  .lesson-progress-track > span { transition: none; }
+  html[data-palette] .today-overview .next-lesson .lesson-start-button:is(:hover, :focus-visible) > svg,
+  html[data-palette] .today-overview .next-lesson .lesson-start-button:active { transform: none; }
+  .lesson-completion-moment, .answer-feedback.correct.is-fresh { animation: none; }
+}
+@media (forced-colors: active) {
+  .lesson-progress-track { border: 1px solid CanvasText; }
+  .lesson-progress-track > span { background: Highlight; }
+  .lesson-completion-moment, html[data-palette] .today-overview .next-lesson .lesson-start-button { border: 1px solid CanvasText; }
+}

@@ -90,6 +90,7 @@ export async function POST(request: Request) {
   let reason = "updated";
   let streakAdvanced = false;
   let streakMilestone = false;
+  let independent: boolean | undefined;
   let shouldPersist = true;
   try {
     if (body.action === "check-in") {
@@ -106,6 +107,7 @@ export async function POST(request: Request) {
       if (typeof body.receipt !== "string") throw new Error("study-incomplete");
       const proof = await unseal(body.receipt, `study:${value.user.id}`);
       const quality = verifyCompletion(proof?.study as StudyReceipt | null, body.lessonId, body.review);
+      independent = quality.independent;
       const result = completeStudy(state, body.lessonId, body.review, new Date(), quality.independent);
       state = result.state;
       earned = result.earned;
@@ -162,7 +164,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: code }, { status: code === "progress-conflict" ? 409 : 503 });
   }
   return NextResponse.json(
-    { ...publicRewardState(state), earned, spent, reason, streakAdvanced, streakMilestone, storage: value.storage },
+    { ...publicRewardState(state), earned, spent, reason, independent, streakAdvanced, streakMilestone, storage: value.storage },
     { headers: { "cache-control": "private, no-store" } },
   );
 }

@@ -18,6 +18,7 @@ import { ConversationListening } from "./conversation-listening";
 import { ConversationTipCard } from "./conversation-tip";
 import { tipForLesson } from "@/lib/conversation-tips";
 import { lessonSteps, migrateLessonCheckpoint, lessonFlowVersion } from "@/lib/lesson-flow";
+import { primeInterfaceSound } from "@/lib/interface-sound";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
@@ -61,6 +62,7 @@ export default function LessonPlayer({
   const [tokens, setTokens] = useState<number[]>(initial?.tokens || []);
   const [checked, setChecked] = useState(Boolean(initial?.checked));
   const [correct, setCorrect] = useState(Boolean(initial?.correct));
+  const [freshCorrectStep, setFreshCorrectStep] = useState<number | null>(null);
   const [translation, setTranslation] = useState(Boolean(initial?.translation));
   const [assisted, setAssisted] = useState(Boolean(initial?.assisted));
   const [contextVisible, setContextVisible] = useState(Boolean(initial?.contextVisible));
@@ -112,6 +114,7 @@ export default function LessonPlayer({
     });
   }
   function moveTo(target: number) {
+    setFreshCorrectStep(null);
     history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
     const previous = history.current[target];
     const alreadyPassed = target < furthestIndex.current && isExercise(steps[target]);
@@ -157,6 +160,7 @@ export default function LessonPlayer({
           throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Tente novamente; sua resposta continua aqui.");
         }
         setCorrect(result.correct); setReceipt(result.receipt); setChecked(true);
+        setFreshCorrectStep(result.correct ? index : null);
         const ok = updateWorkspace(userId, current => ({ ...current, attempts: [...current.attempts, {
           id: crypto.randomUUID(), lessonId: lesson.id, stepId: exerciseId(lesson, step), answer: selected,
           correct: result.correct, assisted, review, createdAt: new Date().toISOString(), contentVersion, evaluationVersion: result.evaluationVersion,
@@ -172,6 +176,7 @@ export default function LessonPlayer({
     if (step.kind === "production") saveWriting();
     if (index === steps.length - 1) {
       saveWriting();
+      primeInterfaceSound();
       try {
         const finished = await onFinish(receipt);
         if (finished) updateWorkspace(userId, current => {
@@ -210,10 +215,12 @@ export default function LessonPlayer({
         <div>
           <p lang={getSupportLocale()}>{supportT(review ? "Revisão" : lesson.title)}</p>
           <progress
+            className="lesson-native-progress"
             value={index + 1}
             max={steps.length}
             aria-label={localizeAttribute("Etapas da lição")}
           />
+          <span className="lesson-progress-track" aria-hidden="true"><span style={{ width: `${((index + 1) / steps.length) * 100}%` }} /></span>
         </div>
         <span>
           {t(index + 1)}/{t(steps.length)}
@@ -448,7 +455,7 @@ export default function LessonPlayer({
         )}
         {checked && (
           <div
-            className={`answer-feedback ${correct ? "correct" : "retry"}`}
+            className={`answer-feedback ${correct ? "correct" : "retry"}${correct && freshCorrectStep === index ? " is-fresh" : ""}`}
             ref={feedback}
             role="status"
           >

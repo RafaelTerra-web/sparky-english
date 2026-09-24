@@ -1,5 +1,9 @@
 let activeSession: { owner: object; stop: () => void } | null = null;
 
+export function hasActiveAudioSession() {
+  return activeSession !== null;
+}
+
 export function claimAudioSession(owner: object, stop: () => void) {
   if (activeSession?.owner !== owner) activeSession?.stop();
   activeSession = { owner, stop };

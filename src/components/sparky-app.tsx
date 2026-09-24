@@ -2,14 +2,15 @@
 import { getInterfaceLocale, getSupportLocale, t, supportT, targetText, localizeAttribute } from "@/lib/interface-language";
 import { useInterfaceLanguage } from "@/lib/interface-language";
 import { LearningLanguagePreferences } from "./learning-language-preferences";
-import { nextInTrail, complementaryPractice, recommendationReason, moduleObjective } from "@/lib/course-guide";
+import { nextInTrail, complementaryPractice, recommendationReason, moduleObjective, lessonMetadata } from "@/lib/course-guide";
+import { interfaceSoundEnabled, playInterfaceSound, setInterfaceSoundEnabled, subscribeInterfaceSound } from "@/lib/interface-sound";
 import { disciplines, type Discipline } from "@/lib/course-metadata";
 import { planReviews, studyDay } from "@/lib/review-plan";
 import { updateWorkspace } from "@/lib/learning-local";
 import { personalizeLesson } from "@/lib/personalized-lesson";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -70,6 +71,7 @@ const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
 type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "music" | "shop";
+type CompletionMoment = { review: boolean; earned: number; independent: boolean; outcome: string; nextReview?: string; nextTitle: string };
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -158,10 +160,14 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const [transitioning, setTransitioning] = useState(false);
   const transitionTimer = useRef<number | null>(null);
   const [rewardBusy, setRewardBusy] = useState(false);
+  const completionInFlight = useRef(false);
+  const [completionMoment, setCompletionMoment] = useState<CompletionMoment | null>(null);
+  const interfaceSounds = useSyncExternalStore(subscribeInterfaceSound, interfaceSoundEnabled, () => true);
   const [rewardAvailable, setRewardAvailable] = useState(true);
   const [workspace, setWorkspace] = useState(blankWorkspace);
   function navigate(nextView: View) {
     setNotice("");
+    setCompletionMoment(null);
     if (nextView === view) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setView(nextView);
@@ -351,6 +357,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       setProgress(emptyProgress);
       setReward(emptyRewards);
       setActive(null);
+      setCompletionMoment(null);
       setView("today");
     } catch {
       setNotice(
@@ -388,7 +395,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         reviews: data.reviews,
       });
       setRewardAvailable(true);
-      return data as PublicRewardState & { earned?: number; spent?: number; reason?: string };
+      return data as PublicRewardState & { earned?: number; spent?: number; reason?: string; independent?: boolean };
     } catch (error) {
       setNotice("Não foi possível salvar essa mudança. Verifique a conexão.");
       if (action.action === "complete") throw error;
@@ -418,31 +425,37 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   }
 
   async function finish(receipt: string): Promise<boolean> {
-    if (!active || rewardBusy) return false;
+    if (!active || rewardBusy || completionInFlight.current) return false;
+    completionInFlight.current = true;
     const now = new Date();
     setToday(now);
-    const result = await rewardRequest({
-      action: "complete",
-      lessonId: active.lesson.id,
-      review: active.review,
-      receipt,
-    });
-    if (result) {
-      if (!active.review && !progress.completed[active.lesson.id]) updateWorkspace(user!.id, current => ({...current,studyDay:studyDay(now),newLessonsToday:(current.studyDay===studyDay(now)?current.newLessonsToday:0)+1}));
-      const earned = result.earned ?? 0;
-      setNotice(
-        active.review
-          ? earned
-            ? `Revisão concluída. +${earned} moedas; confira a próxima data na revisão.`
-            : "Revisão concluída. Esta prática não gerou uma nova recompensa."
-          : earned
-            ? `Lição concluída. +${earned} moedas.`
-            : "Lição concluída novamente. A recompensa da primeira conclusão já foi recebida.",
-      );
-      setActive(null);
-      return true;
+    try {
+      const result = await rewardRequest({
+        action: "complete",
+        lessonId: active.lesson.id,
+        review: active.review,
+        receipt,
+      });
+      if (result) {
+        if (!active.review && !progress.completed[active.lesson.id]) updateWorkspace(user!.id, current => ({...current,studyDay:studyDay(now),newLessonsToday:(current.studyDay===studyDay(now)?current.newLessonsToday:0)+1}));
+        setCompletionMoment({
+          review: active.review,
+          earned: result.earned ?? 0,
+          independent: result.independent === true,
+          outcome: lessonMetadata[active.lesson.id]?.outcome ?? active.lesson.experience.application,
+          nextReview: result.reviews?.[active.lesson.id],
+          nextTitle: nextInTrail(progress.level, result.completed)?.title ?? "Revisar o que aprendi",
+        });
+        setNotice("");
+        playInterfaceSound("complete");
+        setView("today");
+        setActive(null);
+        return true;
+      }
+      return false;
+    } finally {
+      completionInFlight.current = false;
     }
-    return false;
   }
 
   if (loading)
@@ -501,6 +514,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     setStudyMode(mode);
     setNotice("");
     if (review && (dailyDone >= 3 || !dueLessons.some(item => item.id === lesson.id))) { setNotice("Você já concluiu as três revisões de hoje. Continue com uma lição nova."); return; }
+    setCompletionMoment(null);
+    playInterfaceSound("start");
     setActive({ lesson: personalizeLesson(lesson, learnerProfile?.name), review });
   };
   async function editNamePronunciation(action = "pronunciation-start") {
@@ -598,6 +613,20 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               <span className="language-chip">
                 <Languages size={15} />{t("Português ")}<ArrowRight size={12} />{t(" Inglês")}</span>
             </div>
+            {completionMoment && <section className="lesson-completion-moment" role="status" aria-live="polite">
+              <span className="lesson-completion-symbol" aria-hidden="true"><Check size={22} /></span>
+              <div className="lesson-completion-copy">
+                <p className="eyebrow">{t(completionMoment.review ? "REVISÃO CONCLUÍDA" : "LIÇÃO CONCLUÍDA")}</p>
+                <h2>{t(completionMoment.independent ? "Você conseguiu sem ajuda." : "Você praticou, corrigiu e avançou.")}</h2>
+                <p lang={getSupportLocale()}>{supportT("Agora você consegue")} {supportT(completionMoment.outcome)}{/[.!?]$/.test(completionMoment.outcome.trim()) ? "" : "."}</p>
+                <div className="lesson-completion-details">
+                  {completionMoment.earned > 0 && <strong>+{completionMoment.earned} {t("moedas")}</strong>}
+                  {completionMoment.nextReview && <span>{t("Próxima revisão:")} {new Intl.DateTimeFormat(getInterfaceLocale(), { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" }).format(new Date(completionMoment.nextReview))}</span>}
+                  <span>{t("Próximo passo:")} {t(completionMoment.nextTitle)}</span>
+                </div>
+              </div>
+              <button className="lesson-completion-close" type="button" onClick={() => setCompletionMoment(null)} aria-label={localizeAttribute("Dispensar conclusão")}><X size={18} /></button>
+            </section>}
             <div className="today-layout">
               <section className="next-lesson">
                 <div className="lesson-copy">
@@ -608,7 +637,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
                   <div className="lesson-meta">
                     <Clock3 size={15} />
                     {t(recommendedReview ? 2 : recommended.minutes)} {t("min")}<span>·</span>{t(recommendedReview ? "Revisão" : "Explicação + prática")}</div>
-                  <button className="cream-button" onClick={() => open(recommended, recommendedReview)}>
+                  <button className="cream-button lesson-start-button" onClick={() => open(recommended, recommendedReview)}>
                     {t(resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar lição")}
                     <ArrowRight size={17} />
                   </button>
@@ -804,6 +833,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
                 <label className="profile-setting">{t("Recomendação de estudo")}<select value={workspace.recommendation} onChange={e=>updateWorkspace(user.id,current=>({...current,recommendation:e.target.value as "balanced"|"new"}))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
                 <label className="profile-setting">{t('Disciplina preferida')}<select aria-label={localizeAttribute("Disciplina preferida")} value={workspace.discipline} onChange={e=>updateWorkspace(user.id,current=>({...current,discipline:e.target.value as Discipline|'all'}))}><option value="all">{t('Equilibrar disciplinas')}</option>{Object.entries(disciplines).map(([id,label])=><option key={id} value={id}>{t(label)}</option>)}</select></label>
                 <label className="profile-setting">{t("Tempo de estudo por dia")}<select value={workspace.minutes} onChange={e=>updateWorkspace(user.id,current=>({...current,minutes:Number(e.target.value)}))}>{[5,10,15,20].map(n=><option key={n} value={n}>{t(n)}{t(" min")}</option>)}</select></label>
+                <label className="profile-setting interface-sound-setting"><span>{t("Sons de interface")}</span><input type="checkbox" checked={interfaceSounds} onChange={event => setInterfaceSoundEnabled(event.target.checked)} /><small>{t("Toques suaves ao começar e concluir lições")}</small></label>
                 <ThemePreferenceControl userId={user.id} />
                 {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
