@@ -66,7 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{document.documentElement.dataset.openingSeen=localStorage.getItem('sparky-opening-seen-v3')==='1'?'true':'false'}catch(e){document.documentElement.dataset.openingSeen='false'}})()`,
+            __html: `(function(){try{document.documentElement.dataset.openingSeen=localStorage.getItem('sparky-opening-seen-v4')==='1'?'true':'false'}catch(e){document.documentElement.dataset.openingSeen='false'}})()`,
           }}
         />
         <script

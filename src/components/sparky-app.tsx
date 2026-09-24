@@ -32,7 +32,8 @@ import {
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
 import { ThemePreferenceControl, ThemeQuickToggle, resetAppearanceSession } from "./theme-preference";
-import { MotionLoader, MotionTransition, StreakBadge, StreakCelebration } from "./motion-pack";
+import { MotionTransition, StreakBadge, StreakCelebration } from "./motion-pack";
+import SparkyLoadingMark from "./sparky-loading-mark";
 import { LevelUpCelebration } from "./level-up-celebration";
 import { levels, levelDescriptions } from "@/lib/levels";
 import {
@@ -121,7 +122,7 @@ function readProgress(userId: string): Progress {
 function clearPrivateStorage() {
   for (const storage of [sessionStorage, localStorage]) {
     for (const key of Object.keys(storage))
-      if (key.startsWith("sparky-") && key !== "sparky-opening-seen-v3" && !key.startsWith("sparky-learning:") && !key.startsWith("sparky-progress:")) storage.removeItem(key);
+      if (key.startsWith("sparky-") && key !== "sparky-opening-seen-v4" && !key.startsWith("sparky-learning:") && !key.startsWith("sparky-progress:")) storage.removeItem(key);
   }
 }
 
@@ -440,9 +441,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
 
   if (loading)
     return (
-      <main className="loading-page">
-        <Brand />
-        <MotionLoader label="Abrindo seu espaço de estudo…" />
+      <main className="loading-page loading-page--brand" role="status" aria-label="Carregando o Sparky English">
+        <SparkyLoadingMark />
       </main>
     );
   if (connectionError)
