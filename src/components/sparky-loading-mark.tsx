@@ -10,11 +10,14 @@ export default function SparkyLoadingMark() {
         <path className="sparky-mark-face sparky-mark-head" d="M60 24C85 24 105 39 105 63C105 87 85 99 60 99C35 99 15 87 15 63C15 39 35 24 60 24Z" />
         <ellipse className="sparky-mark-patch" cx="42" cy="61" rx="13" ry="17" transform="rotate(22 42 61)" />
         <ellipse className="sparky-mark-patch" cx="78" cy="61" rx="13" ry="17" transform="rotate(-22 78 61)" />
+        <path className="sparky-mark-brow" d="M31 42C34 38 38 37 42 39M78 39C82 37 86 38 89 42" strokeWidth="2" strokeLinecap="round" />
         <g className="sparky-loading-eyes">
-          <ellipse className="sparky-mark-sclera" cx="43" cy="62" rx="3.8" ry="4.8" />
-          <ellipse className="sparky-mark-sclera" cx="77" cy="62" rx="3.8" ry="4.8" />
-          <ellipse className="sparky-mark-pupil" cx="43" cy="62.5" rx="2.6" ry="3.5" />
-          <ellipse className="sparky-mark-pupil" cx="77" cy="62.5" rx="2.6" ry="3.5" />
+          <ellipse className="sparky-mark-sclera" cx="43" cy="62" rx="6.2" ry="7.8" />
+          <ellipse className="sparky-mark-sclera" cx="77" cy="62" rx="6.2" ry="7.8" />
+          <ellipse className="sparky-mark-pupil" cx="45" cy="62" rx="3.7" ry="5.1" />
+          <ellipse className="sparky-mark-pupil" cx="79" cy="62" rx="3.7" ry="5.1" />
+          <circle className="sparky-mark-eye-light" cx="46" cy="59.5" r="1.2" />
+          <circle className="sparky-mark-eye-light" cx="80" cy="59.5" r="1.2" />
         </g>
         <path className="sparky-mark-pupil" d="M55 76C55 72 58 70 60 70C62 70 65 72 65 76C65 79 62 81 60 81C58 81 55 79 55 76Z" />
         <path className="sparky-mark-mouth" d="M60 81V84M60 84C56 88 52 88 49 85M60 84C64 88 68 88 71 85" strokeWidth="2.2" strokeLinecap="round" />

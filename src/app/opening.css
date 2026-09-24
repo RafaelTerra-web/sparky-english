@@ -54,6 +54,8 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 .sparky-mark-face, .sparky-mark-sclera { fill: var(--sparky-mark-face); }
 .sparky-mark-head { stroke: var(--sparky-mark-outline); stroke-width: .8px; }
 .sparky-mark-patch, .sparky-mark-pupil { fill: var(--sparky-mark-ink); }
+.sparky-mark-eye-light { fill: var(--sparky-mark-face); }
+.sparky-mark-brow { stroke: var(--sparky-mark-ink); }
 .sparky-mark-mouth { stroke: var(--sparky-mark-ink); }
 .sparky-mark-scarf-line { stroke: var(--sparky-mark-scarf); }
 .sparky-mark-scarf { fill: var(--sparky-mark-scarf); }
