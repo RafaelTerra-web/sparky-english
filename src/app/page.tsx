@@ -1,5 +1,5 @@
-import SparkyApp from "@/components/sparky-app";
+import OpeningGate from "@/components/opening-gate";
 
 export default function Page() {
-  return <SparkyApp />;
+  return <OpeningGate />;
 }

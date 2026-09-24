@@ -11,6 +11,7 @@ import "./music.css";
 import "./music-immersive.css";
 import "./motion.css";
 import "./glass.css";
+import "./opening.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

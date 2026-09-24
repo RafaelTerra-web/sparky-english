@@ -125,7 +125,7 @@ function clearPrivateStorage() {
   }
 }
 
-export default function SparkyApp() {
+export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const [onboardingEnabled, setOnboardingEnabled] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [learnerProfile, setLearnerProfile] = useState<LearnerProfile|null>(null);
@@ -244,12 +244,15 @@ export default function SparkyApp() {
         if (!controller.signal.aborted) setConnectionError(true);
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+          onReady?.();
+        }
       });
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(() => undefined);
     return () => controller.abort();
-  }, []);
+  }, [onReady]);
 
   useEffect(() => {
     if (!user) return;
