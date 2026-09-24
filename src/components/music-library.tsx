@@ -15,14 +15,29 @@ export default function MusicLibrary({ userId, level }: { userId: string; level:
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
   useEffect(() => { const controller = new AbortController(); fetch('/api/music', { cache: 'no-store', signal: controller.signal }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(d => { setCatalog(d.catalog); setLab(d.storage === 'lab'); setError(false); }).catch(() => { if (!controller.signal.aborted) setError(true); }).finally(() => { if (!controller.signal.aborted) setLoading(false); }); return () => controller.abort(); }, [retry]);
+  useEffect(() => {
+    if (active || !catalog.length) return;
+    const frame = requestAnimationFrame(() => {
+      try {
+        const id = localStorage.getItem(`sparky-music:active:${userId}`);
+        const lesson = catalog.find(item => item.id === id);
+        if (lesson) setActive(lesson);
+        else if (id) localStorage.removeItem(`sparky-music:active:${userId}`);
+      } catch { /* Session restore is optional. */ }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [active, catalog, userId]);
+  useEffect(() => { const refresh = () => setRetry(value => value + 1); window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
+  function openSession(lesson: MusicLesson) { try { localStorage.setItem(`sparky-music:active:${userId}`, lesson.id); } catch {} setActive(lesson); }
+  function closeSession() { try { localStorage.removeItem(`sparky-music:active:${userId}`); } catch {} setActive(null); }
   const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic}`.toLowerCase().includes(query.toLowerCase()));
   return <><section className="music-library">
-    <div className="music-hero music-observatory"><MusicScene playing={!active} /><div className="music-hero-copy"><span className="music-kicker"><Headphones size={16} /> SPARKY · MUSIC LAB</span><h1>{t('Ouça. Sinta.')}<br /><em>{t('Aprenda.')}</em></h1><p>{t('Música inteira, letra viva e pequenas descobertas. Entre no inglês pelo som.')}</p><div className="music-hero-tags"><span>{t('No seu ritmo')}</span><span>{t('Letra sincronizada')}</span><span>{t('24 desafios')}</span></div></div><span className="music-hero-edition" aria-hidden="true">THE LISTENING ROOM · VOL. 01</span></div>
+    <div className="music-hero music-observatory">{!active && <MusicScene playing />}<div className="music-hero-copy"><span className="music-kicker"><Headphones size={16} /> SPARKY · MUSIC LAB</span><h1>{t('Ouça. Sinta.')}<br /><em>{t('Aprenda.')}</em></h1><p>{t('Música inteira, letra viva e pequenas descobertas. Entre no inglês pelo som.')}</p><div className="music-hero-tags"><span>{t('No seu ritmo')}</span><span>{t('Letra sincronizada')}</span><span>{t('24 desafios')}</span></div></div><span className="music-hero-edition" aria-hidden="true">THE LISTENING ROOM · VOL. 01</span></div>
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
     <div className="music-toolbar"><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={t('Música, artista ou tema')} /></label><label>{t('Nível')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
     <div className="music-collection-heading"><div><span className="music-kicker">{t('SUA SELEÇÃO')}</span><h2>{t('Escolha o próximo play.')}</h2></div><p className="music-muted">{t('Seu nível sugerido:')} {level}</p></div>
-    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p>{t('Nenhuma música disponível neste filtro.')}</p> : <div className="music-grid">{visible.map((lesson, index) => <button key={lesson.id} className="music-card" data-track-id={lesson.id} data-tone={lesson.id === 'heartless-local' ? 'violet' : 'emerald'} onClick={() => setActive(lesson)}><div className="music-cover"><span className="music-cover-number" aria-hidden="true">{String(index + 1).padStart(2, '0')} / SESSIONS</span><div className="music-card-disc" aria-hidden="true"><i /></div><span>{lesson.level}</span><span className="music-cover-play" aria-hidden="true"><Play size={20} fill="currentColor" /></span></div><div className="music-card-copy"><p className="music-muted">{lesson.artist} · {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</p><h2>{lesson.title}</h2><p>{t(lesson.topic)}</p><strong>{t('Abrir sessão')} <ArrowRight size={16} /></strong></div></button>)}</div>}
-  </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={() => setActive(null)} />}</>;
+    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p>{t('Nenhuma música disponível neste filtro.')}</p> : <div className="music-grid">{visible.map((lesson, index) => <button key={lesson.id} className="music-card" data-track-id={lesson.id} data-tone={lesson.id === 'heartless-local' ? 'violet' : 'emerald'} onClick={() => openSession(lesson)}><div className="music-cover"><span className="music-cover-number" aria-hidden="true">{String(index + 1).padStart(2, '0')} / SESSIONS</span><div className="music-card-disc" aria-hidden="true"><i /></div><span>{lesson.level}</span><span className="music-cover-play" aria-hidden="true"><Play size={20} fill="currentColor" /></span></div><div className="music-card-copy"><p className="music-muted">{lesson.artist} · {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</p><h2>{lesson.title}</h2><p>{t(lesson.topic)}</p><strong>{t('Abrir sessão')} <ArrowRight size={16} /></strong></div></button>)}</div>}
+  </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={closeSession} />}</>;
 }
 
 function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson: MusicLesson; lab: boolean; onClose: () => void }) {
@@ -107,8 +122,14 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
     return () => { element?.pause(); document.removeEventListener('visibilitychange', hide); };
   }, []);
   useEffect(() => {
+    const save = () => { if (audio.current) rememberPosition(audio.current.currentTime); };
+    window.addEventListener('pagehide', save);
+    return () => window.removeEventListener('pagehide', save);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
     if (!playing) return;
-    let frame = 0, lastSave = 0, previousTime = audio.current?.currentTime ?? 0;
+    let frame = 0, lastSave = 0, lastPaint = 0, previousTime = audio.current?.currentTime ?? 0;
     const tick = () => {
       const a = audio.current; if (!a) return;
       let current = a.currentTime;
@@ -116,7 +137,8 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       if (justHeard && !progressRef.current.heard.includes(justHeard.id)) update({ heard: [...progressRef.current.heard, justHeard.id] });
       if (loop && (current >= line.end || current < line.start - 0.2)) { a.currentTime = line.start; current = line.start; }
       if (!loop && current >= studyEnd) { a.pause(); a.currentTime = studyEnd; current = studyEnd; }
-      setTime(current);
+      const now = performance.now();
+      if (now - lastPaint >= 90 || current >= studyEnd) { setTime(current); lastPaint = now; }
       previousTime = current;
       if (performance.now() - lastSave > 4000) { rememberPosition(current); lastSave = performance.now(); }
       frame = requestAnimationFrame(tick);
@@ -164,7 +186,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
         {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
       <footer className="listen-dock">
-        <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) update({ position: audio.current.currentTime, positionAt: Date.now() }); }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
+        <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) { setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); } }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
         <div className="listen-timeline"><input aria-label="Posição da música" type="range" min="0" max={studyEnd} step="0.01" value={Math.min(time, studyEnd)} onChange={e => seek(Number(e.target.value))} /><div><span>{clock(time)}</span><span>Música completa · {clock(studyEnd)}</span></div></div>
         <div className="listen-transport">
           <button className="listen-icon" aria-label="Repetir trecho" aria-pressed={loop} onClick={() => { const index = activeLine >= 0 ? activeLine : selected; setSelected(index); setLoop(!loop); if (!loop) seek(lesson.lines[index].start); }}><RotateCcw size={20} /></button>

@@ -43,6 +43,10 @@ export default function PrivacyPage() {
       <h2>{t("Call com Sparky ou Pinky")}</h2>
       <p>{t("A Call é uma prática opcional por turnos. O microfone só é ativado quando você toca em Falar. Cada trecho enviado tem no máximo 45 segundos e é convertido no navegador antes de ser processado pelo Alibaba Cloud Model Studio com Qwen para transcrever sua fala, preparar uma resposta pedagógica e gerar a voz do mascote.")}</p>
       <p>{t("O Sparky não armazena o arquivo de áudio da Call. A transcrição fica temporariamente no Supabase para permitir a retomada e é apagada ao encerrar por padrão. As respostas do mascote, o feedback e o resumo podem permanecer por até 30 dias. O feedback é formativo: não altera seu nível, não emite certificado e não avalia pronúncia apenas pelo texto transcrito. Você não deve falar senhas ou dados pessoais durante a conversa.")}</p>
+      <h2>{t("Notificações")}</h2>
+      <p>{support === "en"
+        ? "If you turn on reminders in Profile, your device will ask for permission. We store a technical push subscription identifier linked to your account to send a daily study reminder. You can turn reminders off in Profile or your device settings. When you sign out, the app cancels the subscription on this device and attempts to remove it from the server; invalid subscriptions are also removed after the push service rejects them."
+        : "Se você ativar lembretes no Perfil, o aparelho pedirá sua permissão. Guardamos um identificador técnico da assinatura push vinculado à sua conta para enviar um lembrete diário de estudo. Você pode desativar no Perfil ou nas configurações do aparelho. Ao sair da conta, o app cancela a assinatura neste aparelho e tenta removê-la do servidor; assinaturas inválidas também são removidas após a rejeição pelo serviço push."}</p>
       <h2>{t("Publicidade e contato")}</h2>
       <p>
         O app não exibe anúncios nem possui feed público. Para solicitar acesso

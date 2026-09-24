@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparky-public-v10";
+const CACHE_NAME = "sparky-public-v11";
 // Development chunk URLs are reused between edits. Never serve cached app code
 // on localhost; an installed worker must also migrate existing preview caches.
 const LOCAL_PREVIEW = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
@@ -27,10 +27,10 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) return;
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(async () => (await caches.match("/offline.html")) || Response.error()));
+    event.respondWith(fetch(request, { cache: 'no-store' }).catch(async () => (await caches.match("/offline.html")) || Response.error()));
     return;
   }
-  const publicAsset = url.pathname.startsWith("/_next/static/") || SHELL.includes(url.pathname);
+  const publicAsset = SHELL.includes(url.pathname);
   if (!publicAsset) return;
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
     if (response.ok && !/private|no-store/i.test(response.headers.get("cache-control") || "")) {
@@ -39,4 +39,31 @@ self.addEventListener("fetch", (event) => {
     }
     return response;
   })));
+});
+
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try { payload = event.data?.json() || {}; } catch { /* Keep a useful fallback. */ }
+  const title = typeof payload.title === 'string' ? payload.title.slice(0, 100) : 'Sparky English';
+  const body = typeof payload.body === 'string' ? payload.body.slice(0, 180) : 'Hora de praticar inglês.';
+  const url = typeof payload.url === 'string' && payload.url.startsWith('/') && !payload.url.startsWith('//') ? payload.url : '/';
+  event.waitUntil(self.registration.showNotification(title, {
+    body,
+    icon: '/icons/sparky-192-v2.png',
+    badge: '/icons/sparky-192-v2.png',
+    tag: 'sparky-study-reminder',
+    data: { url },
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || '/', self.location.origin);
+  const url = target.origin === self.location.origin ? target.href : self.location.origin + '/';
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const existing = windows.find(client => new URL(client.url).origin === self.location.origin);
+    if (existing) { await existing.focus(); if (existing.url !== url) await existing.navigate(url); }
+    else await self.clients.openWindow(url);
+  })());
 });

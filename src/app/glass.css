@@ -1,0 +1,91 @@
+/* A translucent shell uses the active palette while keeping text fully opaque. */
+html, body { overscroll-behavior-y: none; }
+html[data-palette] body {
+  background-image: radial-gradient(ellipse at 8% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 36%),
+    radial-gradient(ellipse at 94% 12%, var(--ambient), transparent 42%);
+  background-attachment: fixed;
+}
+html[data-palette] :is(.profile-card, .profile-note, .lesson-card, .study-summary, .review-card, .course-module, .install-prompt, .music-card) {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-color: color-mix(in srgb, var(--line) 76%, white 24%);
+  box-shadow: inset 0 1px 0 #ffffff73, 0 18px 45px var(--shadow-color);
+}
+html[data-palette] :is(.profile-card, .profile-note, .study-summary, .review-card, .course-module) {
+  border-radius: 22px;
+}
+html[data-palette] .music-hero {
+  border: 1px solid #ffffff4d;
+  box-shadow: inset 0 1px 0 #ffffff52, 0 24px 52px var(--shadow-color);
+}
+@supports (backdrop-filter: blur(1px)) {
+  html[data-palette] :is(.sidebar, .mobile-nav, .workspace-header) {
+    background: color-mix(in srgb, var(--chrome) 80%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+    border-color: color-mix(in srgb, var(--line) 72%, white 28%);
+  }
+}
+@media (max-width: 700px) {
+  html[data-palette] body { background-attachment: scroll; }
+  html[data-palette] .workspace-header {
+    border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+    border-radius: 18px;
+    padding: 8px 10px;
+    box-shadow: inset 0 1px 0 #ffffff6b, 0 8px 25px var(--shadow-color);
+  }
+  html[data-palette] .mobile-nav {
+    border-top: 1px solid color-mix(in srgb, var(--line) 60%, white 40%);
+    box-shadow: 0 -10px 32px var(--shadow-color), inset 0 1px 0 #ffffff82;
+  }
+  /* Keep the full-screen listening stage free of expensive blur layers. */
+  .clip-room .listen-shell { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .clip-room .listen-settings { max-height: min(70dvh, 460px); overflow-y: auto; }
+  .listen-room input, .listen-room select, .listen-room textarea { font-size: 16px; }
+  .clip-room .clip-options button { min-height: 48px; }
+  .app-frame:has(.listen-room[open]) :is(.mobile-nav, .workspace-header) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.push-preference {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-soft);
+}
+.push-preference-heading { display: flex; align-items: flex-start; gap: 12px; }
+.push-preference-heading > svg { flex: none; color: var(--accent); margin-top: 2px; }
+.push-preference h3 { font-size: 15px; margin: 0 0 5px; }
+.push-preference p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.push-preference .secondary-button { justify-self: start; }
+
+.native-refresh {
+  position: fixed;
+  top: max(8px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid #ffffff75;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 86%, transparent);
+  color: var(--on-primary);
+  box-shadow: 0 10px 28px var(--shadow-color), inset 0 1px 0 #ffffff75;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-65px + var(--pull) * 70px)) scale(calc(.86 + var(--pull) * .14));
+  transition: opacity .18s, transform .2s;
+  font-size: 12px;
+  font-weight: 650;
+}
+.native-refresh[data-visible="true"] { opacity: 1; }
+.native-refresh[data-refreshing="true"] { transform: translate(-50%, 0); }
+.native-refresh[data-refreshing="true"] svg { animation: sparky-refresh-spin .8s linear infinite; }
+@keyframes sparky-refresh-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .native-refresh, .native-refresh svg { transition: none; animation: none !important; } }

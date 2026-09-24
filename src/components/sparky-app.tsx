@@ -49,6 +49,8 @@ import dynamic from "next/dynamic";
 import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 import LessonPlayer from "./lesson-player";
+import PushNotifications, { disablePushForCurrentDevice } from "./push-notifications";
+import NativeRefresh from "./native-refresh";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
 import {
@@ -132,7 +134,7 @@ export default function SparkyApp() {
   const interfaceLanguage = useInterfaceLanguage(user?.id);
   const [loading, setLoading] = useState(true);
   const [connectionError, setConnectionError] = useState(false);
-  const [view, setView] = useState<View>("today");
+  const [view, setView] = useState<View>('today');
   const lessonOpener = useRef<HTMLElement | null>(null);
   const lastView = useRef(view);
   useEffect(() => {
@@ -191,6 +193,7 @@ export default function SparkyApp() {
       .then(async (session) => {
         if (session.authenticated && session.user) {
           setUser(session.user);
+          try { if (localStorage.getItem(`sparky-music:active:${session.user.id}`)) setView('music'); } catch { /* Restore is optional. */ }
           const local = readProgress(session.user.id);
           try {
             const response = await fetch("/api/rewards", { cache: "no-store" });
@@ -298,10 +301,23 @@ export default function SparkyApp() {
       }
   }
 
+  async function refreshAppData() {
+    setToday(new Date());
+    try {
+      const response = await fetch('/api/rewards', { cache: 'no-store' });
+      if (response.ok) {
+        const fresh = await response.json() as PublicRewardState;
+        setReward(fresh);
+        setProgress(current => ({ ...current, completed: fresh.completed, reviews: fresh.reviews }));
+      }
+    } finally { window.dispatchEvent(new Event('sparky:refresh')); }
+  }
+
   async function logout() {
     setSigningOut(true);
     setNotice("");
     try {
+      await disablePushForCurrentDevice().catch(() => undefined);
       const response = await fetch("/api/session", { method: "DELETE" });
       if (!response.ok) throw new Error("logout");
       try {
@@ -492,6 +508,7 @@ export default function SparkyApp() {
     <div className="app-frame">
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <MotionTransition active={transitioning} />
+      <NativeRefresh onRefresh={refreshAppData} />
       {streakCelebration && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} />
       <aside className="sidebar">
@@ -777,6 +794,7 @@ export default function SparkyApp() {
                 <label className="profile-setting">{t('Disciplina preferida')}<select aria-label={localizeAttribute("Disciplina preferida")} value={workspace.discipline} onChange={e=>updateWorkspace(user.id,current=>({...current,discipline:e.target.value as Discipline|'all'}))}><option value="all">{t('Equilibrar disciplinas')}</option>{Object.entries(disciplines).map(([id,label])=><option key={id} value={id}>{t(label)}</option>)}</select></label>
                 <label className="profile-setting">{t("Tempo de estudo por dia")}<select value={workspace.minutes} onChange={e=>updateWorkspace(user.id,current=>({...current,minutes:Number(e.target.value)}))}>{[5,10,15,20].map(n=><option key={n} value={n}>{t(n)}{t(" min")}</option>)}</select></label>
                 <ThemePreferenceControl userId={user.id} />
+                <PushNotifications />
                 {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}</button>}
                 {onboardingEnabled && <button className="secondary-button" onClick={async () => {
                   if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;

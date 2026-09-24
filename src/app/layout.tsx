@@ -10,6 +10,7 @@ import "./study-remap.css";
 import "./music.css";
 import "./music-immersive.css";
 import "./motion.css";
+import "./glass.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -11,7 +11,7 @@ export default function MusicScene({ playing, clock, tone = 'emerald', energy = 
   useEffect(() => { motion.current = { playing, clock, energy, chorus }; synchronize.current?.(); }, [playing, clock, energy, chorus]);
   useEffect(() => {
     const element = host.current;
-    if (!element) return;
+    if (!element || window.matchMedia('(pointer: coarse), (max-width: 700px)').matches) return;
     let cancelled = false;
     let dispose: (() => void) | undefined;
     void import('three').then(THREE => {

@@ -2,6 +2,8 @@
 
 Esta branch contém o [laboratório local de músicas](docs/music-lab.md), com conta de testes isolada. Não foi publicada em produção.
 
+As melhorias de reprodução no iPhone, gesto de atualização no Android e Web Push estão descritas em [docs/push-and-mobile.md](docs/push-and-mobile.md). A ativação de push exige a migração do banco e as chaves VAPID no ambiente de publicação.
+
 PWA privada de inglês para falantes de português do Brasil. Navegação, instruções e feedback podem ser usados em PT-BR ou inglês, selecionados no Perfil; exemplos, diálogos e respostas são em inglês. A tradução pode ser consultada durante as lições.
 
 ## Local development
