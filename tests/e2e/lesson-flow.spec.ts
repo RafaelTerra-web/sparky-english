@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { lessons } from '../../src/lib/curriculum';
 import { contentVersion } from '../../src/lib/content/build';
 
-async function account(page: import('@playwright/test').Page, kind: 'production' | 'choice') {
+async function account(page: import('@playwright/test').Page, kind: 'production' | 'choice' | 'complete_sentence') {
   const lesson = lessons.find(item => item.id === 'a1-1-1')!;
   const index = lesson.steps.findIndex(step => step.kind === kind);
   await page.addInitScript(({ index, contentVersion }) => {
@@ -39,15 +39,34 @@ test('old final writing step resumes at the concise ending and keeps the old dra
 test('question command and options stay large and fit a narrow phone',async({page},info)=>{
   await page.setViewportSize({width:320,height:740});
   await account(page,'choice');
-  const command=page.locator('.lesson-body > .step-explanation');
+  const command=page.locator('#lesson-question');
   await expect(command).toBeVisible();
+  const context=page.locator('.lesson-body > .english-example');
+  await expect(context).toBeVisible();
+  expect(await context.evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('#lesson-question')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  await expect(page.locator('.answer-options > button')).toHaveCount(4);
   expect(await page.locator('.answer-options').evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('.lesson-notes')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  const gap=await page.locator('.answer-options').evaluate(el=>el.getBoundingClientRect().top-document.querySelector('#lesson-question')!.getBoundingClientRect().bottom);
+  expect(gap).toBeLessThanOrEqual(24);
 
   expect(await command.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(22);
   expect(await page.locator('.answer-options > button').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(18);
   expect(await page.locator('.lesson-body').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   await expect.poll(()=>page.locator('.lesson-illustration img').evaluate(el=>(el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await page.screenshot({path:info.outputPath('larger-command.png')});
+});
+
+test('sentence context precedes the nearby question and four answers',async({page})=>{
+  await page.setViewportSize({width:320,height:740});
+  await account(page,'complete_sentence');
+  const context=page.locator('.lesson-body > .english-example');
+  const question=page.locator('#lesson-question');
+  const options=page.locator('.answer-options');
+  await expect(context).toBeVisible();
+  await expect(question).toBeVisible();
+  await expect(options.locator('button')).toHaveCount(4);
+  expect(await context.evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('#lesson-question')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  expect(await options.evaluate(el=>el.getBoundingClientRect().top-document.querySelector('#lesson-question')!.getBoundingClientRect().bottom)).toBeLessThanOrEqual(24);
 });
 
 for (const mascot of ['sparky','pinky'] as const) test(`new C1 lesson plays ${mascot} at natural and slow speeds`,async({page})=>{

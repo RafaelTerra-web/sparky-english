@@ -25,29 +25,36 @@ export default function SparkyLoadingMark() {
         <path className="sparky-loading-scarf sparky-mark-scarf" d="M75 97C86 105 96 104 106 99C102 108 97 113 90 115C84 110 78 105 75 97Z" />
       </svg>
       <svg className="sparky-loading-face sparky-loading-face--pinky" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path className="pinky-mark-ear" d="M44 59C31 46 20 35 9 38C1 40 2 52 9 62C19 74 33 70 44 59Z" />
-        <path className="pinky-mark-ear-inner" d="M39 58C27 48 18 42 10 44C6 45 9 53 14 58C23 67 32 65 39 58Z" />
+        <g className="pinky-loading-ear-left">
+          <path className="pinky-mark-ear" d="M47 55C36 44 23 13 10 14C1 15 1 39 8 55C15 70 33 69 47 55Z" />
+          <path className="pinky-mark-ear-inner" d="M39 52C31 42 20 22 12 23C8 24 9 40 14 51C20 61 29 62 39 52Z" />
+        </g>
         <g className="pinky-loading-ear-right">
-          <path className="pinky-mark-ear" d="M76 59C89 46 100 35 111 38C119 40 118 52 111 62C101 74 87 70 76 59Z" />
-          <path className="pinky-mark-ear-inner" d="M81 58C93 48 102 42 110 44C114 45 111 53 106 58C97 67 88 65 81 58Z" />
+          <path className="pinky-mark-ear" d="M73 55C84 44 97 13 110 14C119 15 119 39 112 55C105 70 87 69 73 55Z" />
+          <path className="pinky-mark-ear-inner" d="M81 52C89 42 100 22 108 23C112 24 111 40 106 51C100 61 91 62 81 52Z" />
         </g>
-        <path className="pinky-mark-fur" d="M52 47C54 39 58 35 63 32C64 38 63 42 61 45C68 39 73 39 78 40C76 45 70 49 64 50" />
-        <path className="pinky-mark-fur" d="M60 44C82 44 97 58 97 78C97 97 82 107 60 107C38 107 23 97 23 78C23 58 38 44 60 44Z" />
-        <path className="pinky-mark-muzzle" d="M28 83C31 75 40 72 48 76C55 80 65 80 72 76C80 72 89 75 92 83C95 96 79 105 60 105C41 105 25 96 28 83Z" />
-        <ellipse className="pinky-mark-blush" cx="34" cy="82" rx="5" ry="4" />
-        <ellipse className="pinky-mark-blush" cx="86" cy="82" rx="5" ry="4" />
-        <path className="pinky-mark-brow" d="M35 62C38 59 41 59 44 60M76 60C79 59 82 59 85 62" strokeWidth="2" strokeLinecap="round" />
+        <path className="pinky-mark-fur" d="M52 48C50 39 54 34 61 31C60 37 59 41 58 43C64 37 69 36 73 37C72 42 67 46 62 48Z" />
+        <path className="pinky-mark-fur" d="M60 44C83 44 101 59 101 80C101 101 83 113 60 113C37 113 19 101 19 80C19 59 37 44 60 44Z" />
+        <path className="pinky-mark-muzzle" d="M25 88C27 78 36 74 45 78C53 82 67 82 75 78C84 74 93 78 95 88C92 101 77 109 60 109C43 109 28 101 25 88Z" />
+        <ellipse className="pinky-mark-blush" cx="32" cy="84" rx="5" ry="3.8" />
+        <ellipse className="pinky-mark-blush" cx="88" cy="84" rx="5" ry="3.8" />
+        <path className="pinky-mark-brow" d="M34 62C39 58 43 59 47 62M73 62C77 59 81 58 86 62" strokeWidth="2" strokeLinecap="round" />
         <g className="sparky-loading-eyes pinky-loading-eyes">
-          <ellipse className="pinky-mark-eye" cx="44" cy="72" rx="5.5" ry="7.5" />
-          <ellipse className="pinky-mark-eye" cx="76" cy="72" rx="5.5" ry="7.5" />
-          <circle className="pinky-mark-eye-light" cx="45.5" cy="69" r="1.2" />
-          <circle className="pinky-mark-eye-light" cx="77.5" cy="69" r="1.2" />
+          <ellipse className="pinky-mark-sclera" cx="44" cy="76" rx="9.5" ry="12" />
+          <ellipse className="pinky-mark-sclera" cx="76" cy="76" rx="9.5" ry="12" />
+          <ellipse className="pinky-mark-eye" cx="46" cy="77" rx="5.5" ry="8.5" />
+          <ellipse className="pinky-mark-eye" cx="78" cy="77" rx="5.5" ry="8.5" />
+          <circle className="pinky-mark-eye-light" cx="47" cy="73" r="2" />
+          <circle className="pinky-mark-eye-light" cx="79" cy="73" r="2" />
+          <path className="pinky-mark-lash" d="m36 67-3-3m49 3 3-3" strokeWidth="2" strokeLinecap="round" />
         </g>
-        <ellipse className="pinky-mark-nose" cx="60" cy="84" rx="4.5" ry="3.5" />
+        <ellipse className="pinky-mark-nose" cx="60" cy="88" rx="5" ry="3.4" />
+        <path className="pinky-mark-smile" d="M60 92c-4 4-9 4-12 1m12-1c4 4 9 4 12 1" strokeWidth="2" strokeLinecap="round" />
       </svg>
       <span className="sparky-loading-name sparky-loading-name--sparky">sparky</span>
       <span className="sparky-loading-name sparky-loading-name--pinky">pinky</span>
       <span className="sparky-loading-subname">ENGLISH</span>
+      <span className="sparky-loading-track"><span /></span>
     </div>
   );
 }

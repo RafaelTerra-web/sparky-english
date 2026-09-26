@@ -33,11 +33,11 @@ const paletteOptions: Array<{
 ];
 
 const browserColors: Record<ThemePaletteId, Record<"light" | "dark", string>> = {
-  sparky: { light: "#f6f3ed", dark: "#0b100e" },
-  beatrice: { light: "#f7f3fb", dark: "#0d0b10" },
-  ocean: { light: "#eff7fa", dark: "#071116" },
-  sunset: { light: "#fff4ef", dark: "#170d0d" },
-  graphite: { light: "#f3f4f6", dark: "#0c0f12" },
+  sparky: { light: "#f6f3ed", dark: "#090d0b" },
+  beatrice: { light: "#f7f3fb", dark: "#09080a" },
+  ocean: { light: "#eff7fa", dark: "#050c10" },
+  sunset: { light: "#fff4ef", dark: "#100909" },
+  graphite: { light: "#f3f4f6", dark: "#080a0d" },
 };
 
 let storedCache: StoredAppearance | null = null;
@@ -87,7 +87,7 @@ function applyAppearance(preference: AppearancePreference) {
   document.documentElement.dataset.palette = preference.palette;
   document.documentElement.dataset.theme = mode;
   document.documentElement.style.colorScheme = mode;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", browserColors[preference.palette][mode]);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(meta => meta.setAttribute("content", browserColors[preference.palette][mode]));
 }
 
 function announceStatus(next: SaveStatus) {

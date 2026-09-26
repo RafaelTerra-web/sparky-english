@@ -14,7 +14,7 @@
   isolation: isolate;
   overflow: hidden;
   opacity: 1;
-  transition: opacity 220ms ease;
+  transition: opacity 220ms cubic-bezier(.2, .7, .25, 1);
 }
 
 html[data-opening-seen="true"] .opening-scene { display: none; }
@@ -34,6 +34,7 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   --pinky-blush: #f29db0;
   --pinky-nose: #9f3d67;
   --pinky-ink: #33212f;
+  --pinky-eye-white: #fff8f5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,7 +44,13 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   text-align: center;
 }
 
-.sparky-loading-face { width: 112px; height: 112px; overflow: visible; }
+.sparky-loading-face {
+  width: 112px;
+  height: 112px;
+  overflow: visible;
+  filter: drop-shadow(0 10px 12px var(--shadow-color));
+  animation: sparky-mark-arrive 600ms cubic-bezier(.18, .85, .25, 1) both;
+}
 .sparky-loading-face--pinky, .sparky-loading-name--pinky { display: none; }
 html[data-opening-mascot="pinky"] .sparky-loading-face--sparky,
 html[data-opening-mascot="pinky"] .sparky-loading-name--sparky { display: none; }
@@ -64,17 +71,18 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 .pinky-mark-fur { fill: var(--pinky-fur); }
 .pinky-mark-muzzle { fill: var(--pinky-muzzle); }
 .pinky-mark-blush { fill: var(--pinky-blush); opacity: .45; }
+.pinky-mark-sclera { fill: var(--pinky-eye-white); }
 .pinky-mark-eye { fill: var(--pinky-ink); }
-.pinky-mark-eye-light { fill: var(--pinky-ear-inner); }
+.pinky-mark-eye-light { fill: var(--pinky-eye-white); }
 .pinky-mark-nose { fill: var(--pinky-nose); }
-.pinky-mark-brow { stroke: var(--pinky-ink); }
+.pinky-mark-brow, .pinky-mark-lash, .pinky-mark-smile { stroke: var(--pinky-ink); }
 .sparky-loading-name {
   margin-top: 6px;
   color: var(--foreground);
   font-family: var(--font-music-grotesk), Arial, sans-serif;
   font-size: 29px;
   font-weight: 700;
-  letter-spacing: -.07em;
+  letter-spacing: 0;
   line-height: 1;
 }
 .sparky-loading-subname {
@@ -83,9 +91,26 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
   font-family: var(--font-geist-sans), Arial, sans-serif;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: .35em;
+  letter-spacing: 0;
   line-height: 1;
-  text-indent: .35em;
+  text-indent: 0;
+}
+.sparky-loading-track {
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin-top: 21px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--surface-strong);
+}
+.sparky-loading-track > span {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: sparky-loading-track 1.15s cubic-bezier(.4, 0, .2, 1) infinite alternate;
 }
 
 .sparky-loading-eyes {
@@ -93,7 +118,7 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
   transform-origin: 60px 62px;
   animation: sparky-loading-blink 1.8s ease-in-out infinite;
 }
-.pinky-loading-eyes { transform-origin: 60px 72px; }
+.pinky-loading-eyes { transform-origin: 60px 76px; }
 .sparky-loading-scarf {
   transform-box: view-box;
   transform-origin: 77px 98px;
@@ -101,8 +126,22 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 }
 .pinky-loading-ear-right {
   transform-box: view-box;
-  transform-origin: 77px 59px;
+  transform-origin: 82px 56px;
   animation: pinky-loading-ear 1.8s ease-in-out infinite;
+}
+.pinky-loading-ear-left {
+  transform-box: view-box;
+  transform-origin: 38px 56px;
+  animation: pinky-loading-ear-left 1.8s ease-in-out infinite;
+}
+
+@keyframes sparky-mark-arrive {
+  from { opacity: 0; transform: translateY(10px) scale(.93); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sparky-loading-track {
+  from { transform: translateX(-95%); }
+  to { transform: translateX(170%); }
 }
 
 @keyframes sparky-loading-blink {
@@ -118,6 +157,11 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
   0%, 18%, 60%, 100% { transform: rotate(0deg); }
   32% { transform: rotate(6deg); }
   45% { transform: rotate(-2deg); }
+}
+@keyframes pinky-loading-ear-left {
+  0%, 18%, 60%, 100% { transform: rotate(0deg); }
+  32% { transform: rotate(-6deg); }
+  45% { transform: rotate(2deg); }
 }
 
 .opening-sound {
@@ -138,5 +182,6 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 
 @media (prefers-reduced-motion: reduce) {
   .opening-scene { transition: none; }
-  .sparky-loading-eyes, .sparky-loading-scarf, .pinky-loading-ear-right { animation: none; }
+  .sparky-loading-face, .sparky-loading-eyes, .sparky-loading-scarf, .pinky-loading-ear-right, .pinky-loading-ear-left, .sparky-loading-track > span { animation: none; }
+  .sparky-loading-track > span { width: 55%; }
 }

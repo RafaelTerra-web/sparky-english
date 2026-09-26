@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { musicCatalog } from './music-catalog';
 import { musicReleases, musicAudioSource } from './music-release';
+import { hasReviewedMusicStore, readReviewedMusicManifest } from './music-blob';
 import { emptyMusicProgress, normalizeMusic, validateMusic, type MusicLesson, type MusicProgress } from './music';
 
 const RELEASE_TIMING_VERSION = 'full-song-timing-2';
@@ -21,7 +22,10 @@ export async function getMusicCatalog() {
   for (const release of musicReleases) {
     if (localMusicMode() && release.id === 'perfect-local') continue;
     try {
-      const data = JSON.parse(await readFile(join(process.cwd(), '.music-assets', release.manifest), 'utf8')) as MusicLesson;
+      const text = hasReviewedMusicStore()
+        ? await readReviewedMusicManifest(release.manifest)
+        : await readFile(join(process.cwd(), '.music-assets', release.manifest), 'utf8');
+      const data = JSON.parse(text) as MusicLesson;
       if (data.id !== release.id) throw Error('invalid-release');
       catalog.push(validateMusic({ ...data, version: release.version, source: musicAudioSource(release.id), rights: 'user-provided', published: true }));
     } catch { /* An absent release bundle is not a public filesystem error. */ }

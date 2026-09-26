@@ -55,7 +55,6 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f6f3ed",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -73,7 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var raw=localStorage.getItem('sparky-appearance-v1'),v=raw?JSON.parse(raw):null,old=localStorage.getItem('sparky-color-theme'),palettes=['sparky','beatrice','ocean','sunset','graphite'],modes=['system','light','dark'],p=v&&palettes.indexOf(v.palette)>-1?v.palette:'sparky',m=v&&modes.indexOf(v.mode)>-1?v.mode:(old==='light'||old==='dark'?old:'system'),d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.palette=p;document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light'}catch(e){document.documentElement.dataset.palette='sparky';document.documentElement.dataset.theme='light'}})()`,
+            __html: `(function(){try{var raw=localStorage.getItem('sparky-appearance-v1'),v=raw?JSON.parse(raw):null,old=localStorage.getItem('sparky-color-theme'),palettes=['sparky','beatrice','ocean','sunset','graphite'],modes=['system','light','dark'],p=v&&palettes.indexOf(v.palette)>-1?v.palette:'sparky',m=v&&modes.indexOf(v.mode)>-1?v.mode:(old==='light'||old==='dark'?old:'system'),d=m==='dark'||(m==='system'&&matchMedia('(prefers-color-scheme: dark)').matches),colors={sparky:['#f6f3ed','#090d0b'],beatrice:['#f7f3fb','#09080a'],ocean:['#eff7fa','#050c10'],sunset:['#fff4ef','#100909'],graphite:['#f3f4f6','#080a0d']},color=colors[p][d?1:0],sync=function(){var metas=document.querySelectorAll('meta[name="theme-color"]'),meta=metas[0];if(!meta){meta=document.createElement('meta');meta.name='theme-color';document.head.appendChild(meta)}meta.content=color;for(var i=1;i<metas.length;i++)metas[i].remove()};document.documentElement.dataset.palette=p;document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light';sync();document.addEventListener('DOMContentLoaded',sync,{once:true})}catch(e){document.documentElement.dataset.palette='sparky';document.documentElement.dataset.theme='light'}})()`,
           }}
         />
       </head>

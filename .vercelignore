@@ -8,6 +8,4 @@
 test-results
 playwright-report
 node_modules
-# The release-only authenticated media bundle is intentionally uploaded.
-!.music-assets
-!.music-assets/**
+.music-assets
