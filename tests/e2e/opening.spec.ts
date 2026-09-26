@@ -49,6 +49,7 @@ test('Pinky selection and appearance are visible during loading', async ({ page 
   await expect(opening.locator('.sparky-loading-name--pinky')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'beatrice');
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#09080a');
   await expect(opening).toHaveCount(0, { timeout: 4000 });
   expect(await page.evaluate(() => localStorage.getItem('sparky-opening-mascot-v1'))).toBe('pinky');
 });

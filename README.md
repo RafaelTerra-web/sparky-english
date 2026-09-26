@@ -67,6 +67,11 @@ npm run audit:experience
 node scripts/smoke-auth.mjs https://sparky-english-iota.vercel.app
 ```
 
+O [procedimento de publicacao](docs/production-release.md) explica como
+validar a musica no Vercel Blob privado, publicar o commit de `origin/main`
+pela integracao com o GitHub e conferir o SHA que esta no ar. O build confere
+os hashes da midia antes de substituir a producao.
+
 Após uma build local, `node scripts/preview-fixture.mjs` abre uma conta fictícia em `http://localhost:3201` exclusivamente para inspeção visual local. Esse processo não altera contas Google e não faz parte das rotas publicadas.
 
 Com o fixture rodando, `node scripts/smoke-study.mjs` valida o fluxo autenticado de exercícios, proteção CSRF, comprovante de conclusão, persistência por cookie e bloqueio de recompensas duplicadas. A especificação de evolução, migração e limites desta entrega está em [docs/evolution-2026-09.md](docs/evolution-2026-09.md).

@@ -1,5 +1,4 @@
-import { existsSync } from 'node:fs';
-
-// A Git checkout cannot contain the reviewed private music bundle. Vercel
-// interprets 0 as "skip deployment" and 1 as "continue the build".
-process.exit(existsSync('.music-assets/manifest.json') ? 1 : 0);
+// Vercel interprets 1 as "continue the build". The prebuild script checks
+// every approved private music hash and fails the deployment if any differ.
+console.log('Continuing build; prebuild will verify reviewed private music.');
+process.exit(1);

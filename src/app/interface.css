@@ -87,6 +87,7 @@ html[data-palette] .install-dismiss:hover { background: var(--surface-strong); }
 
 /* Reusable interaction states derive from the active palette. */
 html[data-palette] :is(button,a,input,textarea,select,summary) { transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease; }
+html { background-color: var(--chrome); }
 html[data-palette] :is(button,a,input,textarea,select,summary):focus-visible { outline-color: var(--focus-ring); }
 html[data-palette] :is(.lesson-identity-card,.review-retrieval-note,.practice-context,.learning-note) { color: var(--text-primary); }
 html[data-palette] :is(.lesson-identity-card,.review-retrieval-note,.practice-context) p { color: var(--text-primary); }
@@ -135,8 +136,24 @@ html[data-palette] .mobile-nav button.active::before { background: var(--accent)
   .catalog-duration { font-size: 12px; }
   .catalog-tools { gap: 12px; }
   .exam-entry { width: 100%; font-size: 13px; padding: 12px; }
-  .mobile-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); grid-template-rows: auto; align-items: stretch; justify-content: initial; gap: 3px; padding-inline: max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-right)); }
-  .mobile-nav button { min-width: 0; width: 100%; min-height: 54px; padding: 7px 2px; font-size: 11px; }
+  .mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(5,minmax(0,1fr));
+    grid-template-rows: auto;
+    align-items: stretch;
+    justify-content: initial;
+    gap: 3px;
+    min-height: calc(68px + env(safe-area-inset-bottom));
+    padding: 7px max(8px,env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+    border-top: 1px solid var(--line);
+    background: var(--chrome);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  html[data-palette] .mobile-nav { background: var(--chrome); }
+  .mobile-nav button { min-width: 0; width: 100%; min-height: 55px; padding: 7px 2px; gap: 4px; border-radius: 8px; font-size: 11px; }
+  html[data-palette] .mobile-nav button.active { background: var(--surface-soft); }
+  .mobile-nav button svg { flex: 0 0 auto; }
   .mobile-nav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .lesson-illustration { height: clamp(140px,23dvh,190px); margin-bottom: 20px; }
   .lesson-body { padding-top: 20px; scrollbar-gutter: auto; }

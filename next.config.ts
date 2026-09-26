@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_SPARKY_RELEASE_ID: process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_GIT_COMMIT_SHA || process.env.SPARKY_RELEASE_SHA || '',
+  },
   distDir: process.env.SPARKY_BUILD_CHECK === 'true' ? '.next-build-check' : '.next',
   outputFileTracingIncludes: {
     '/api/music': ['./.music-assets/**/manifest.json'],
@@ -17,6 +20,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      { source: "/", headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0, must-revalidate" }] },
       { source: "/audio/classes/:file", headers: [{ key: "Cache-Control", value: "public, max-age=86400" }] },
       { source: "/audio/tips/:file", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
       { source: "/lesson-images/:file", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },

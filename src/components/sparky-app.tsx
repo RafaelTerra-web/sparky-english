@@ -13,20 +13,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowRight,
-  BookOpen,
-  Music2,
   Check,
   ChevronRight,
   Clock3,
-  ClipboardCheck,
   Globe2,
   GraduationCap,
-  Home,
   Languages,
   LockKeyhole,
   LogOut,
   RotateCcw,
-  Settings2,
   Settings,
   ShoppingBag,
   X,
@@ -54,8 +49,12 @@ import PushNotifications, { disablePushForCurrentDevice } from "./push-notificat
 import MascotMoment from "./mascot-moment";
 import { LessonCompletionCelebration, type CompletionMoment } from "./lesson-completion-celebration";
 import NativeRefresh from "./native-refresh";
+import { ReleaseRefresh } from "./release-refresh";
+import { StoryInvite } from "./story-invite";
+import { TodayIcon, CourseIcon, ReviewIcon, ExamsIcon, MusicIcon, ShopIcon, ProfileIcon } from "./original-nav-icons";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
+const StoryExperience = dynamic(() => import("./story-experience"), { loading: () => <SectionLoading /> });
 import {
   MascotFigure,
   MascotStudio,
@@ -71,7 +70,7 @@ const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
-type View = "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "music" | "shop";
+type View = "call" | "classroom" | "today" | "story" | "course" | "review" | "exams" | "profile" | "music" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -88,13 +87,13 @@ const emptyRewards: PublicRewardState = {
   streak: { count: 0, longest: 0, lastDay: null },
 };
 const navigation = [
-  { id: "today" as View, label: "Hoje", icon: Home },
-  { id: "course" as View, label: "Curso", icon: BookOpen },
-  { id: "review" as View, label: "Revisão", icon: RotateCcw },
-  { id: "exams" as View, label: "Simulados", icon: ClipboardCheck },
-  { id: "music" as View, label: "Músicas", icon: Music2 },
-  { id: "shop" as View, label: "Loja", icon: ShoppingBag },
-  { id: "profile" as View, label: "Perfil", icon: Settings2 },
+  { id: "today" as View, label: "Hoje", icon: TodayIcon },
+  { id: "course" as View, label: "Curso", icon: CourseIcon },
+  { id: "review" as View, label: "Revisão", icon: ReviewIcon },
+  { id: "exams" as View, label: "Simulados", icon: ExamsIcon },
+  { id: "music" as View, label: "Músicas", icon: MusicIcon },
+  { id: "shop" as View, label: "Loja", icon: ShopIcon },
+  { id: "profile" as View, label: "Perfil", icon: ProfileIcon },
 ];
 
 function readProgress(userId: string): Progress {
@@ -533,6 +532,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <MotionTransition active={transitioning} />
       <NativeRefresh onRefresh={refreshAppData} />
+      <ReleaseRefresh />
       {completionMoment && <LessonCompletionCelebration moment={completionMoment} onClose={() => setCompletionMoment(null)} />}
       {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} mascot={reward.mascot} />
@@ -542,8 +542,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           {navigation.map((item) => (
             <button
               key={item.id}
-              className={view === item.id ? "nav-item active" : "nav-item"}
-              aria-current={view === item.id ? "page" : undefined}
+              className={view === item.id || (view === "story" && item.id === "today") ? "nav-item active" : "nav-item"}
+              aria-current={view === item.id || (view === "story" && item.id === "today") ? "page" : undefined}
               onClick={() => {
                 navigate(item.id);
               }}
@@ -684,6 +684,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
                 </button>
               </aside>
             </div>
+            <StoryInvite userId={user.id} onOpen={() => navigate("story")} />
             {learnerProfile && voiceEnabled && !active && <PersonalSparkyMessage key={`${learnerProfile.name}-${learnerProfile.namePronunciation}`} profile={learnerProfile} occasion="welcome" onPronunciation={() => void editNamePronunciation()} />}
             <InstallAppPrompt />
             {callEnabled && <section className="call-invite">
@@ -713,6 +714,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           </>
         )}
         {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => navigate("today")} />}
+        {view === "story" && <StoryExperience userId={user.id} mascot={reward.mascot} onBack={() => navigate("today")} />}
         {view === "course" && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "review" && (
           <>
@@ -879,8 +881,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         {navigation.filter(item => item.id !== "profile" && item.id !== "exams").map((item) => (
           <button
             key={item.id}
-            aria-current={view === item.id || (view === "exams" && item.id === "course") ? "page" : undefined}
-            className={view === item.id || (view === "exams" && item.id === "course") ? "active" : ""}
+            aria-current={view === item.id || (view === "exams" && item.id === "course") || (view === "story" && item.id === "today") ? "page" : undefined}
+            className={view === item.id || (view === "exams" && item.id === "course") || (view === "story" && item.id === "today") ? "active" : ""}
             onClick={() => navigate(item.id)}
           >
             <item.icon size={20} />

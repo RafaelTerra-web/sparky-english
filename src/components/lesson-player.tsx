@@ -20,6 +20,7 @@ import { tipForLesson } from "@/lib/conversation-tips";
 import { lessonSteps, migrateLessonCheckpoint, lessonFlowVersion } from "@/lib/lesson-flow";
 import { primeInterfaceSound } from "@/lib/interface-sound";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
+import styles from "./lesson-player.module.css";
 const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 
 export default function LessonPlayer({
@@ -76,6 +77,7 @@ export default function LessonPlayer({
   const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
   const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
   const step = steps[index];
+  const hasAnswerChoices = isExercise(step) && step.kind !== "order_words";
   const illustrationId = lessonIllustrationId(lesson);
   const showIllustration = Boolean(illustrationId) && ["hook", "choice", "listening_detail", "listening_inference"].includes(step.kind);
   const retrievalExercise = review && isExercise(step);
@@ -287,7 +289,7 @@ export default function LessonPlayer({
               </div>;
             })}
           </dl>
-        ) : <p lang={step.kind === "order_words" ? "pt-BR" : supportLanguage} className="step-explanation">{step.kind === "order_words" ? step.body : supportT(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p>}
+        ) : !hasAnswerChoices ? <p lang={step.kind === "order_words" ? "pt-BR" : supportLanguage} className="step-explanation">{step.kind === "order_words" ? step.body : supportT(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p> : null}
         {index===0&&!review&&studyMode==='practice'&&<p lang={getSupportLocale()} className="practice-context">{supportT('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{supportT('Próxima na trilha:')}{supportT(nextLesson.title)}</>}</p>}
         {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p lang={getSupportLocale()}>{supportT(lessonMetadata[lesson.id].outcome)}.</p><p lang={getSupportLocale()}>{supportT('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p lang={getSupportLocale()}><strong>{supportT('Depois de concluir, próxima na trilha:')}</strong>{supportT(nextLesson.title)}</p>:<p lang={getSupportLocale()}>{supportT('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
         {step.kind === "hook" && (
@@ -405,25 +407,28 @@ export default function LessonPlayer({
             </div>
           </div>
         ) : (
-          isExercise(step) && (
-            <div
-              className="answer-options"
-              role="group"
-              aria-label={localizeAttribute("Opções de resposta")}
-            >
-              {step.options!.map((option, optionIndex) => (
-                <button
-                  key={option}
-                  disabled={checked}
-                  aria-pressed={answer === option}
-                  className={answer === option ? "selected" : ""}
-                  onClick={() => setAnswer(option)}
-                >
-                  <span>{t(String.fromCharCode(65 + optionIndex))}</span>
-                  <span lang="en">{targetText(option)}</span>
-                  {answer === option && <Check size={17} />}
-                </button>
-              ))}
+          hasAnswerChoices && (
+            <div className={styles.questionBlock}>
+              <p id="lesson-question" lang={supportLanguage} className={styles.questionPrompt}>{supportT(step.body)}</p>
+              <div
+                className="answer-options"
+                role="group"
+                aria-labelledby="lesson-question"
+              >
+                {step.options!.map((option, optionIndex) => (
+                  <button
+                    key={option}
+                    disabled={checked}
+                    aria-pressed={answer === option}
+                    className={answer === option ? "selected" : ""}
+                    onClick={() => setAnswer(option)}
+                  >
+                    <span>{t(String.fromCharCode(65 + optionIndex))}</span>
+                    <span lang="en">{targetText(option)}</span>
+                    {answer === option && <Check size={17} />}
+                  </button>
+                ))}
+              </div>
             </div>
           )
         )}

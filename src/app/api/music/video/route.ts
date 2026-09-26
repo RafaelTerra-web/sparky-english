@@ -3,12 +3,14 @@ import { join } from 'node:path';
 import { cookies } from 'next/headers';
 import { readSession, SESSION_COOKIE } from '@/lib/auth-session';
 import { musicRelease } from '@/lib/music-release';
+import { hasReviewedMusicStore, reviewedMusicRedirect } from '@/lib/music-blob';
 
 export async function GET(request: Request) {
   if (!await readSession((await cookies()).get(SESSION_COOKIE)?.value)) return new Response(null, { status: 401 });
   const release = musicRelease(new URL(request.url).searchParams.get('trackId'));
   if (!release || !('video' in release)) return new Response(null, { status: 404 });
   try {
+    if (hasReviewedMusicStore()) return await reviewedMusicRedirect(release.video);
     const path = join(process.cwd(), '.music-assets', release.video);
     const { size } = await stat(path);
     const range = request.headers.get('range');

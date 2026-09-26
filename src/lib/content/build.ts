@@ -2,6 +2,7 @@ import type { Lesson, Level, Step } from "../curriculum";
 import type { LessonDraft, ModuleDraft } from "./types";
 import { authoredStepOrders, createLessonExperience, createPronunciationGuide, firstSentence, usageContrasts } from "./pedagogy.ts";
 import { productionSupport } from "./production-support.ts";
+import { fourthOptionsFor } from "./fourth-options.ts";
 
 export const contentVersion = "2026-09-07.2";
 export const sourceIdsForLevel = (level: Level) => ["B2", "C1", "C2"].includes(level) ? ["cefr", "cefr-global", "cefr-spoken"] : [
@@ -23,6 +24,7 @@ export function buildLesson(
   previous?: Pick<LessonDraft, "title" | "example" | "translation">,
 ): Lesson {
   const words = data.example.split(" ");
+  const [choiceD, gapD] = fourthOptionsFor(data.id);
   const experience = createLessonExperience(data, module, position, previous);
   if (data.exampleFrom) experience.discovery = `Retome o modelo em uma situação diferente: ${data.question} Compare intenção, interpretação e efeito antes de consultar a explicação.`;
   const base: Record<string, Step> = {
@@ -64,7 +66,7 @@ export function buildLesson(
       english: data.dialogue,
       translation: data.dialogueTranslation,
       translationSummary: ["B2", "C1", "C2"].includes(module.level),
-      options: rotate(data.choices, position + 1),
+      options: rotate([...data.choices, choiceD], position + 1),
       answer: data.choices[0],
       explanation: data.explanation,
     },
@@ -73,7 +75,7 @@ export function buildLesson(
       title: "Pratique a estrutura",
       body: "Escolha a opção que completa a frase no contexto indicado.",
       english: data.gap,
-      options: rotate(data.fills, position + 2),
+      options: rotate([...data.fills, gapD], position + 2),
       answer: data.fills[0],
       explanation: data.gapExplanation,
     },

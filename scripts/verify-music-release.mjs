@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { get } from '@vercel/blob';
 
 // Perfect is unchanged from dpl_A19hmuaCfqY5UHqqtt2mj9mwHWzv. Heartless was
 // prepared separately from the user-provided video and reviewed locally.
@@ -30,8 +31,23 @@ export async function verifyMusicRelease(directory = '.music-assets') {
   }
 }
 
+export async function verifyMusicBlob() {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) throw Error('Private music storage credential is missing.');
+  for (const [name, expected] of Object.entries(approvedMusicFiles)) {
+    const result = await get(`reviewed-v1/${name}`, { access: 'private', token });
+    if (!result || result.statusCode !== 200) throw Error(`Reviewed private music blob is missing: ${name}`);
+    const hash = createHash('sha256');
+    for await (const chunk of result.stream) hash.update(chunk);
+    if (hash.digest('hex') !== expected) throw Error(`Reviewed private music blob differs from the approved file: ${name}`);
+  }
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  if (process.env.VERCEL || process.argv.includes('--required')) {
+  if (process.argv.includes('--remote') || (process.env.VERCEL && process.env.BLOB_READ_WRITE_TOKEN)) {
+    await verifyMusicBlob();
+    console.log('Reviewed private music blobs verified.');
+  } else if (process.env.VERCEL || process.argv.includes('--required')) {
     await verifyMusicRelease();
     console.log('Reviewed music manifest and approved audio verified.');
   }

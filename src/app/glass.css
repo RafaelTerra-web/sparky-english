@@ -78,8 +78,11 @@ html[data-palette] body .today-overview .study-summary { padding: 22px; border: 
     box-shadow: inset 0 1px 0 #ffffff6b, 0 8px 25px var(--shadow-color);
   }
   html[data-palette] .mobile-nav {
-    border-top: 1px solid color-mix(in srgb, var(--line) 60%, white 40%);
-    box-shadow: 0 -10px 32px var(--shadow-color), inset 0 1px 0 #ffffff82;
+    border-top: 1px solid var(--line);
+    background: var(--chrome);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: 0 -6px 20px var(--shadow-color);
   }
   /* Keep the full-screen listening stage free of expensive blur layers. */
   .clip-room .listen-shell { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }

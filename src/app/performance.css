@@ -22,10 +22,6 @@
 .lesson-card { content-visibility: auto; contain-intrinsic-block-size: 104px; }
 
 @media (max-width: 900px) {
-  .mobile-nav {
-    -webkit-backdrop-filter: saturate(115%) blur(10px);
-    backdrop-filter: saturate(115%) blur(10px);
-  }
   .section-loading { min-height: 48dvh; }
 }
 @media (prefers-reduced-transparency: reduce) {

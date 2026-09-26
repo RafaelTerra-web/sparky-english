@@ -10,6 +10,7 @@ import { c2Modules } from "./content/c2.ts";
 import { c2ExtensionModules } from "./content/c2-extension.ts";
 import { buildLesson, sourceIdsForLevel } from "./content/build.ts";
 import { authoredStepOrders, createLessonExperience, createPronunciationGuide, usageContrasts } from "./content/pedagogy.ts";
+import { fourthOptionsFor } from "./content/fourth-options.ts";
 import type { ModuleDraft, LessonExperience, PronunciationGuide, UsageContrast, ProductionSupport } from "./content/types.ts";
 
 import type { Level } from "./levels";
@@ -80,6 +81,7 @@ type LessonInput = {
 };
 
 function lesson(data: LessonInput): Lesson {
+  const [choiceD, gapD] = fourthOptionsFor(data.id);
   return {
     id: data.id,
     title: data.title,
@@ -106,7 +108,9 @@ function lesson(data: LessonInput): Lesson {
         kind: "choice",
         title: "Escolha a resposta",
         body: data.question,
-        options: data.choices,
+        english: data.dialogue,
+        translation: data.dialogueTranslation,
+        options: [...data.choices, choiceD],
         answer: data.answer,
         explanation: data.explanation,
       },
@@ -115,7 +119,7 @@ function lesson(data: LessonInput): Lesson {
         title: "Complete a frase",
         body: "Qual opção preenche a lacuna?",
         english: data.gap,
-        options: data.gapOptions,
+        options: [...data.gapOptions, gapD],
         answer: data.gapAnswer,
         explanation: data.gapExplanation,
       },

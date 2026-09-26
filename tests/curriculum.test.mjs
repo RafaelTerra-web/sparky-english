@@ -17,6 +17,8 @@ import { c1ExtensionModules } from "../src/lib/content/c1-extension.ts";
 import { c2Modules } from "../src/lib/content/c2.ts";
 import { c2ExtensionModules } from "../src/lib/content/c2-extension.ts";
 import { curriculumSources } from "../src/lib/content/build.ts";
+import { fourthOptions } from "../src/lib/content/fourth-options.ts";
+import { advancedExpansionModules } from "../src/lib/content/advanced-expansion.ts";
 
 const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules, ...fluentPracticeModules];
 const legacy = ["a1-1-1", "a1-2-1", "a2-3-1", "a2-4-1", "b1-5-1", "b1-6-1"];
@@ -101,6 +103,11 @@ test("all new lessons contain substantial theory, context, translations, vocabul
 test("every published exercise has one editorial key and rejects all distractors", () => {
   let exercises = 0;
   const authoredSequences = new Set();
+  const expectedFourthOptions = [
+    ...lessons.map(lesson => lesson.id),
+    ...advancedExpansionModules.flatMap(module => module.lessons.map(lesson => lesson.id)),
+  ];
+  assert.deepEqual(Object.keys(fourthOptions).sort(), expectedFourthOptions.sort());
   for (const lesson of lessons) {
     assert.equal(lesson.steps[0].kind, "hook");
     assert.equal(lesson.steps.at(-1).kind, "summary");
@@ -132,7 +139,8 @@ test("every published exercise has one editorial key and rejects all distractors
         );
         assert.notEqual(step.options.join(" "), step.answer);
       } else {
-        assert.equal(new Set(step.options).size, 3);
+        assert.equal(step.options.length, 4, `${lesson.id}: ${step.kind} must show A-D`);
+        assert.equal(new Set(step.options).size, 4);
         assert.equal(step.options.filter((o) => o === step.answer).length, 1);
         for (const option of step.options.filter((o) => o !== step.answer))
           assert.equal(correctAnswer(step, option), false);
