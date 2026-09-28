@@ -1,30 +1,43 @@
-import { fluentPracticeModules } from "../src/lib/content/fluent-practice.ts";
-import { a1Modules } from '../src/lib/content/a1.ts';
-import { a2Modules } from '../src/lib/content/a2.ts';
-import { a2CommunicationModules } from '../src/lib/content/a2-practice.ts';
-import { b1Modules } from '../src/lib/content/b1.ts';
-import { b2Modules } from '../src/lib/content/b2.ts';
-import { c1Modules } from '../src/lib/content/c1.ts';
-import { c1ExtensionModules } from '../src/lib/content/c1-extension.ts';
-import { c2Modules } from '../src/lib/content/c2.ts';
-import { c2ExtensionModules } from '../src/lib/content/c2-extension.ts';
-const rows = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules, ...fluentPracticeModules].flatMap(m => m.lessons);
-let failures = 0;
-const minimum = { rule: 150, pitfall: 65, dialogue: 71, dialogueTranslation: 61, production: 61, explanation: 51, gapExplanation: 46 };
-for (const row of rows) for (const [field, length] of Object.entries(minimum)) {
-  if (row[field].length < length) { failures++; console.log(`${row.title}: ${field} (${row[field].length}/${length})`); }
-}
-for (const field of ['rule', 'example', 'dialogue', 'question', 'production']) {
-  const seen = new Map();
-  for (const row of rows) {
-    if (field === "example" && row.exampleFrom) {
-      const source = rows.find(item => item.id === row.exampleFrom);
-      if (!source || source.example !== row.example || source.translation !== row.translation) { failures++; console.log("Invalid reused example: " + row.id); }
-      continue;
+import assert from "node:assert/strict";
+import { lessons, modules } from "../src/lib/curriculum.ts";
+import { exerciseId, studyExercises, gradeAttempt, startStudy, verifyCompletion } from "../src/lib/study.ts";
+import { lessonLedger, moduleLedger } from "../src/lib/content/ledger.ts";
+import { normalizeOrderAnswer } from "../src/lib/content/order-variants.ts";
+const words = text => text?.trim().split(/\s+/).length ?? 0;
+let choice = 0, order = 0;
+const allIds = new Set();
+assert.equal(lessons.length,176);
+assert.deepEqual(new Set(lessonLedger),new Set(lessons.map(l=>l.id)));
+assert.deepEqual(new Set(moduleLedger),new Set(modules.map(m=>m.id)));
+for (const lesson of lessons) {
+  const steps = studyExercises(lesson,false);
+  assert.deepEqual(steps.map(s=>s.kind),["choice","order_words","choice","order_words","choice","order_words"],lesson.id);
+  assert.ok(lesson.support?.some(s=>s.kind==="teach"),lesson.id);
+  assert.ok(lesson.support?.some(s=>s.kind==="production"),lesson.id);
+  const beginner = ["A1","A2"].includes(lesson.level), intermediate=["B1","B2"].includes(lesson.level);
+  let proof = startStudy(lesson.id,false);
+  for (const step of steps) {
+    const id=exerciseId(lesson,step);
+    assert.ok(!allIds.has(id),id);allIds.add(id);
+    assert.ok(words(step.body)<=12 && words(step.bodyEnglish)<=12,id+": instruction");
+    assert.ok(words(step.english)<=(beginner?25:45),id+": context");
+    assert.ok(step.explanation && step.explanationEnglish,id+": feedback in both languages");
+    assert.ok(words(step.explanation)<=35 && words(step.explanationEnglish)<=35,id+": short feedback");
+    if(step.kind==="choice"){
+      choice++;assert.equal(step.options.length,3,id);assert.equal(new Set(step.options).size,3,id);
+      assert.equal(step.options.filter(o=>o===step.answer).length,1,id);
+      for(const answer of step.options.filter(o=>o!==step.answer)) assert.equal(gradeAttempt({lessonId:lesson.id,review:false,stepId:id,answer,assisted:false,previous:proof}).correct,false,id);
+    }else{
+      order++;const length=words(step.answer);
+      assert.ok(length>=(beginner?3:intermediate?6:8)&&length<=(beginner?8:intermediate?12:16),id+": word count");
+      const bag=value=>normalizeOrderAnswer(value).split(" ").sort();
+      assert.deepEqual(bag(step.options.join(" ")),bag(step.answer),id);
+      for(const answer of step.acceptedAnswers??[]) assert.deepEqual(bag(answer),bag(step.answer),id+": equivalent token set");
     }
-    if (seen.has(row[field])) { failures++; console.log(`Duplicate ${field}: ${seen.get(row[field])} / ${row.title}`); }
-    seen.set(row[field], row.title);
+    proof=gradeAttempt({lessonId:lesson.id,review:false,stepId:id,answer:step.answer,assisted:false,previous:proof}).receipt;
   }
+  assert.deepEqual(verifyCompletion(proof,lesson.id,false),{independent:true});
+  assert.equal(new Set(steps.filter(s=>s.kind==="order_words").map(s=>s.answer)).size,3,lesson.id);
 }
-console.log(`${rows.length} new lessons; ${rows.reduce((sum, row) => sum + Object.values(row).filter(v => typeof v === 'string').join(' ').split(/\s+/).length, 0)} authored words across lesson fields (before rendering).`);
-if (failures) process.exitCode = 1;
+assert.equal(choice,528);assert.equal(order,528);
+console.log(JSON.stringify({lessons:lessons.length,modules:modules.length,choice,order,exercises:allIds.size,errors:0}));

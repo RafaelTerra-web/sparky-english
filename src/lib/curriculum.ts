@@ -1,3 +1,5 @@
+import { normalizeOrderAnswer } from "./content/order-variants.ts";
+import { quickLesson } from "./content/quick.ts";
 import { fluentPracticeModules } from "./content/fluent-practice.ts";
 import { a1Modules } from "./content/a1.ts";
 import { a2Modules } from "./content/a2.ts";
@@ -17,6 +19,11 @@ import type { Level } from "./levels";
 import type { ListeningConversation } from "./listening-types";
 export type { Level } from "./levels";
 export type Step = {
+  acceptedAnswers?: string[];
+  id?: string;
+  cue?: string;
+  bodyEnglish?: string;
+  explanationEnglish?: string;
   kind:
     | "hook"
     | "discovery"
@@ -56,6 +63,8 @@ export type Lesson = {
   level: Level;
   minutes: number;
   steps: Step[];
+  exercises?: Step[];
+  support?: Step[];
   moduleId?: string;
   sourceIds?: string[];
   experience: LessonExperience;
@@ -363,7 +372,7 @@ export const modules = drafts.map((module, index) => {
     description: module.description,
     order: index + 1,
     prerequisiteId: module.prerequisiteId ?? (index > 0 ? drafts[index - 1].id : null),
-    lessons: items,
+    lessons: items.map(quickLesson),
   };
 });
 export type CourseModule = (typeof modules)[number];
@@ -398,5 +407,5 @@ export function searchModules(level: Level | "all", query: string) {
 }
 
 export function correctAnswer(step: Step, answer: string) {
-  return answer === step.answer;
+  return step.kind === "order_words" ? [step.answer!, ...(step.acceptedAnswers ?? [])].some(value => normalizeOrderAnswer(value) === normalizeOrderAnswer(answer)) : answer === step.answer;
 }

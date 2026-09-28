@@ -1,3 +1,4 @@
+import { quickProfile } from "@/lib/quick-onboarding";
 import { NextRequest, NextResponse } from "next/server";
 import { readBoundedJson } from '@/lib/bounded-json';
 import { readSession, SESSION_COOKIE, sameOrigin } from "@/lib/auth-session";
@@ -128,7 +129,15 @@ export async function POST(request: NextRequest) {
     if (!session || body.revision !== session.revision)
       throw new Error("conflict");
     const draft = { ...session.data };
-    if (body.action === "name") {
+    if (body.action === "quick-profile") {
+      const previousName = draft.name;
+      Object.assign(draft, quickProfile(draft, body), { consentVersion: "onboarding-v1" });
+      await saveDraft(key, draft, session.revision);
+      if (previousName !== draft.name) await deleteNameAudio(key);
+      return NextResponse.json(await snapshot(key), { headers });
+    } else if (body.action === "quick-back") {
+      draft.step = body.stage === 0 ? "name" : "level";
+    } else if (body.action === "name") {
       const valid = validateName(body.name);
       Object.assign(draft, valid, { step: "age", namePronunciation: valid.name, namePronunciationStatus: undefined, namePronunciationVersion, namePronunciationRevision: (draft.namePronunciationRevision ?? 0) + 1 });
       await saveDraft(key, draft, session.revision);
@@ -201,7 +210,16 @@ export async function POST(request: NextRequest) {
       if (draft.step === "test") draft.step = "level";
     } else if (body.action === "next" && draft.step === "welcome") {
       draft.step = "name";
-    } else if (body.action === "finish") {
+    } else if (body.action === "finish" || body.action === "quick-finish") {
+      if (body.action === "quick-finish") {
+        if (!["sparky", "pinky"].includes(String(body.mascot))) throw new Error("Escolha um mascote.");
+        draft.mascot = body.mascot as "sparky" | "pinky";
+        if (!pronunciationConfirmed(draft)) {
+          draft.namePronunciation = draft.name;
+          draft.namePronunciationStatus = "text-only";
+          draft.namePronunciationVersion = namePronunciationVersion;
+        }
+      }
       if (!pronunciationConfirmed(draft) && draft.namePronunciationStatus !== "text-only") {
         draft.step = "pronunciation";
         await saveDraft(key, draft, session.revision);

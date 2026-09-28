@@ -18,9 +18,14 @@ test('server cap survives state round-trips and resets at Sao Paulo midnight',()
  const tomorrow=completeStudy(blocked.state,lessons[3].id,true,new Date('2026-09-10T03:00Z'));assert.equal(tomorrow.earned,2);assert.equal(tomorrow.state.reviewCount,1);
  assert.equal(studyDay(new Date('2026-09-10T02:59Z')),'2026-09-09');
 });
-test('a short review requires one validated answer and cannot complete a full lesson',()=>{
- const lesson=lessons[0],steps=studyExercises(lesson,true);assert.equal(steps.length,1);
- const {receipt}=gradeAttempt({lessonId:lesson.id,review:true,stepId:exerciseId(lesson,steps[0]),answer:steps[0].answer,assisted:false});
- assert.equal(verifyCompletion(receipt,lesson.id,true).independent,true);assert.throws(()=>verifyCompletion(receipt,lesson.id,false),/incomplete/);
- assert.equal(studyExercises(lesson,false).length,3);
+test('a review requires three validated answers and cannot complete a full lesson',()=>{
+ const lesson=lessons[0],steps=studyExercises(lesson,true);assert.equal(steps.length,3);
+ let receipt;
+ for(const step of steps) {
+   receipt=gradeAttempt({lessonId:lesson.id,review:true,stepId:exerciseId(lesson,step),answer:step.answer,assisted:false,previous:receipt}).receipt;
+   if(step!==steps.at(-1)) assert.throws(()=>verifyCompletion(receipt,lesson.id,true),/incomplete/);
+ }
+ assert.equal(verifyCompletion(receipt,lesson.id,true).independent,true);
+ assert.throws(()=>verifyCompletion(receipt,lesson.id,false),/incomplete/);
+ assert.equal(studyExercises(lesson,false).length,6);
 });

@@ -17,7 +17,7 @@ const subscribe = (listener: () => void) => { listeners.add(listener); return ()
 const escape = (text: string) => text.replace(/[.*+?^$()|[\]\\{}]/g, "\\$&");
 async function loadDictionary() {
   loadingDictionary ??= (async () => {
-    const response = await fetch("/locales/en.json");
+    const response = await fetch("/locales/en.json?release=" + encodeURIComponent(process.env.NEXT_PUBLIC_SPARKY_RELEASE_ID ?? "local-quick-2026-09-28"));
     if (!response.ok) throw new Error("Não foi possível carregar o inglês. Tente novamente.");
     dictionary = await response.json();
     templates = Object.entries(dictionary)

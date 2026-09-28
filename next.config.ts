@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    NEXT_PUBLIC_SPARKY_RELEASE_ID: process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_GIT_COMMIT_SHA || process.env.SPARKY_RELEASE_SHA || '',
+    NEXT_PUBLIC_SPARKY_RELEASE_ID: process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_GIT_COMMIT_SHA || process.env.SPARKY_RELEASE_SHA || 'local-quick-2026-09-28',
   },
   distDir: process.env.SPARKY_BUILD_CHECK === 'true' ? '.next-build-check' : '.next',
   outputFileTracingIncludes: {
@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
     '/api/media-progress': ['./.music-assets/**/*.mp3', './.music-assets/**/*.mp4'],
     '/api/music/audio': ['./.music-assets/**/*.mp4', './.music-assets/**/manifest.json'],
     '/api/music/video': ['./.music-assets/**/*.mp3', './.music-assets/**/manifest.json'],
+  },
+  async redirects() {
+    return [{ source: "/", has: [{ type: "host" as const, value: "sparky-english-rafaelterra-webs-projects.vercel.app" }], destination: "https://sparky-english-iota.vercel.app/", permanent: false }];
   },
   async headers() {
     return [

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { speechBounds } from '../src/lib/audio-timeline.ts';
 import { personalizeLesson } from '../src/lib/personalized-lesson.ts';
 import { lessons } from '../src/lib/curriculum.ts';
-import { gradeAttempt, isExercise, exerciseId } from '../src/lib/study.ts';
+import { gradeAttempt, studyExercises, exerciseId } from '../src/lib/study.ts';
 test('speech edges are trimmed with padding while internal silence remains', () => {
  const data = new Float32Array(1000); data[300] = 0.5; data[600] = 0.5;
  assert.deepEqual(speechBounds([data], 1000), { offset: 0.275, duration: 0.351 });
@@ -16,7 +16,7 @@ test('personalization preserves IDs and grades the same personalized exercises',
  assert.ok(JSON.stringify(original).includes('Ana'));
  assert.ok(!JSON.stringify(lesson).includes('Ana'));
  let previous;
- for (const step of lesson.steps.filter(isExercise)) {
+ for (const step of studyExercises(lesson,false)) {
   const result = gradeAttempt({lessonId: lesson.id, review: false, stepId: exerciseId(lesson, step), answer: step.answer, assisted: false, learnerName: 'Rafael', previous});
   assert.equal(result.correct, true); previous = result.receipt;
  }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparky-public-v12";
+const CACHE_NAME = "sparky-public-v13";
 // Development chunk URLs are reused between edits. Never serve cached app code
 // on localhost; an installed worker must also migrate existing preview caches.
 const LOCAL_PREVIEW = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
@@ -17,7 +17,10 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("sparky-") && (LOCAL_PREVIEW || key !== CACHE_NAME)).map((key) => caches.delete(key)))).then(() => self.clients.claim()),
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("sparky-") && (LOCAL_PREVIEW || key !== CACHE_NAME)).map((key) => caches.delete(key)))).then(() => self.clients.claim()).then(async () => {
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      windows.forEach(client => client.postMessage({ type: "SPARKY_RELEASE_READY", cacheVersion: CACHE_NAME }));
+    }),
   );
 });
 

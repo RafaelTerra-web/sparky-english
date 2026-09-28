@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { readSession, SESSION_COOKIE, sameOrigin, seal, unseal } from "@/lib/auth-session";
-import { gradeAttempt, type StudyReceipt } from "@/lib/study";
+import { gradeAttempt, startStudy, type StudyReceipt } from "@/lib/study";
 import { accountKey, loadOnboarding } from "@/lib/onboarding-store";
 
 export async function POST(request: Request) {
@@ -12,6 +12,12 @@ export async function POST(request: Request) {
     const text = await request.text();
     if (text.length > 12000) throw new Error("invalid-attempt");
     const body = JSON.parse(text);
+    if (body?.action === "start") {
+      if (typeof body.lessonId !== "string" || typeof body.review !== "boolean") throw new Error("invalid-attempt");
+      const study = startStudy(body.lessonId, body.review);
+      const receipt = await seal({ study }, `study:${user.id}`, 8 * 3600);
+      return NextResponse.json({ receipt, exerciseIds: study.exerciseIds, sessionId: study.sessionId, startedAt: study.startedAt }, { headers: { "cache-control": "private, no-store" } });
+    }
     if (!body || typeof body.lessonId !== "string" || typeof body.review !== "boolean" ||
       typeof body.stepId !== "string" || typeof body.answer !== "string" ||
       typeof body.assisted !== "boolean" || (body.receipt && typeof body.receipt !== "string"))
@@ -21,7 +27,7 @@ export async function POST(request: Request) {
     const profile = body.lessonId === "a1-1-1" && process.env.SPARKY_ONBOARDING_ENABLED === "true" ? (await loadOnboarding(accountKey(user.id))).profile : null;
     const result = gradeAttempt({ ...body, learnerName: profile?.name, previous: previous?.study as StudyReceipt | undefined });
     const receipt = await seal({ study: result.receipt }, `study:${user.id}`, 8 * 3600);
-    return NextResponse.json({ ...result, receipt }, { headers: { "cache-control": "private, no-store" } });
+    return NextResponse.json({ ...result, evidence: { passed: result.receipt.passed, failed: result.receipt.failed, assisted: result.receipt.assisted }, receipt }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     const code = error instanceof Error ? error.message : "invalid-attempt";
     const allowed = ["study-expired", "study-out-of-order", "lesson-not-found", "invalid-attempt"];
