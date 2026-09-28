@@ -4,7 +4,7 @@ import { authoredStepOrders, createLessonExperience, createPronunciationGuide, f
 import { productionSupport } from "./production-support.ts";
 import { fourthOptionsFor } from "./fourth-options.ts";
 
-export const contentVersion = "2026-09-07.2";
+export const contentVersion = "2026-09-28.quick-1";
 export const sourceIdsForLevel = (level: Level) => ["B2", "C1", "C2"].includes(level) ? ["cefr", "cefr-global", "cefr-spoken"] : [
   "cefr",
   ["B1", "B2", "C1", "C2"].includes(level) ? "bc-grammar-b1" : "bc-grammar-a1",

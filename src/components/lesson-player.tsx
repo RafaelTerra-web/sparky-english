@@ -1,515 +1,305 @@
 "use client";
-import { englishVariety } from "@/lib/language-policy";
-import { lessonMetadata, pathsForLesson } from "@/lib/course-guide";
-import { t, supportT, targetText, useSupportLanguage, setSupportLanguage, localizeAttribute, getSupportLocale } from "@/lib/interface-language";
-import { useEffect, useRef, useState, type RefObject } from "react";
-import Image from "next/image";
-import { lessonIllustrationId } from "@/lib/lesson-illustrations";
-import { ArrowLeft, ArrowRight, Check, Languages, X } from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import dynamic from "next/dynamic";
+import { X, Check, ArrowRight, RotateCcw, Clock3 } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum";
 import type { PublicRewardState } from "@/lib/rewards-shared";
-import { contentVersion } from "@/lib/content/build";
-import { isExercise, exerciseId } from "@/lib/study";
-import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey } from "@/lib/learning-local";
-import type { CheckpointStepState } from "@/lib/learning-local";
-import { SpeechPractice } from "./speech-practice";
-import { MascotFigure } from "./mascot-studio";
-import { ConversationListening } from "./conversation-listening";
-import { ConversationTipCard } from "./conversation-tip";
-import { tipForLesson } from "@/lib/conversation-tips";
-import { lessonSteps, migrateLessonCheckpoint, lessonFlowVersion } from "@/lib/lesson-flow";
-import { primeInterfaceSound } from "@/lib/interface-sound";
 import type { LearnerProfile } from "@/lib/onboarding-shared";
-import styles from "./lesson-player.module.css";
-const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
-
-export default function LessonPlayer({
-  userId,
-  lesson,
-  review,
-  mascot,
-  equipped,
-  saving,
-  openerRef,
-  learnerProfile,
-  onClose,
-  onFinish,
-  studyMode = "guided",
-  nextLesson,
-}: {
-  studyMode?: "guided"|"practice";
-  nextLesson?: Lesson;
-  userId: string;
-  lesson: Lesson;
-  review: boolean;
-  mascot: PublicRewardState["mascot"];
-  equipped: PublicRewardState["equipped"];
-  saving: boolean;
-  openerRef?: RefObject<HTMLElement | null>;
-  learnerProfile?: LearnerProfile | null;
-  onClose: () => void;
-  onFinish: (receipt: string) => Promise<boolean>;
-}) {
+import type { Checkpoint, CheckpointStepState } from "@/lib/learning-local";
+import { readWorkspace, updateWorkspace, saveCheckpoint, checkpointKey } from "@/lib/learning-local";
+import { contentVersion } from "@/lib/content/build";
+import { exerciseId, evaluationVersion } from "@/lib/study";
+import { lessonSteps, lessonFlowVersion, migrateLessonCheckpoint } from "@/lib/lesson-flow";
+import { challengeLimit, challengeScore, activeClockNow, readPersonalRecord, type PracticeMode, type ChallengeState, type PracticeResult } from "@/lib/quick-practice";
+import { t, supportT, getSupportLocale, useSupportLanguage, localizeAttribute } from "@/lib/interface-language";
+import { primeInterfaceSound, playInterfaceSound } from "@/lib/interface-sound";
+import { lessonMetadata } from "@/lib/course-guide";
+import MascotMoment from "./mascot-moment";
+import styles from "./quick-player.module.css";
+const LessonSupport = dynamic(() => import("./lesson-support"), { loading: () => <p role="status">{t("Carregando…")}</p> });
+type Props = {
+  userId: string; lesson: Lesson; review: boolean; mascot: PublicRewardState["mascot"];
+  equipped: PublicRewardState["equipped"]; saving: boolean;
+  openerRef?: RefObject<HTMLElement | null>; learnerProfile?: LearnerProfile | null;
+  studyMode?: "guided" | "practice"; nextLesson?: Lesson;
+  onClose: () => void; onFinish: (receipt: string, result?: PracticeResult) => Promise<boolean>;
+};
+type Evidence = { passed: number; failed: number; assisted: number };
+export default function LessonPlayer({ userId, lesson, review, mascot, saving, openerRef, learnerProfile, onClose, onFinish }: Props) {
   const supportLanguage = useSupportLanguage();
-  const dialog = useRef<HTMLDialogElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
-  const body = useRef<HTMLDivElement>(null);
-  const feedback = useRef<HTMLDivElement>(null);
-  const [recovered] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
-  const [initial] = useState(() => recovered && (!review || recovered.reviewFormat === 2) && Date.now() - Date.parse(recovered.updatedAt) < 7 * 3600000 ? recovered : null);
-  const steps = lessonSteps(lesson, review);
-  const [index, setIndex] = useState(initial && initial.index < steps.length ? initial.index : 0);
-  const [answer, setAnswer] = useState(initial?.answer || "");
-  const [tokens, setTokens] = useState<number[]>(initial?.tokens || []);
-  const [checked, setChecked] = useState(Boolean(initial?.checked));
-  const [correct, setCorrect] = useState(Boolean(initial?.correct));
-  const [freshCorrectStep, setFreshCorrectStep] = useState<number | null>(null);
-  const [translation, setTranslation] = useState(Boolean(initial?.translation));
-  const [assisted, setAssisted] = useState(Boolean(initial?.assisted));
-  const [contextVisible, setContextVisible] = useState(Boolean(initial?.contextVisible));
-  const [revealed, setRevealed] = useState(Boolean(initial?.revealed));
-  const [listened, setListened] = useState(Boolean(initial?.listened));
-  const [draft] = useState(recovered?.draft || "");
-  const [receipt, setReceipt] = useState(initial?.receipt || "");
-  const [verifying, setVerifying] = useState(false);
+  const [initial] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
+  const [personalBest] = useState(() => readPersonalRecord(userId, lesson.id));
+  const [upgrade] = useState(() => readWorkspace(userId).restartNotice === true);
+  const [phase, setPhase] = useState<"choose" | "active">(initial?.receipt ? "active" : "choose");
+  const [ids, setIds] = useState(initial?.exerciseIds);
+  const [index, setIndex] = useState(initial?.index ?? 0);
+  const [answer, setAnswer] = useState(initial?.answer ?? "");
+  const [tokens, setTokens] = useState<number[]>(initial?.tokens ?? []);
+  const [checked, setChecked] = useState(initial?.checked ?? false);
+  const [correct, setCorrect] = useState(initial?.correct ?? false);
+  const [helped, setHelped] = useState(initial?.assisted ?? false);
+  const [supportOpen, setSupportOpen] = useState(initial?.contextVisible ?? false);
+  const [receipt, setReceipt] = useState(initial?.receipt ?? "");
+  const [sessionId, setSessionId] = useState(initial?.sessionId ?? "");
+  const [startedAt, setStartedAt] = useState(initial?.startedAt ?? 0);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [storageError, setStorageError] = useState(false);
+  const [passed, setPassed] = useState(() => Object.entries(initial?.history ?? {}).reduce((mask, [position, value]) => value.correct ? mask | (1 << Number(position)) : mask, initial?.correct ? 1 << initial.index : 0));
+  const [fresh, setFresh] = useState(false);
+  const [challenge, setChallenge] = useState<ChallengeState>(initial?.challenge ?? { mode: "normal", activeMs: 0, failed: 0, helped: 0, expired: false });
+  const [elapsed, setElapsed] = useState(initial?.challenge?.activeMs ?? 0);
+  const clock = useRef(elapsed);
+  const responding = useRef(false);
+  const lastTick = useRef(0);
+  const locked = useRef(false);
   const history = useRef<Record<string, CheckpointStepState>>(initial?.history ?? {});
-  const furthestIndex = useRef(initial?.furthestIndex ?? initial?.index ?? 0);
+  const telemetrySeq = useRef(initial?.telemetrySeq ?? 0);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const latest = useRef<Checkpoint | null>(null);
+  const tracking = useRef<(kind: string) => void>(() => {});
+  const steps = lessonSteps(lesson, review, ids);
   const step = steps[index];
-  const hasAnswerChoices = isExercise(step) && step.kind !== "order_words";
-  const illustrationId = lessonIllustrationId(lesson);
-  const showIllustration = Boolean(illustrationId) && ["hook", "choice", "listening_detail", "listening_inference"].includes(step.kind);
-  const retrievalExercise = review && isExercise(step);
-  const selected = step.kind === "order_words" ? tokens.map(token => step.options?.[token] || "").join(" ") : answer;
-  useEffect(() => {
-    // Safari does not focus buttons on touch; keep the explicit invoking control.
+  const selected = step.kind === "order_words" ? tokens.map(token => step.options![token]).join(" ") : answer;
+  const expired = challenge.mode === "challenge" && (challenge.expired || elapsed >= challengeLimit(lesson.level));
+  let streak = 0;
+  for (let i = 0; i < steps.length; i++) {
+    if (!(passed & (1 << i))) break;
+    streak = ((challenge.failed | challenge.helped) & (1 << i)) ? 0 : streak + 1;
+  }
+  useEffect(() => { tracking.current = kind => {
+    if (!sessionId || !receipt) return;
+    const data = { receipt, sequence: ++telemetrySeq.current, kind, index, mode: challenge.mode, activeMs: Math.round(clock.current) };
+    const payload = JSON.stringify(data);
+    if (kind === "abandon" && navigator.sendBeacon) {
+      navigator.sendBeacon("/api/learning-events", new Blob([payload], { type: "application/json" }));
+    } else void fetch("/api/learning-events", { method: "POST", headers: { "content-type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+  }; });
+  useLayoutEffect(() => {
     const opener = openerRef?.current ?? document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.dataset.sparkyBusy = "lesson";
     const current = dialog.current;
     current?.showModal();
-    return () => { current?.close(); document.body.style.overflow = previousOverflow; if (opener?.isConnected) opener.focus({ preventScroll: true }); };
+    return () => {
+      current?.close(); document.body.style.overflow = previousOverflow;
+      delete document.documentElement.dataset.sparkyBusy;
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
+    };
   }, [openerRef]);
+  useEffect(() => { heading.current?.focus({ preventScroll: true }); }, [index, phase]);
+  useLayoutEffect(() => {
+    if (!receipt || phase !== "active" || !ids) return;
+    history.current[index] = { answer, tokens, checked, correct, translation: false, assisted: helped,
+      contextVisible: supportOpen, revealed: false, listened: false };
+    latest.current = { reviewFormat: 3, flowVersion: lessonFlowVersion, lessonId: lesson.id, review, index,
+      exerciseId: exerciseId(lesson, step), exerciseIds: ids, sessionId, startedAt,
+      answer, tokens, checked, correct, translation: false, assisted: helped, contextVisible: supportOpen,
+      revealed: false, listened: false, receipt, draft: initial?.draft ?? "", history: history.current,
+      challenge: { ...challenge, activeMs: clock.current }, telemetrySeq: telemetrySeq.current,
+      updatedAt: new Date().toISOString(), contentVersion };
+    if (!saveCheckpoint(userId, latest.current)) queueMicrotask(() => setStorageError(true));
+  }, [userId, lesson, review, index, answer, tokens, checked, correct, helped, supportOpen, receipt, ids, challenge, elapsed, phase, sessionId, startedAt, initial, step]);
+  useLayoutEffect(() => {
+    responding.current = phase === "active" && !checked && !supportOpen && !busy && !saving && !expired && Boolean(receipt);
+    lastTick.current = performance.now();
+  }, [phase, checked, supportOpen, busy, saving, expired, receipt]);
   useEffect(() => {
-    heading.current?.focus({ preventScroll: true });
-    body.current?.scrollTo({ top: 0, behavior: "instant" });
-  }, [index]);
+    if (phase !== "active") return;
+    let wasVisible = !document.hidden;
+    const tick = () => {
+      const now = performance.now();
+      if (!document.hidden && wasVisible && responding.current && !locked.current) clock.current += Math.max(0, now - lastTick.current);
+      lastTick.current = now;
+      setElapsed(Math.floor(clock.current / 1000) * 1000);
+    };
+    const pause = () => {
+      lastTick.current = performance.now(); wasVisible = !document.hidden;
+      if (document.hidden) {
+        tracking.current("abandon");
+        if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current, updatedAt: new Date().toISOString() });
+      }
+    };
+    const leaving = () => {
+      tick(); tracking.current("abandon");
+      if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current, updatedAt: new Date().toISOString() });
+    };
+    const timer = window.setInterval(tick, 250);
+    document.addEventListener("visibilitychange", pause); window.addEventListener("pagehide", leaving);
+    return () => { window.clearInterval(timer); document.removeEventListener("visibilitychange", pause); window.removeEventListener("pagehide", leaving); };
+  }, [phase, userId]);
   useEffect(() => {
-    if (checked) feedback.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
-    if (error) body.current?.scrollTo({ top: 0, behavior: "instant" });
-  }, [checked, error]);
-  useEffect(() => {
-    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
-    const saved = saveCheckpoint(userId, { reviewFormat: 2, lessonId: lesson.id, review, index, answer, tokens, checked, correct,
-      translation, assisted, contextVisible, revealed, listened, receipt, draft, furthestIndex: furthestIndex.current,
-      history: history.current, updatedAt: new Date().toISOString(), contentVersion, flowVersion: lessonFlowVersion });
-    if (!saved) queueMicrotask(() => setStorageError(true));
-  }, [userId, lesson.id, review, index, answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened, receipt, draft]);
-  function tokensForAnswer(target: number) {
-    const targetStep = steps[target];
-    if (targetStep.kind !== "order_words") return [];
-    const unused = targetStep.options!.map((word, token) => ({ word, token }));
-    return targetStep.answer!.split(" ").map(word => {
-      const found = unused.findIndex(item => item.word === word);
-      return unused.splice(found, 1)[0].token;
-    });
+    if (!expired || challenge.expired) return;
+    queueMicrotask(() => { setChallenge(state => ({ ...state, expired: true })); tracking.current("timeout"); });
+  }, [expired, challenge.expired]);
+  async function requestStudy(data: Record<string, unknown>) {
+    const response = await fetch("/api/study", { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify(data), signal: AbortSignal.timeout(15000) });
+    const result = await response.json();
+    if (!response.ok) {
+      if (["study-expired", "study-out-of-order"].includes(result.error)) {
+        setPhase("choose"); setReceipt(""); setIds(undefined); setIndex(0); setAnswer(""); setTokens([]);
+        setChecked(false); setCorrect(false); setHelped(false); setPassed(0); history.current = {}; clock.current = 0; setElapsed(0);
+        setChallenge(state => ({ ...state, activeMs: 0, failed: 0, helped: 0, expired: false }));
+        updateWorkspace(userId, workspace => { const checkpoints = { ...workspace.checkpoints }; delete checkpoints[checkpointKey(lesson.id, review)]; return { ...workspace, checkpoints }; });
+        throw new Error("A sessão expirou. Comece a prática novamente; seus textos foram preservados.");
+      }
+      throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Sua resposta continua aqui.");
+    }
+    return result;
   }
-  function moveTo(target: number) {
-    setFreshCorrectStep(null);
-    history.current[index] = { answer, tokens, checked, correct, translation, assisted, contextVisible, revealed, listened };
-    const previous = history.current[target];
-    const alreadyPassed = target < furthestIndex.current && isExercise(steps[target]);
-    setIndex(target);
-    setAnswer(previous?.answer ?? (alreadyPassed && steps[target].kind !== "order_words" ? steps[target].answer! : ""));
-    setTokens(previous?.tokens ?? (alreadyPassed ? tokensForAnswer(target) : []));
-    setChecked(previous?.checked ?? alreadyPassed);
-    setCorrect(previous?.correct ?? alreadyPassed);
-    setTranslation(previous?.translation ?? false);
-    setAssisted(previous?.assisted ?? false);
-    setContextVisible(previous?.contextVisible ?? false);
-    setRevealed(previous?.revealed ?? false);
-    setListened(previous?.listened ?? false);
+  async function start() {
+    if (locked.current) return;
+    locked.current = true; setBusy(true); setError(""); primeInterfaceSound();
+    try {
+      const result = await requestStudy({ action: "start", lessonId: lesson.id, review });
+      setIds(result.exerciseIds); setReceipt(result.receipt); setSessionId(result.sessionId); setStartedAt(result.startedAt);
+      clock.current = 0; setElapsed(0); setPassed(0); setPhase("active"); playInterfaceSound("start");
+      updateWorkspace(userId, workspace => ({ ...workspace, restartNotice: false }));
+      // The first event uses the receipt just returned, before React renders it.
+      void fetch("/api/learning-events", { method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ receipt: result.receipt, sequence: ++telemetrySeq.current, kind: "start", index: 0, mode: challenge.mode, activeMs: 0 }) }).catch(() => {});
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Não foi possível iniciar. Tente novamente."); }
+    finally { locked.current = false; setBusy(false); }
   }
-  function previous() {
-    if (index === 0 || verifying || saving) return;
-    setError("");
-    if (step.kind === "production") saveWriting();
-    moveTo(index - 1);
-  }
-  function saveWriting() {
-    if (!draft.trim()) return;
-    const ok = updateWorkspace(userId, current => current.writings.some(w => w.lessonId === lesson.id && w.text === draft) ? current : ({ ...current,
-      writings: [...current.writings, { id: crypto.randomUUID(), lessonId: lesson.id, text: draft, createdAt: new Date().toISOString(), contentVersion }].slice(-100),
-    }));
-    if (!ok) setStorageError(true);
+  function syncClock(now: number) {
+    if (responding.current && !document.hidden && !locked.current) clock.current += Math.max(0, now - lastTick.current);
+    lastTick.current = now; setElapsed(Math.floor(clock.current / 1000) * 1000);
   }
   async function next() {
-    if (verifying || saving) return;
-    setError("");
-    if (isExercise(step) && !checked) {
-      setVerifying(true);
+    if (locked.current || saving || expired) return;
+    syncClock(activeClockNow());
+    if (challenge.mode === "challenge" && clock.current >= challengeLimit(lesson.level)) {
+      setChallenge(state => ({ ...state, expired: true })); tracking.current("timeout"); return;
+    }
+    setError(""); primeInterfaceSound();
+    if (!checked) {
+      if (!selected || !receipt) return;
+      locked.current = true; setBusy(true);
       try {
-        const response = await fetch("/api/study", { method: "POST", signal: AbortSignal.timeout(15000), headers: { "content-type": "application/json" },
-          body: JSON.stringify({ lessonId: lesson.id, review, stepId: exerciseId(lesson, step), answer: selected, assisted, receipt }) });
-        const result = await response.json();
-        if (!response.ok) {
-          if (["study-expired", "study-out-of-order"].includes(result.error)) {
-            history.current = {}; furthestIndex.current = 0;
-            setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false); setRevealed(false); setListened(false);
-            throw new Error("A validação desta prática expirou. Retome os exercícios desde o início; seu rascunho foi preservado.");
-          }
-          throw new Error(response.status === 401 ? "Sua sessão expirou. Entre novamente para continuar." : "Não foi possível verificar. Tente novamente; sua resposta continua aqui.");
-        }
-        setCorrect(result.correct); setReceipt(result.receipt); setChecked(true);
-        setFreshCorrectStep(result.correct ? index : null);
-        const ok = updateWorkspace(userId, current => ({ ...current, attempts: [...current.attempts, {
-          id: crypto.randomUUID(), lessonId: lesson.id, stepId: exerciseId(lesson, step), answer: selected,
-          correct: result.correct, assisted, review, createdAt: new Date().toISOString(), contentVersion, evaluationVersion: result.evaluationVersion,
-        }].slice(-600) }));
-        if (!ok) setStorageError(true);
-      } catch (cause) { setError(cause instanceof TypeError || cause instanceof DOMException ? "A conexão falhou ou demorou demais. Tente novamente; sua resposta foi preservada." : cause instanceof Error ? cause.message : "Sem conexão. Tente novamente."); }
-      finally { setVerifying(false); }
+        const result = await requestStudy({ lessonId: lesson.id, review, stepId: exerciseId(lesson, step), answer: selected, assisted: helped, receipt });
+        const evidence = result.evidence as Evidence;
+        setReceipt(result.receipt); setPassed(evidence.passed); setCorrect(result.correct); setChecked(true);
+        setChallenge(state => ({ ...state, failed: evidence.failed, helped: evidence.assisted }));
+        setFresh(result.correct);
+        if (result.correct) playInterfaceSound("correct");
+        if (!updateWorkspace(userId, workspace => ({ ...workspace, attempts: [...workspace.attempts,
+          { id: crypto.randomUUID(), lessonId: lesson.id, stepId: exerciseId(lesson, step), answer: selected, correct: result.correct, assisted: helped,
+            review, createdAt: new Date().toISOString(), contentVersion, evaluationVersion }].slice(-600) }))) setStorageError(true);
+        void fetch("/api/learning-events", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
+          receipt: result.receipt, sequence: ++telemetrySeq.current, kind: "attempt", index, mode: challenge.mode, activeMs: Math.round(clock.current) }) }).catch(() => {});
+      } catch (cause) { setError(cause instanceof Error && !(cause instanceof TypeError || cause instanceof DOMException) ? cause.message : "A conexão falhou. Tente novamente; sua resposta foi preservada."); }
+      finally { locked.current = false; setBusy(false); }
       return;
     }
-    if (isExercise(step) && !correct) {
-      setChecked(false); setAnswer(""); setTokens([]); setAssisted(true); return;
+    if (!correct) {
+      setChecked(false); setAnswer(""); setTokens([]); setHelped(true); setFresh(false); return;
     }
-    if (step.kind === "production") saveWriting();
     if (index === steps.length - 1) {
-      saveWriting();
-      primeInterfaceSound();
+      locked.current = true; setBusy(true);
       try {
-        const finished = await onFinish(receipt);
-        if (finished) updateWorkspace(userId, current => {
-          const checkpoints = { ...current.checkpoints }; delete checkpoints[checkpointKey(lesson.id, review)];
-          return { ...current, checkpoints };
-        });
+        const result: PracticeResult = { mode: challenge.mode, score: challengeScore((1 << steps.length) - 1, challenge.failed, challenge.helped, steps.length),
+          activeMs: Math.round(clock.current), recordEligible: !review && challenge.mode === "challenge" && !challenge.expired && clock.current < challengeLimit(lesson.level), sessionId };
+        const finished = await onFinish(receipt, result);
+        if (finished) {
+          tracking.current("complete");
+          updateWorkspace(userId, workspace => { const checkpoints = { ...workspace.checkpoints }; delete checkpoints[checkpointKey(lesson.id, review)]; return { ...workspace, checkpoints }; });
+        }
       } catch (cause) {
         if (cause instanceof Error && cause.message === "study-incomplete") {
-          history.current = {}; furthestIndex.current = 0;
-          setReceipt(""); setIndex(0); setChecked(false); setAnswer(""); setTokens([]); setContextVisible(false); setAssisted(false); setTranslation(false); setRevealed(false); setListened(false);
-          setError("A validação da prática expirou. Retome os exercícios; seus textos foram preservados.");
-        } else setError("Não foi possível salvar a conclusão. Verifique a conexão e tente Concluir novamente. Sua prática foi preservada.");
-      }
+          setPhase("choose"); setReceipt(""); setIds(undefined); setIndex(0); setPassed(0);
+          setAnswer(""); setTokens([]); setChecked(false); setCorrect(false); setHelped(false);
+          history.current = {}; clock.current = 0; setElapsed(0);
+          setChallenge({ mode: "normal", activeMs: 0, failed: 0, helped: 0, expired: false });
+          updateWorkspace(userId, workspace => { const checkpoints = { ...workspace.checkpoints }; delete checkpoints[checkpointKey(lesson.id, review)]; return { ...workspace, checkpoints }; });
+          setError("A sessão expirou. Comece a prática novamente; seus textos foram preservados.");
+        } else setError("Não foi possível salvar. Tente Concluir novamente; sua prática foi preservada.");
+      } finally { locked.current = false; setBusy(false); }
       return;
     }
-    const target = index + 1;
-    furthestIndex.current = Math.max(furthestIndex.current, target);
-    moveTo(target);
+    setIndex(index + 1); setAnswer(""); setTokens([]); setChecked(false); setCorrect(false); setHelped(false); setSupportOpen(false); setFresh(false);
   }
-  return (
-    <dialog
-      ref={dialog}
-      className="lesson-dialog"
-      onCancel={(event) => { event.preventDefault(); if (!saving && !verifying) { saveWriting(); onClose(); } }}
-      aria-labelledby="lesson-title"
-    >
-      <header>
-        <button
-          className="icon-button"
-          disabled={saving || verifying}
-          onClick={() => { saveWriting(); onClose(); }}
-          aria-label={localizeAttribute("Fechar lição")}
-        >
-          <X size={20} />
-        </button>
-        <div>
-          <p lang={getSupportLocale()}>{supportT(review ? "Revisão" : lesson.title)}</p>
-          <progress
-            className="lesson-native-progress"
-            value={index + 1}
-            max={steps.length}
-            aria-label={localizeAttribute("Etapas da lição")}
-          />
-          <span className="lesson-progress-track" aria-hidden="true"><span style={{ width: `${((index + 1) / steps.length) * 100}%` }} /></span>
-        </div>
-        <span>
-          {t(index + 1)}/{t(steps.length)}
-        </span>
-      </header>
-      <div className="lesson-body" ref={body} data-step-kind={step.kind}>
-        {error && <p lang={getSupportLocale()} className="study-error" role="alert">{supportT(error)}</p>}
-        {storageError && <p lang={getSupportLocale()} className="study-error" role="alert">{supportT("O navegador bloqueou o salvamento local. Mantenha esta aba aberta para preservar sua prática.")}</p>}
-        {showIllustration && (
-          <figure className="lesson-illustration" aria-hidden="true">
-            <Image
-              src={`/lesson-images/${illustrationId}.png`}
-              alt={localizeAttribute("")}
-              width={960}
-              height={640}
-              sizes="(max-width: 720px) calc(100vw - 40px), 760px"
-              priority={index === 0}
-            />
-          </figure>
-        )}
-        {(step.kind === "summary" || (index === 0 && !showIllustration)) && (
-          <MascotFigure mascot={mascot} equipped={equipped} size="small" decorative />
-        )}
-        <p className="eyebrow">
-          {t(step.kind === "teach"
-            ? "Entenda primeiro"
-            : step.kind === "hook"
-              ? lesson.experience.personality
-              : step.kind === "discovery"
-                ? "Descubra antes da regra"
-            : step.kind === "summary"
-              ? "Resumo da lição"
-              : step.kind === "production"
-                ? "Escrita e revisão"
-                : step.kind === "vocabulary"
-                  ? "Palavras em contexto"
-                  : step.kind === "pronunciation"
-                    ? "Treino de pronúncia · 20–90 segundos"
-                    : step.kind === "error_analysis"
-                      ? "Aprenda com os erros"
-                  : isExercise(step)
-                    ? "Sua vez"
-                    : "Observe o exemplo")}
-        </p>
-        <h2 id="lesson-title" ref={heading} tabIndex={-1}>
-          {t(step.title)}
-        </h2>
-        {index === 0 && !review && <details className="learning-disclosure lesson-language-help">
-          <summary>{t("Idiomas desta lição")}</summary>
-          <p>{englishVariety(lesson.steps.map(item => [item.english, ...(item.options ?? [])].join(" ")).join(" "))}</p>
-          <p lang={supportLanguage}>{supportT("O padrão de produção é US English. Grafias britânicas aparecem como exposição ao inglês internacional; esta etiqueta não identifica o sotaque do áudio.")}</p>
-          <label htmlFor="lesson-support-language">{t("Idioma das explicações")}</label>
-          <select id="lesson-support-language" value={supportLanguage} onChange={event => void setSupportLanguage(event.target.value as "pt-BR" | "en", userId).catch(() => setError("Não foi possível carregar o inglês. Tente novamente."))}>
-            <option value="pt-BR">Português (Brasil)</option><option value="en">English</option>
-          </select>
-        </details>}
-        {step.kind === "vocabulary" ? (
-          <dl className="vocabulary-cards" aria-label={localizeAttribute("Vocabulário da lição")}>
-            {step.body.split("\n").filter(Boolean).map((line, lineIndex) => {
-              const separator = line.indexOf(" — ");
-              return <div key={lineIndex}>
-                <dt lang={separator >= 0 ? "en" : undefined}>{targetText(separator >= 0 ? line.slice(0, separator) : line)}</dt>
-                {separator >= 0 && <dd lang={supportLanguage}>{supportT(line.slice(separator + 3))}</dd>}
-              </div>;
-            })}
-          </dl>
-        ) : !hasAnswerChoices ? <p lang={step.kind === "order_words" ? "pt-BR" : supportLanguage} className="step-explanation">{step.kind === "order_words" ? step.body : supportT(step.kind === "summary" ? `Você praticou como ${lesson.experience.application}. Sua prática está pronta para ser concluída.` : step.body)}</p> : null}
-        {index===0&&!review&&studyMode==='practice'&&<p lang={getSupportLocale()} className="practice-context">{supportT('Treino complementar. Esta conclusão também conta no curso.')}{nextLesson&&<>{supportT('Próxima na trilha:')}{supportT(nextLesson.title)}</>}</p>}
-        {step.kind==='summary'&&!review&&<section className="lesson-outcome"><h3>{t('Agora você consegue')}</h3><p lang={getSupportLocale()}>{supportT(lessonMetadata[lesson.id].outcome)}.</p><p lang={getSupportLocale()}>{supportT('Confira na prática: tente fazer isso com uma situação sua, sem consultar o modelo.')}</p>{pathsForLesson(lesson.id).map(p=><details key={p.id}><summary>{t('Aplicar em outro contexto')} · {t(p.title)}</summary><p lang="en">{p.steps.find(s=>s.lessonId===lesson.id)!.task}</p></details>)}{nextLesson?<p lang={getSupportLocale()}><strong>{supportT('Depois de concluir, próxima na trilha:')}</strong>{supportT(nextLesson.title)}</p>:<p lang={getSupportLocale()}>{supportT('Trilha concluída. Você pode continuar explorando outras disciplinas.')}</p>}</section>}
-        {step.kind === "hook" && (
-          <div className="lesson-identity-card">
-            <p lang={getSupportLocale()}><b>{supportT("Seu desafio:")}</b> {supportT(lesson.experience.challenge)}</p>
-            <p lang={getSupportLocale()}><b>{supportT("Para usar no dia a dia:")}</b> {supportT(lesson.experience.application)}.</p>
-            <details className="learning-disclosure"><summary>{t("Ver uma dica")}</summary><p lang={getSupportLocale()}>{supportT(lesson.experience.discovery)}</p></details>
-          </div>
-        )}
-
-        {step.kind === "pronunciation" && step.pronunciation && (
-          <section className="pronunciation-lab" aria-label={localizeAttribute("Treino de pronúncia")}>
-            <div className="pronunciation-focus"><strong>{supportT(step.pronunciation.focus)}</strong>{step.pronunciation.ipa && <span>{targetText(step.pronunciation.ipa)}</span>}</div>
-            <p lang={getSupportLocale()}><strong>{supportT("Posição da boca:")}</strong> {supportT(step.pronunciation.mouth)}</p>
-            <div className="speech-forms">
-              <div><span>{t("FRASE DO ÁUDIO")}</span><p lang="en">{targetText(step.pronunciation.careful)}</p></div>
-              <div><span>{t("COMO ESCUTAR")}</span><p lang={getSupportLocale()}>{supportT(step.pronunciation.natural)}</p></div>
-            </div>
-            <p lang={getSupportLocale()}><strong>{supportT("O que muda:")}</strong> {supportT(step.pronunciation.change)}</p>
-            {step.pronunciation.contrast && (
-              <div className="contrast-drill"><span>{t("COMPARE OS SONS")}</span><p lang="en">{targetText(step.pronunciation.contrast[0])} <strong>{targetText("×")}</strong> {targetText(step.pronunciation.contrast[1])}</p><small lang={getSupportLocale()}>{supportT("Exemplos adicionais para praticar sem áudio próprio. Alterne as formas e perceba qual movimento muda.")}</small></div>
-            )}
-            <ol className="repeat-ladder">
-              {step.pronunciation.drill.map((item, drillIndex) => <li lang={getSupportLocale()} key={drillIndex}><span>{supportT(drillIndex + 1)}</span><span lang="en">{targetText(item)}</span></li>)}
-            </ol>
-            <p lang={getSupportLocale()} className="microtrain-instruction"><strong>{supportT("Repita acompanhando a voz (shadowing):")}</strong>{supportT(" ouça o áudio abaixo em velocidade natural e comece a repetir logo depois da voz. Tente acompanhar o ritmo, a ligação entre as palavras e a entonação.")}</p>
-            {voiceEnabled && <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.pronunciation.drill[2]} initialMascot={mascot} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />}
-          </section>
-        )}
-        {step.kind === "error_analysis" && step.contrasts && (
-          <div className="usage-contrast" aria-label={localizeAttribute("Comparação de uso")}>
-            {step.contrasts.filter(item => item.tone !== "fixed").map(item => <div key={item.label} data-tone={item.tone}><span>{t(item.label)}</span><p lang="en">{targetText(item.text)}</p></div>)}
-            <p lang={getSupportLocale()}>{supportT("Que escolha precisa mudar para atender ao contexto da frase?")}</p>
-            <details key={index} className="learning-disclosure">
-              <summary>{t("Ver o ajuste e o motivo")}</summary>
-              {step.contrasts.filter(item => item.tone === "fixed").map(item => <p key={item.label} lang="en">{targetText(item.text)}</p>)}
-              <p lang={getSupportLocale()}>{supportT(step.explanation)}</p>
-            </details>
-          </div>
-        )}
-        {!review && step.kind === "pronunciation" && lesson.steps.find(item => item.kind === "production")?.speakingTask && (
-          <details className="learning-disclosure">
-            <summary>{t("Experimente uma resposta sua")}</summary>
-            <p lang={getSupportLocale()}>{supportT(lesson.steps.find(item => item.kind === "production")!.speakingTask)}</p>
-            <p lang={getSupportLocale()}>{supportT("Prática opcional em voz alta, sem precisar escrever ou gravar.")}</p>
-          </details>
-        )}
-        {!review && step.kind === "pronunciation" && tipForLesson(lesson.id) && <ConversationTipCard key={`${lesson.id}-${mascot}`} tip={tipForLesson(lesson.id)!} mascot={mascot} />}
-        {step.listening && <ConversationListening key={`${lesson.id}:${index}`} conversation={step.listening}
-          attempted={checked || step.kind !== "choice" || readWorkspace(userId).attempts.some(attempt => attempt.lessonId === lesson.id && attempt.stepId === exerciseId(lesson, step) && attempt.review === review && attempt.contentVersion === contentVersion)}
-          onAssisted={() => setAssisted(true)} />}
-        {voiceEnabled && step.english && step.kind === "example" && (
-          <SpeechPractice key={`${lesson.id}-${index}`} lessonId={lesson.id} text={step.english} initialMascot={mascot} onPlayed={() => setListened(true)} personalVoiceDisabled={learnerProfile?.namePronunciationStatus === "text-only"} />
-        )}
-        {voiceEnabled && step.kind === "example" && (
-          <div className="listening-reveal">
-            <p lang={getSupportLocale()}>{supportT(listened ? "Agora confira o que você entendeu." : "Tente ouvir pelo menos uma vez antes de revelar o texto.")}</p>
-            <button className="secondary-button" onClick={() => setRevealed(value => !value)} aria-expanded={revealed}>
-              {t(revealed ? "Ocultar frase" : "Revelar frase")}
-            </button>
-          </div>
-        )}
-        {step.english && (step.kind !== "example" || !voiceEnabled || revealed) && (
-          <div
-            className={`english-example ${step.kind === "dialogue" ? "dialogue-example" : ""}`}
-            lang="en"
-          >
-            {targetText(step.english)}
-          </div>
-        )}
-        {step.translation && (step.kind !== "example" || !voiceEnabled || revealed) && (
-          <div className="translation-block">
-            <button
-              className="text-button"
-              onClick={() => { setTranslation(!translation); if (!translation) setAssisted(true); }}
-              aria-expanded={translation}
-            >
-              <Languages size={16} />
-              {t(step.translationSummary ? translation ? "Ocultar resumo em português" : "Ver resumo em português" : translation ? "Ocultar tradução em português" : "Ver tradução em português")}
-            </button>
-            {translation && <p lang="pt-BR" data-language-role="translation">{step.translation}</p>}
-          </div>
-        )}
-        {step.kind === "order_words" ? (
-          <div className="word-exercise">
-            <div className="word-answer" aria-label={localizeAttribute("Frase montada")}>
-              {tokens.length ? (
-                tokens.map((token) => (
-                  <button
-                    key={token}
-                    disabled={checked}
-                    onClick={() =>
-                      setTokens(tokens.filter((value) => value !== token))
-                    }
-                    lang="en"
-                  >
-                    {targetText(step.options![token])} <X size={12} />
-                  </button>
-                ))
-              ) : (
-                <span>{t("Toque nas palavras abaixo para montar a frase.")}</span>
-              )}
-            </div>
-            <div className="word-bank">
-              {step.options!.map((word, token) => (
-                <button
-                  key={token}
-                  disabled={tokens.includes(token) || checked}
-                  onClick={() => setTokens([...tokens, token])}
-                  lang="en"
-                >
-                  {targetText(word)}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          hasAnswerChoices && (
-            <div className={styles.questionBlock}>
-              <p id="lesson-question" lang={supportLanguage} className={styles.questionPrompt}>{supportT(step.body)}</p>
-              <div
-                className="answer-options"
-                role="group"
-                aria-labelledby="lesson-question"
-              >
-                {step.options!.map((option, optionIndex) => (
-                  <button
-                    key={option}
-                    disabled={checked}
-                    aria-pressed={answer === option}
-                    className={answer === option ? "selected" : ""}
-                    onClick={() => setAnswer(option)}
-                  >
-                    <span>{t(String.fromCharCode(65 + optionIndex))}</span>
-                    <span lang="en">{targetText(option)}</span>
-                    {answer === option && <Check size={17} />}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )
-        )}
-        {isExercise(step) && (
-          <details key={index} open={contextVisible} className="lesson-notes" onToggle={(event) => {
-            setContextVisible(event.currentTarget.open);
-            if (event.currentTarget.open) {
-              setAssisted(true);
-            }
-          }}>
-            <summary>{t("Consultar explicação e vocabulário")}</summary>
-            {lesson.steps
-              .filter(
-                (item) => item.kind === "teach" || item.kind === "vocabulary",
-              )
-              .map((item, noteIndex) => (
-                <section key={noteIndex}>
-                  <h3>{t(item.title)}</h3>
-                  {item.kind === "vocabulary" ? <dl className="vocabulary-cards">{item.body.split("\n").filter(Boolean).map((line, i) => {
-                    const separator = line.indexOf(" — ");
-                    return <div key={i}><dt lang="en">{separator < 0 ? line : line.slice(0, separator)}</dt>{separator >= 0 && <dd lang={supportLanguage}>{supportT(line.slice(separator + 3))}</dd>}</div>;
-                  })}</dl> : <p lang={supportLanguage}>{supportT(item.body)}</p>}
-                </section>
-              ))}
-          </details>
-        )}
-        {retrievalExercise && assisted && !checked && (
-          <p lang={getSupportLocale()} className="review-assistance-status" role="status">{supportT("Você consultou uma explicação ou tradução. Esta tentativa será marcada como “com ajuda”.")}</p>
-        )}
-        {checked && (
-          <div
-            className={`answer-feedback ${correct ? "correct" : "retry"}${correct && freshCorrectStep === index ? " is-fresh" : ""}`}
-            ref={feedback}
-            role="status"
-          >
-            <strong>
-              {t(correct ? "Resposta correta." : "Vamos rever essa resposta.")}
-            </strong>
-            <p lang={getSupportLocale()}>{supportT(step.explanation)}</p>
-            {!correct && (
-              <p lang={getSupportLocale()}>{supportT("Resposta: ")}<span lang="en">{targetText(step.answer)}</span>
-              </p>
-            )}
-          </div>
-        )}
+  function close() {
+    if (locked.current || saving) return;
+    syncClock(activeClockNow());
+    if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current + 1 });
+    tracking.current("abandon"); onClose();
+  }
+  const remaining = Math.max(0, Math.ceil((challengeLimit(lesson.level) - elapsed) / 1000));
+  return <dialog ref={dialog} className={styles.dialog} aria-labelledby="quick-title" onCancel={event => { event.preventDefault(); close(); }}>
+    <header className={styles.header}>
+      <button type="button" className="icon-button" onClick={close} disabled={busy || saving} aria-label={localizeAttribute("Fechar lição")}><X size={22}/></button>
+      <div className={styles.progress}>
+        <span>{t(review ? "Revisão rápida" : lesson.title)}</span>
+        {phase === "active" && <progress aria-label={localizeAttribute("Progresso da lição")} value={index + (checked && correct ? 1 : 0)} max={steps.length}/>}
       </div>
-      <footer>
-        <span>
-          {t(review
-            ? retrievalExercise
-              ? assisted
-                ? "Apoio consultado nesta etapa"
-                : "Tente responder antes de consultar explicações"
-              : "Prática de revisão"
-            : "Você pode consultar as explicações")}
-        </span>
-        <div className="lesson-footer-actions">
-          <button
-            className="secondary-button lesson-back-button"
-            disabled={index === 0 || saving || verifying}
-            onClick={previous}
-          >
-            <ArrowLeft size={16} />{t("Voltar etapa")}</button>
-          <button
-            className="primary-button lesson-forward-button"
-            disabled={saving || verifying || (isExercise(step) && !selected)}
-            onClick={next}
-          >
-            {t(verifying ? "Verificando…" : saving
-              ? "Salvando…"
-              : isExercise(step) && !checked
-              ? "Verificar"
-              : checked && !correct
-                ? "Tentar novamente"
-                : index === steps.length - 1
-                  ? "Concluir"
-                  : "Continuar")}
-            <ArrowRight size={16} />
-          </button>
+      {phase === "active" && <strong aria-label={localizeAttribute("Questão atual")}>{index + 1}/{steps.length}</strong>}
+    </header>
+    <div className={styles.body} data-step-kind={phase === "active" ? step.kind : "launch"}>
+      {error && <p className={styles.error} role="alert">{supportT(error)}</p>}
+      {storageError && <p className={styles.error} role="status">{t("O navegador bloqueou o salvamento. Mantenha esta aba aberta.")}</p>}
+      {phase === "choose" ? <div className={styles.launch}>
+        <MascotMoment mascot={mascot} mood="invite" className={styles.mascot}/>
+        <p className="eyebrow">{t(review ? "3 questões · 1–2 min" : "6 questões · 2–4 min")}</p>
+        <h2 ref={heading} tabIndex={-1} id="quick-title">{t(lesson.title)}</h2>
+        <p lang={getSupportLocale()}>{supportT(lessonMetadata[lesson.id]?.outcome ?? lesson.experience.application)}</p>
+        {!review && <fieldset className={styles.modes}><legend>{t("Como você quer praticar?")}</legend>
+          {(["normal", "challenge"] as PracticeMode[]).map(mode => <label key={mode} data-selected={challenge.mode === mode}>
+            <input type="radio" name="practice-mode" value={mode} checked={challenge.mode === mode} onChange={() => setChallenge(state => ({ ...state, mode }))}/>
+            <strong>{t(mode === "normal" ? "Normal" : "Desafio")}</strong><small>{t(mode === "normal" ? "No seu ritmo" : "Tempo, pontos e recorde")}</small>
+          </label>)}
+        </fieldset>}
+        {challenge.mode === "challenge" && <p className={styles.caption}>{t("Tempo de resposta:")} {challengeLimit(lesson.level) / 60000} {t("min. O relógio pausa nas dicas e correções.")}</p>}
+        {challenge.mode === "challenge" && personalBest && <p className={styles.caption}>{t("Seu recorde:")} {personalBest.score} {t("pontos")} · {Math.round(personalBest.activeMs / 1000)}s</p>}
+        {upgrade && <p className={styles.caption} role="status">{t("As lições ficaram mais rápidas. Esta prática começa no novo formato; seu progresso foi preservado.")}</p>}
+      </div> : <>
+        <div className={styles.topline}>
+          <span className="eyebrow">{t(step.kind === "order_words" ? "Organize" : "Escolha")}</span>
+          {challenge.mode === "challenge" && <span className={styles.timer} aria-label={localizeAttribute("Tempo restante")}><Clock3 size={15}/> {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, "0")} · {challengeScore(passed, challenge.failed, challenge.helped, steps.length)} {t("pontos")}</span>}
+          {fresh && streak === 3 && <span className={styles.combo} role="status">{t("3 acertos seguidos!")} ✦</span>}
         </div>
-      </footer>
-    </dialog>
-  );
+        <h2 id="quick-title" ref={heading} tabIndex={-1} className={styles.prompt} lang={getSupportLocale()}>{supportLanguage === "en" ? step.bodyEnglish : step.body}</h2>
+        {step.english && <p className={styles.context} lang="en">{step.english}</p>}
+        {step.cue && <p className={styles.cue} lang="pt-BR" data-language-role="stimulus">{step.cue}</p>}
+        {step.kind === "order_words" ? <div className={styles.order}>
+          <div className={styles.wordAnswer} role="group" aria-label={localizeAttribute("Frase montada")}>
+            {tokens.length ? tokens.map(token => <button key={token} type="button" lang="en" disabled={checked || busy || expired}
+              onClick={() => setTokens(tokens.filter(value => value !== token))} aria-label={localizeAttribute("Remover palavra") + ": " + step.options![token]}>{step.options![token]} <X size={12}/></button>)
+              : <span>{t("Toque nas palavras para montar a frase.")}</span>}
+          </div>
+          <div className={styles.wordBank} role="group" aria-label={localizeAttribute("Banco de palavras")}>{step.options!.map((word, token) =>
+            <button key={token} type="button" lang="en" disabled={tokens.includes(token) || checked || busy || expired} onClick={() => setTokens([...tokens, token])}>{word}</button>)}</div>
+          <button className={styles.clear} type="button" disabled={!tokens.length || checked || busy || expired} onClick={() => setTokens([])}><RotateCcw size={15}/>{t("Limpar")}</button>
+        </div> : <div className={styles.options} role="group" aria-labelledby="quick-title">{step.options!.map((option, i) =>
+          <button key={i} type="button" aria-pressed={answer === option} data-selected={answer === option} disabled={checked || busy || expired} onClick={() => setAnswer(option)}>
+            <span className={styles.letter}>{String.fromCharCode(65 + i)}</span><span lang="en">{option}</span>{answer === option && <Check size={18}/>}
+          </button>)}</div>}
+        {checked && <div className={correct ? styles.correct : styles.retry} role="status" data-answer-feedback>
+          <div className={styles.feedbackTitle}>{correct && <MascotMoment mascot={mascot} mood="celebrate" className={styles.reaction}/>}<strong>{t(correct ? "Boa! Você acertou." : "Vamos corrigir.")}</strong></div>
+          <p lang={getSupportLocale()}>{supportLanguage === "en" ? step.explanationEnglish : step.explanation}</p>
+          {!correct && <p><span>{t("Resposta:")}</span> <strong lang="en">{step.answer}</strong></p>}
+        </div>}
+        {expired && <div className={styles.retry} role="status"><strong>{t("O tempo terminou.")}</strong><p>{t("Continue no seu ritmo. Suas respostas continuam salvas.")}</p></div>}
+        <details className={styles.support} open={supportOpen}><summary onClick={event => {
+          event.preventDefault();
+          syncClock(activeClockNow());
+          const open = !supportOpen;
+          responding.current = !open && !checked && !busy && !saving && !expired;
+          setSupportOpen(open);
+          if (open && !helped && !checked) { setHelped(true); tracking.current("help"); }
+        }}>{t("Entender melhor")}</summary>
+          {supportOpen && <LessonSupport lesson={lesson} mascot={mascot} userId={userId} textOnly={learnerProfile?.namePronunciationStatus === "text-only"}/>}
+        </details>
+      </>}
+    </div>
+    <footer className={styles.footer}>
+      <span className={styles.caption}>{t(phase === "choose" ? "Uma ideia por vez." : helped ? "Com ajuda nesta questão" : "Você pode consultar uma dica.")}</span>
+      <button className="primary-button" type="button" disabled={busy || saving || (phase === "active" && !expired && !checked && (!selected || !receipt))}
+        onClick={phase === "choose" ? start : expired ? () => { setChallenge(state => ({ ...state, mode: "normal", expired: true })); } : next}>
+        {t(busy ? "Verificando…" : saving ? "Salvando…" : phase === "choose" ? "Começar" : expired ? "Continuar no modo normal" : !checked ? "Verificar" : !correct ? "Tentar novamente" : index === steps.length - 1 ? "Concluir" : "Continuar")}<ArrowRight size={18}/>
+      </button>
+    </footer>
+  </dialog>;
 }

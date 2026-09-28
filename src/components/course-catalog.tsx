@@ -11,7 +11,7 @@ import { courseModules, emptyFilters, filterCourse, lessonById, lessonMetadata, 
 import { lessonIllustrationId } from '@/lib/lesson-illustrations';
 
 type Mode='guided'|'practice';
-export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOpen,onExams}:{level:Level;completed:Record<string,string>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
+export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOpen}:{level:Level;completed:Record<string,string>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
  const [filters,setFilters]=useState<CourseFilters>({...emptyFilters,level});
  const next=nextInTrail(level,completed);
  const inProgress=useMemo(()=>new Set(Object.values(workspace.checkpoints).filter(p=>!p.review).map(p=>p.lessonId)),[workspace.checkpoints]);
@@ -24,7 +24,7 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
  const remainingModules=courseModules.filter(m=>levels.indexOf(m.level)>=levels.indexOf(level));
  const filterOptions=[['discipline','Disciplina',disciplines],['skill','Habilidade',skills],['function','Quero aprender a',functions],['language','Conteúdo de língua',languageTopics],['status','Status',statusNames]] as const;
  return <div className="guided-course">
-  <div className="page-heading"><div><p className="eyebrow">{t('Seu caminho no inglês')}</p><h1>{t('Curso')}</h1></div><button className="secondary-button" onClick={onExams}>{t('Simulados')}</button></div>
+  <div className="page-heading"><div><p className="eyebrow">{t('Seu caminho no inglês')}</p><h1>{t('Trilha')}</h1></div></div>
   <div className="course-modes" role="group" aria-label={localizeAttribute('Como você quer estudar?')}>
    <button aria-pressed={mode==='guided'} className={mode==='guided'?'primary-button':'secondary-button'} onClick={()=>onMode('guided')}>{t('Seguir meu curso')}</button>
    <button aria-pressed={mode==='practice'} className={mode==='practice'?'primary-button':'secondary-button'} onClick={()=>onMode('practice')}>{t('Treinar por disciplina')}</button>
@@ -32,7 +32,7 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
   {mode==='guided'?<>
    <section className="trail-current" aria-labelledby="trail-heading">{next && <Image className="trail-current-art" src={`/lesson-images/${lessonIllustrationId(next)}.png`} alt="" width={960} height={720} sizes="(max-width: 700px) 120px, 210px" />}<p className="eyebrow">{t('Você está aqui')} · {t(level)}</p><h2 id="trail-heading">{t(currentModule?.title??'Trilha concluída')}</h2>
     {currentModule&&<p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(currentModule.id))}.</p>}
-    {next?<><p><strong>{t('Próxima lição:')}</strong>{t(next.title)}</p><p>{t('Seguimos a sequência do seu nível recomendado e aproveitamos as conclusões já registradas.')}</p><button className="primary-button" onClick={()=>onOpen(next,false,'guided')}>{t(inProgress.has(next.id)?'Retomar lição':'Continuar meu curso')}<ArrowRight size={17}/></button></>:<p>{t('Você concluiu a sequência a partir do nível recomendado. Explore outra disciplina ou pratique uma revisão disponível.')}</p>}
+    {next?<><p><strong>{t('Próxima lição:')}</strong>{t(next.title)}</p><button className="primary-button" onClick={()=>onOpen(next,false,'guided')}>{t(inProgress.has(next.id)?'Retomar lição':'Continuar meu curso')}<ArrowRight size={17}/></button></>:<p>{t('Você concluiu a sequência a partir do nível recomendado. Explore outra disciplina ou pratique uma revisão disponível.')}</p>}
    </section>
    <div className="section-heading"><h2>{t('Sua trilha')}</h2><span>{t('Pré-requisitos orientam; todas as lições continuam abertas.')}</span></div>
    <ol className="course-trail">{remainingModules.map(m=>{
@@ -52,9 +52,9 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
    <section className="practice-context"><h2>{t('Treino complementar')}</h2><p>{t('Explore um assunto livremente. As conclusões contam no curso; sua próxima lição principal continua indicada abaixo.')}</p>{next&&<p><strong>{t('Próxima na trilha:')}</strong><button className="text-button" onClick={()=>onOpen(next,false,'guided')}>{t(next.title)}<ArrowRight size={15}/></button></p>}</section>
    <section className="course-filters" aria-label={localizeAttribute('Filtrar lições')}>
     <label className="catalog-search"><Search size={18}/><input value={filters.query} onChange={e=>setFilter('query',e.target.value)} placeholder={localizeAttribute('Buscar assunto ou expressão')} aria-label={localizeAttribute('Buscar assunto ou expressão')}/></label>
-    <div className="filter-grid"><label>{t('Nível')}<select aria-label={localizeAttribute("Nível")} value={filters.level} onChange={e=>setFilter('level',e.target.value as CourseFilters['level'])}><option value="all">{t('Todos os níveis')}</option>{levels.map(l=><option key={l}>{l}</option>)}</select></label>
+    <details className="quick-filter-details"><summary>{t("Mais filtros")}</summary><div className="filter-grid"><label>{t('Nível')}<select aria-label={localizeAttribute("Nível")} value={filters.level} onChange={e=>setFilter('level',e.target.value as CourseFilters['level'])}><option value="all">{t('Todos os níveis')}</option>{levels.map(l=><option key={l}>{l}</option>)}</select></label>
      {filterOptions.map(([key,label,options])=><label key={key}>{t(label)}<select aria-label={localizeAttribute(label)} value={filters[key]} onChange={e=>setFilter(key,e.target.value as never)}><option value="">{t('Todos')}</option>{Object.entries(options).map(([value,name])=><option key={value} value={value}>{t(name)}</option>)}</select></label>)}
-    </div>
+    </div></details>
     <div className="filter-chips" aria-label={localizeAttribute('Filtros ativos')}>{filters.level!=='all'&&<button onClick={()=>setFilter('level','all')}>{filters.level} ×</button>}{filterOptions.map(([key,label,options])=>filters[key]&&<button key={key} onClick={()=>setFilter(key,'')}>{t(label)}: {t((options as Record<string,string>)[filters[key]])} ×</button>)}{filters.query&&<button onClick={()=>setFilter('query','')}>{filters.query} ×</button>}<button className="text-button" onClick={()=>setFilters({...emptyFilters})}>{t('Limpar filtros')}</button></div>
     <p role="status">{results.reduce((n,m)=>n+m.lessons.length,0)} {t(results.reduce((n,m)=>n+m.lessons.length,0)===1?'lição encontrada':'lições encontradas')}</p>
    </section>

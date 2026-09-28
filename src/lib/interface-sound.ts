@@ -45,13 +45,13 @@ export function primeInterfaceSound() {
   if (audio?.state === "suspended") void audio.resume().catch(() => {});
 }
 
-export function playInterfaceSound(kind: "start" | "complete") {
+export function playInterfaceSound(kind: "start" | "complete" | "correct") {
   if (!interfaceSoundEnabled() || hasActiveAudioSession()) return;
   const audio = audioContext();
   if (!audio) return;
   const play = () => {
     if (audio.state !== "running") return;
-    const tones = kind === "start" ? [[520, 0, .07], [700, .075, .09]] : [[590, 0, .11], [790, .095, .16]];
+    const tones = kind === "correct" ? [[740, 0, .055]] : kind === "start" ? [[520, 0, .07], [700, .075, .09]] : [[590, 0, .11], [790, .095, .16]];
     for (const [frequency, offset, duration] of tones) {
       const oscillator = audio.createOscillator();
       const gain = audio.createGain();

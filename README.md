@@ -1,6 +1,6 @@
 # Sparky English
 
-Esta branch contém o [laboratório local de músicas](docs/music-lab.md), com conta de testes isolada. Não foi publicada em produção.
+A jornada rápida está descrita em [docs/quick-learning.md](docs/quick-learning.md), incluindo compatibilidade, Desafio, métricas e atualização da PWA. O [laboratório de músicas](docs/music-lab.md) continua disponível com conta de testes isolada.
 
 As melhorias de reprodução no iPhone, gesto de atualização no Android e Web Push estão descritas em [docs/push-and-mobile.md](docs/push-and-mobile.md). A ativação de push exige a migração do banco e as chaves VAPID no ambiente de publicação.
 
@@ -22,7 +22,7 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.
 
-Há 176 lições (170 autorais e as 6 originais), em 31 módulos: 38 lições em A1, 44 em A2, 40 em B1, 14 em B2 e 20 em C1 e C2. O catálogo oferece busca por conteúdo, filtros de nível e de conclusão. Cada lição tem missão, descoberta, escuta antes da revelação, pronúncia, contraste de erros, três exercícios objetivos com feedback e transferência escrita e oral. O curso alterna oito sequências de atividade em vez de repetir uma ordem fixa. São 528 exercícios objetivos. A trilha orienta o estudo até temas C2; sua conclusão não comprova fluência nem cobertura integral do CEFR. As referências e os limites editoriais estão em [docs/curriculum.md](docs/curriculum.md), e o redesenho em [docs/pedagogical-review.md](docs/pedagogical-review.md).
+Há 176 lições em 31 módulos: 38 em A1, 44 em A2, 40 em B1, 14 em B2 e 20 em C1 e C2. Cada lição tem seis questões curtas, alternando três escolhas e três ordenações, totalizando 1.056 questões. Teoria, vocabulário, áudio e produção ficam em Entender melhor. A estimativa é 2–4 minutos; Normal não tem limite e Desafio é opcional. Concluir a trilha não constitui certificação de proficiência. Veja [docs/quick-learning.md](docs/quick-learning.md) para o modelo atual e [docs/curriculum.md](docs/curriculum.md) para referências.
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 

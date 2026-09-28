@@ -4,7 +4,7 @@ import { lessons, modules } from '../src/lib/curriculum.ts';
 import { a1Modules } from '../src/lib/content/a1.ts';
 import { buildLesson, contentVersion } from '../src/lib/content/build.ts';
 import { lessonLedger, moduleLedger } from '../src/lib/content/ledger.ts';
-import { gradeAttempt, verifyCompletion, exerciseId, isExercise, studyExercises } from '../src/lib/study.ts';
+import { gradeAttempt, verifyCompletion, exerciseId, studyExercises } from '../src/lib/study.ts';
 import { normalizeWorkspace, blankWorkspace, writingLimit } from '../src/lib/learning-local.ts';
 import { normalizeRewardState, publicRewardState, emptyRewardState, completeStudy } from '../src/lib/rewards.ts';
 import { seal } from '../src/lib/auth-session.ts';
@@ -17,7 +17,7 @@ test('published identities survive editorial reordering; ledger covers all lesso
   assert.deepEqual(new Set(lessonLedger), new Set(lessons.map(l => l.id)));
   assert.deepEqual(new Set(moduleLedger), new Set(modules.map(m => m.id)));
   for (const lesson of lessons) {
-    const ids = lesson.steps.filter(isExercise).map(s => exerciseId(lesson, s));
+    const ids = studyExercises(lesson,false).map(s => exerciseId(lesson, s));
     assert.equal(new Set(ids).size, ids.length);
   }
 });
@@ -32,7 +32,7 @@ test('legacy cookie bit zero keeps the original lesson identity after catalog or
   } finally { lessons.splice(0, lessons.length, ...original); }
 });
 test('server grading rejects skipped exercises and incomplete, wrong-lesson or expired evidence', () => {
-  const lesson = lessons[0], steps = lesson.steps.filter(isExercise), now = Date.now();
+  const lesson = lessons[0], steps = studyExercises(lesson,false), now = Date.now();
   const input = s => ({ lessonId: lesson.id, review: false, stepId: exerciseId(lesson,s), answer: s.answer, assisted: false });
   assert.throws(() => gradeAttempt(input(steps[1]),now), /out-of-order/);
   assert.throws(() => verifyCompletion(null,lesson.id,false), /incomplete/);

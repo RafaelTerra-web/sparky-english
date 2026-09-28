@@ -14,6 +14,9 @@ export type CheckpointStepState = {
   revealed: boolean; listened: boolean;
 };
 export type Checkpoint = {
+  telemetrySeq?: number;
+  exerciseIds?: string[]; exerciseId?: string; sessionId?: string; startedAt?: number;
+  challenge?: { mode: "normal" | "challenge"; activeMs: number; failed: number; helped: number; expired: boolean };
   reviewFormat?: number;
   flowVersion?: number;
   lessonId: string; review: boolean; index: number; answer: string; tokens: number[];
@@ -27,11 +30,13 @@ export type Writing = { id: string; lessonId: string; text: string; createdAt: s
 export type LegacySavedPhrase = { id: string; english: string; translation: string; lessonId: string };
 export type LearningWorkspace = {
   discipline: Discipline | "all"; examFocus?: ExamFocus;
+  dailyActiveMs: number; goalSessions: string[];
   studyDay: string; newLessonsToday: number; recommendation: "balanced" | "new";
+  restartNotice?: boolean;
   version: 1; checkpoints: Record<string, Checkpoint>; attempts: Attempt[];
   writings: Writing[]; vocabulary: LegacySavedPhrase[]; goal: string; minutes: number;
 };
-export const blankWorkspace = (): LearningWorkspace => ({ discipline: "all", studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
+export const blankWorkspace = (): LearningWorkspace => ({ discipline: "all", dailyActiveMs: 0, goalSessions: [], studyDay: "", newLessonsToday: 0, recommendation:"balanced", version: 1, checkpoints: {}, attempts: [], writings: [], vocabulary: [], goal: "Comunicar no dia a dia", minutes: 10 });
 export const workspaceKey = (userId: string) => `sparky-learning:${userId}`;
 export const checkpointKey = (lessonId: string, review: boolean) => `${lessonId}:${review ? "review" : "lesson"}`;
 export function normalizeWorkspace(raw: unknown): LearningWorkspace {
@@ -51,6 +56,9 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
       string(p.receipt) && string(p.draft) && p.draft.length <= writingLimit && date(p.updatedAt))
     .map(([key, p]) => [key, {
       ...p,
+      telemetrySeq: Number.isSafeInteger(p.telemetrySeq) && p.telemetrySeq! >= 0 && p.telemetrySeq! <= 1000 ? p.telemetrySeq : 0,
+      exerciseIds: Array.isArray(p.exerciseIds) && p.exerciseIds.length <= 6 && p.exerciseIds.every(id => typeof id === "string" && id.startsWith(p.lessonId + ":")) ? p.exerciseIds : undefined,
+      challenge: p.challenge && ["normal", "challenge"].includes(p.challenge.mode) && Number.isFinite(p.challenge.activeMs) && p.challenge.activeMs >= 0 && p.challenge.activeMs <= 28800000 && Number.isSafeInteger(p.challenge.failed) && p.challenge.failed >= 0 && p.challenge.failed <= 63 && Number.isSafeInteger(p.challenge.helped) && p.challenge.helped >= 0 && p.challenge.helped <= 63 ? p.challenge : undefined,
       // The disclosure state is independent of the question's visible context.
       contextVisible: typeof p.contextVisible === "boolean" ? p.contextVisible : false,
       furthestIndex: Number.isSafeInteger(p.furthestIndex) && p.furthestIndex! >= p.index && p.furthestIndex! < 30 ? p.furthestIndex : p.index,
@@ -71,8 +79,11 @@ export function normalizeWorkspace(raw: unknown): LearningWorkspace {
     }
   }
   return { ...blank, checkpoints,
+    restartNotice: value.restartNotice === true || Object.values(value.checkpoints || {}).some(p => p && p.contentVersion !== contentVersion),
     discipline: ["everyday","work","travel","school","technology","science","culture","exchange"].includes(value.discipline) ? value.discipline : "all",
     examFocus: value.examFocus && date(value.examFocus.completedAt) && value.examFocus.skills && typeof value.examFocus.skills === "object" ? {completedAt:value.examFocus.completedAt,skills:Object.fromEntries(Object.entries(value.examFocus.skills).filter(([k,v]) => ["listening","reading","vocabulary","grammar"].includes(k) && typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 100))} : undefined,
+    dailyActiveMs: Number.isFinite(value.dailyActiveMs) && value.dailyActiveMs >= 0 ? Math.min(86400000, value.dailyActiveMs) : 0,
+    goalSessions: Array.isArray(value.goalSessions) ? value.goalSessions.filter(id => typeof id === "string").slice(-100) : [],
     studyDay: typeof value.studyDay === "string" ? value.studyDay : "",
     newLessonsToday: Number.isSafeInteger(value.newLessonsToday) && value.newLessonsToday >= 0 ? Math.min(500, value.newLessonsToday) : 0,
     recommendation: value.recommendation === "new" ? "new" : "balanced",

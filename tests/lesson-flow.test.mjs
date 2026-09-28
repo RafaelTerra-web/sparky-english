@@ -7,35 +7,26 @@ import { lessonDelivery, lessonVoiceIdentity, preservedDelivery } from '../src/l
 import { mascotSpeechPrompt } from '../src/lib/gemini-voice.ts';
 import { contentVersion } from '../src/lib/content/build.ts';
 
-test('shorter lesson flow retains every assessed item in its original order', () => {
-  for (const lesson of lessons) for (const review of [false, true]) {
-    const steps = lessonSteps(lesson, review);
-    assert.ok(!steps.some(step => step.kind === 'production'));
-    assert.equal(steps.at(-1).kind, 'summary');
-    assert.deepEqual(steps.filter(isExercise), studyExercises(lesson, review));
+test('six-question flow separates mandatory practice from optional reference material', () => {
+  for (const lesson of lessons) for (const review of [false,true]) {
+    const steps=lessonSteps(lesson,review);
+    assert.equal(steps.length,review?3:6);
+    assert.ok(steps.every(isExercise));
+    assert.deepEqual(steps,studyExercises(lesson,review));
+    assert.ok(lesson.support.some(s=>s.kind==='production'));
   }
 });
-
-test('old checkpoints migrate before, on and after removed writing, without losing receipts or drafts', () => {
-  const state = { answer:'saved answer', tokens:[], checked:true, correct:true, translation:true, assisted:true, contextVisible:true, revealed:true, listened:true };
-  for (const lesson of lessons) for (const index of lesson.steps.keys()) {
-    const checkpoint = { ...state, lessonId:lesson.id, review:false, index, furthestIndex:lesson.steps.length-1, history:Object.fromEntries(lesson.steps.map((_,i)=>[i,state])), draft:'My existing draft', receipt:'signed evidence', updatedAt:new Date().toISOString(), contentVersion };
-    const migrated = migrateLessonCheckpoint(checkpoint, lesson);
-    assert.equal(migrated.receipt, checkpoint.receipt);
-    assert.equal(migrated.draft, checkpoint.draft);
-    assert.equal(migrated.flowVersion, lessonFlowVersion);
-    assert.deepEqual(migrateLessonCheckpoint(migrated, lesson), migrated);
-    const visible = lessonSteps(lesson,false);
-    assert.equal(visible[migrated.index].kind, lesson.steps[index].kind === 'production' ? 'summary' : lesson.steps[index].kind);
-    assert.equal(migrated.furthestIndex, visible.length-1);
-    if (lesson.steps[index].kind !== 'production') assert.equal(migrated.answer, state.answer);
-    assert.equal(Object.keys(migrated.history).length, visible.length);
+test('old flow restarts while new checkpoints retain the authorized exercise selection', () => {
+  const lesson=lessons[0];
+  assert.equal(migrateLessonCheckpoint({review:false,index:2,receipt:'old',contentVersion,flowVersion:2},lesson),undefined);
+  for(const review of [false,true]) {
+    const steps=studyExercises(lesson,review);
+    const ids=steps.map(s=>lesson.id+':'+s.id);
+    const current={review,index:1,receipt:'signed',answer:'partial',tokens:[0],contentVersion,flowVersion:lessonFlowVersion,reviewFormat:3,exerciseIds:ids,exerciseId:ids[1]};
+    assert.deepEqual(migrateLessonCheckpoint(current,lesson),current);
+    assert.equal(migrateLessonCheckpoint({...current,exerciseId:ids[0]},lesson),undefined);
+    assert.equal(migrateLessonCheckpoint({...current,exerciseIds:['bad']},lesson),undefined);
   }
-});
-
-test('review checkpoints keep their independent question indexes', () => {
-  const old = { review:true, index:2, history:{2:{answer:'yes'}}, receipt:'signed' };
-  assert.deepEqual(migrateLessonCheckpoint(old,lessons[0]), {...old,flowVersion:lessonFlowVersion});
 });
 
 test('natural delivery changes only intermediate/advanced English, never personal names', () => {

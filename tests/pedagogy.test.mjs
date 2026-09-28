@@ -53,7 +53,7 @@ test("editorial writing scaffolds cover all six levels while the lesson estimate
   }
   assert.equal(covered.size, 6);
   for (const lesson of lessons) {
-    assert.ok(lesson.minutes >= 7 && lesson.minutes <= 20, lesson.id);
+    assert.ok(lesson.minutes >= 2 && lesson.minutes <= 4, lesson.id);
     const comparison = lesson.steps.find(step => step.kind === "error_analysis");
     assert.ok(comparison.explanation?.length > 20, `${lesson.id}: contrast needs a reason`);
   }

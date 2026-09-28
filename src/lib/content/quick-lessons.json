@@ -1,0 +1,5288 @@
+{
+  "a1-1-1": {
+    "intent": [
+      "Diga seu nome: Ana.",
+      "Introduce yourself as Ana."
+    ],
+    "sentences": [
+      [
+        "Hi, I'm Ana.",
+        "Oi, eu sou a Ana."
+      ],
+      [
+        "This is my friend Leo.",
+        "Este é meu amigo Leo."
+      ],
+      [
+        "Her name is Sara.",
+        "O nome dela é Sara."
+      ]
+    ],
+    "scene": "Leo: Hi, I'm Leo.",
+    "replies": [
+      "Hi, I'm Ana.",
+      "He is Leo.",
+      "I'm from Brazil."
+    ],
+    "note": [
+      "I'm apresenta seu próprio nome.",
+      "I'm introduces your own name."
+    ],
+    "vocabulary": "hi — oi\nI'm — eu sou\nfriend — amigo ou amiga"
+  },
+  "a1-identidade-01": {
+    "intent": [
+      "Pergunte o nome da pessoa.",
+      "Ask someone their name."
+    ],
+    "sentences": [
+      [
+        "What is your name?",
+        "Qual é o seu nome?"
+      ],
+      [
+        "My name is Omar.",
+        "Meu nome é Omar."
+      ],
+      [
+        "Her name is Sara.",
+        "O nome dela é Sara."
+      ]
+    ],
+    "scene": "Jo: What's your name?",
+    "replies": [
+      "My name is Omar.",
+      "I'm from Recife.",
+      "I'm twenty years old."
+    ],
+    "note": [
+      "What pergunta o nome; my apresenta o seu.",
+      "What asks for a name; my introduces your own."
+    ]
+  },
+  "a1-identidade-02": {
+    "intent": [
+      "Diga seu país de origem.",
+      "Say your country of origin."
+    ],
+    "sentences": [
+      [
+        "I am from Brazil.",
+        "Eu sou do Brasil."
+      ],
+      [
+        "I live in Recife.",
+        "Eu moro em Recife."
+      ],
+      [
+        "She is from China.",
+        "Ela é da China."
+      ]
+    ],
+    "scene": "Mei: Where are you from?",
+    "replies": [
+      "I'm from Brazil.",
+      "I live near school.",
+      "I'm a teacher."
+    ],
+    "note": [
+      "Be from informa a origem.",
+      "Be from expresses origin."
+    ]
+  },
+  "a1-identidade-03": {
+    "intent": [
+      "Diga que você tem vinte anos.",
+      "State your own age: twenty."
+    ],
+    "sentences": [
+      [
+        "I am twenty years old.",
+        "Eu tenho vinte anos."
+      ],
+      [
+        "She is eighteen years old.",
+        "Ela tem dezoito anos."
+      ],
+      [
+        "He is thirty years old.",
+        "Ele tem trinta anos."
+      ]
+    ],
+    "scene": "Ben: How old are you?",
+    "replies": [
+      "I'm twenty.",
+      "I have two sisters.",
+      "I'm from Brazil."
+    ],
+    "note": [
+      "Para idade, use be + número.",
+      "For age, use be + a number."
+    ]
+  },
+  "a1-identidade-04": {
+    "intent": [
+      "Apresente sua amiga Clara.",
+      "Introduce your friend Clara."
+    ],
+    "sentences": [
+      [
+        "This is my friend Clara.",
+        "Esta é minha amiga Clara."
+      ],
+      [
+        "She is a teacher.",
+        "Ela é professora."
+      ],
+      [
+        "He is my colleague.",
+        "Ele é meu colega."
+      ]
+    ],
+    "scene": "Jo: Who is Clara?",
+    "replies": [
+      "She's my friend.",
+      "I'm Clara.",
+      "She's from Recife."
+    ],
+    "note": [
+      "This is apresenta outra pessoa.",
+      "This is introduces another person."
+    ]
+  },
+  "a1-identidade-05": {
+    "intent": [
+      "Diga que vocês não estão atrasados.",
+      "Say that your group is not late."
+    ],
+    "sentences": [
+      [
+        "We are not late.",
+        "Nós não estamos atrasados."
+      ],
+      [
+        "They are at home.",
+        "Eles estão em casa."
+      ],
+      [
+        "She is not tired.",
+        "Ela não está cansada."
+      ]
+    ],
+    "scene": "Jo: Are you late?",
+    "replies": [
+      "No, we are not.",
+      "Yes, we are late.",
+      "No, she is tired."
+    ],
+    "note": [
+      "Not nega; we combina com are.",
+      "Not makes a negative; we takes are."
+    ]
+  },
+  "a1-identidade-06": {
+    "intent": [
+      "Peça para soletrar o sobrenome.",
+      "Ask how to spell a surname."
+    ],
+    "sentences": [
+      [
+        "How do you spell your surname?",
+        "Como você soletra seu sobrenome?"
+      ],
+      [
+        "My surname is Silva.",
+        "Meu sobrenome é Silva."
+      ],
+      [
+        "Please spell your first name.",
+        "Por favor, soletre seu primeiro nome."
+      ]
+    ],
+    "scene": "Jo: How do you spell Silva?",
+    "replies": [
+      "S-I-L-V-A.",
+      "My name is Jo.",
+      "I'm from Brazil."
+    ],
+    "note": [
+      "Spell pede as letras de uma palavra.",
+      "Spell asks for the letters in a word."
+    ]
+  },
+  "a1-pessoas-01": {
+    "intent": [
+      "Diga que ela é engenheira.",
+      "Say she works as an engineer."
+    ],
+    "sentences": [
+      [
+        "She is an engineer.",
+        "Ela é engenheira."
+      ],
+      [
+        "He is a doctor.",
+        "Ele é médico."
+      ],
+      [
+        "They are my friends.",
+        "Eles são meus amigos."
+      ]
+    ],
+    "scene": "Jo: Is Lia a doctor?",
+    "replies": [
+      "No, she's an engineer.",
+      "Yes, she's a doctor.",
+      "No, he's a teacher."
+    ],
+    "note": [
+      "Use an antes do som vocálico em engineer.",
+      "Use an before the vowel sound in engineer."
+    ]
+  },
+  "a1-pessoas-02": {
+    "intent": [
+      "Indique duas caixas neste lugar.",
+      "Point out two boxes here."
+    ],
+    "sentences": [
+      [
+        "There are two boxes here.",
+        "Há duas caixas aqui."
+      ],
+      [
+        "There is one book here.",
+        "Há um livro aqui."
+      ],
+      [
+        "The boxes are over there.",
+        "As caixas estão ali."
+      ]
+    ],
+    "scene": "Jo: How many boxes are here?",
+    "replies": [
+      "There are two boxes.",
+      "There is one box.",
+      "There are two books."
+    ],
+    "note": [
+      "Box recebe -es no plural: boxes.",
+      "Box takes -es in the plural: boxes."
+    ]
+  },
+  "a1-pessoas-03": {
+    "intent": [
+      "Diga quantos filhos sua irmã tem.",
+      "Say how many children your sister has."
+    ],
+    "sentences": [
+      [
+        "My sister has two children.",
+        "Minha irmã tem dois filhos."
+      ],
+      [
+        "My brother has one child.",
+        "Meu irmão tem um filho."
+      ],
+      [
+        "Our parents live near school.",
+        "Nossos pais moram perto da escola."
+      ]
+    ],
+    "scene": "Jo: Does your sister have children?",
+    "replies": [
+      "Yes, she has two children.",
+      "Yes, she has two brothers.",
+      "No, he has one child."
+    ],
+    "note": [
+      "Children é o plural de child.",
+      "Children is the plural of child."
+    ]
+  },
+  "a1-pessoas-04": {
+    "intent": [
+      "Indique que a bolsa pertence à Ana.",
+      "Say the bag belongs to Ana."
+    ],
+    "sentences": [
+      [
+        "This is Ana's bag.",
+        "Esta é a bolsa da Ana."
+      ],
+      [
+        "This is my brother's coat.",
+        "Este é o casaco do meu irmão."
+      ],
+      [
+        "That bag belongs to Leo.",
+        "Aquela bolsa pertence ao Leo."
+      ]
+    ],
+    "scene": "Jo: Whose bag is this?",
+    "replies": [
+      "It's Ana's bag.",
+      "It's a blue bag.",
+      "She's my friend."
+    ],
+    "note": [
+      "Nome + 's indica posse.",
+      "A name + 's expresses possession."
+    ]
+  },
+  "a1-pessoas-05": {
+    "intent": [
+      "Aponte sapatos novos perto de você.",
+      "Point to new shoes near you."
+    ],
+    "sentences": [
+      [
+        "These shoes are new.",
+        "Estes sapatos são novos."
+      ],
+      [
+        "Those shoes are old.",
+        "Aqueles sapatos são velhos."
+      ],
+      [
+        "This coat is new.",
+        "Este casaco é novo."
+      ]
+    ],
+    "scene": "Jo: Are these shoes new?",
+    "replies": [
+      "Yes, they are new.",
+      "Yes, it is new.",
+      "No, those are new."
+    ],
+    "note": [
+      "These aponta vários itens próximos.",
+      "These points to several nearby items."
+    ]
+  },
+  "a1-pessoas-06": {
+    "intent": [
+      "Descreva o jardim que eles têm.",
+      "Describe their small garden."
+    ],
+    "sentences": [
+      [
+        "They have a small garden.",
+        "Eles têm um jardim pequeno."
+      ],
+      [
+        "She has two small rooms.",
+        "Ela tem dois cômodos pequenos."
+      ],
+      [
+        "Our garden is very large.",
+        "Nosso jardim é muito grande."
+      ]
+    ],
+    "scene": "Jo: Do they have a large garden?",
+    "replies": [
+      "No, they have a small garden.",
+      "Yes, it is very large.",
+      "No, she has a small room."
+    ],
+    "note": [
+      "O adjetivo vem antes do nome e não varia.",
+      "The adjective precedes the noun and does not change."
+    ]
+  },
+  "a1-2-1": {
+    "intent": [
+      "Informe seu horário de início no trabalho.",
+      "Say when your work starts."
+    ],
+    "sentences": [
+      [
+        "I start work at nine.",
+        "Eu começo a trabalhar às nove."
+      ],
+      [
+        "She starts work at eight.",
+        "Ela começa a trabalhar às oito."
+      ],
+      [
+        "We finish work at five.",
+        "Nós terminamos de trabalhar às cinco."
+      ]
+    ],
+    "scene": "Jo: When do you start work?",
+    "replies": [
+      "I start at nine.",
+      "I finish at five.",
+      "She starts at eight."
+    ],
+    "note": [
+      "Use at com um horário.",
+      "Use at with a clock time."
+    ],
+    "vocabulary": "start work — começar a trabalhar\nfinish work — terminar o trabalho\nat nine — às nove"
+  },
+  "a1-rotina-01": {
+    "intent": [
+      "Descreva o hábito dela de estudar inglês.",
+      "Describe her evening English habit."
+    ],
+    "sentences": [
+      [
+        "She studies English every evening.",
+        "Ela estuda inglês todas as noites."
+      ],
+      [
+        "I study English every morning.",
+        "Eu estudo inglês todas as manhãs."
+      ],
+      [
+        "They work at the library.",
+        "Eles trabalham na biblioteca."
+      ]
+    ],
+    "scene": "Jo: Does Lia study in the evening?",
+    "replies": [
+      "Yes, she studies every evening.",
+      "Yes, I study every morning.",
+      "No, they work at night."
+    ],
+    "note": [
+      "Com she, study vira studies.",
+      "With she, study becomes studies."
+    ]
+  },
+  "a1-rotina-02": {
+    "intent": [
+      "Diga que você não bebe café.",
+      "Say you do not drink coffee."
+    ],
+    "sentences": [
+      [
+        "I do not drink coffee.",
+        "Eu não bebo café."
+      ],
+      [
+        "She does not drink tea.",
+        "Ela não bebe chá."
+      ],
+      [
+        "They drink water at lunch.",
+        "Eles bebem água no almoço."
+      ]
+    ],
+    "scene": "Jo: Do you drink coffee?",
+    "replies": [
+      "No, I do not.",
+      "Yes, I do.",
+      "No, she does not."
+    ],
+    "note": [
+      "Use do not + verbo com I.",
+      "Use do not + verb with I."
+    ]
+  },
+  "a1-rotina-03": {
+    "intent": [
+      "Pergunte se a pessoa trabalha aos domingos.",
+      "Ask about Sunday work."
+    ],
+    "sentences": [
+      [
+        "Do you work on Sundays?",
+        "Você trabalha aos domingos?"
+      ],
+      [
+        "Does she work on Mondays?",
+        "Ela trabalha às segundas-feiras?"
+      ],
+      [
+        "I work at the library.",
+        "Eu trabalho na biblioteca."
+      ]
+    ],
+    "scene": "Jo: Do you work on Sundays?",
+    "replies": [
+      "No, I don't.",
+      "No, she doesn't.",
+      "I'm at home now."
+    ],
+    "note": [
+      "Do inicia perguntas sobre hábitos com you.",
+      "Do starts habit questions with you."
+    ]
+  },
+  "a1-rotina-04": {
+    "intent": [
+      "Diga como você costuma ir à escola.",
+      "Say your usual way to school."
+    ],
+    "sentences": [
+      [
+        "I usually walk to school.",
+        "Eu geralmente vou a pé para a escola."
+      ],
+      [
+        "She never takes the bus.",
+        "Ela nunca pega o ônibus."
+      ],
+      [
+        "We sometimes cycle to work.",
+        "Nós às vezes pedalamos para o trabalho."
+      ]
+    ],
+    "scene": "Jo: How often do you walk to school?",
+    "replies": [
+      "I usually walk.",
+      "I walked yesterday.",
+      "I am walking now."
+    ],
+    "note": [
+      "Usually indica um hábito frequente.",
+      "Usually expresses a frequent habit."
+    ]
+  },
+  "a1-rotina-05": {
+    "intent": [
+      "Informe que a aula começa às seis e meia.",
+      "Say the lesson starts at six thirty."
+    ],
+    "sentences": [
+      [
+        "The lesson starts at half past six.",
+        "A aula começa às seis e meia."
+      ],
+      [
+        "The bus leaves at quarter past seven.",
+        "O ônibus sai às sete e quinze."
+      ],
+      [
+        "We meet at quarter to eight.",
+        "Nós nos encontramos às quinze para as oito."
+      ]
+    ],
+    "scene": "Jo: Does the lesson start at six?",
+    "replies": [
+      "No, it starts at half past six.",
+      "Yes, it starts at six.",
+      "No, it ends at six."
+    ],
+    "note": [
+      "Half past six significa 6:30.",
+      "Half past six means 6:30."
+    ]
+  },
+  "a1-rotina-06": {
+    "intent": [
+      "Diga em qual mês é seu aniversário.",
+      "Say your birthday month."
+    ],
+    "sentences": [
+      [
+        "My birthday is in October.",
+        "Meu aniversário é em outubro."
+      ],
+      [
+        "The class starts on Monday.",
+        "A aula começa na segunda-feira."
+      ],
+      [
+        "We meet at nine tomorrow.",
+        "Nós nos encontramos às nove amanhã."
+      ]
+    ],
+    "scene": "Jo: When is your birthday?",
+    "replies": [
+      "It's in October.",
+      "It's on Monday.",
+      "It's at nine."
+    ],
+    "note": [
+      "Use in com meses.",
+      "Use in with months."
+    ]
+  },
+  "a1-casa-01": {
+    "intent": [
+      "Indique uma biblioteca perto da sua casa.",
+      "Say there is a nearby library."
+    ],
+    "sentences": [
+      [
+        "There is a library near my home.",
+        "Há uma biblioteca perto da minha casa."
+      ],
+      [
+        "There are two shops near school.",
+        "Há duas lojas perto da escola."
+      ],
+      [
+        "The library is behind the bank.",
+        "A biblioteca fica atrás do banco."
+      ]
+    ],
+    "scene": "Jo: Is there a library near your home?",
+    "replies": [
+      "Yes, there is.",
+      "Yes, there are.",
+      "Yes, I am."
+    ],
+    "note": [
+      "There is apresenta um item singular.",
+      "There is introduces a singular item."
+    ]
+  },
+  "a1-casa-02": {
+    "intent": [
+      "Localize as chaves embaixo da cadeira.",
+      "Locate the keys beneath the chair."
+    ],
+    "sentences": [
+      [
+        "The keys are under the chair.",
+        "As chaves estão embaixo da cadeira."
+      ],
+      [
+        "The bag is on the table.",
+        "A bolsa está sobre a mesa."
+      ],
+      [
+        "The chair is beside the window.",
+        "A cadeira está ao lado da janela."
+      ]
+    ],
+    "scene": "Jo: Are the keys on the chair?",
+    "replies": [
+      "No, they're under it.",
+      "Yes, they're on it.",
+      "No, it's on the table."
+    ],
+    "note": [
+      "Under significa embaixo de.",
+      "Under means beneath."
+    ]
+  },
+  "a1-casa-03": {
+    "intent": [
+      "Descreva uma cozinha pequena e iluminada.",
+      "Describe a small, bright kitchen."
+    ],
+    "sentences": [
+      [
+        "The kitchen is small but bright.",
+        "A cozinha é pequena, mas iluminada."
+      ],
+      [
+        "The bedroom is large and quiet.",
+        "O quarto é grande e silencioso."
+      ],
+      [
+        "There are two windows here.",
+        "Há duas janelas aqui."
+      ]
+    ],
+    "scene": "Jo: Is the kitchen dark?",
+    "replies": [
+      "No, it's small but bright.",
+      "Yes, it's dark.",
+      "No, the bedroom is large."
+    ],
+    "note": [
+      "But liga duas características em contraste.",
+      "But links contrasting qualities."
+    ]
+  },
+  "a1-casa-04": {
+    "intent": [
+      "Oriente uma virada à esquerda no banco.",
+      "Direct a left turn at the bank."
+    ],
+    "sentences": [
+      [
+        "Turn left at the bank.",
+        "Vire à esquerda no banco."
+      ],
+      [
+        "Go straight past the library.",
+        "Siga em frente passando pela biblioteca."
+      ],
+      [
+        "Turn right at the school.",
+        "Vire à direita na escola."
+      ]
+    ],
+    "scene": "Jo: Should I turn right at the bank?",
+    "replies": [
+      "No, turn left.",
+      "Yes, turn right.",
+      "No, wait at school."
+    ],
+    "note": [
+      "Turn left orienta uma virada à esquerda.",
+      "Turn left gives a left-turn instruction."
+    ]
+  },
+  "a1-casa-05": {
+    "intent": [
+      "Informe que você vai à faculdade de trem.",
+      "Say you travel to college by train."
+    ],
+    "sentences": [
+      [
+        "I go to college by train.",
+        "Eu vou à faculdade de trem."
+      ],
+      [
+        "She walks to school every day.",
+        "Ela vai a pé para a escola diariamente."
+      ],
+      [
+        "We take the bus to work.",
+        "Nós pegamos o ônibus para o trabalho."
+      ]
+    ],
+    "scene": "Jo: How do you go to college?",
+    "replies": [
+      "By train.",
+      "At nine.",
+      "Near the station."
+    ],
+    "note": [
+      "By + transporte indica o meio usado.",
+      "By + transport expresses the means used."
+    ]
+  },
+  "a1-casa-06": {
+    "intent": [
+      "Peça para manter a porta fechada.",
+      "Ask someone to keep the door closed."
+    ],
+    "sentences": [
+      [
+        "Please keep the door closed.",
+        "Por favor, mantenha a porta fechada."
+      ],
+      [
+        "Please open the window now.",
+        "Por favor, abra a janela agora."
+      ],
+      [
+        "Do not leave your bag here.",
+        "Não deixe sua bolsa aqui."
+      ]
+    ],
+    "scene": "Sign: Please keep the door closed.",
+    "replies": [
+      "I'll close the door.",
+      "I'll leave it open.",
+      "I'll open the window."
+    ],
+    "note": [
+      "Keep + closed pede que algo permaneça fechado.",
+      "Keep + closed asks for something to remain shut."
+    ]
+  },
+  "a1-consumo-01": {
+    "intent": [
+      "Peça um sanduíche com educação.",
+      "Politely order a sandwich."
+    ],
+    "sentences": [
+      [
+        "I would like a sandwich, please.",
+        "Eu gostaria de um sanduíche, por favor."
+      ],
+      [
+        "I would like some water, please.",
+        "Eu gostaria de um pouco de água, por favor."
+      ],
+      [
+        "She likes sandwiches with cheese.",
+        "Ela gosta de sanduíches com queijo."
+      ]
+    ],
+    "scene": "Server: What would you like?",
+    "replies": [
+      "A sandwich, please.",
+      "I like cooking.",
+      "She has a sandwich."
+    ],
+    "note": [
+      "Would like expressa um pedido educado.",
+      "Would like expresses a polite request."
+    ]
+  },
+  "a1-consumo-02": {
+    "intent": [
+      "Diga que gosta de cozinhar com amigos.",
+      "Say you enjoy cooking with friends."
+    ],
+    "sentences": [
+      [
+        "I like cooking with my friends.",
+        "Eu gosto de cozinhar com meus amigos."
+      ],
+      [
+        "She does not like swimming.",
+        "Ela não gosta de nadar."
+      ],
+      [
+        "We enjoy reading at home.",
+        "Nós gostamos de ler em casa."
+      ]
+    ],
+    "scene": "Jo: Do you like cooking?",
+    "replies": [
+      "Yes, I like cooking.",
+      "Yes, I cook now.",
+      "No, she likes cooking."
+    ],
+    "note": [
+      "Like + -ing descreve uma atividade apreciada.",
+      "Like + -ing describes an activity you enjoy."
+    ]
+  },
+  "a1-consumo-03": {
+    "intent": [
+      "Peça duas garrafas de água.",
+      "Say you need two bottles of water."
+    ],
+    "sentences": [
+      [
+        "We need two bottles of water.",
+        "Nós precisamos de duas garrafas de água."
+      ],
+      [
+        "We need three apples today.",
+        "Nós precisamos de três maçãs hoje."
+      ],
+      [
+        "There is some bread here.",
+        "Há um pouco de pão aqui."
+      ]
+    ],
+    "scene": "Jo: How much water do we need?",
+    "replies": [
+      "Two bottles of water.",
+      "Two waters of bottle.",
+      "Three apples."
+    ],
+    "note": [
+      "Bottles permite contar porções de water.",
+      "Bottles lets you count portions of water."
+    ]
+  },
+  "a1-consumo-04": {
+    "intent": [
+      "Informe que há leite na geladeira.",
+      "Say there is milk in the fridge."
+    ],
+    "sentences": [
+      [
+        "There is some milk in the fridge.",
+        "Há um pouco de leite na geladeira."
+      ],
+      [
+        "We do not have any eggs.",
+        "Nós não temos nenhum ovo."
+      ],
+      [
+        "Are there any apples here?",
+        "Há alguma maçã aqui?"
+      ]
+    ],
+    "scene": "Jo: Is there any milk?",
+    "replies": [
+      "Yes, there is some.",
+      "No, there is some.",
+      "Yes, there are some."
+    ],
+    "note": [
+      "Some é comum em afirmações; any em perguntas e negativas.",
+      "Some is common in statements; any in questions and negatives."
+    ]
+  },
+  "a1-consumo-05": {
+    "intent": [
+      "Pergunte o preço da camisa azul.",
+      "Ask the price of the blue shirt."
+    ],
+    "sentences": [
+      [
+        "How much is this blue shirt?",
+        "Quanto custa esta camisa azul?"
+      ],
+      [
+        "How many shirts do you need?",
+        "De quantas camisas você precisa?"
+      ],
+      [
+        "This shirt costs ten dollars.",
+        "Esta camisa custa dez dólares."
+      ]
+    ],
+    "scene": "Jo: How much is this shirt?",
+    "replies": [
+      "It's ten dollars.",
+      "I need two shirts.",
+      "It's a large size."
+    ],
+    "note": [
+      "How much pergunta preço ou quantidade não contável.",
+      "How much asks about price or uncountable quantity."
+    ]
+  },
+  "a1-consumo-06": {
+    "intent": [
+      "Diga que a jaqueta está pequena demais.",
+      "Say the jacket is too small."
+    ],
+    "sentences": [
+      [
+        "This jacket is too small.",
+        "Esta jaqueta está pequena demais."
+      ],
+      [
+        "These shoes are too large.",
+        "Estes sapatos estão grandes demais."
+      ],
+      [
+        "This coat is the right size.",
+        "Este casaco é do tamanho certo."
+      ]
+    ],
+    "scene": "Assistant: Does the jacket fit?",
+    "replies": [
+      "No, it's too small.",
+      "Yes, it's too small.",
+      "No, these shoes are new."
+    ],
+    "note": [
+      "Too small indica tamanho menor que o necessário.",
+      "Too small means smaller than needed."
+    ]
+  },
+  "a1-interacao-01": {
+    "intent": [
+      "Diga que seu irmão sabe tocar violão.",
+      "Say your brother can play guitar."
+    ],
+    "sentences": [
+      [
+        "My brother can play the guitar.",
+        "Meu irmão sabe tocar violão."
+      ],
+      [
+        "My sister cannot swim yet.",
+        "Minha irmã ainda não sabe nadar."
+      ],
+      [
+        "Can you ride a bike?",
+        "Você sabe andar de bicicleta?"
+      ]
+    ],
+    "scene": "Jo: Can your brother play the guitar?",
+    "replies": [
+      "Yes, he can.",
+      "Yes, she can.",
+      "Yes, he does."
+    ],
+    "note": [
+      "Can vem seguido do verbo na forma base.",
+      "Can is followed by the base form of the verb."
+    ]
+  },
+  "a1-interacao-02": {
+    "intent": [
+      "Peça permissão para abrir a janela.",
+      "Ask permission to open the window."
+    ],
+    "sentences": [
+      [
+        "Can I open the window?",
+        "Posso abrir a janela?"
+      ],
+      [
+        "Can you close the door?",
+        "Você pode fechar a porta?"
+      ],
+      [
+        "I can speak English now.",
+        "Eu consigo falar inglês agora."
+      ]
+    ],
+    "scene": "Jo: Can I open the window?",
+    "replies": [
+      "Yes, you can.",
+      "Yes, I do.",
+      "No, she can."
+    ],
+    "note": [
+      "Can I pede permissão para sua própria ação.",
+      "Can I asks permission for your own action."
+    ]
+  },
+  "a1-interacao-03": {
+    "intent": [
+      "Descreva pessoas esperando o ônibus agora.",
+      "Describe people waiting for the bus now."
+    ],
+    "sentences": [
+      [
+        "They are waiting for the bus.",
+        "Eles estão esperando o ônibus."
+      ],
+      [
+        "She is reading a book now.",
+        "Ela está lendo um livro agora."
+      ],
+      [
+        "We take the bus every day.",
+        "Nós pegamos o ônibus todos os dias."
+      ]
+    ],
+    "scene": "Jo: What are they doing?",
+    "replies": [
+      "They're waiting for the bus.",
+      "They wait every morning.",
+      "She reads at home."
+    ],
+    "note": [
+      "Be + -ing descreve uma ação em andamento.",
+      "Be + -ing describes an action in progress."
+    ]
+  },
+  "a1-interacao-04": {
+    "intent": [
+      "Pergunte se a pessoa está ouvindo a professora.",
+      "Ask if someone is listening to the teacher."
+    ],
+    "sentences": [
+      [
+        "Are you listening to the teacher?",
+        "Você está ouvindo a professora?"
+      ],
+      [
+        "Is she talking on the phone?",
+        "Ela está falando ao telefone?"
+      ],
+      [
+        "Do you listen to music daily?",
+        "Você ouve música diariamente?"
+      ]
+    ],
+    "scene": "Jo: Are you listening to the teacher?",
+    "replies": [
+      "Yes, I am.",
+      "Yes, I do.",
+      "Yes, she is."
+    ],
+    "note": [
+      "Em perguntas, are vem antes de you.",
+      "In questions, are comes before you."
+    ]
+  },
+  "a1-interacao-05": {
+    "intent": [
+      "Descreva o clima frio e com vento hoje.",
+      "Describe today's cold, windy weather."
+    ],
+    "sentences": [
+      [
+        "It is cold and windy today.",
+        "Está frio e ventando hoje."
+      ],
+      [
+        "It is hot and sunny today.",
+        "Está quente e ensolarado hoje."
+      ],
+      [
+        "I need a warm coat now.",
+        "Eu preciso de um casaco quente agora."
+      ]
+    ],
+    "scene": "Jo: What's the weather like?",
+    "replies": [
+      "It's cold and windy.",
+      "It's a warm coat.",
+      "I'm cold at home."
+    ],
+    "note": [
+      "Use it para descrever o clima.",
+      "Use it to describe the weather."
+    ]
+  },
+  "a1-interacao-06": {
+    "intent": [
+      "Combine um encontro na biblioteca às quatro.",
+      "Arrange a library meeting at four."
+    ],
+    "sentences": [
+      [
+        "See you at the library at four.",
+        "Vejo você na biblioteca às quatro."
+      ],
+      [
+        "Meet me at school at five.",
+        "Encontre-me na escola às cinco."
+      ],
+      [
+        "The library closes at six today.",
+        "A biblioteca fecha às seis hoje."
+      ]
+    ],
+    "scene": "Message: See you at the library at four.",
+    "replies": [
+      "OK, see you there at four.",
+      "OK, see you at school.",
+      "OK, I'll come at six."
+    ],
+    "note": [
+      "At pode indicar tanto lugar quanto horário.",
+      "At can indicate both a place and a time."
+    ]
+  },
+  "a2-passado-01": {
+    "intent": [
+      "Diga onde vocês estavam ontem à noite.",
+      "Say where your group was last night."
+    ],
+    "sentences": [
+      [
+        "We were at home last night.",
+        "Nós estávamos em casa ontem à noite."
+      ],
+      [
+        "She was at school yesterday.",
+        "Ela estava na escola ontem."
+      ],
+      [
+        "They were in London last week.",
+        "Eles estavam em Londres na semana passada."
+      ]
+    ],
+    "scene": "Jo: Were you at home last night?",
+    "replies": [
+      "Yes, we were.",
+      "Yes, we are.",
+      "Yes, she was."
+    ],
+    "note": [
+      "Were é o passado de are.",
+      "Were is the past of are."
+    ]
+  },
+  "a2-passado-02": {
+    "intent": [
+      "Conte a visita dela à tia no fim de semana.",
+      "Describe her weekend visit to her aunt."
+    ],
+    "sentences": [
+      [
+        "She visited her aunt last weekend.",
+        "Ela visitou a tia no fim de semana passado."
+      ],
+      [
+        "We watched a film last night.",
+        "Nós assistimos a um filme ontem à noite."
+      ],
+      [
+        "He called his brother yesterday.",
+        "Ele ligou para o irmão ontem."
+      ]
+    ],
+    "scene": "Jo: Did Lia visit her aunt?",
+    "replies": [
+      "Yes, she visited her last weekend.",
+      "Yes, she visits her tomorrow.",
+      "No, we watched a film."
+    ],
+    "note": [
+      "Visited marca uma ação encerrada no passado.",
+      "Visited marks a completed past action."
+    ]
+  },
+  "a2-passado-03": {
+    "intent": [
+      "Conte a compra de frutas no mercado.",
+      "Describe a fruit purchase at the market."
+    ],
+    "sentences": [
+      [
+        "We bought fruit at the market.",
+        "Nós compramos frutas no mercado."
+      ],
+      [
+        "She took the train yesterday.",
+        "Ela pegou o trem ontem."
+      ],
+      [
+        "They ate lunch at home.",
+        "Eles almoçaram em casa."
+      ]
+    ],
+    "scene": "Jo: What did you buy at the market?",
+    "replies": [
+      "We bought fruit.",
+      "We buy fruit tomorrow.",
+      "She took a train."
+    ],
+    "note": [
+      "Bought é o passado irregular de buy.",
+      "Bought is the irregular past of buy."
+    ]
+  },
+  "a2-4-1": {
+    "intent": [
+      "Conte sua ida ao parque ontem.",
+      "Describe your park visit yesterday."
+    ],
+    "sentences": [
+      [
+        "I went to the park yesterday.",
+        "Eu fui ao parque ontem."
+      ],
+      [
+        "She stayed at home last night.",
+        "Ela ficou em casa ontem à noite."
+      ],
+      [
+        "We walked to school this morning.",
+        "Nós fomos a pé para a escola esta manhã."
+      ]
+    ],
+    "scene": "Jo: Did you go to the park?",
+    "replies": [
+      "Yes, I went yesterday.",
+      "Yes, I go tomorrow.",
+      "No, she stayed at home."
+    ],
+    "note": [
+      "Depois de did, use go; na afirmação, went.",
+      "After did, use go; in a statement, went."
+    ],
+    "vocabulary": "went — foi ou fui\nstayed — ficou\nwalked — caminhou"
+  },
+  "a2-passado-04": {
+    "intent": [
+      "Negue a viagem deles no mês passado.",
+      "Deny their trip last month."
+    ],
+    "sentences": [
+      [
+        "They did not travel last month.",
+        "Eles não viajaram no mês passado."
+      ],
+      [
+        "Did she visit London last year?",
+        "Ela visitou Londres no ano passado?"
+      ],
+      [
+        "We travelled by train yesterday.",
+        "Nós viajamos de trem ontem."
+      ]
+    ],
+    "scene": "Jo: Did they travel last month?",
+    "replies": [
+      "No, they did not.",
+      "No, they do not.",
+      "No, they were not."
+    ],
+    "note": [
+      "Did not pede o verbo na forma base.",
+      "Did not takes the base form of the verb."
+    ]
+  },
+  "a2-passado-05": {
+    "intent": [
+      "Conte que vocês comeram antes de sair.",
+      "Say you ate before leaving."
+    ],
+    "sentences": [
+      [
+        "First we ate, then we left.",
+        "Primeiro nós comemos, depois nós saímos."
+      ],
+      [
+        "Before dinner, she called her sister.",
+        "Antes do jantar, ela ligou para a irmã."
+      ],
+      [
+        "They returned home after the concert.",
+        "Eles voltaram para casa depois do show."
+      ]
+    ],
+    "scene": "Jo: Did you leave before eating?",
+    "replies": [
+      "No, we ate first.",
+      "Yes, we ate first.",
+      "No, we didn't eat."
+    ],
+    "note": [
+      "First e then deixam a sequência clara.",
+      "First and then make the sequence clear."
+    ]
+  },
+  "a2-passado-06": {
+    "intent": [
+      "Mostre o estudo interrompido pelo telefone.",
+      "Describe studying interrupted by a phone call."
+    ],
+    "sentences": [
+      [
+        "I was studying when the phone rang.",
+        "Eu estava estudando quando o telefone tocou."
+      ],
+      [
+        "She was cooking when I arrived.",
+        "Ela estava cozinhando quando eu cheguei."
+      ],
+      [
+        "They watched a film after dinner.",
+        "Eles assistiram a um filme depois do jantar."
+      ]
+    ],
+    "scene": "Jo: What were you doing when I called?",
+    "replies": [
+      "I was studying.",
+      "I study every evening.",
+      "I will study tomorrow."
+    ],
+    "note": [
+      "Was studying é a ação em andamento; rang a interrompe.",
+      "Was studying is the ongoing action; rang interrupts it."
+    ]
+  },
+  "a2-escolhas-01": {
+    "intent": [
+      "Compare o preço do trem com o ônibus.",
+      "Compare the train's price with the bus."
+    ],
+    "sentences": [
+      [
+        "This train is cheaper than the bus.",
+        "Este trem é mais barato que o ônibus."
+      ],
+      [
+        "The bus is slower than the train.",
+        "O ônibus é mais lento que o trem."
+      ],
+      [
+        "This ticket is more expensive than mine.",
+        "Esta passagem é mais cara que a minha."
+      ]
+    ],
+    "scene": "Jo: Which costs less, the train or bus?",
+    "replies": [
+      "The train is cheaper.",
+      "The train is more expensive.",
+      "The bus is slower."
+    ],
+    "note": [
+      "Cheaper than compara o preço de duas opções.",
+      "Cheaper than compares the price of two options."
+    ]
+  },
+  "a2-escolhas-02": {
+    "intent": [
+      "Escolha o quarto mais silencioso do hotel.",
+      "Identify the quietest room in the hotel."
+    ],
+    "sentences": [
+      [
+        "This is the quietest room here.",
+        "Este é o quarto mais silencioso aqui."
+      ],
+      [
+        "That room is larger than this one.",
+        "Aquele quarto é maior que este."
+      ],
+      [
+        "This hotel is near the station.",
+        "Este hotel fica perto da estação."
+      ]
+    ],
+    "scene": "Jo: Which room is the quietest?",
+    "replies": [
+      "This room is the quietest.",
+      "This room is quieter than one room.",
+      "That hotel is near the station."
+    ],
+    "note": [
+      "The quietest destaca um item de todo o grupo.",
+      "The quietest singles out one item in the whole group."
+    ]
+  },
+  "a2-escolhas-03": {
+    "intent": [
+      "Diga que o ônibus é menos rápido.",
+      "Say the bus is less fast."
+    ],
+    "sentences": [
+      [
+        "The bus is not as fast.",
+        "O ônibus não é tão rápido."
+      ],
+      [
+        "The train is as comfortable as yours.",
+        "O trem é tão confortável quanto o seu."
+      ],
+      [
+        "This taxi is cheaper than that one.",
+        "Este táxi é mais barato que aquele."
+      ]
+    ],
+    "scene": "Jo: Is the bus as fast as the train?",
+    "replies": [
+      "No, it isn't as fast.",
+      "Yes, it isn't as fast.",
+      "No, it's as fast."
+    ],
+    "note": [
+      "Not as fast indica velocidade menor na comparação.",
+      "Not as fast expresses lower speed in the comparison."
+    ]
+  },
+  "a2-escolhas-04": {
+    "intent": [
+      "Diga que a bolsa pesa demais para carregar.",
+      "Say the bag is too heavy to carry."
+    ],
+    "sentences": [
+      [
+        "This bag is too heavy to carry.",
+        "Esta bolsa é pesada demais para carregar."
+      ],
+      [
+        "The room is warm enough for us.",
+        "O quarto é quente o suficiente para nós."
+      ],
+      [
+        "The bag is light enough to lift.",
+        "A bolsa é leve o suficiente para levantar."
+      ]
+    ],
+    "scene": "Jo: Can you carry this bag?",
+    "replies": [
+      "No, it's too heavy.",
+      "No, it's light enough.",
+      "Yes, it's too heavy to carry."
+    ],
+    "note": [
+      "Too indica excesso; enough indica suficiência.",
+      "Too expresses excess; enough expresses sufficiency."
+    ]
+  },
+  "a2-escolhas-05": {
+    "intent": [
+      "Diga que vocês não têm muito tempo.",
+      "Say your group has little time."
+    ],
+    "sentences": [
+      [
+        "We do not have much time.",
+        "Nós não temos muito tempo."
+      ],
+      [
+        "There are many people at the station.",
+        "Há muitas pessoas na estação."
+      ],
+      [
+        "She has a lot of books.",
+        "Ela tem muitos livros."
+      ]
+    ],
+    "scene": "Jo: Do we have much time?",
+    "replies": [
+      "No, we have very little time.",
+      "No, we have many time.",
+      "Yes, there are many people."
+    ],
+    "note": [
+      "Much acompanha time, que não é contável.",
+      "Much goes with time, which is uncountable."
+    ]
+  },
+  "a2-escolhas-06": {
+    "intent": [
+      "Informe que restam alguns minutos.",
+      "Say a few minutes remain."
+    ],
+    "sentences": [
+      [
+        "We have a few minutes left.",
+        "Nós temos alguns minutos restantes."
+      ],
+      [
+        "There is a little milk left.",
+        "Há um pouco de leite restante."
+      ],
+      [
+        "We have few minutes and must hurry.",
+        "Nós temos poucos minutos e precisamos nos apressar."
+      ]
+    ],
+    "scene": "Jo: Can we talk before class?",
+    "replies": [
+      "Yes, we have a few minutes.",
+      "Yes, we have a little minutes.",
+      "No, we have plenty of time."
+    ],
+    "note": [
+      "A few acompanha nomes contáveis no plural.",
+      "A few goes with plural countable nouns."
+    ]
+  },
+  "a2-experiencias-01": {
+    "intent": [
+      "Conte uma experiência sem mencionar uma data.",
+      "Describe travel experience without a specific date."
+    ],
+    "sentences": [
+      [
+        "I have visited three different countries.",
+        "Eu visitei três países diferentes."
+      ],
+      [
+        "She visited Italy last summer.",
+        "Ela visitou a Itália no verão passado."
+      ],
+      [
+        "We are visiting France next month.",
+        "Nós vamos visitar a França no mês que vem."
+      ]
+    ],
+    "scene": "Jo: Have you visited other countries?",
+    "replies": [
+      "Yes, I've visited three.",
+      "Yes, I visit tomorrow.",
+      "No, she visited Italy."
+    ],
+    "note": [
+      "Have visited apresenta experiência sem data encerrada.",
+      "Have visited expresses experience without a finished-time date."
+    ]
+  },
+  "a2-experiencias-02": {
+    "intent": [
+      "Pergunte sobre uma experiência com comida coreana.",
+      "Ask about experience of Korean food."
+    ],
+    "sentences": [
+      [
+        "Have you ever tried Korean food?",
+        "Você já experimentou comida coreana?"
+      ],
+      [
+        "I have never tried sushi before.",
+        "Eu nunca experimentei sushi antes."
+      ],
+      [
+        "We tried Korean food last Friday.",
+        "Nós experimentamos comida coreana na sexta-feira passada."
+      ]
+    ],
+    "scene": "Jo: Have you ever tried Korean food?",
+    "replies": [
+      "No, I've never tried it.",
+      "No, I never will try it.",
+      "Yes, I will try it tomorrow."
+    ],
+    "note": [
+      "Ever pergunta se algo aconteceu alguma vez.",
+      "Ever asks if something has happened at any time."
+    ]
+  },
+  "a2-experiencias-03": {
+    "intent": [
+      "Diga que acabou de terminar a tarefa.",
+      "Say you finished your homework moments ago."
+    ],
+    "sentences": [
+      [
+        "I have just finished my homework.",
+        "Eu acabei de terminar minha tarefa."
+      ],
+      [
+        "She has already packed her bag.",
+        "Ela já arrumou a bolsa."
+      ],
+      [
+        "They have not arrived here yet.",
+        "Eles ainda não chegaram aqui."
+      ]
+    ],
+    "scene": "Jo: Is your homework finished?",
+    "replies": [
+      "Yes, I've just finished it.",
+      "No, I've just finished it.",
+      "Yes, I haven't finished it yet."
+    ],
+    "note": [
+      "Just indica uma ação concluída há pouco.",
+      "Just expresses an action completed moments ago."
+    ]
+  },
+  "a2-experiencias-04": {
+    "intent": [
+      "Indique que ela mora aqui desde 2020.",
+      "Say she has lived here since 2020."
+    ],
+    "sentences": [
+      [
+        "She has lived here since 2020.",
+        "Ela mora aqui desde 2020."
+      ],
+      [
+        "We have worked here for two years.",
+        "Nós trabalhamos aqui há dois anos."
+      ],
+      [
+        "He moved here in March.",
+        "Ele se mudou para cá em março."
+      ]
+    ],
+    "scene": "Jo: How long has she lived here?",
+    "replies": [
+      "Since 2020.",
+      "For 2020.",
+      "Since two years."
+    ],
+    "note": [
+      "Since indica início; for indica duração.",
+      "Since marks a starting point; for marks duration."
+    ]
+  },
+  "a2-experiencias-05": {
+    "intent": [
+      "Diga que Lia saiu e ainda não voltou.",
+      "Say Lia has left and has not returned."
+    ],
+    "sentences": [
+      [
+        "Lia has gone to the supermarket.",
+        "Lia foi ao supermercado e ainda não voltou."
+      ],
+      [
+        "Leo has been to the museum.",
+        "Leo já foi ao museu e voltou."
+      ],
+      [
+        "They went shopping last Saturday.",
+        "Eles foram às compras no sábado passado."
+      ]
+    ],
+    "scene": "Jo: Is Lia back from the supermarket?",
+    "replies": [
+      "No, she's gone to the supermarket.",
+      "Yes, she's gone and still there.",
+      "No, she's been and returned."
+    ],
+    "note": [
+      "Gone indica que a pessoa ainda está fora.",
+      "Gone indicates the person is still away."
+    ]
+  },
+  "a2-experiencias-06": {
+    "intent": [
+      "Conte quando você assistiu ao filme.",
+      "Say when you watched the film."
+    ],
+    "sentences": [
+      [
+        "I saw that film last Friday.",
+        "Eu assisti àquele filme na sexta-feira passada."
+      ],
+      [
+        "I have seen that film before.",
+        "Eu já assisti àquele filme antes."
+      ],
+      [
+        "She is watching that film now.",
+        "Ela está assistindo àquele filme agora."
+      ]
+    ],
+    "scene": "Jo: When did you see the film?",
+    "replies": [
+      "Last Friday.",
+      "I've seen it before.",
+      "I'm watching it now."
+    ],
+    "note": [
+      "Uma data passada encerrada pede past simple.",
+      "A finished past date calls for the past simple."
+    ]
+  },
+  "a2-3-1": {
+    "intent": [
+      "Sugira um encontro no sábado.",
+      "Suggest meeting on Saturday."
+    ],
+    "sentences": [
+      [
+        "Let's meet on Saturday.",
+        "Vamos nos encontrar no sábado."
+      ],
+      [
+        "We met at the library yesterday.",
+        "Nós nos encontramos na biblioteca ontem."
+      ],
+      [
+        "Can we meet at six instead?",
+        "Podemos nos encontrar às seis em vez disso?"
+      ]
+    ],
+    "scene": "Jo: Let's meet on Saturday.",
+    "replies": [
+      "Sounds good. See you on Saturday.",
+      "We met last Monday.",
+      "I am at home now."
+    ],
+    "note": [
+      "Let's + verbo faz uma sugestão conjunta.",
+      "Let's + verb makes a joint suggestion."
+    ],
+    "vocabulary": "let's — vamos\nmeet — encontrar\ninstead — em vez disso"
+  },
+  "a2-planos-01": {
+    "intent": [
+      "Conte a intenção de visitar seus primos.",
+      "Describe your plan to visit your cousins."
+    ],
+    "sentences": [
+      [
+        "We are going to visit our cousins.",
+        "Nós vamos visitar nossos primos."
+      ],
+      [
+        "I'll carry that bag for you.",
+        "Eu vou carregar essa bolsa para você."
+      ],
+      [
+        "She is visiting her tutor tomorrow.",
+        "Ela vai visitar a professora particular amanhã."
+      ]
+    ],
+    "scene": "Jo: What are your plans for Sunday?",
+    "replies": [
+      "We're going to visit our cousins.",
+      "We visited them yesterday.",
+      "I'll answer this call now."
+    ],
+    "note": [
+      "Going to apresenta uma intenção já formada.",
+      "Going to expresses an intention already formed."
+    ]
+  },
+  "a2-planos-02": {
+    "intent": [
+      "Ofereça ajuda com as bolsas agora.",
+      "Offer help with the bags now."
+    ],
+    "sentences": [
+      [
+        "I will help you with those bags.",
+        "Eu vou ajudar você com essas bolsas."
+      ],
+      [
+        "She helped me with my homework.",
+        "Ela me ajudou com minha tarefa."
+      ],
+      [
+        "We are going to travel next month.",
+        "Nós vamos viajar no mês que vem."
+      ]
+    ],
+    "scene": "Jo: These bags are really heavy.",
+    "replies": [
+      "I'll carry one for you.",
+      "I carried one yesterday.",
+      "I'm going to buy a bag."
+    ],
+    "note": [
+      "Will permite fazer uma oferta no momento.",
+      "Will can express an offer made at that moment."
+    ]
+  },
+  "a2-planos-03": {
+    "intent": [
+      "Conte um encontro já combinado para quinta-feira.",
+      "Describe an arranged meeting on Thursday."
+    ],
+    "sentences": [
+      [
+        "I am meeting my tutor on Thursday.",
+        "Eu vou encontrar minha professora particular na quinta-feira."
+      ],
+      [
+        "We are going to study more often.",
+        "Nós vamos estudar com mais frequência."
+      ],
+      [
+        "I'll call you later this evening.",
+        "Eu vou ligar para você mais tarde esta noite."
+      ]
+    ],
+    "scene": "Jo: Have you arranged Thursday's meeting?",
+    "replies": [
+      "Yes, I'm meeting my tutor then.",
+      "Yes, I might arrange it someday.",
+      "No, I met her last Thursday."
+    ],
+    "note": [
+      "Present continuous pode expressar um compromisso combinado.",
+      "Present continuous can express an arranged appointment."
+    ]
+  },
+  "a2-planos-04": {
+    "intent": [
+      "Convide alguém para jantar com vocês.",
+      "Invite someone to dinner with your group."
+    ],
+    "sentences": [
+      [
+        "Would you like to join us?",
+        "Você gostaria de se juntar a nós?"
+      ],
+      [
+        "I'd love to, but I'm busy.",
+        "Eu adoraria, mas estou ocupado."
+      ],
+      [
+        "Let's cook dinner at home tonight.",
+        "Vamos preparar o jantar em casa hoje à noite."
+      ]
+    ],
+    "scene": "Jo: Would you like to join us for dinner?",
+    "replies": [
+      "I'd love to, thanks.",
+      "I like cooking every day.",
+      "You would like dinner."
+    ],
+    "note": [
+      "Would you like to faz um convite educado.",
+      "Would you like to makes a polite invitation."
+    ]
+  },
+  "a2-planos-05": {
+    "intent": [
+      "Diga o plano para o caso de chuva.",
+      "State the plan if it rains."
+    ],
+    "sentences": [
+      [
+        "If it rains, we will stay home.",
+        "Se chover, nós ficaremos em casa."
+      ],
+      [
+        "If it is sunny, we'll go out.",
+        "Se fizer sol, nós sairemos."
+      ],
+      [
+        "When it rains, the road gets wet.",
+        "Quando chove, a estrada fica molhada."
+      ]
+    ],
+    "scene": "Jo: What will we do if it rains?",
+    "replies": [
+      "We'll stay home.",
+      "We stayed home last week.",
+      "It always gets wet."
+    ],
+    "note": [
+      "Use present simple depois de if nessa condição futura.",
+      "Use present simple after if in this future condition."
+    ]
+  },
+  "a2-planos-06": {
+    "intent": [
+      "Descreva o hábito de pegar táxi após trabalhar tarde.",
+      "Describe taking a taxi after late work."
+    ],
+    "sentences": [
+      [
+        "When I finish late, I take taxis.",
+        "Quando termino tarde, eu pego táxis."
+      ],
+      [
+        "If I finish early, I'll call you.",
+        "Se eu terminar cedo, eu vou ligar para você."
+      ],
+      [
+        "I took a taxi home yesterday.",
+        "Eu peguei um táxi para casa ontem."
+      ]
+    ],
+    "scene": "Jo: What do you usually do after working late?",
+    "replies": [
+      "I take a taxi home.",
+      "I'll take one next Friday.",
+      "I took one yesterday."
+    ],
+    "note": [
+      "Present simple nas duas partes descreve uma regra habitual.",
+      "Present simple in both parts describes a habitual rule."
+    ]
+  },
+  "a2-servicos-01": {
+    "intent": [
+      "Aconselhe conferir os horários primeiro.",
+      "Advise checking the timetable first."
+    ],
+    "sentences": [
+      [
+        "You should check the timetable first.",
+        "Você deveria conferir os horários primeiro."
+      ],
+      [
+        "We have to show our tickets.",
+        "Nós temos que mostrar nossas passagens."
+      ],
+      [
+        "You must not enter this room.",
+        "Você não pode entrar nesta sala."
+      ]
+    ],
+    "scene": "Jo: I don't know when the train leaves.",
+    "replies": [
+      "You should check the timetable.",
+      "You must never check it.",
+      "You checked it yesterday."
+    ],
+    "note": [
+      "Should + verbo dá um conselho.",
+      "Should + verb gives advice."
+    ]
+  },
+  "a2-servicos-02": {
+    "intent": [
+      "Informe a obrigação de mostrar as passagens.",
+      "State the requirement to show tickets."
+    ],
+    "sentences": [
+      [
+        "We have to show our tickets.",
+        "Nós temos que mostrar nossas passagens."
+      ],
+      [
+        "You should book a seat early.",
+        "Você deveria reservar um assento cedo."
+      ],
+      [
+        "We do not have to pay today.",
+        "Nós não precisamos pagar hoje."
+      ]
+    ],
+    "scene": "Jo: Do we need to show our tickets?",
+    "replies": [
+      "Yes, we have to.",
+      "No, we have to.",
+      "Yes, we should never show them."
+    ],
+    "note": [
+      "Have to indica uma obrigação.",
+      "Have to expresses an obligation."
+    ]
+  },
+  "a2-servicos-03": {
+    "intent": [
+      "Proíba estacionar na frente do portão.",
+      "Prohibit parking in front of the gate."
+    ],
+    "sentences": [
+      [
+        "You must not park at the gate.",
+        "Você não pode estacionar no portão."
+      ],
+      [
+        "You do not have to book today.",
+        "Você não precisa reservar hoje."
+      ],
+      [
+        "You should park near the station.",
+        "Você deveria estacionar perto da estação."
+      ]
+    ],
+    "scene": "Jo: Can I park in front of the gate?",
+    "replies": [
+      "No, you must not park there.",
+      "Yes, you don't have to park there.",
+      "Yes, you must park there."
+    ],
+    "note": [
+      "Must not proíbe; don't have to dispensa obrigação.",
+      "Must not prohibits; don't have to removes an obligation."
+    ]
+  },
+  "a2-servicos-04": {
+    "intent": [
+      "Reserve um quarto por duas noites.",
+      "Book a room for two nights."
+    ],
+    "sentences": [
+      [
+        "I'd like a room for two nights.",
+        "Eu gostaria de um quarto por duas noites."
+      ],
+      [
+        "Could I see the room first?",
+        "Eu poderia ver o quarto primeiro?"
+      ],
+      [
+        "We checked out yesterday morning.",
+        "Nós saímos do hotel ontem de manhã."
+      ]
+    ],
+    "scene": "Receptionist: How long would you like to stay?",
+    "replies": [
+      "For two nights, please.",
+      "Two rooms, please.",
+      "We left yesterday."
+    ],
+    "note": [
+      "For two nights indica a duração da estadia.",
+      "For two nights expresses the duration of the stay."
+    ]
+  },
+  "a2-servicos-05": {
+    "intent": [
+      "Relate que os fones não funcionam.",
+      "Report that the headphones do not work."
+    ],
+    "sentences": [
+      [
+        "These headphones do not work.",
+        "Estes fones não funcionam."
+      ],
+      [
+        "I bought this blue bag yesterday.",
+        "Eu comprei esta bolsa azul ontem."
+      ],
+      [
+        "Could I try a larger size?",
+        "Eu poderia experimentar um tamanho maior?"
+      ]
+    ],
+    "scene": "Assistant: What's wrong with the headphones?",
+    "replies": [
+      "They don't work.",
+      "They're the wrong colour, but work.",
+      "I need a larger jacket."
+    ],
+    "note": [
+      "Descreva o defeito com uma frase objetiva.",
+      "Describe the fault with a clear statement."
+    ]
+  },
+  "a2-servicos-06": {
+    "intent": [
+      "Peça para remarcar a consulta.",
+      "Ask to reschedule the appointment."
+    ],
+    "sentences": [
+      [
+        "Could we reschedule my appointment?",
+        "Poderíamos remarcar minha consulta?"
+      ],
+      [
+        "I have an appointment on Monday.",
+        "Eu tenho uma consulta na segunda-feira."
+      ],
+      [
+        "Please cancel my appointment today.",
+        "Por favor, cancele minha consulta hoje."
+      ]
+    ],
+    "scene": "Jo: Can you still come at ten?",
+    "replies": [
+      "Could we reschedule for eleven?",
+      "Yes, cancel it permanently.",
+      "I came at ten yesterday."
+    ],
+    "note": [
+      "Reschedule muda o horário; cancel remove o compromisso.",
+      "Reschedule changes the time; cancel removes the appointment."
+    ]
+  },
+  "a2-textos-01": {
+    "intent": [
+      "Peça para enviar o endereço a eles.",
+      "Ask someone to send them the address."
+    ],
+    "sentences": [
+      [
+        "Please send them the address.",
+        "Por favor, envie o endereço para eles."
+      ],
+      [
+        "Please send her the new timetable.",
+        "Por favor, envie os novos horários para ela."
+      ],
+      [
+        "They sent us two tickets yesterday.",
+        "Eles nos enviaram duas passagens ontem."
+      ]
+    ],
+    "scene": "Jo: Who should receive the address?",
+    "replies": [
+      "Please send it to them.",
+      "Please send them to it.",
+      "Please send her the timetable."
+    ],
+    "note": [
+      "Them pode receber a ação de send.",
+      "Them can receive the action of send."
+    ]
+  },
+  "a2-textos-02": {
+    "intent": [
+      "Mostre o resultado de encontrar a loja fechada.",
+      "Show the result of finding the shop closed."
+    ],
+    "sentences": [
+      [
+        "The shop was closed, so we left.",
+        "A loja estava fechada, então nós saímos."
+      ],
+      [
+        "We left because it was late.",
+        "Nós saímos porque era tarde."
+      ],
+      [
+        "The shop was small but bright.",
+        "A loja era pequena, mas iluminada."
+      ]
+    ],
+    "scene": "Jo: Why did you go home?",
+    "replies": [
+      "The shop was closed, so we left.",
+      "The shop was open, so we stayed.",
+      "The shop was bright but small."
+    ],
+    "note": [
+      "So introduz o resultado; because apresenta a causa.",
+      "So introduces a result; because gives a cause."
+    ]
+  },
+  "a2-textos-03": {
+    "intent": [
+      "Oriente chegar quinze minutos antes do passeio.",
+      "Ask someone to arrive fifteen minutes before the tour."
+    ],
+    "sentences": [
+      [
+        "Please arrive fifteen minutes before the tour.",
+        "Por favor, chegue quinze minutos antes do passeio."
+      ],
+      [
+        "The tour lasts about two hours.",
+        "O passeio dura cerca de duas horas."
+      ],
+      [
+        "Bring your ticket to the main entrance.",
+        "Traga sua passagem para a entrada principal."
+      ]
+    ],
+    "scene": "Email: The tour starts at ten. Arrive fifteen minutes early.",
+    "replies": [
+      "I'll arrive at nine forty-five.",
+      "I'll arrive at ten fifteen.",
+      "I'll arrive after the tour."
+    ],
+    "note": [
+      "Before indica um momento anterior ao início.",
+      "Before indicates a time earlier than the start."
+    ]
+  },
+  "a2-textos-04": {
+    "intent": [
+      "Descreva limpeza boa, mas barulho na rua.",
+      "Describe a clean room beside a noisy street."
+    ],
+    "sentences": [
+      [
+        "The room was clean but noisy.",
+        "O quarto era limpo, mas barulhento."
+      ],
+      [
+        "The room was small and quiet.",
+        "O quarto era pequeno e silencioso."
+      ],
+      [
+        "The street was busy all night.",
+        "A rua ficou movimentada a noite toda."
+      ]
+    ],
+    "scene": "Review: The room was clean, but the street was noisy.",
+    "replies": [
+      "Clean room, noisy surroundings.",
+      "Dirty room, quiet street.",
+      "Everything was perfect."
+    ],
+    "note": [
+      "But contrasta um ponto positivo com uma limitação.",
+      "But contrasts a positive point with a limitation."
+    ]
+  },
+  "a2-textos-05": {
+    "intent": [
+      "Peça os horários do curso por e-mail.",
+      "Request the course timetable by email."
+    ],
+    "sentences": [
+      [
+        "Could you send me the course timetable?",
+        "Você poderia me enviar os horários do curso?"
+      ],
+      [
+        "Thank you for your helpful reply.",
+        "Obrigado pela sua resposta útil."
+      ],
+      [
+        "I am interested in your evening course.",
+        "Eu tenho interesse no seu curso noturno."
+      ]
+    ],
+    "scene": "Email: I need the timetable before booking.",
+    "replies": [
+      "Could you send me the timetable?",
+      "I booked without checking the timetable.",
+      "You sent me the timetable yesterday."
+    ],
+    "note": [
+      "Could you + verbo faz um pedido educado.",
+      "Could you + verb makes a polite request."
+    ]
+  },
+  "a2-textos-06": {
+    "intent": [
+      "Informe entrada após seis com ingresso.",
+      "Say entry is allowed after six with a ticket."
+    ],
+    "sentences": [
+      [
+        "You can enter after six with tickets.",
+        "Vocês podem entrar após as seis com ingressos."
+      ],
+      [
+        "Please bring your ticket to the entrance.",
+        "Por favor, traga seu ingresso para a entrada."
+      ],
+      [
+        "The gates close at ten tonight.",
+        "Os portões fecham às dez hoje à noite."
+      ]
+    ],
+    "scene": "Rules: Entry after six. Ticket required.",
+    "replies": [
+      "I'll bring my ticket and enter after six.",
+      "I'll enter at five without a ticket.",
+      "I'll bring a ticket and enter at five."
+    ],
+    "note": [
+      "A entrada depende do horário e do ingresso.",
+      "Entry depends on both the time and the ticket."
+    ]
+  },
+  "a2-comunicacao-01": {
+    "intent": [
+      "Peça direções para a biblioteca com educação.",
+      "Politely ask for directions to the library."
+    ],
+    "sentences": [
+      [
+        "Could you give me directions to the library?",
+        "Você poderia me dar direções para a biblioteca?"
+      ],
+      [
+        "Turn left after the next traffic light.",
+        "Vire à esquerda após o próximo semáforo."
+      ],
+      [
+        "The library is opposite the main bank.",
+        "A biblioteca fica em frente ao banco principal."
+      ]
+    ],
+    "scene": "Jo: Can I help you?",
+    "replies": [
+      "Could you give me directions to the library?",
+      "I went to the library yesterday.",
+      "I borrowed two books last week."
+    ],
+    "note": [
+      "Could you suaviza um pedido de orientação.",
+      "Could you makes a request for directions more polite."
+    ]
+  },
+  "a2-comunicacao-02": {
+    "intent": [
+      "Confirme se o ônibus vai à estação central.",
+      "Check whether the bus goes to Central Station."
+    ],
+    "sentences": [
+      [
+        "Does this bus go to Central Station?",
+        "Este ônibus vai para a estação central?"
+      ],
+      [
+        "The next train leaves in ten minutes.",
+        "O próximo trem sai em dez minutos."
+      ],
+      [
+        "Please get off at the next stop.",
+        "Por favor, desça na próxima parada."
+      ]
+    ],
+    "scene": "Driver: This bus goes to Central Station.",
+    "replies": [
+      "Great, that's where I need to go.",
+      "Then it doesn't go to my station.",
+      "Thanks, I'll wait for a different route."
+    ],
+    "note": [
+      "Depois de does, use go na forma base.",
+      "After does, use the base form go."
+    ]
+  },
+  "a2-comunicacao-03": {
+    "intent": [
+      "Peça sopa sem queijo com educação.",
+      "Politely order soup without cheese."
+    ],
+    "sentences": [
+      [
+        "Could I have the soup without cheese?",
+        "Eu poderia pedir a sopa sem queijo?"
+      ],
+      [
+        "I'd like some bread with my soup.",
+        "Eu gostaria de um pouco de pão com minha sopa."
+      ],
+      [
+        "Could I have the chicken instead?",
+        "Eu poderia pedir o frango em vez disso?"
+      ]
+    ],
+    "scene": "Server: Would you like cheese on your soup?",
+    "replies": [
+      "No cheese, please.",
+      "Extra cheese, please.",
+      "Yes, I want more cheese."
+    ],
+    "note": [
+      "Without remove um ingrediente do pedido.",
+      "Without removes an ingredient from an order."
+    ]
+  },
+  "a2-comunicacao-04": {
+    "intent": [
+      "Peça para repetir mais devagar.",
+      "Ask someone to repeat more slowly."
+    ],
+    "sentences": [
+      [
+        "Could you say that more slowly, please?",
+        "Você poderia dizer isso mais devagar, por favor?"
+      ],
+      [
+        "Could you write down the address?",
+        "Você poderia anotar o endereço?"
+      ],
+      [
+        "I understood the time but not the place.",
+        "Eu entendi o horário, mas não o lugar."
+      ]
+    ],
+    "scene": "Jo: The address is seventeen Willow Street.",
+    "replies": [
+      "Could you say that more slowly, please?",
+      "Please say it much faster.",
+      "I will speak more slowly tomorrow."
+    ],
+    "note": [
+      "More slowly pede redução da velocidade da fala.",
+      "More slowly asks for a slower speaking speed."
+    ]
+  },
+  "a2-comunicacao-05": {
+    "intent": [
+      "Peça para fechar a janela com respeito.",
+      "Respectfully ask someone to close the window."
+    ],
+    "sentences": [
+      [
+        "Would you mind closing the window?",
+        "Você se importaria de fechar a janela?"
+      ],
+      [
+        "Could I open the window instead?",
+        "Eu poderia abrir a janela em vez disso?"
+      ],
+      [
+        "The window is already open now.",
+        "A janela já está aberta agora."
+      ]
+    ],
+    "scene": "Jo: Would you mind closing the window?",
+    "replies": [
+      "Not at all. I'll close it.",
+      "Not at all. I'll open it.",
+      "Yes, I closed it yesterday."
+    ],
+    "note": [
+      "Would you mind é seguido de -ing.",
+      "Would you mind is followed by -ing."
+    ]
+  },
+  "a2-comunicacao-06": {
+    "intent": [
+      "Avise atraso e proponha encontrar às seis.",
+      "Explain you're late and suggest meeting at six."
+    ],
+    "sentences": [
+      [
+        "I'm running late; could we meet at six?",
+        "Estou atrasado; poderíamos nos encontrar às seis?"
+      ],
+      [
+        "I'll arrive on time at five.",
+        "Eu chegarei no horário às cinco."
+      ],
+      [
+        "Could we meet at the library instead?",
+        "Poderíamos nos encontrar na biblioteca em vez disso?"
+      ]
+    ],
+    "scene": "Jo: We agreed to meet at five. I'm running late.",
+    "replies": [
+      "Could we meet at six instead?",
+      "I arrived at five yesterday.",
+      "Let's keep five; I'm already there."
+    ],
+    "note": [
+      "Instead propõe substituir o horário combinado.",
+      "Instead proposes replacing the arranged time."
+    ]
+  },
+  "b1-narrativas-01": {
+    "intent": [
+      "Conte um hábito antigo de ir à escola.",
+      "Describe a past habit of walking to school."
+    ],
+    "sentences": [
+      [
+        "I used to walk to school every day.",
+        "Eu costumava ir a pé para a escola todos os dias."
+      ],
+      [
+        "She usually takes the bus to work.",
+        "Ela geralmente pega o ônibus para o trabalho."
+      ],
+      [
+        "We walked home after the concert yesterday.",
+        "Nós voltamos a pé para casa depois do show ontem."
+      ]
+    ],
+    "scene": "Jo: Do you still walk to school every day?",
+    "replies": [
+      "No, I used to, but now I cycle.",
+      "Yes, I used to and never did.",
+      "No, I will start walking next year."
+    ],
+    "note": [
+      "Used to apresenta um hábito que mudou.",
+      "Used to expresses a habit that has changed."
+    ]
+  },
+  "b1-narrativas-02": {
+    "intent": [
+      "Mostre que o filme começou antes da chegada.",
+      "Show the film began before the arrival."
+    ],
+    "sentences": [
+      [
+        "The film had started before we arrived.",
+        "O filme tinha começado antes de nós chegarmos."
+      ],
+      [
+        "We watched the film after we arrived.",
+        "Nós assistimos ao filme depois de chegarmos."
+      ],
+      [
+        "They were waiting outside when we arrived.",
+        "Eles estavam esperando do lado de fora quando chegamos."
+      ]
+    ],
+    "scene": "Jo: Was the film already playing when you arrived?",
+    "replies": [
+      "Yes, it had started before we got there.",
+      "Yes, it started after we got there.",
+      "No, it had already started before our arrival."
+    ],
+    "note": [
+      "Had started situa uma ação antes de outra passada.",
+      "Had started places an action before another past action."
+    ]
+  },
+  "b1-narrativas-03": {
+    "intent": [
+      "Descreva uma caminhada interrompida por uma descoberta.",
+      "Describe a discovery during a walk."
+    ],
+    "sentences": [
+      [
+        "While I was walking home, I noticed a wallet.",
+        "Enquanto eu caminhava para casa, percebi uma carteira."
+      ],
+      [
+        "She found the wallet after she got home.",
+        "Ela encontrou a carteira depois de chegar em casa."
+      ],
+      [
+        "They were looking for the wallet all morning.",
+        "Eles estavam procurando a carteira a manhã toda."
+      ]
+    ],
+    "scene": "Jo: What happened while you were walking home?",
+    "replies": [
+      "I noticed a wallet on the pavement.",
+      "I will notice a wallet tomorrow.",
+      "I usually leave my wallet at home."
+    ],
+    "note": [
+      "Past continuous cria o cenário; past simple traz o acontecimento.",
+      "Past continuous sets the scene; past simple gives the event."
+    ]
+  },
+  "b1-narrativas-04": {
+    "intent": [
+      "Descreva um estudo iniciado há duas horas e ainda ativo.",
+      "Describe studying that started two hours ago and continues."
+    ],
+    "sentences": [
+      [
+        "I have been studying for two hours.",
+        "Eu estou estudando há duas horas."
+      ],
+      [
+        "She studied for two hours last night.",
+        "Ela estudou por duas horas ontem à noite."
+      ],
+      [
+        "We will study for two hours tomorrow.",
+        "Nós estudaremos por duas horas amanhã."
+      ]
+    ],
+    "scene": "Jo: You started studying at two. It's four now.",
+    "replies": [
+      "I've been studying for two hours.",
+      "I studied tomorrow for two hours.",
+      "I finished two hours before I started."
+    ],
+    "note": [
+      "Have been studying destaca continuidade até o presente.",
+      "Have been studying highlights continuity up to the present."
+    ]
+  },
+  "b1-narrativas-05": {
+    "intent": [
+      "Relate que ela disse estar cansada.",
+      "Report that she said she was tired."
+    ],
+    "sentences": [
+      [
+        "She said she was tired after work.",
+        "Ela disse que estava cansada depois do trabalho."
+      ],
+      [
+        "He asked whether she needed a break.",
+        "Ele perguntou se ela precisava de uma pausa."
+      ],
+      [
+        "They told us to wait outside the office.",
+        "Eles nos disseram para esperar fora do escritório."
+      ]
+    ],
+    "scene": "Lia: I'm tired. Later, Jo asks what Lia said.",
+    "replies": [
+      "She said she was tired.",
+      "She said Jo was tired.",
+      "She asked if I was tired."
+    ],
+    "note": [
+      "Ao relatar, ajuste o pronome à pessoa citada.",
+      "When reporting, adjust the pronoun to the person quoted."
+    ]
+  },
+  "b1-narrativas-06": {
+    "intent": [
+      "Conte um sucesso específico ao pegar o último trem.",
+      "Describe successfully catching the last train."
+    ],
+    "sentences": [
+      [
+        "We managed to catch the last train.",
+        "Nós conseguimos pegar o último trem."
+      ],
+      [
+        "She could swim well when she was young.",
+        "Ela sabia nadar bem quando era jovem."
+      ],
+      [
+        "They couldn't find the station before midnight.",
+        "Eles não conseguiram encontrar a estação antes da meia-noite."
+      ]
+    ],
+    "scene": "Jo: Did you actually catch the last train?",
+    "replies": [
+      "Yes, we managed to catch it.",
+      "Yes, we could swim as children.",
+      "No, we managed to catch it."
+    ],
+    "note": [
+      "Managed to destaca um sucesso numa ocasião específica.",
+      "Managed to highlights success on a specific occasion."
+    ]
+  },
+  "b1-5-1": {
+    "intent": [
+      "Apresente uma opinião favorável sobre este plano.",
+      "Give a favourable opinion of this plan."
+    ],
+    "sentences": [
+      [
+        "I think this plan is better for us.",
+        "Eu acho que este plano é melhor para nós."
+      ],
+      [
+        "The report lists three different plans for us.",
+        "O relatório lista três planos diferentes para nós."
+      ],
+      [
+        "I prefer the other plan because it's cheaper.",
+        "Eu prefiro o outro plano porque ele é mais barato."
+      ]
+    ],
+    "scene": "Jo: Why do you prefer this plan?",
+    "replies": [
+      "I think it's better because it saves time.",
+      "The report exists in the office.",
+      "Because this plan better I think."
+    ],
+    "note": [
+      "I think marca opinião; because acrescenta a razão.",
+      "I think marks an opinion; because adds the reason."
+    ],
+    "vocabulary": "I think — eu acho\nplan — plano\nbetter — melhor"
+  },
+  "b1-argumentos-01": {
+    "intent": [
+      "Concorde parcialmente e destaque o custo alto.",
+      "Partly agree and highlight the high cost."
+    ],
+    "sentences": [
+      [
+        "I see your point, but the cost is high.",
+        "Eu entendo seu argumento, mas o custo é alto."
+      ],
+      [
+        "I completely agree that the cost is acceptable.",
+        "Eu concordo totalmente que o custo é aceitável."
+      ],
+      [
+        "I disagree because the estimate is too low.",
+        "Eu discordo porque a estimativa é baixa demais."
+      ]
+    ],
+    "scene": "Jo: This option is fast, but expensive. What do you think?",
+    "replies": [
+      "I see your point, but the cost worries me.",
+      "I agree completely; there are no drawbacks.",
+      "Speed doesn't matter and I won't discuss it."
+    ],
+    "note": [
+      "Reconheça um mérito antes de apresentar sua ressalva.",
+      "Acknowledge a merit before introducing your reservation."
+    ]
+  },
+  "b1-argumentos-02": {
+    "intent": [
+      "Mostre uma escolha apesar do preço alto.",
+      "Show a choice despite a high price."
+    ],
+    "sentences": [
+      [
+        "Although it was expensive, we chose the train.",
+        "Embora fosse caro, nós escolhemos o trem."
+      ],
+      [
+        "We chose the train because it was cheap.",
+        "Nós escolhemos o trem porque era barato."
+      ],
+      [
+        "We chose the bus instead of the train.",
+        "Nós escolhemos o ônibus em vez do trem."
+      ]
+    ],
+    "scene": "Jo: Why mention the high price if you chose the train?",
+    "replies": [
+      "It was expensive, but we chose it anyway.",
+      "We chose it because it was the cheapest.",
+      "We didn't choose the train at all."
+    ],
+    "note": [
+      "Although introduz uma concessão, não uma causa.",
+      "Although introduces a concession, not a cause."
+    ]
+  },
+  "b1-argumentos-03": {
+    "intent": [
+      "Dê hiking como exemplo de atividade ao ar livre.",
+      "Give hiking as an example of outdoor activity."
+    ],
+    "sentences": [
+      [
+        "I enjoy outdoor activities such as hiking.",
+        "Eu gosto de atividades ao ar livre, como caminhadas."
+      ],
+      [
+        "I avoid hiking because my knee hurts.",
+        "Eu evito caminhadas porque meu joelho dói."
+      ],
+      [
+        "We enjoy indoor games during the winter.",
+        "Nós gostamos de jogos em ambientes fechados durante o inverno."
+      ]
+    ],
+    "scene": "Jo: What outdoor activities do you enjoy?",
+    "replies": [
+      "Activities such as hiking and cycling.",
+      "Only activities inside a sports hall.",
+      "Hiking is an activity I always avoid."
+    ],
+    "note": [
+      "Such as introduz exemplos de uma categoria.",
+      "Such as introduces examples of a category."
+    ]
+  },
+  "b1-argumentos-04": {
+    "intent": [
+      "Destaque o baixo custo como vantagem de pedalar.",
+      "Highlight low cost as a benefit of cycling."
+    ],
+    "sentences": [
+      [
+        "One advantage of cycling is the low cost.",
+        "Uma vantagem de pedalar é o baixo custo."
+      ],
+      [
+        "One drawback of cycling is the bad weather.",
+        "Uma desvantagem de pedalar é o mau tempo."
+      ],
+      [
+        "The bus is expensive during the rush hour.",
+        "O ônibus é caro durante o horário de pico."
+      ]
+    ],
+    "scene": "Jo: What makes cycling a useful option on a budget?",
+    "replies": [
+      "Its low cost is an advantage.",
+      "Bad weather makes it more expensive.",
+      "The bus costs more during rush hour."
+    ],
+    "note": [
+      "Advantage apresenta um benefício; drawback uma limitação.",
+      "Advantage expresses a benefit; drawback a limitation."
+    ]
+  },
+  "b1-argumentos-05": {
+    "intent": [
+      "Recomende reservar passagens com antecedência.",
+      "Recommend booking tickets early."
+    ],
+    "sentences": [
+      [
+        "I recommend booking your tickets early to save money.",
+        "Eu recomendo reservar suas passagens cedo para economizar dinheiro."
+      ],
+      [
+        "We decided to buy our tickets at the station.",
+        "Nós decidimos comprar nossas passagens na estação."
+      ],
+      [
+        "She regrets buying tickets for the wrong date.",
+        "Ela se arrepende de comprar passagens para a data errada."
+      ]
+    ],
+    "scene": "Jo: Tickets are cheaper this week. What do you recommend?",
+    "replies": [
+      "I recommend booking them early.",
+      "I recommend book them early.",
+      "I regret the date of your appointment."
+    ],
+    "note": [
+      "Recommend pode ser seguido de uma forma em -ing.",
+      "Recommend can be followed by an -ing form."
+    ]
+  },
+  "b1-argumentos-06": {
+    "intent": [
+      "Atribua o horário à informação publicada.",
+      "Attribute the departure time to published information."
+    ],
+    "sentences": [
+      [
+        "According to the timetable, the train leaves at nine.",
+        "Segundo os horários publicados, o trem sai às nove."
+      ],
+      [
+        "I think the train might leave a little later.",
+        "Eu acho que o trem pode sair um pouco mais tarde."
+      ],
+      [
+        "In my opinion, the journey is too long.",
+        "Na minha opinião, a viagem é longa demais."
+      ]
+    ],
+    "scene": "Jo: How do you know the train leaves at nine?",
+    "replies": [
+      "That's what the timetable says.",
+      "It's just my preference about the journey.",
+      "I like the train more than the bus."
+    ],
+    "note": [
+      "According to identifica a fonte da informação.",
+      "According to identifies the source of the information."
+    ]
+  },
+  "b1-hipoteses-01": {
+    "intent": [
+      "Apresente a mudança de data como possibilidade.",
+      "Present a date change as a possibility."
+    ],
+    "sentences": [
+      [
+        "We might change the date of the meeting.",
+        "Nós talvez mudemos a data da reunião."
+      ],
+      [
+        "We must change the date of the meeting.",
+        "Nós precisamos mudar a data da reunião."
+      ],
+      [
+        "We changed the date of the meeting yesterday.",
+        "Nós mudamos a data da reunião ontem."
+      ]
+    ],
+    "scene": "Jo: Is the date change certain?",
+    "replies": [
+      "No, we might change it.",
+      "Yes, might means it is certain.",
+      "No, we changed it yesterday."
+    ],
+    "note": [
+      "Might expressa possibilidade, não certeza.",
+      "Might expresses possibility, not certainty."
+    ]
+  },
+  "b1-hipoteses-02": {
+    "intent": [
+      "Deduza cansaço após uma viagem longa.",
+      "Infer tiredness after a long journey."
+    ],
+    "sentences": [
+      [
+        "He must be tired after that long journey.",
+        "Ele deve estar cansado depois daquela viagem longa."
+      ],
+      [
+        "He might be tired, but I have no evidence.",
+        "Ele talvez esteja cansado, mas não tenho evidências."
+      ],
+      [
+        "He has to finish his report before dinner.",
+        "Ele precisa terminar seu relatório antes do jantar."
+      ]
+    ],
+    "scene": "Jo: He travelled all night and can hardly stay awake.",
+    "replies": [
+      "He must be tired after the journey.",
+      "He must finish a report, so he's not tired.",
+      "He cannot be tired because he travelled."
+    ],
+    "note": [
+      "Must pode marcar uma dedução forte baseada em indícios.",
+      "Must can mark a strong deduction based on evidence."
+    ]
+  },
+  "b1-hipoteses-03": {
+    "intent": [
+      "Imagine aprender italiano se tivesse mais tempo.",
+      "Imagine learning Italian if you had more time."
+    ],
+    "sentences": [
+      [
+        "If I had more time, I would learn Italian.",
+        "Se eu tivesse mais tempo, aprenderia italiano."
+      ],
+      [
+        "If I have time tomorrow, I'll call you.",
+        "Se eu tiver tempo amanhã, eu vou ligar para você."
+      ],
+      [
+        "I learned Italian when I lived in Rome.",
+        "Eu aprendi italiano quando morei em Roma."
+      ]
+    ],
+    "scene": "Jo: Imagine you had more free time. What would you do?",
+    "replies": [
+      "I'd learn Italian.",
+      "I learned Italian last year.",
+      "I'll call you if I'm free tomorrow."
+    ],
+    "note": [
+      "If + passado e would apresentam uma hipótese imaginária.",
+      "If + past and would express an imaginary situation."
+    ]
+  },
+  "b1-hipoteses-04": {
+    "intent": [
+      "Apresente terminar cedo como condição possível.",
+      "Present finishing early as a realistic condition."
+    ],
+    "sentences": [
+      [
+        "If I finish early, I will call you.",
+        "Se eu terminar cedo, eu vou ligar para você."
+      ],
+      [
+        "If I had more time, I would travel.",
+        "Se eu tivesse mais tempo, eu viajaria."
+      ],
+      [
+        "I called you after I finished work yesterday.",
+        "Eu liguei para você depois de terminar o trabalho ontem."
+      ]
+    ],
+    "scene": "Jo: Can you call me today if work finishes early?",
+    "replies": [
+      "Yes, if I finish early, I'll call.",
+      "Yes, I called you yesterday.",
+      "Only if I had finished last year."
+    ],
+    "note": [
+      "If + presente apresenta uma condição futura possível.",
+      "If + present expresses a realistic future condition."
+    ]
+  },
+  "b1-hipoteses-05": {
+    "intent": [
+      "Use unless para indicar como evitar perder o ônibus.",
+      "Use unless to explain how to avoid missing the bus."
+    ],
+    "sentences": [
+      [
+        "We will miss the bus unless we leave now.",
+        "Nós perderemos o ônibus a menos que saiamos agora."
+      ],
+      [
+        "We won't miss the bus if we leave now.",
+        "Nós não perderemos o ônibus se sairmos agora."
+      ],
+      [
+        "We missed the bus because we left too late.",
+        "Nós perdemos o ônibus porque saímos tarde demais."
+      ]
+    ],
+    "scene": "Jo: What does unless we leave now mean?",
+    "replies": [
+      "If we don't leave now, we'll miss the bus.",
+      "If we leave now, we'll definitely miss the bus.",
+      "We already left and caught the bus yesterday."
+    ],
+    "note": [
+      "Unless significa if not.",
+      "Unless means if not."
+    ]
+  },
+  "b1-hipoteses-06": {
+    "intent": [
+      "Prefira caminhar a esperar um táxi.",
+      "Prefer walking to waiting for a taxi."
+    ],
+    "sentences": [
+      [
+        "I would rather walk than wait for a taxi.",
+        "Eu preferiria caminhar a esperar um táxi."
+      ],
+      [
+        "I prefer waiting here because my foot hurts.",
+        "Eu prefiro esperar aqui porque meu pé dói."
+      ],
+      [
+        "We decided to take the next train home.",
+        "Nós decidimos pegar o próximo trem para casa."
+      ]
+    ],
+    "scene": "Jo: Would you rather walk or wait for a taxi?",
+    "replies": [
+      "I'd rather walk.",
+      "I'd rather to walk.",
+      "I walked here yesterday."
+    ],
+    "note": [
+      "Would rather pede o verbo na forma base.",
+      "Would rather takes the base form of the verb."
+    ]
+  },
+  "b1-precisao-01": {
+    "intent": [
+      "Identifique a colega pela ajuda de ontem.",
+      "Identify the colleague by yesterday's help."
+    ],
+    "sentences": [
+      [
+        "She is the colleague who helped me yesterday.",
+        "Ela é a colega que me ajudou ontem."
+      ],
+      [
+        "This is the file that I sent yesterday.",
+        "Este é o arquivo que eu enviei ontem."
+      ],
+      [
+        "The colleague works in the office near school.",
+        "A colega trabalha no escritório perto da escola."
+      ]
+    ],
+    "scene": "Jo: Which colleague do you mean?",
+    "replies": [
+      "The one who helped me yesterday.",
+      "The file that arrived yesterday.",
+      "The one which I have not met."
+    ],
+    "note": [
+      "Who retoma uma pessoa numa oração relativa.",
+      "Who refers to a person in a relative clause."
+    ]
+  },
+  "b1-precisao-02": {
+    "intent": [
+      "Destaque a biblioteca como local que recebe a limpeza.",
+      "Focus on the library receiving the cleaning."
+    ],
+    "sentences": [
+      [
+        "The library is cleaned every morning before opening.",
+        "A biblioteca é limpa todas as manhãs antes de abrir."
+      ],
+      [
+        "The cleaner opens the library every morning.",
+        "O funcionário abre a biblioteca todas as manhãs."
+      ],
+      [
+        "The library was closed for repairs last week.",
+        "A biblioteca foi fechada para reparos na semana passada."
+      ]
+    ],
+    "scene": "Jo: Is the library cleaned every morning?",
+    "replies": [
+      "Yes, it is cleaned before opening.",
+      "Yes, it cleans itself every morning.",
+      "No, the cleaner opened it yesterday."
+    ],
+    "note": [
+      "Is cleaned foca quem recebe a ação habitual.",
+      "Is cleaned focuses on the receiver of a habitual action."
+    ]
+  },
+  "b1-precisao-03": {
+    "intent": [
+      "Noticie a inauguração da ponte no ano passado.",
+      "Report the bridge's opening last year."
+    ],
+    "sentences": [
+      [
+        "The bridge was opened to traffic last year.",
+        "A ponte foi aberta ao tráfego no ano passado."
+      ],
+      [
+        "The bridge is inspected every month for safety.",
+        "A ponte é inspecionada todos os meses por segurança."
+      ],
+      [
+        "They will open the new bridge next month.",
+        "Eles vão abrir a ponte nova no mês que vem."
+      ]
+    ],
+    "scene": "Jo: When was the bridge opened?",
+    "replies": [
+      "It was opened last year.",
+      "It is opening next month.",
+      "It inspects the traffic every week."
+    ],
+    "note": [
+      "Was opened situa a ação passiva no passado.",
+      "Was opened places the passive action in the past."
+    ]
+  },
+  "b1-precisao-04": {
+    "intent": [
+      "Conte a decisão de sair antes do almoço.",
+      "Describe deciding to leave before lunch."
+    ],
+    "sentences": [
+      [
+        "We decided to leave before lunch that day.",
+        "Nós decidimos sair antes do almoço naquele dia."
+      ],
+      [
+        "She enjoys cooking lunch for her friends.",
+        "Ela gosta de preparar o almoço para seus amigos."
+      ],
+      [
+        "They avoided travelling during the busiest holiday weekend.",
+        "Eles evitaram viajar durante o fim de semana mais movimentado do feriado."
+      ]
+    ],
+    "scene": "Jo: What did you decide to do?",
+    "replies": [
+      "We decided to leave before lunch.",
+      "We decided leaving before lunch.",
+      "We enjoy leaving yesterday before lunch."
+    ],
+    "note": [
+      "Decide é seguido de to + verbo.",
+      "Decide is followed by to + verb."
+    ]
+  },
+  "b1-precisao-05": {
+    "intent": [
+      "Peça para desligar o aparelho antes de sair.",
+      "Ask someone to switch the device off before leaving."
+    ],
+    "sentences": [
+      [
+        "Please turn it off before you leave home.",
+        "Por favor, desligue isso antes de sair de casa."
+      ],
+      [
+        "Please turn the music down during the meeting.",
+        "Por favor, abaixe a música durante a reunião."
+      ],
+      [
+        "She turned on the light when she arrived.",
+        "Ela acendeu a luz quando chegou."
+      ]
+    ],
+    "scene": "Jo: Where does it go in turn off?",
+    "replies": [
+      "Between turn and off: turn it off.",
+      "After off: turn off it.",
+      "Before turn: it turn off."
+    ],
+    "note": [
+      "O pronome fica entre turn e off.",
+      "The pronoun goes between turn and off."
+    ]
+  },
+  "b1-precisao-06": {
+    "intent": [
+      "Diga que ela tem interesse em aprender fotografia.",
+      "Say she is interested in learning photography."
+    ],
+    "sentences": [
+      [
+        "She is interested in learning photography this year.",
+        "Ela tem interesse em aprender fotografia este ano."
+      ],
+      [
+        "He is good at explaining difficult ideas clearly.",
+        "Ele é bom em explicar ideias difíceis claramente."
+      ],
+      [
+        "We are worried about missing the last train.",
+        "Nós estamos preocupados em perder o último trem."
+      ]
+    ],
+    "scene": "Jo: Is Lia interested in photography?",
+    "replies": [
+      "Yes, she's interested in learning it.",
+      "Yes, she's interested to learning it.",
+      "No, he's good at explaining it."
+    ],
+    "note": [
+      "Interested combina com in; depois da preposição, use -ing.",
+      "Interested takes in; after the preposition, use -ing."
+    ]
+  },
+  "b1-6-1": {
+    "intent": [
+      "Peça para explicar novamente uma informação.",
+      "Ask for an explanation to be repeated."
+    ],
+    "sentences": [
+      [
+        "Could you explain that again a little more slowly?",
+        "Você poderia explicar isso novamente um pouco mais devagar?"
+      ],
+      [
+        "Do you mean we should meet before lunch?",
+        "Você quer dizer que devemos nos encontrar antes do almoço?"
+      ],
+      [
+        "I understood the first part of your explanation.",
+        "Eu entendi a primeira parte da sua explicação."
+      ]
+    ],
+    "scene": "Jo: The instructions weren't clear to me.",
+    "replies": [
+      "Could you explain that again?",
+      "I understood everything; no need to explain.",
+      "Explain again you, now!"
+    ],
+    "note": [
+      "Could you + verbo faz um pedido claro e educado.",
+      "Could you + verb makes a clear, polite request."
+    ],
+    "vocabulary": "explain — explicar\nagain — de novo\nslowly — devagar"
+  },
+  "b1-colaboracao-01": {
+    "intent": [
+      "Pergunte indiretamente onde fica o escritório.",
+      "Ask indirectly where the office is."
+    ],
+    "sentences": [
+      [
+        "Could you tell me where the office is?",
+        "Você poderia me dizer onde fica o escritório?"
+      ],
+      [
+        "Where is the office on this floor?",
+        "Onde fica o escritório neste andar?"
+      ],
+      [
+        "The office is next to the library.",
+        "O escritório fica ao lado da biblioteca."
+      ]
+    ],
+    "scene": "Jo: Is where is the office correct after tell me?",
+    "replies": [
+      "No, use where the office is.",
+      "Yes, always use where is the office.",
+      "No, omit office and the verb."
+    ],
+    "note": [
+      "Na parte indireta, use ordem de afirmação.",
+      "In the indirect part, use statement word order."
+    ]
+  },
+  "b1-colaboracao-02": {
+    "intent": [
+      "Confirme que o prazo é na sexta-feira.",
+      "Check that the deadline is Friday."
+    ],
+    "sentences": [
+      [
+        "So, you mean the deadline is Friday?",
+        "Então, você quer dizer que o prazo é sexta-feira?"
+      ],
+      [
+        "Could we extend the deadline until next week?",
+        "Poderíamos estender o prazo até a semana que vem?"
+      ],
+      [
+        "We sent the proposal before Friday last week.",
+        "Nós enviamos a proposta antes de sexta-feira na semana passada."
+      ]
+    ],
+    "scene": "Jo: Please send the file before the weekend.",
+    "replies": [
+      "So, you mean the deadline is Friday?",
+      "I sent it last weekend.",
+      "You must mean Tuesday; I won't check."
+    ],
+    "note": [
+      "You mean permite confirmar sua interpretação.",
+      "You mean lets you check your interpretation."
+    ]
+  },
+  "b1-colaboracao-03": {
+    "intent": [
+      "Peça uma extensão do prazo até sexta-feira.",
+      "Ask for a deadline extension until Friday."
+    ],
+    "sentences": [
+      [
+        "Could we extend the deadline until Friday?",
+        "Poderíamos estender o prazo até sexta-feira?"
+      ],
+      [
+        "We agreed to finish the report by Tuesday.",
+        "Nós combinamos terminar o relatório até terça-feira."
+      ],
+      [
+        "Please confirm whether the deadline has already changed.",
+        "Por favor, confirme se o prazo já mudou."
+      ]
+    ],
+    "scene": "Jo: The report is due tomorrow, but we need more time.",
+    "replies": [
+      "Could we extend the deadline until Friday?",
+      "The deadline changed yesterday without agreement.",
+      "I'll ignore the deadline and send it someday."
+    ],
+    "note": [
+      "Until Friday propõe o novo limite do prazo.",
+      "Until Friday proposes the new deadline limit."
+    ]
+  },
+  "b1-colaboracao-04": {
+    "intent": [
+      "Peça orientação para enviar um arquivo.",
+      "Ask for help uploading a file."
+    ],
+    "sentences": [
+      [
+        "Could you show me how to upload this file?",
+        "Você poderia me mostrar como enviar este arquivo?"
+      ],
+      [
+        "I uploaded the wrong file yesterday by mistake.",
+        "Eu enviei o arquivo errado ontem por engano."
+      ],
+      [
+        "Please tell me which folder contains the report.",
+        "Por favor, me diga qual pasta contém o relatório."
+      ]
+    ],
+    "scene": "Jo: I can't find the upload button.",
+    "replies": [
+      "Could you show me how to upload this file?",
+      "I finished uploading it without help.",
+      "You should know, so don't ask."
+    ],
+    "note": [
+      "Explique a dificuldade e peça uma ação específica.",
+      "Explain the difficulty and request a specific action."
+    ]
+  },
+  "b1-colaboracao-05": {
+    "intent": [
+      "Relate ter recebido uma bolsa de cor diferente.",
+      "Report receiving a bag of a different colour."
+    ],
+    "sentences": [
+      [
+        "I ordered a blue bag but received a green one.",
+        "Eu pedi uma bolsa azul, mas recebi uma verde."
+      ],
+      [
+        "The bag arrived on time and matched my order.",
+        "A bolsa chegou no prazo e correspondeu ao meu pedido."
+      ],
+      [
+        "Could you send me the delivery address again?",
+        "Você poderia me enviar o endereço de entrega novamente?"
+      ]
+    ],
+    "scene": "Assistant: What is the problem with your order?",
+    "replies": [
+      "I ordered blue, but the bag is green.",
+      "Everything matched my order perfectly.",
+      "Your shop is terrible; I won't explain."
+    ],
+    "note": [
+      "Contraste o pedido e o recebido para esclarecer o problema.",
+      "Contrast the order and delivery to clarify the problem."
+    ]
+  },
+  "b1-colaboracao-06": {
+    "intent": [
+      "Registre o acordo de enviar a proposta até terça.",
+      "Record the agreement to send the proposal by Tuesday."
+    ],
+    "sentences": [
+      [
+        "We agreed to send the proposal by Tuesday.",
+        "Nós combinamos enviar a proposta até terça-feira."
+      ],
+      [
+        "They suggested sending the proposal sometime next month.",
+        "Eles sugeriram enviar a proposta em algum momento no próximo mês."
+      ],
+      [
+        "She asked whether the proposal had been approved.",
+        "Ela perguntou se a proposta tinha sido aprovada."
+      ]
+    ],
+    "scene": "Jo: What did we agree in the meeting?",
+    "replies": [
+      "We'll send the proposal by Tuesday.",
+      "We might discuss it next month.",
+      "The proposal was approved before the meeting."
+    ],
+    "note": [
+      "Agreed to registra uma decisão, não apenas uma sugestão.",
+      "Agreed to records a decision, not just a suggestion."
+    ]
+  },
+  "b1-leitura-01": {
+    "intent": [
+      "Resuma o assunto central sobre a mudança de horário.",
+      "Summarise the main topic of the schedule change."
+    ],
+    "sentences": [
+      [
+        "The article explains why the club changed its schedule.",
+        "O artigo explica por que o clube mudou seus horários."
+      ],
+      [
+        "One paragraph lists the names of three club members.",
+        "Um parágrafo lista os nomes de três membros do clube."
+      ],
+      [
+        "The final sentence gives the club's street address.",
+        "A última frase informa o endereço do clube."
+      ]
+    ],
+    "scene": "Article: Attendance fell, so the club moved sessions to evenings.",
+    "replies": [
+      "The club changed its schedule to improve attendance.",
+      "The article is mainly a list of addresses.",
+      "The club closed permanently without explaining why."
+    ],
+    "note": [
+      "A ideia principal abrange o texto, não um detalhe isolado.",
+      "The main idea covers the text, not an isolated detail."
+    ]
+  },
+  "b1-leitura-02": {
+    "intent": [
+      "Faça uma inferência cautelosa sobre preocupação.",
+      "Make a cautious inference about worry."
+    ],
+    "sentences": [
+      [
+        "She seems worried about the deadline this week.",
+        "Ela parece preocupada com o prazo nesta semana."
+      ],
+      [
+        "She definitely knows the report will be rejected.",
+        "Ela com certeza sabe que o relatório será rejeitado."
+      ],
+      [
+        "She submitted the report before the deadline yesterday.",
+        "Ela entregou o relatório antes do prazo ontem."
+      ]
+    ],
+    "scene": "Jo keeps checking the deadline and asks for extra time.",
+    "replies": [
+      "She seems worried about finishing on time.",
+      "She definitely hates her manager.",
+      "She certainly forgot the deadline."
+    ],
+    "note": [
+      "Seems permite inferir sem apresentar certeza absoluta.",
+      "Seems allows an inference without claiming absolute certainty."
+    ]
+  },
+  "b1-leitura-03": {
+    "intent": [
+      "Destaque a diferença no horário do aviso novo.",
+      "Highlight the changed time in the new notice."
+    ],
+    "sentences": [
+      [
+        "The latest notice gives a different opening time.",
+        "O aviso mais recente informa um horário de abertura diferente."
+      ],
+      [
+        "Both notices give exactly the same opening time.",
+        "Os dois avisos informam exatamente o mesmo horário de abertura."
+      ],
+      [
+        "The first notice lists the manager's contact details.",
+        "O primeiro aviso lista os contatos do gerente."
+      ]
+    ],
+    "scene": "Old notice: Opens at nine. Updated notice: Opens at ten.",
+    "replies": [
+      "The updated opening time is ten.",
+      "Both notices say nine.",
+      "Neither notice gives an opening time."
+    ],
+    "note": [
+      "Compare a mesma informação e confira a atualização.",
+      "Compare the same information and check the update."
+    ]
+  },
+  "b1-leitura-04": {
+    "intent": [
+      "Inicie um pedido formal sobre um curso noturno.",
+      "Start a formal request about an evening course."
+    ],
+    "sentences": [
+      [
+        "I am writing to ask about your evening course.",
+        "Estou escrevendo para perguntar sobre seu curso noturno."
+      ],
+      [
+        "Hey, tell me about that course right now.",
+        "Ei, me conte sobre aquele curso agora."
+      ],
+      [
+        "Thanks for the details you sent me yesterday.",
+        "Obrigado pelos detalhes que você me enviou ontem."
+      ]
+    ],
+    "scene": "You are emailing a college for the first time.",
+    "replies": [
+      "I am writing to ask about your evening course.",
+      "Hey mate, course stuff now!",
+      "Great party yesterday, see you tonight."
+    ],
+    "note": [
+      "Escolha o registro de acordo com o destinatário.",
+      "Choose the register to suit the recipient."
+    ]
+  },
+  "b1-leitura-05": {
+    "intent": [
+      "Explique por que a prática regular ajuda.",
+      "Explain why regular practice helps."
+    ],
+    "sentences": [
+      [
+        "Regular practice helps because it builds familiarity over time.",
+        "A prática regular ajuda porque cria familiaridade com o tempo."
+      ],
+      [
+        "Regular practice is useful, but today the library is closed.",
+        "A prática regular é útil, mas hoje a biblioteca está fechada."
+      ],
+      [
+        "The library has three rooms and a new timetable.",
+        "A biblioteca tem três salas e novos horários."
+      ]
+    ],
+    "scene": "Jo: Practice makes familiar expressions easier to use.",
+    "replies": [
+      "Regular practice helps because it builds familiarity.",
+      "Practice helps although familiarity makes it harder.",
+      "The library has three rooms, so expressions are familiar."
+    ],
+    "note": [
+      "Because liga a ideia à sua justificativa.",
+      "Because links an idea to its justification."
+    ]
+  },
+  "b1-leitura-06": {
+    "intent": [
+      "Justifique a escolha de uma biblioteca quieta e gratuita.",
+      "Justify choosing a quiet, free library."
+    ],
+    "sentences": [
+      [
+        "We chose the library because it is quiet and free.",
+        "Nós escolhemos a biblioteca porque ela é silenciosa e gratuita."
+      ],
+      [
+        "We chose the café although it was noisy and expensive.",
+        "Nós escolhemos o café embora ele fosse barulhento e caro."
+      ],
+      [
+        "The library closes earlier than the café on Fridays.",
+        "A biblioteca fecha mais cedo que o café às sextas-feiras."
+      ]
+    ],
+    "scene": "Jo: We need somewhere quiet without paying an entry fee.",
+    "replies": [
+      "Let's use the library; it's quiet and free.",
+      "Let's choose the loud café with an entry fee.",
+      "The closing time is the only thing that matters."
+    ],
+    "note": [
+      "Use critérios relevantes para justificar sua escolha.",
+      "Use relevant criteria to justify your choice."
+    ]
+  },
+  "b1-vida-em-movimento-01": {
+    "intent": [
+      "Avise atraso e proponha encontrar na entrada.",
+      "Explain a delay and suggest meeting at the entrance."
+    ],
+    "sentences": [
+      [
+        "I'm going to be late; I'll meet you at the entrance.",
+        "Vou me atrasar; encontrarei você na entrada."
+      ],
+      [
+        "I arrived early and waited by the main entrance.",
+        "Eu cheguei cedo e esperei perto da entrada principal."
+      ],
+      [
+        "Could we change the entrance to the other side?",
+        "Poderíamos mudar a entrada para o outro lado?"
+      ]
+    ],
+    "scene": "Jo: The bus is delayed and the film starts soon.",
+    "replies": [
+      "I'll be late; meet me at the entrance.",
+      "I'm already there and won't be late.",
+      "I was late yesterday, so cancel next week."
+    ],
+    "note": [
+      "Avise o problema e ofereça um plano concreto.",
+      "Explain the problem and offer a concrete plan."
+    ]
+  },
+  "b1-vida-em-movimento-02": {
+    "intent": [
+      "Descreva um aparelho que desliga mesmo com bateria cheia.",
+      "Describe a device switching off despite a full battery."
+    ],
+    "sentences": [
+      [
+        "It keeps switching off, even when the battery is full.",
+        "Ele continua desligando, mesmo quando a bateria está cheia."
+      ],
+      [
+        "It only switches off when the battery is empty.",
+        "Ele só desliga quando a bateria está vazia."
+      ],
+      [
+        "I switched it off after the battery had charged.",
+        "Eu desliguei o aparelho depois que a bateria carregou."
+      ]
+    ],
+    "scene": "Assistant: What happens after you charge it fully?",
+    "replies": [
+      "It keeps switching off even with a full battery.",
+      "It works perfectly whenever the battery is full.",
+      "I turn it off deliberately before using it."
+    ],
+    "note": [
+      "Keeps + -ing indica um problema repetido.",
+      "Keeps + -ing expresses a repeated problem."
+    ]
+  },
+  "b2-argumentacao-01": {
+    "intent": [
+      "Reconheça evidência útil apesar do teste curto.",
+      "Acknowledge useful evidence despite a short trial."
+    ],
+    "sentences": [
+      [
+        "Although the trial was short, it provided useful evidence.",
+        "Embora o teste tenha sido curto, ele forneceu evidências úteis."
+      ],
+      [
+        "The trial was too short to prove the claim conclusively.",
+        "O teste foi curto demais para comprovar a afirmação conclusivamente."
+      ],
+      [
+        "We extended the trial to collect more reliable evidence.",
+        "Nós estendemos o teste para reunir evidências mais confiáveis."
+      ]
+    ],
+    "scene": "Jo: The short trial helped, but it cannot settle everything.",
+    "replies": [
+      "It provided useful evidence, though the trial was short.",
+      "Its short duration proves the policy always works.",
+      "A short trial can never provide any useful information."
+    ],
+    "note": [
+      "Uma concessão reconhece um mérito sem eliminar a ressalva.",
+      "A concession recognises a merit without removing the reservation."
+    ]
+  },
+  "b2-argumentacao-02": {
+    "intent": [
+      "Apresente contribuição possível, sem afirmar causa certa.",
+      "Suggest a possible contribution without claiming certain causation."
+    ],
+    "sentences": [
+      [
+        "The new schedule may have contributed to the improvement.",
+        "Os novos horários podem ter contribuído para a melhoria."
+      ],
+      [
+        "The new schedule definitely caused every improvement we recorded.",
+        "Os novos horários com certeza causaram todas as melhorias registradas."
+      ],
+      [
+        "The improvement occurred before the new schedule was introduced.",
+        "A melhoria ocorreu antes da introdução dos novos horários."
+      ]
+    ],
+    "scene": "Attendance improved after a schedule change, but advertising changed too.",
+    "replies": [
+      "The new schedule may have contributed to the improvement.",
+      "The schedule alone certainly caused the improvement.",
+      "The improvement proves advertising had no effect."
+    ],
+    "note": [
+      "May have contributed evita confundir associação com causa comprovada.",
+      "May have contributed avoids confusing association with proven causation."
+    ]
+  },
+  "b2-argumentacao-03": {
+    "intent": [
+      "Discorde pedindo uma estimativa mais confiável.",
+      "Disagree by requesting a more reliable estimate."
+    ],
+    "sentences": [
+      [
+        "I see your point, but we need a reliable estimate.",
+        "Eu entendo seu argumento, mas precisamos de uma estimativa confiável."
+      ],
+      [
+        "I completely accept your estimate without needing further evidence.",
+        "Eu aceito totalmente sua estimativa sem precisar de outras evidências."
+      ],
+      [
+        "I reject the estimate and refuse to discuss alternatives.",
+        "Eu rejeito a estimativa e me recuso a discutir alternativas."
+      ]
+    ],
+    "scene": "Jo: This rough estimate should be enough to approve the budget.",
+    "replies": [
+      "I see your point, but we need a more reliable estimate.",
+      "You're wrong, and there's nothing more to discuss.",
+      "A rough estimate is always exact enough."
+    ],
+    "note": [
+      "Reconhecer o argumento mantém espaço para discutir sua ressalva.",
+      "Acknowledging the argument leaves room to discuss your reservation."
+    ]
+  },
+  "b2-argumentacao-04": {
+    "intent": [
+      "Compare economia inicial e facilidade de manutenção.",
+      "Compare initial savings with ease of maintenance."
+    ],
+    "sentences": [
+      [
+        "The first option is cheaper, whereas the second is simpler.",
+        "A primeira opção é mais barata, enquanto a segunda é mais simples."
+      ],
+      [
+        "Both options cost the same and require equal maintenance.",
+        "As duas opções custam o mesmo e exigem manutenção igual."
+      ],
+      [
+        "The first option is cheaper because it needs less maintenance.",
+        "A primeira opção é mais barata porque precisa de menos manutenção."
+      ]
+    ],
+    "scene": "Option A costs less now; option B is easier to maintain.",
+    "replies": [
+      "A saves upfront costs, whereas B simplifies maintenance.",
+      "A is better on every possible criterion.",
+      "B is cheaper upfront and harder to maintain."
+    ],
+    "note": [
+      "Whereas compara alternativas sem declarar uma vencedora absoluta.",
+      "Whereas compares alternatives without declaring an absolute winner."
+    ]
+  },
+  "b2-argumentacao-05": {
+    "intent": [
+      "Condicione a extensão do prazo ao mesmo escopo.",
+      "Make a deadline extension conditional on unchanged scope."
+    ],
+    "sentences": [
+      [
+        "We can extend the deadline provided the scope stays unchanged.",
+        "Podemos estender o prazo desde que o escopo permaneça igual."
+      ],
+      [
+        "We must extend the deadline regardless of any scope changes.",
+        "Precisamos estender o prazo independentemente de mudanças no escopo."
+      ],
+      [
+        "We reduced the scope before agreeing to an earlier deadline.",
+        "Reduzimos o escopo antes de combinar um prazo mais curto."
+      ]
+    ],
+    "scene": "Jo: Could we have another week without adding features?",
+    "replies": [
+      "Yes, provided that the scope stays the same.",
+      "Yes, regardless of how many features you add.",
+      "No, provided means the scope must increase."
+    ],
+    "note": [
+      "Provided that apresenta uma condição necessária ao acordo.",
+      "Provided that introduces a necessary condition for the agreement."
+    ]
+  },
+  "b2-argumentacao-06": {
+    "intent": [
+      "Responda à objeção com uma alternativa offline.",
+      "Answer the objection with an offline alternative."
+    ],
+    "sentences": [
+      [
+        "This concern could be addressed by offering an offline option.",
+        "Essa preocupação poderia ser resolvida oferecendo uma opção offline."
+      ],
+      [
+        "This concern proves we should abandon the whole project immediately.",
+        "Essa preocupação prova que devemos abandonar todo o projeto imediatamente."
+      ],
+      [
+        "The online option already works for everyone without any exceptions.",
+        "A opção online já funciona para todos sem nenhuma exceção."
+      ]
+    ],
+    "scene": "Jo: Some users cannot connect reliably enough to submit the form.",
+    "replies": [
+      "We could address that by offering an offline option.",
+      "We should assume everyone has reliable internet.",
+      "Their connection problems don't matter to the project."
+    ],
+    "note": [
+      "By + -ing explica uma ação que responde à objeção.",
+      "By + -ing explains an action that answers the objection."
+    ]
+  },
+  "b2-autonomia-01": {
+    "intent": [
+      "Relate uma revisão acordada antes da decisão.",
+      "Report an agreed review before a decision."
+    ],
+    "sentences": [
+      [
+        "They agreed to review the proposal before making a decision.",
+        "Eles combinaram revisar a proposta antes de tomar uma decisão."
+      ],
+      [
+        "They rejected the proposal before anyone could review its details.",
+        "Eles rejeitaram a proposta antes de alguém revisar os detalhes."
+      ],
+      [
+        "They approved the proposal without agreeing to any further review.",
+        "Eles aprovaram a proposta sem combinar outra revisão."
+      ]
+    ],
+    "scene": "Minutes: The team agreed to review the proposal before deciding.",
+    "replies": [
+      "A review was agreed; no final decision was made.",
+      "The proposal was finally approved in the meeting.",
+      "The team rejected any possibility of a review."
+    ],
+    "note": [
+      "Diferencie um acordo sobre o processo de uma decisão final.",
+      "Distinguish an agreement about the process from a final decision."
+    ]
+  },
+  "b2-autonomia-02": {
+    "intent": [
+      "Reformule a restrição do desconto ao plano anual.",
+      "Restate that the discount is restricted to annual plans."
+    ],
+    "sentences": [
+      [
+        "In other words, the discount applies only to annual subscriptions.",
+        "Em outras palavras, o desconto se aplica apenas às assinaturas anuais."
+      ],
+      [
+        "The discount applies to every subscription, including monthly plans.",
+        "O desconto se aplica a todas as assinaturas, incluindo planos mensais."
+      ],
+      [
+        "The annual subscription is discounted only during the first month.",
+        "A assinatura anual tem desconto apenas durante o primeiro mês."
+      ]
+    ],
+    "scene": "Policy: Monthly plans pay full price. Annual plans receive a discount.",
+    "replies": [
+      "In other words, only annual subscriptions qualify.",
+      "In other words, every monthly payment is discounted.",
+      "In other words, the discount lasts one month only."
+    ],
+    "note": [
+      "Reformular deve preservar a restrição expressa por only.",
+      "A paraphrase must preserve the restriction expressed by only."
+    ]
+  },
+  "b2-autonomia-03": {
+    "intent": [
+      "Relate uma entrega que deveria ter ocorrido antes.",
+      "Report a delivery expected to happen earlier."
+    ],
+    "sentences": [
+      [
+        "The replacement was supposed to arrive sometime last week.",
+        "O produto de substituição deveria ter chegado em algum momento na semana passada."
+      ],
+      [
+        "The replacement arrived earlier than expected and worked perfectly.",
+        "O produto de substituição chegou antes do esperado e funcionou perfeitamente."
+      ],
+      [
+        "The shop will arrange a replacement sometime next week.",
+        "A loja vai providenciar uma substituição em algum momento na próxima semana."
+      ]
+    ],
+    "scene": "Assistant: Your replacement hasn't arrived. When was it expected?",
+    "replies": [
+      "It was supposed to arrive last week.",
+      "It arrived early and works perfectly.",
+      "There was never any expected delivery date."
+    ],
+    "note": [
+      "Was supposed to indica uma expectativa anterior não cumprida aqui.",
+      "Was supposed to expresses an earlier expectation unmet here."
+    ]
+  },
+  "b2-autonomia-04": {
+    "intent": [
+      "Sinalize a passagem para os resultados da pesquisa.",
+      "Signal a transition to the survey results."
+    ],
+    "sentences": [
+      [
+        "Turning to the survey, most respondents preferred evening classes.",
+        "Passando à pesquisa, a maioria dos participantes preferiu aulas noturnas."
+      ],
+      [
+        "The introduction described how the survey questions were designed.",
+        "A introdução descreveu como as perguntas da pesquisa foram elaboradas."
+      ],
+      [
+        "In conclusion, we need more evidence before recommending any changes.",
+        "Concluindo, precisamos de mais evidências antes de recomendar mudanças."
+      ]
+    ],
+    "scene": "You finished describing the method and now present the survey findings.",
+    "replies": [
+      "Turning to the results, most respondents preferred evening classes.",
+      "As I said in the introduction, let's end here.",
+      "The findings are final proof about everyone's preferences."
+    ],
+    "note": [
+      "Turning to orienta o público para o próximo tópico.",
+      "Turning to guides the audience to the next topic."
+    ]
+  },
+  "b2-autonomia-05": {
+    "intent": [
+      "Imagine uma consequência de conferir o arquivo antes.",
+      "Imagine the consequence of checking the file earlier."
+    ],
+    "sentences": [
+      [
+        "If we had checked, we would have noticed the missing page.",
+        "Se tivéssemos conferido, teríamos percebido a página ausente."
+      ],
+      [
+        "If we check the file now, we will notice missing pages.",
+        "Se conferirmos o arquivo agora, perceberemos páginas ausentes."
+      ],
+      [
+        "We checked the file and noticed the missing page immediately.",
+        "Nós conferimos o arquivo e percebemos a página ausente imediatamente."
+      ]
+    ],
+    "scene": "Jo: We didn't check the file, so we missed the error.",
+    "replies": [
+      "If we'd checked it, we'd have noticed the missing page.",
+      "If we check it yesterday, we will notice the page.",
+      "We checked it then and found every error."
+    ],
+    "note": [
+      "Had + particípio com would have imagina outro passado.",
+      "Had + participle with would have imagines a different past."
+    ]
+  },
+  "b2-autonomia-06": {
+    "intent": [
+      "Recomende testar antes de assumir uma mudança permanente.",
+      "Recommend a trial before making a permanent change."
+    ],
+    "sentences": [
+      [
+        "We recommend a trial before committing to a permanent change.",
+        "Nós recomendamos um teste antes de assumir uma mudança permanente."
+      ],
+      [
+        "We recommend a permanent change without testing any alternatives first.",
+        "Nós recomendamos uma mudança permanente sem testar alternativas antes."
+      ],
+      [
+        "The trial has already proved the change works everywhere.",
+        "O teste já provou que a mudança funciona em todos os lugares."
+      ]
+    ],
+    "scene": "Jo: Evidence is promising, but we don't know the long-term effects.",
+    "replies": [
+      "We recommend a trial before a permanent change.",
+      "Let's make it permanent without further evaluation.",
+      "The evidence guarantees every long-term outcome."
+    ],
+    "note": [
+      "Uma recomendação deve respeitar os limites da evidência disponível.",
+      "A recommendation should respect the limits of available evidence."
+    ]
+  },
+  "b2-acordos-cotidianos-01": {
+    "intent": [
+      "Proponha testar os horários por duas semanas.",
+      "Suggest trying the schedule for two weeks."
+    ],
+    "sentences": [
+      [
+        "Let's try the schedule for two weeks and review it.",
+        "Vamos testar os horários por duas semanas e avaliá-los."
+      ],
+      [
+        "We must adopt the schedule permanently without discussing the results.",
+        "Precisamos adotar os horários permanentemente sem discutir os resultados."
+      ],
+      [
+        "The previous schedule was cancelled before anyone tried it.",
+        "Os horários anteriores foram cancelados antes de alguém testá-los."
+      ]
+    ],
+    "scene": "Housemates disagree about quiet hours and haven't tested either proposal.",
+    "replies": [
+      "Let's try it for two weeks, then discuss how it went.",
+      "Let's make it permanent and never review it.",
+      "Disagreement means no schedule can ever work."
+    ],
+    "note": [
+      "Um teste com revisão permite negociar sem assumir permanência.",
+      "A trial with a review allows negotiation without committing permanently."
+    ]
+  },
+  "b2-acordos-cotidianos-02": {
+    "intent": [
+      "Condicione a recomendação à confirmação de acesso.",
+      "Make the recommendation conditional on confirmed access."
+    ],
+    "sentences": [
+      [
+        "The museum sounds promising, provided we can confirm accessible entry.",
+        "O museu parece promissor, desde que possamos confirmar uma entrada acessível."
+      ],
+      [
+        "The museum is definitely accessible because the photos look welcoming.",
+        "O museu com certeza é acessível porque as fotos parecem acolhedoras."
+      ],
+      [
+        "The museum should be rejected before checking any access information.",
+        "O museu deve ser rejeitado antes de conferir informações de acesso."
+      ]
+    ],
+    "scene": "Jo uses a wheelchair. The museum website doesn't mention step-free access.",
+    "replies": [
+      "It sounds promising, as long as we confirm the access.",
+      "The photos prove it meets every access requirement.",
+      "No website detail means accessible entry is impossible."
+    ],
+    "note": [
+      "As long as mantém a recomendação condicionada à verificação.",
+      "As long as keeps the recommendation conditional on verification."
+    ]
+  },
+  "c1-sintese-01": {
+    "intent": [
+      "Sintetize convergência sem apagar diferenças entre os relatórios.",
+      "Synthesise agreement without erasing differences between reports."
+    ],
+    "sentences": [
+      [
+        "Both reports highlight access, although they measure different outcomes.",
+        "Os dois relatórios destacam acesso, embora meçam resultados diferentes."
+      ],
+      [
+        "Both reports reach identical conclusions using exactly the same measures.",
+        "Os dois relatórios chegam a conclusões idênticas usando exatamente as mesmas medidas."
+      ],
+      [
+        "The reports contradict each other on every aspect of access.",
+        "Os relatórios se contradizem em todos os aspectos do acesso."
+      ]
+    ],
+    "scene": "Report A links transport access to attendance. Report B links digital access to course completion.",
+    "replies": [
+      "Both emphasise access, but examine different outcomes.",
+      "Both prove transport alone determines course completion.",
+      "Their different measures mean they share no relevant insight."
+    ],
+    "note": [
+      "Uma síntese preserva convergência e limites de comparabilidade.",
+      "A synthesis preserves agreement and limits of comparability."
+    ]
+  },
+  "c1-sintese-02": {
+    "intent": [
+      "Relacione a queda ao registro, sem afirmar menor demanda.",
+      "Link the decline to reporting without asserting lower demand."
+    ],
+    "sentences": [
+      [
+        "The decline appears to reflect reporting changes rather than demand.",
+        "A queda parece refletir mudanças no registro, e não na demanda."
+      ],
+      [
+        "The decline conclusively proves that demand has permanently disappeared.",
+        "A queda prova conclusivamente que a demanda desapareceu permanentemente."
+      ],
+      [
+        "Demand increased before any changes to reporting were introduced.",
+        "A demanda aumentou antes da introdução de mudanças no registro."
+      ]
+    ],
+    "scene": "Reported requests fell after the counting rule changed; independent bookings stayed stable.",
+    "replies": [
+      "The decline appears to reflect reporting rather than demand.",
+      "Demand must have collapsed permanently.",
+      "The counting rule cannot influence reported figures."
+    ],
+    "note": [
+      "Appears to calibra certeza; rather than contrasta explicações.",
+      "Appears to calibrates certainty; rather than contrasts explanations."
+    ]
+  },
+  "c1-sintese-03": {
+    "intent": [
+      "Retome a discrepância como motivo para investigar a coleta.",
+      "Refer back to the discrepancy as the reason to investigate collection."
+    ],
+    "sentences": [
+      [
+        "This discrepancy prompted the team to examine the collection method.",
+        "Essa discrepância levou a equipe a examinar o método de coleta."
+      ],
+      [
+        "The team accepted both conflicting figures without checking their sources.",
+        "A equipe aceitou os dois números conflitantes sem conferir suas fontes."
+      ],
+      [
+        "The collection method changed before any discrepancy had been identified.",
+        "O método de coleta mudou antes de qualquer discrepância ter sido identificada."
+      ]
+    ],
+    "scene": "Two tables report different totals for the same period. The team investigates the counting method.",
+    "replies": [
+      "This discrepancy prompted a review of how figures were collected.",
+      "The discrepancy confirms both totals are unquestionably correct.",
+      "The investigation caused a discrepancy that appeared earlier."
+    ],
+    "note": [
+      "This discrepancy retoma a informação anterior e conecta a consequência.",
+      "This discrepancy refers back to previous information and connects the consequence."
+    ]
+  },
+  "c1-sintese-04": {
+    "intent": [
+      "Preserve a ressalva dos autores sobre organizações menores.",
+      "Preserve the authors' caveat about smaller organisations."
+    ],
+    "sentences": [
+      [
+        "The authors caution that the findings may not apply to smaller organisations.",
+        "Os autores alertam que os resultados talvez não se apliquem a organizações menores."
+      ],
+      [
+        "The authors guarantee that their findings apply equally to every organisation.",
+        "Os autores garantem que seus resultados se aplicam igualmente a todas as organizações."
+      ],
+      [
+        "Smaller organisations rejected the study before reading the authors' conclusions.",
+        "Organizações menores rejeitaram o estudo antes de ler as conclusões dos autores."
+      ]
+    ],
+    "scene": "The study examined large firms only. Its authors warn against assuming the same results for small firms.",
+    "replies": [
+      "The authors caution that applicability to smaller organisations remains uncertain.",
+      "The findings establish identical outcomes for every firm.",
+      "Small firms were tested and showed the same results."
+    ],
+    "note": [
+      "Uma paráfrase mantém atribuição e grau de certeza.",
+      "A paraphrase preserves attribution and degree of certainty."
+    ]
+  },
+  "c1-sintese-05": {
+    "intent": [
+      "Use a exceção para limitar o alcance da afirmação.",
+      "Use the exception to narrow the claim's scope."
+    ],
+    "sentences": [
+      [
+        "The exception suggests that the claim needs to be narrowed.",
+        "A exceção sugere que a afirmação precisa ser delimitada."
+      ],
+      [
+        "The exception proves that every part of the argument is false.",
+        "A exceção prova que todas as partes do argumento são falsas."
+      ],
+      [
+        "The claim remains universal despite every documented exception to it.",
+        "A afirmação permanece universal apesar de todas as exceções documentadas."
+      ]
+    ],
+    "scene": "A method helped most teams, but consistently failed where internet access was unreliable.",
+    "replies": [
+      "The claim should be limited to teams with reliable access.",
+      "The method always works, including where it failed.",
+      "One exception proves it cannot help any team."
+    ],
+    "note": [
+      "Um contraexemplo pode limitar a generalização sem negar todo benefício.",
+      "A counterexample can limit a generalisation without denying every benefit."
+    ]
+  },
+  "c1-sintese-06": {
+    "intent": [
+      "Recomende implementação gradual para permitir avaliação.",
+      "Recommend phased implementation to allow evaluation."
+    ],
+    "sentences": [
+      [
+        "On balance, phased introduction would allow the policy to be evaluated.",
+        "No conjunto, uma introdução gradual permitiria avaliar a política."
+      ],
+      [
+        "Immediate universal adoption would eliminate the need for any further evaluation.",
+        "A adoção universal imediata eliminaria a necessidade de outras avaliações."
+      ],
+      [
+        "The policy has already been evaluated under every possible condition.",
+        "A política já foi avaliada sob todas as condições possíveis."
+      ]
+    ],
+    "scene": "The proposal is promising, but its effects on smaller teams remain unclear.",
+    "replies": [
+      "A phased introduction would allow those effects to be evaluated.",
+      "Universal implementation would guarantee identical effects everywhere.",
+      "There is no uncertainty left to evaluate."
+    ],
+    "note": [
+      "On balance apresenta uma avaliação ponderada dos prós e limites.",
+      "On balance introduces a weighed assessment of benefits and limits."
+    ]
+  },
+  "c1-interacao-01": {
+    "intent": [
+      "Faça um pedido formal de comentários até quinta-feira.",
+      "Make a formal request for comments by Thursday."
+    ],
+    "sentences": [
+      [
+        "We would appreciate receiving your comments by Thursday this week.",
+        "Nós agradeceríamos receber seus comentários até quinta-feira desta semana."
+      ],
+      [
+        "Hey, send me those comments whenever you feel like it.",
+        "Ei, me envie aqueles comentários quando tiver vontade."
+      ],
+      [
+        "We received your comments before the meeting last Thursday.",
+        "Nós recebemos seus comentários antes da reunião na quinta-feira passada."
+      ]
+    ],
+    "scene": "You need to request feedback from a new external partner by Thursday.",
+    "replies": [
+      "We would appreciate receiving your comments by Thursday.",
+      "Hey mate, whenever you feel like commenting is fine.",
+      "We already received your comments last week."
+    ],
+    "note": [
+      "Ajustar o registro não deve alterar o pedido nem o prazo.",
+      "Changing register should not alter the request or the deadline."
+    ]
+  },
+  "c1-interacao-02": {
+    "intent": [
+      "Identifique a necessidade compartilhada por duas equipes.",
+      "Identify a need shared by both teams."
+    ],
+    "sentences": [
+      [
+        "What both teams need is a predictable process for urgent requests.",
+        "O que ambas as equipes precisam é de um processo previsível para pedidos urgentes."
+      ],
+      [
+        "One team's priorities must always override the other's without discussion.",
+        "As prioridades de uma equipe devem sempre prevalecer sobre as da outra sem discussão."
+      ],
+      [
+        "Both teams already agree on every detail of the current process.",
+        "Ambas as equipes já concordam com todos os detalhes do processo atual."
+      ]
+    ],
+    "scene": "One team needs speed; the other needs advance notice. Both struggle with unpredictable urgent requests.",
+    "replies": [
+      "Both need a predictable process that defines urgent requests.",
+      "Only speed matters; notice should always be ignored.",
+      "Their different priorities mean they share no needs."
+    ],
+    "note": [
+      "Mediar começa por encontrar uma necessidade comum relevante.",
+      "Mediation starts by finding a relevant shared need."
+    ]
+  },
+  "c1-interacao-03": {
+    "intent": [
+      "Peça para revisar o parágrafo final de forma indireta.",
+      "Indirectly ask to review the final paragraph."
+    ],
+    "sentences": [
+      [
+        "Is there any chance we could revisit the final paragraph?",
+        "Há alguma chance de podermos revisar o parágrafo final?"
+      ],
+      [
+        "The final paragraph has already been approved without any reservations.",
+        "O parágrafo final já foi aprovado sem nenhuma ressalva."
+      ],
+      [
+        "Who wrote the final paragraph before the review meeting began?",
+        "Quem escreveu o parágrafo final antes de começar a reunião de revisão?"
+      ]
+    ],
+    "scene": "Editor: Is there any chance we could revisit the final paragraph?",
+    "replies": [
+      "Of course. Which part would you like to change?",
+      "Yes, it exists at the end of the document.",
+      "No, chance means the paragraph was deleted."
+    ],
+    "note": [
+      "Um pedido indireto pode convidar uma ação, não só uma resposta literal.",
+      "An indirect request can invite action, not just a literal answer."
+    ]
+  },
+  "c1-interacao-04": {
+    "intent": [
+      "Destaque que o entendimento veio somente após a revisão.",
+      "Emphasise understanding only after the review."
+    ],
+    "sentences": [
+      [
+        "Only after the review did we understand the problem's full scale.",
+        "Somente após a revisão entendemos toda a dimensão do problema."
+      ],
+      [
+        "We fully understood the problem long before the review began.",
+        "Nós entendemos totalmente o problema muito antes de começar a revisão."
+      ],
+      [
+        "The review began only after everyone had solved the entire problem.",
+        "A revisão começou somente depois de todos resolverem o problema inteiro."
+      ]
+    ],
+    "scene": "Jo: The scale was unclear until we reviewed all the cases.",
+    "replies": [
+      "Only after the review did we understand the scale.",
+      "Only after the review we did understand the scale.",
+      "Only before the review had we already solved it."
+    ],
+    "note": [
+      "Only after no início exige inversão do auxiliar e sujeito.",
+      "Initial only after requires inversion of auxiliary and subject."
+    ]
+  },
+  "c1-interacao-05": {
+    "intent": [
+      "Separe uma estimativa inicial do orçamento aprovado.",
+      "Separate an initial estimate from the approved budget."
+    ],
+    "sentences": [
+      [
+        "Let me distinguish between the initial estimate and the approved budget.",
+        "Permita-me distinguir a estimativa inicial do orçamento aprovado."
+      ],
+      [
+        "The initial estimate and approved budget are always identical amounts.",
+        "A estimativa inicial e o orçamento aprovado sempre têm valores idênticos."
+      ],
+      [
+        "The approved budget was rejected before the initial estimate existed.",
+        "O orçamento aprovado foi rejeitado antes da existência da estimativa inicial."
+      ]
+    ],
+    "scene": "Audience: You mentioned two amounts. Which one is the approved budget?",
+    "replies": [
+      "Let me distinguish the initial estimate from the approved budget.",
+      "Both amounts must be identical because both concern costs.",
+      "That question is irrelevant, so let's move on."
+    ],
+    "note": [
+      "Delimite os termos antes de responder uma pergunta complexa.",
+      "Define the terms before answering a complex question."
+    ]
+  },
+  "c1-interacao-06": {
+    "intent": [
+      "Registre o acordo sujeito à aprovação de acessibilidade.",
+      "Record the agreement as conditional on an accessibility review."
+    ],
+    "sentences": [
+      [
+        "The agreement remains subject to a successful accessibility review.",
+        "O acordo continua sujeito a uma revisão de acessibilidade bem-sucedida."
+      ],
+      [
+        "The agreement is unconditional even if the accessibility review fails.",
+        "O acordo é incondicional mesmo se a revisão de acessibilidade falhar."
+      ],
+      [
+        "The accessibility review was cancelled because the agreement no longer exists.",
+        "A revisão de acessibilidade foi cancelada porque o acordo não existe mais."
+      ]
+    ],
+    "scene": "Both sides agree to proceed only if the accessibility review passes.",
+    "replies": [
+      "The agreement remains subject to a successful accessibility review.",
+      "Accessibility is optional because the agreement is unconditional.",
+      "The review failed, so approval is guaranteed."
+    ],
+    "note": [
+      "Subject to registra uma condição ainda relevante ao acordo.",
+      "Subject to records a condition still relevant to the agreement."
+    ]
+  },
+  "c1-evidencias-01": {
+    "intent": [
+      "Reconheça relevância e limite causado por amostra estreita.",
+      "Acknowledge relevance and a limit caused by a narrow sample."
+    ],
+    "sentences": [
+      [
+        "The study is relevant, but its narrow sample limits generalisation.",
+        "O estudo é relevante, mas sua amostra estreita limita a generalização."
+      ],
+      [
+        "The study's narrow sample proves its results apply to everyone.",
+        "A amostra estreita do estudo prova que seus resultados se aplicam a todos."
+      ],
+      [
+        "The sample's size makes every observation in the study meaningless.",
+        "O tamanho da amostra torna todas as observações do estudo sem sentido."
+      ]
+    ],
+    "scene": "A useful study included only one large urban school.",
+    "replies": [
+      "It is relevant, but broader applicability remains uncertain.",
+      "It proves the same effects in every school.",
+      "It contains no useful observations because its sample is narrow."
+    ],
+    "note": [
+      "Relevância não garante que a conclusão alcance todos os contextos.",
+      "Relevance does not guarantee applicability to every context."
+    ]
+  },
+  "c1-evidencias-02": {
+    "intent": [
+      "Descreva mudança curta sem alegar permanência.",
+      "Describe a short-term shift without claiming permanence."
+    ],
+    "sentences": [
+      [
+        "The figures suggest a temporary shift rather than a permanent change.",
+        "Os números sugerem uma mudança temporária, e não uma mudança permanente."
+      ],
+      [
+        "The figures establish a permanent transformation across every possible setting.",
+        "Os números comprovam uma transformação permanente em todos os contextos possíveis."
+      ],
+      [
+        "The figures contain no information about any changes over time.",
+        "Os números não contêm informações sobre mudanças ao longo do tempo."
+      ]
+    ],
+    "scene": "Purchases increased during a one-week promotion, then returned to their earlier level.",
+    "replies": [
+      "The figures suggest a short-term shift.",
+      "The promotion permanently changed everyone's behaviour.",
+      "No purchasing change occurred at any point."
+    ],
+    "note": [
+      "Limite a afirmação ao período que os dados sustentam.",
+      "Limit the claim to the period supported by the data."
+    ]
+  },
+  "c1-evidencias-03": {
+    "intent": [
+      "Indique precisão suficiente para planejar, mas não ranquear diferenças pequenas.",
+      "Describe precision sufficient for planning but not ranking small differences."
+    ],
+    "sentences": [
+      [
+        "The estimate supports planning, though not comparisons between very small differences.",
+        "A estimativa serve ao planejamento, mas não a comparações entre diferenças muito pequenas."
+      ],
+      [
+        "The estimate is precise enough to rank every tiny difference reliably.",
+        "A estimativa é precisa o suficiente para classificar cada diferença mínima com confiabilidade."
+      ],
+      [
+        "The estimate cannot support any decision because uncertainty always prevents planning.",
+        "A estimativa não pode apoiar decisões porque a incerteza sempre impede planejamento."
+      ]
+    ],
+    "scene": "The estimate is within ten percent. Two options differ by one percent.",
+    "replies": [
+      "It supports broad planning, not a confident ranking of those options.",
+      "The one-percent difference is certainly meaningful.",
+      "Any uncertainty makes all planning impossible."
+    ],
+    "note": [
+      "A precisão necessária depende da decisão que será tomada.",
+      "The precision required depends on the decision being made."
+    ]
+  },
+  "c1-evidencias-04": {
+    "intent": [
+      "Relacione uma taxa dobrada ao aumento de quatro casos.",
+      "Relate a doubled rate to four additional cases."
+    ],
+    "sentences": [
+      [
+        "The rate doubled, but the increase meant only four additional cases.",
+        "A taxa dobrou, mas o aumento representou apenas quatro casos adicionais."
+      ],
+      [
+        "The rate doubled, so thousands of additional cases must have occurred.",
+        "A taxa dobrou, então milhares de casos adicionais devem ter ocorrido."
+      ],
+      [
+        "The number of cases stayed unchanged despite a doubling of the rate.",
+        "O número de casos ficou igual apesar de a taxa ter dobrado."
+      ]
+    ],
+    "scene": "Cases rose from four to eight with the same population size.",
+    "replies": [
+      "The rate doubled, representing four additional cases.",
+      "The rate doubled, representing four thousand additional cases.",
+      "Doubling means there were no additional cases."
+    ],
+    "note": [
+      "Combine mudança relativa e números absolutos para dar contexto.",
+      "Combine relative change and absolute numbers to provide context."
+    ]
+  },
+  "c1-evidencias-05": {
+    "intent": [
+      "Corrija a alegação usando o registro verificado.",
+      "Correct the claim using the verified record."
+    ],
+    "sentences": [
+      [
+        "The verified record shows a schedule change, not a cancellation.",
+        "O registro verificado mostra uma mudança de horário, e não um cancelamento."
+      ],
+      [
+        "The online claim proves the event was cancelled despite the official schedule.",
+        "A alegação online prova o cancelamento do evento apesar dos horários oficiais."
+      ],
+      [
+        "The record says nothing about whether the event will still happen.",
+        "O registro não informa se o evento ainda acontecerá."
+      ]
+    ],
+    "scene": "A post claims cancellation. The official update says the event starts an hour later.",
+    "replies": [
+      "The verified update confirms a later start, not cancellation.",
+      "The event was cancelled because a post says so.",
+      "The official update confirms every claim in the post."
+    ],
+    "note": [
+      "Priorize a informação verificada ao corrigir uma alegação.",
+      "Prioritise verified information when correcting a claim."
+    ]
+  },
+  "c1-evidencias-06": {
+    "intent": [
+      "Recomende um piloto condicionado à revisão independente.",
+      "Recommend a pilot conditional on independent review."
+    ],
+    "sentences": [
+      [
+        "A limited pilot is justified, provided access and outcomes are independently reviewed.",
+        "Um piloto limitado se justifica, desde que acesso e resultados sejam revisados de forma independente."
+      ],
+      [
+        "A permanent rollout is justified without reviewing access or outcomes.",
+        "Uma implantação permanente se justifica sem revisar acesso ou resultados."
+      ],
+      [
+        "The pilot should continue regardless of what independent reviewers find.",
+        "O piloto deve continuar independentemente do que revisores externos encontrarem."
+      ]
+    ],
+    "scene": "Evidence supports a small trial, but access and outcomes need independent monitoring.",
+    "replies": [
+      "A limited pilot is justified, provided those aspects are independently reviewed.",
+      "The evidence guarantees success without any monitoring.",
+      "Independent review should be avoided so approval is easier."
+    ],
+    "note": [
+      "Mantenha a recomendação ligada às condições que a justificam.",
+      "Keep the recommendation tied to the conditions that justify it."
+    ]
+  },
+  "c1-intencoes-e-impacto-01": {
+    "intent": [
+      "Verifique o pedido implícito e renegocie o prazo.",
+      "Check the implied request and renegotiate the deadline."
+    ],
+    "sentences": [
+      [
+        "If you're asking me to lead this, we'd need to revise the deadline.",
+        "Se você está pedindo que eu lidere isso, precisaríamos revisar o prazo."
+      ],
+      [
+        "I'm certain you ordered me to lead this without changing any deadline.",
+        "Tenho certeza de que você me ordenou liderar isso sem mudar o prazo."
+      ],
+      [
+        "Since nobody asked, I will ignore the project's deadline entirely.",
+        "Como ninguém pediu, vou ignorar completamente o prazo do projeto."
+      ]
+    ],
+    "scene": "Jo: It would help to have someone experienced lead this. Your schedule is already full.",
+    "replies": [
+      "If you're asking me to lead it, we'd need to revisit the deadline.",
+      "You definitely ordered me, so I'll ignore my other work.",
+      "I will take it on silently and keep every deadline."
+    ],
+    "note": [
+      "Confirme a intenção antes de assumir um pedido indireto.",
+      "Check the intention before treating an indirect comment as a request."
+    ]
+  },
+  "c1-intencoes-e-impacto-02": {
+    "intent": [
+      "Converta feedback vago em uma proposta verificável.",
+      "Turn vague feedback into a testable proposal."
+    ],
+    "sentences": [
+      [
+        "Would it help if I led with the finding and explained the caveat afterwards?",
+        "Ajudaria se eu começasse pelo resultado e explicasse a ressalva depois?"
+      ],
+      [
+        "I'll remove every caveat so the finding sounds completely certain.",
+        "Vou remover todas as ressalvas para o resultado parecer totalmente certo."
+      ],
+      [
+        "Your feedback is too vague, so no revision can ever help.",
+        "Seu feedback é vago demais, então nenhuma revisão poderá ajudar."
+      ]
+    ],
+    "scene": "Editor: The opening feels unfocused. The finding arrives too late.",
+    "replies": [
+      "Would it help if I led with the finding, then explained the caveat?",
+      "I'll delete the caveat and claim certainty.",
+      "I won't ask what change might improve the opening."
+    ],
+    "note": [
+      "Proponha uma mudança concreta sem apagar a ressalva relevante.",
+      "Suggest a concrete change without removing the relevant caveat."
+    ]
+  },
+  "c2-nuance-01": {
+    "intent": [
+      "Reconheça eficiência sem endossar os pressupostos do projeto.",
+      "Acknowledge efficiency without endorsing the scheme's assumptions."
+    ],
+    "sentences": [
+      [
+        "Granting the scheme's efficiency does not entail endorsing its assumptions.",
+        "Reconhecer a eficiência do projeto não implica endossar seus pressupostos."
+      ],
+      [
+        "Recognising the scheme's efficiency establishes unconditional support for its assumptions.",
+        "Reconhecer a eficiência do projeto estabelece apoio incondicional aos seus pressupostos."
+      ],
+      [
+        "Rejecting every practical benefit is necessary before questioning the scheme's assumptions.",
+        "Rejeitar todos os benefícios práticos é necessário antes de questionar os pressupostos do projeto."
+      ]
+    ],
+    "scene": "The writer praises faster processing but questions whether speed is an adequate measure of fairness.",
+    "replies": [
+      "She concedes efficiency while challenging its sufficiency as a fairness measure.",
+      "Her praise establishes unconditional endorsement of the whole scheme.",
+      "Her criticism means she denies any improvement in speed."
+    ],
+    "note": [
+      "Reconhecer um mérito não equivale a endossar a conclusão inteira.",
+      "Acknowledging a merit does not amount to endorsing the whole conclusion."
+    ]
+  },
+  "c2-nuance-02": {
+    "intent": [
+      "Identifique ironia apoiada pelo contexto do atraso.",
+      "Identify irony supported by the delay's context."
+    ],
+    "sentences": [
+      [
+        "Calling the delay a triumph of efficiency was hardly an unqualified compliment.",
+        "Chamar o atraso de triunfo da eficiência dificilmente foi um elogio sem ressalvas."
+      ],
+      [
+        "The reviewer praised the helpful employee without criticising her individual response.",
+        "O avaliador elogiou a funcionária prestativa sem criticar sua resposta individual."
+      ],
+      [
+        "The opening's literal praise remains entirely consistent with the failures described afterwards.",
+        "O elogio literal da abertura permanece totalmente coerente com as falhas descritas depois."
+      ]
+    ],
+    "scene": "After forty minutes and duplicate forms, a reviewer calls the process a remarkable triumph of efficiency.",
+    "replies": [
+      "The mismatch between praise and failures supports an ironic reading.",
+      "The phrase proves the reviewer welcomed every delay.",
+      "The wording proves personal hostility towards every employee."
+    ],
+    "note": [
+      "A ironia depende da incongruência contextual, não de uma palavra isolada.",
+      "Irony depends on contextual incongruity, not an isolated word."
+    ]
+  },
+  "c2-nuance-03": {
+    "intent": [
+      "Conteste uma pergunta que pressupõe um fracasso não demonstrado.",
+      "Challenge a question presupposing an unestablished failure."
+    ],
+    "sentences": [
+      [
+        "The question presupposes a failure that the report has not established.",
+        "A pergunta pressupõe um fracasso que o relatório não demonstrou."
+      ],
+      [
+        "The report conclusively establishes the failure implied by every subsequent question.",
+        "O relatório demonstra conclusivamente o fracasso implícito em todas as perguntas posteriores."
+      ],
+      [
+        "The question asks whether failure occurred without assuming that it did.",
+        "A pergunta indaga se houve fracasso sem assumir que ele ocorreu."
+      ]
+    ],
+    "scene": "Interviewer: Why did the pilot fail? The report records mixed results and reaches no verdict of failure.",
+    "replies": [
+      "That question assumes a failure the report hasn't established.",
+      "The question neutrally asks whether the pilot failed.",
+      "Any mixed result proves complete failure by definition."
+    ],
+    "note": [
+      "Verifique a premissa antes de aceitar a forma da pergunta.",
+      "Check the premise before accepting the question's framing."
+    ]
+  },
+  "c2-nuance-04": {
+    "intent": [
+      "Preserve a negação parcial sobre os candidatos excluídos.",
+      "Preserve partial negation about excluded applicants."
+    ],
+    "sentences": [
+      [
+        "Not all applicants were excluded, but the criteria remained unclear.",
+        "Nem todos os candidatos foram excluídos, mas os critérios continuaram pouco claros."
+      ],
+      [
+        "No applicants were excluded, and the criteria were entirely transparent.",
+        "Nenhum candidato foi excluído, e os critérios eram totalmente transparentes."
+      ],
+      [
+        "All applicants were excluded because the criteria ruled everyone out.",
+        "Todos os candidatos foram excluídos porque os critérios eliminaram todas as pessoas."
+      ]
+    ],
+    "scene": "The report says not all applicants were excluded and criticises unclear selection criteria.",
+    "replies": [
+      "It denies universal exclusion without specifying how many were excluded.",
+      "It states that nobody was excluded.",
+      "It confirms that every applicant was excluded."
+    ],
+    "note": [
+      "Not all nega a totalidade; não significa none.",
+      "Not all denies universality; it does not mean none."
+    ]
+  },
+  "c2-nuance-05": {
+    "intent": [
+      "Mostre o que a metáfora destaca e oculta.",
+      "Show what the metaphor foregrounds and obscures."
+    ],
+    "sentences": [
+      [
+        "The metaphor foregrounds speed while obscuring the need for ongoing support.",
+        "A metáfora destaca velocidade enquanto oculta a necessidade de apoio contínuo."
+      ],
+      [
+        "The metaphor proves speed is the only legitimate criterion for assessing support.",
+        "A metáfora prova que velocidade é o único critério legítimo para avaliar apoio."
+      ],
+      [
+        "The metaphor has no possible influence on how readers interpret the proposal.",
+        "A metáfora não pode influenciar como leitores interpretam a proposta."
+      ]
+    ],
+    "scene": "A training programme is called a launch pad. The proposal discusses starting quickly but omits follow-up support.",
+    "replies": [
+      "The image emphasises the start while sidelining sustained support.",
+      "The image proves ongoing support is unnecessary.",
+      "The metaphor establishes how much support every participant receives."
+    ],
+    "note": [
+      "Uma metáfora orienta atenção, mas não comprova o argumento.",
+      "A metaphor guides attention but does not prove the argument."
+    ]
+  },
+  "c2-nuance-06": {
+    "intent": [
+      "Escolha a leitura mais estreita apoiada pela ressalva final.",
+      "Choose the narrower reading supported by the final qualification."
+    ],
+    "sentences": [
+      [
+        "The passage permits two readings, but its final qualification favours the narrower one.",
+        "O trecho permite duas leituras, mas sua ressalva final favorece a mais estreita."
+      ],
+      [
+        "The passage permits only one reading and contains no qualification whatsoever.",
+        "O trecho permite apenas uma leitura e não contém nenhuma ressalva."
+      ],
+      [
+        "The final qualification expands the claim to include every conceivable circumstance.",
+        "A ressalva final amplia a afirmação para incluir todas as circunstâncias imagináveis."
+      ]
+    ],
+    "scene": "Text: The policy benefits everyone involved, at least among those who can access the online form.",
+    "replies": [
+      "The qualification limits everyone to those with access.",
+      "The qualification guarantees benefits to people without access.",
+      "The wording establishes equal benefits for all citizens."
+    ],
+    "note": [
+      "Uma ressalva final pode limitar o alcance de uma afirmação ampla.",
+      "A final qualification can limit the scope of a broad claim."
+    ]
+  },
+  "c2-producao-01": {
+    "intent": [
+      "Reduza repetição preservando as ressalvas do argumento.",
+      "Reduce repetition while preserving the argument's qualifications."
+    ],
+    "sentences": [
+      [
+        "The revision removes repetition without sacrificing the argument's important qualifications.",
+        "A revisão remove repetição sem sacrificar as ressalvas importantes do argumento."
+      ],
+      [
+        "The revision removes every qualification to make the conclusion sound certain.",
+        "A revisão remove todas as ressalvas para fazer a conclusão parecer certa."
+      ],
+      [
+        "The revision repeats each claim twice without clarifying the argument's scope.",
+        "A revisão repete cada afirmação duas vezes sem esclarecer o alcance do argumento."
+      ]
+    ],
+    "scene": "Original: The pilot may help some teams, although evidence remains limited. An editor asks for a shorter version.",
+    "replies": [
+      "The pilot may help some teams; evidence remains limited.",
+      "The pilot will help every team.",
+      "Limited evidence proves the pilot cannot help anyone."
+    ],
+    "note": [
+      "Economia textual não deve aumentar indevidamente a certeza da afirmação.",
+      "Textual economy should not unjustifiably increase a claim's certainty."
+    ]
+  },
+  "c2-producao-02": {
+    "intent": [
+      "Simplifique uma explicação mantendo sua precisão.",
+      "Simplify an explanation while preserving its accuracy."
+    ],
+    "sentences": [
+      [
+        "A simpler explanation need not imply a less accurate one.",
+        "Uma explicação mais simples não precisa ser menos precisa."
+      ],
+      [
+        "A simpler explanation necessarily removes every uncertainty and exception from the claim.",
+        "Uma explicação mais simples necessariamente remove todas as incertezas e exceções da afirmação."
+      ],
+      [
+        "An accurate explanation must always contain every specialist term from the original.",
+        "Uma explicação precisa deve sempre conter todos os termos técnicos do original."
+      ]
+    ],
+    "scene": "A technical report finds an association but cannot establish causation. A public summary is needed.",
+    "replies": [
+      "The factors are linked; the study doesn't show that one causes the other.",
+      "One factor certainly causes the other.",
+      "The study found nothing because causation wasn't established."
+    ],
+    "note": [
+      "Troque jargão por clareza sem transformar associação em causa.",
+      "Replace jargon with clarity without turning association into causation."
+    ]
+  },
+  "c2-producao-03": {
+    "intent": [
+      "Atribua a crítica aos moradores sem adotá-la como fato.",
+      "Attribute the criticism to residents without adopting it as fact."
+    ],
+    "sentences": [
+      [
+        "The report attributes criticism to residents without adopting every allegation itself.",
+        "O relatório atribui a crítica aos moradores sem adotar todas as acusações."
+      ],
+      [
+        "The report establishes every resident's allegation as an independently verified fact.",
+        "O relatório estabelece todas as acusações dos moradores como fatos verificados independentemente."
+      ],
+      [
+        "The report denies that any resident expressed criticism of the proposal.",
+        "O relatório nega que qualquer morador tenha expressado críticas à proposta."
+      ]
+    ],
+    "scene": "Report: Residents allege that consultation was inadequate. The report has not independently assessed that allegation.",
+    "replies": [
+      "The report records the residents' allegation without endorsing it as established fact.",
+      "The report independently proves consultation was inadequate.",
+      "The report confirms no resident criticised consultation."
+    ],
+    "note": [
+      "Discurso relatado preserva quem sustenta cada afirmação.",
+      "Reported discourse preserves who is responsible for each claim."
+    ]
+  },
+  "c2-producao-04": {
+    "intent": [
+      "Reconheça uma objeção válida sem tratá-la como decisão final.",
+      "Acknowledge a valid objection without treating it as decisive."
+    ],
+    "sentences": [
+      [
+        "The objection is well founded, but does not itself settle the question.",
+        "A objeção é bem fundamentada, mas por si só não resolve a questão."
+      ],
+      [
+        "The objection is irrelevant because acknowledging it would require abandoning the argument.",
+        "A objeção é irrelevante porque reconhecê-la exigiria abandonar o argumento."
+      ],
+      [
+        "The objection conclusively settles every aspect of the decision without further comparison.",
+        "A objeção resolve conclusivamente todos os aspectos da decisão sem outras comparações."
+      ]
+    ],
+    "scene": "An option has a genuine accessibility drawback, but the alternatives also have unresolved accessibility barriers.",
+    "replies": [
+      "The drawback is real, yet comparison with alternatives remains necessary.",
+      "Acknowledging the drawback proves every alternative is better.",
+      "Because alternatives have barriers, the drawback should be denied."
+    ],
+    "note": [
+      "Uma objeção relevante precisa ser integrada, não ignorada nem absolutizada.",
+      "A relevant objection must be integrated, neither ignored nor treated as absolute."
+    ]
+  },
+  "c2-producao-05": {
+    "intent": [
+      "Mostre a avaliação acrescentada por merely adequate.",
+      "Identify the judgement added by merely adequate."
+    ],
+    "sentences": [
+      [
+        "Describing the improvement as merely adequate adds a judgement beyond the figures.",
+        "Descrever a melhoria como meramente adequada acrescenta um julgamento além dos números."
+      ],
+      [
+        "Describing the improvement as adequate reports the exact figures without any evaluative framing.",
+        "Descrever a melhoria como adequada relata os números exatos sem qualquer enquadramento avaliativo."
+      ],
+      [
+        "The figures alone establish that every observer considered the improvement disappointing.",
+        "Os números sozinhos demonstram que todos os observadores consideraram a melhoria decepcionante."
+      ]
+    ],
+    "scene": "Two reports give the same increase. One calls it merely adequate; the other reports the number alone.",
+    "replies": [
+      "Merely adequate introduces a restrictive evaluation not contained in the number.",
+      "The phrase changes the numerical increase itself.",
+      "Both formulations contain exactly the same evaluative stance."
+    ],
+    "note": [
+      "Escolhas lexicais podem acrescentar julgamento sem mudar os números.",
+      "Lexical choices can add judgement without changing the numbers."
+    ]
+  },
+  "c2-producao-06": {
+    "intent": [
+      "Defenda uma conclusão que acomode incerteza.",
+      "Defend a conclusion that accommodates uncertainty."
+    ],
+    "sentences": [
+      [
+        "A defensible conclusion accommodates uncertainty without surrendering reasoned judgement entirely.",
+        "Uma conclusão defensável acomoda a incerteza sem abandonar completamente o julgamento fundamentado."
+      ],
+      [
+        "A defensible conclusion must claim complete certainty about every possible outcome.",
+        "Uma conclusão defensável deve alegar certeza completa sobre todos os resultados possíveis."
+      ],
+      [
+        "Any uncertainty requires abandoning all comparison and refusing to reach any conclusion.",
+        "Qualquer incerteza exige abandonar toda comparação e recusar qualquer conclusão."
+      ]
+    ],
+    "scene": "Evidence favours a limited pilot, while long-term effects remain uncertain and access needs monitoring.",
+    "replies": [
+      "A monitored pilot is defensible; permanent rollout is not yet established.",
+      "Uncertainty proves no decision can ever be justified.",
+      "Promising evidence guarantees permanent success everywhere."
+    ],
+    "note": [
+      "Reconhecer incerteza permite uma conclusão delimitada e justificável.",
+      "Acknowledging uncertainty allows a bounded, justified conclusion."
+    ]
+  },
+  "c2-estilo-cultura-01": {
+    "intent": [
+      "Leia a alusão como contraste entre promessa e resultado.",
+      "Read the allusion as a contrast between promise and outcome."
+    ],
+    "sentences": [
+      [
+        "The headline echoes a familiar promise to expose how little has changed.",
+        "O título ecoa uma promessa conhecida para mostrar quão pouco mudou."
+      ],
+      [
+        "The headline repeats the promise to confirm that every expected change occurred.",
+        "O título repete a promessa para confirmar que todas as mudanças esperadas ocorreram."
+      ],
+      [
+        "The headline's familiar wording establishes the author's personal political allegiance beyond doubt.",
+        "A formulação conhecida do título estabelece sem dúvida a posição política pessoal do autor."
+      ]
+    ],
+    "scene": "A headline repeats a famous promise of a fresh start above an article describing unchanged delays.",
+    "replies": [
+      "The echoed promise highlights the gap between expectation and outcome.",
+      "The echo confirms that the fresh start succeeded completely.",
+      "The wording proves the author personally supports the original speaker."
+    ],
+    "note": [
+      "Uma alusão ganha função pelo contraste construído no texto.",
+      "An allusion gains its function from the contrast built in the text."
+    ]
+  },
+  "c2-estilo-cultura-02": {
+    "intent": [
+      "Separe a certeza citada da posição do narrador.",
+      "Separate quoted certainty from the narrator's stance."
+    ],
+    "sentences": [
+      [
+        "The narrator reproduces the committee's certainty without necessarily sharing it.",
+        "O narrador reproduz a certeza do comitê sem necessariamente compartilhá-la."
+      ],
+      [
+        "The narrator's quotation establishes unquestioning agreement with everything the committee believes.",
+        "A citação do narrador estabelece concordância incondicional com tudo em que o comitê acredita."
+      ],
+      [
+        "The committee's certainty proves the author independently verified every prediction in the account.",
+        "A certeza do comitê prova que o autor verificou independentemente todas as previsões do relato."
+      ]
+    ],
+    "scene": "Narrator: The committee called success inevitable. Yet subsequent events left its prediction unresolved.",
+    "replies": [
+      "The committee's certainty is reported, not necessarily endorsed by the narrator.",
+      "The narrator guarantees success because the committee predicted it.",
+      "The author's own verified conclusion is that success occurred."
+    ],
+    "note": [
+      "Diferencie voz citada, narrador e posição atribuível ao autor.",
+      "Distinguish the quoted voice, narrator, and position attributable to the author."
+    ]
+  },
+  "c2-estilo-cultura-03": {
+    "intent": [
+      "Mostre uma tradução que deslocou o alvo da piada.",
+      "Identify a translation that shifted the joke's target."
+    ],
+    "sentences": [
+      [
+        "A literal translation preserved the words but misplaced the joke's intended target.",
+        "Uma tradução literal preservou as palavras, mas deslocou o alvo pretendido da piada."
+      ],
+      [
+        "A literal translation necessarily preserves every cultural implication and rhetorical effect of humour.",
+        "Uma tradução literal necessariamente preserva todas as implicações culturais e efeitos retóricos do humor."
+      ],
+      [
+        "The joke's meaning depends only on dictionary equivalents regardless of the audience's expectations.",
+        "O sentido da piada depende apenas de equivalentes de dicionário, independentemente das expectativas do público."
+      ]
+    ],
+    "scene": "The original mocks an inefficient process. The literal version sounds like an insult to the employee.",
+    "replies": [
+      "The translation shifts the target from the process to the person.",
+      "The target is unchanged because the words are literal equivalents.",
+      "The employee must have been the original target too."
+    ],
+    "note": [
+      "Preservar palavras não garante preservar alvo, registro e efeito.",
+      "Preserving words does not guarantee preserving target, register, and effect."
+    ]
+  },
+  "c2-estilo-cultura-04": {
+    "intent": [
+      "Compare a atribuição de agência nas duas descrições.",
+      "Compare how the two descriptions assign agency."
+    ],
+    "sentences": [
+      [
+        "The accounts describe the same transfer while assigning agency and benefit differently.",
+        "Os relatos descrevem a mesma transferência enquanto atribuem agência e benefício de formas diferentes."
+      ],
+      [
+        "The accounts describe entirely different transfers because their verbs have different evaluative effects.",
+        "Os relatos descrevem transferências totalmente diferentes porque seus verbos têm efeitos avaliativos distintos."
+      ],
+      [
+        "The shared transfer proves both accounts express identical views about agency and benefit.",
+        "A transferência compartilhada prova que ambos os relatos expressam visões idênticas sobre agência e benefício."
+      ]
+    ],
+    "scene": "Account A: The city rescued the firm. Account B: The firm secured public funds. Both describe the same payment.",
+    "replies": [
+      "The descriptions frame who acts and benefits differently.",
+      "Different framing proves the payment itself never occurred.",
+      "Both verbs assign identical agency and evaluation."
+    ],
+    "note": [
+      "Compare fatos compartilhados e enquadramentos sem confundir os dois.",
+      "Compare shared facts and framing without confusing them."
+    ]
+  },
+  "c2-estilo-cultura-05": {
+    "intent": [
+      "Organize etapas paralelas e reserve a ênfase final.",
+      "Organise parallel stages and reserve the final emphasis."
+    ],
+    "sentences": [
+      [
+        "The revision clarifies the sequence, balances the clauses and highlights the consequence.",
+        "A revisão esclarece a sequência, equilibra as orações e destaca a consequência."
+      ],
+      [
+        "The revision scatters the stages across unrelated clauses and removes the consequence.",
+        "A revisão espalha as etapas por orações desconexas e remove a consequência."
+      ],
+      [
+        "The revision's rhythm guarantees the argument is factually correct without checking any evidence.",
+        "O ritmo da revisão garante a correção factual do argumento sem conferir evidências."
+      ]
+    ],
+    "scene": "Editor: Keep the stages parallel and place the consequence at the end.",
+    "replies": [
+      "First assess access, then test delivery, finally evaluate the effect.",
+      "Access was assessed; testing delivery; the effect somewhere.",
+      "Parallel rhythm proves every reported effect is true."
+    ],
+    "note": [
+      "Ritmo e paralelismo organizam ênfase; não comprovam os fatos.",
+      "Rhythm and parallelism organise emphasis; they do not prove facts."
+    ]
+  },
+  "c2-estilo-cultura-06": {
+    "intent": [
+      "Compare objetivos semelhantes e meios retóricos diferentes.",
+      "Compare similar aims and different rhetorical means."
+    ],
+    "sentences": [
+      [
+        "The comparison reveals similar aims pursued through sharply different rhetorical means.",
+        "A comparação revela objetivos semelhantes buscados por meios retóricos claramente diferentes."
+      ],
+      [
+        "Similar aims prove both texts use identical rhetorical means and evaluative framing.",
+        "Objetivos semelhantes provam que os dois textos usam meios retóricos e enquadramentos avaliativos idênticos."
+      ],
+      [
+        "Different rhetorical means prevent the texts from sharing any communicative aim whatsoever.",
+        "Meios retóricos diferentes impedem os textos de compartilhar qualquer objetivo comunicativo."
+      ]
+    ],
+    "scene": "Both texts seek support for reform. One uses collective pride; the other emphasises practical safeguards.",
+    "replies": [
+      "Their aim converges, while their persuasive strategies differ.",
+      "The different strategies prove their aims cannot overlap.",
+      "Their shared aim makes every rhetorical choice identical."
+    ],
+    "note": [
+      "Compare propósito e estratégia como dimensões distintas.",
+      "Compare purpose and strategy as distinct dimensions."
+    ]
+  },
+  "c2-significado-em-disputa-01": {
+    "intent": [
+      "Conteste a premissa de uma decisão já finalizada.",
+      "Challenge the premise that the decision was final."
+    ],
+    "sentences": [
+      [
+        "That question assumes the decision was final, which is precisely what's disputed.",
+        "Essa pergunta assume que a decisão era final, exatamente o que está em disputa."
+      ],
+      [
+        "The disputed decision must have been final because the interviewer described it that way.",
+        "A decisão contestada deve ter sido final porque o entrevistador a descreveu assim."
+      ],
+      [
+        "The question neutrally asks whether any final decision was ever reached.",
+        "A pergunta indaga de forma neutra se alguma decisão final chegou a ser tomada."
+      ]
+    ],
+    "scene": "Interviewer: Why did you reverse the final decision? The minutes record only a provisional proposal.",
+    "replies": [
+      "That question assumes finality, which the minutes do not establish.",
+      "We reversed the final decision, although no decision existed.",
+      "Calling it final proves the proposal was binding."
+    ],
+    "note": [
+      "Conteste a premissa explicitamente antes de responder dentro dela.",
+      "Challenge the premise explicitly before answering within it."
+    ]
+  },
+  "c2-significado-em-disputa-02": {
+    "intent": [
+      "Repare ironia que foi entendida como elogio.",
+      "Repair irony that was understood as praise."
+    ],
+    "sentences": [
+      [
+        "Calling the delay efficient was ironic; I meant to criticise the process.",
+        "Chamar o atraso de eficiente foi irônico; eu quis criticar o processo."
+      ],
+      [
+        "The listener's misunderstanding proves they should have recognised the irony without any explanation.",
+        "O mal-entendido do ouvinte prova que ele deveria ter reconhecido a ironia sem explicação."
+      ],
+      [
+        "Because the words sounded positive, the speaker must have intended an unqualified compliment.",
+        "Como as palavras soaram positivas, o falante deve ter pretendido um elogio sem ressalvas."
+      ]
+    ],
+    "scene": "You called a long delay a triumph of efficiency. A listener understood praise and looks confused.",
+    "replies": [
+      "I meant that ironically; I was criticising the delay, not praising it.",
+      "You should have understood; I refuse to clarify.",
+      "Yes, every delay is proof of excellent efficiency."
+    ],
+    "note": [
+      "Reparar explicita a intenção sem culpar quem interpretou diferente.",
+      "Repair makes the intention explicit without blaming a different interpretation."
+    ]
+  }
+}
