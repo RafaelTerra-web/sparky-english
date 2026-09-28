@@ -1,5 +1,7 @@
 # Sparky English
 
+O plano **[Sparky Economy](docs/sparky-economy.md)** registra a futura economia de moedas, expedições educacionais e conquistas de competência. É uma especificação para implementação posterior, sem recursos novos nesta entrega.
+
 A jornada rápida está descrita em [docs/quick-learning.md](docs/quick-learning.md), incluindo compatibilidade, Desafio, métricas e atualização da PWA. O [laboratório de músicas](docs/music-lab.md) continua disponível com conta de testes isolada.
 
 As melhorias de reprodução no iPhone, gesto de atualização no Android e Web Push estão descritas em [docs/push-and-mobile.md](docs/push-and-mobile.md). A ativação de push exige a migração do banco e as chaves VAPID no ambiente de publicação.
