@@ -74,9 +74,9 @@ test("normal session requires correction, keyboard ordering and exactly six serv
  expect(wallet.completed[lesson.id]).toBeTruthy();
 });
 
-for(const level of ["A1","A2","B1","B2","C1","C2"])test("six quick questions in "+level,async({page},info)=>{
+for(const sample of [1,0])for(const level of ["A1","A2","B1","B2","C1","C2"])test((sample===0?"additional representative lesson in ":"six quick questions in ")+level,async({page},info)=>{
  await prepare(page);
- const lesson=lessons.filter(l=>l.level===level)[1];
+ const lesson=lessons.filter(l=>l.level===level)[sample];
  await openLesson(page,lesson);
  for(let i=0;i<6;i++){
   if(i===1||i===5)await page.screenshot({path:info.outputPath(level+"-"+i+".png")});

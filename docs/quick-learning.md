@@ -48,3 +48,5 @@ npm run build
 npm run test:e2e:quick
 
 O Playwright usa o build de produção em uma conta exclusivamente local, sem credenciais de produção nem escrita em Blob, Supabase ou serviços de IA. A suíte cobre Chromium desktop/Android e WebKit iPhone, os seis níveis, teclado, semântica ARIA, texto ampliado, movimento reduzido, inglês, correção, retomada, desafio, revisão, migração, cadastro e atualização segura. A leitura de tela é conferida pela árvore de acessibilidade; não substitui uma sessão manual com NVDA ou VoiceOver.
+
+Validação da entrega: 174 testes unitários e 66 cenários Playwright aprovados, incluindo duas lições completas de cada nível em desktop, Android e iPhone. Lint, auditorias editoriais/de experiência/cobertura e build de produção aprovados.
