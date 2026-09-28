@@ -15,6 +15,7 @@ import "./glass.css";
 import "./opening.css";
 import "./lesson-delight.css";
 import "./quick-journey.css";
+import "./interface-polish.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

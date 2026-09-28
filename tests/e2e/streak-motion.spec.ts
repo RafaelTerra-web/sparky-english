@@ -22,9 +22,9 @@ test("daily check-in presents the streak and animated navigation feedback", asyn
   await expect(page.locator(".streak-celebration")).toContainText("+5 moedas");
   await expect.poll(() => page.evaluate(() => {
     const flame = document.querySelector<HTMLImageElement>(".streak-animation-flame");
-    return Boolean(flame?.complete && flame.naturalWidth > 0 && flame.src.includes("streak-flame-192.png"));
+    return Boolean(flame?.complete && flame.naturalWidth > 0 && flame.currentSrc.includes("streak-flame-loop.webp"));
   })).toBe(true);
-  await page.getByRole("button", { name: "Curso", exact: true }).filter({ visible: true }).click();
+  await page.getByRole("button", { name: "Trilha", exact: true }).filter({ visible: true }).click();
   await expect(page.locator(".motion-transition")).toBeVisible();
   await expect(page.locator(".course-trail")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -55,8 +55,9 @@ test("streak roadmap explores milestones and restores keyboard focus", async ({ 
 
 test("reduced motion removes decorative motion but keeps the streak readable", async ({ page }) => {
   await openAccount(page, true);
-  await page.getByRole("button", { name: "Curso", exact: true }).filter({ visible: true }).click();
+  await expect(page.locator(".next-lesson .streak-badge")).toContainText("7");
+  await expect.poll(() => page.locator(".next-lesson .streak-flame img").evaluate(image => (image as HTMLImageElement).currentSrc)).toContain("streak-flame-96.png");
+  await page.getByRole("button", { name: "Trilha", exact: true }).filter({ visible: true }).click();
   await expect(page.locator(".course-trail")).toBeVisible();
   await expect(page.locator(".motion-transition")).toHaveCount(0);
-  await expect(page.locator(".streak-badge")).toContainText("7");
 });

@@ -1,8 +1,9 @@
 "use client";
+import { CoinIcon } from "./coin-icon";
 import { t, localizeAttribute, translate, supportT, getSupportLocale } from "@/lib/interface-language";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { Check, Coins, Compass, Eye, RotateCcw, ShoppingBag } from "lucide-react";
+import { Check, Compass, Eye, RotateCcw, ShoppingBag } from "lucide-react";
 import {
   accessoryCatalog,
   cosmeticCatalog,
@@ -98,7 +99,7 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
   }
 
   return <section className="mascot-studio shop-v2" aria-labelledby="mascot-studio-title">
-    <header className="studio-header"><div><p className="eyebrow">{t("Aprenda · conquiste · combine")}</p><h2 id="mascot-studio-title">{t("Loja de descobertas")}</h2></div><span className="coin-balance" aria-label={localizeAttribute(`${reward.coins} moedas`)}><Coins size={20} /> {reward.coins}</span></header>
+    <header className="studio-header"><div><p className="eyebrow">{t("Aprenda · conquiste · combine")}</p><h2 id="mascot-studio-title">{t("Loja de descobertas")}</h2></div><span className="coin-balance" aria-label={localizeAttribute(`${reward.coins} moedas`)}><CoinIcon size={26} /> {reward.coins}</span></header>
     <p lang={getSupportLocale()} className="shop-intro">{supportT("Transforme seu estudo em trajes, acessórios e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.")}</p>
     {!!reward.sceneRefund && <details className="shop-refund"><summary>{reward.sceneRefund}{t(" moedas devolvidas pelos cenários retirados")}</summary><p lang={getSupportLocale()}>{supportT("Os cenários foram descontinuados. Todas as compras foram reembolsadas integralmente uma única vez.")}</p></details>}
     {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund}{t(" moedas devolvidas pela atualização anterior")}</summary><p lang={getSupportLocale()}>{supportT("Esse reembolso já foi incluído no seu saldo. Você pode combinar os novos acessórios com os trajes disponíveis.")}</p></details>}
@@ -166,7 +167,7 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
           {cosmetic && <button className="text-button" disabled={busy || !compatible} onClick={() => tryItem(item.id)}><Eye size={16} /> {t(compatible ? "Experimentar" : "Incompatível")}</button>}
           {owned ? cosmetic ? <button className="secondary-button" disabled={busy || !compatible} onClick={async () => { if (await onAction({ action: "equip", mascot, slot: item.slot, itemId: equipped ? null : item.id })) clearPreview(); }}>{t(equipped ? "Remover" : "Usar")}</button>
             : <button className="primary-button" onClick={() => setPack(item.id)}>{t("Abrir missões")}</button>
-            : <><span className="shop-price"><Coins size={16} /> {item.price}{t(" moedas")}</span>
+            : <><span className="shop-price"><CoinIcon size={16} /> {item.price}{t(" moedas")}</span>
               {shortfall > 0 ? <><p lang={getSupportLocale()} className="shop-shortfall">{supportT("Faltam")}{shortfall}{supportT(" moedas")}</p><button className="secondary-button" disabled={busy} onClick={onStudy}>{t("Continuar estudando")}</button></> : <button className="secondary-button" disabled={busy || !compatible} onClick={() => requestPurchase(item.id)}><ShoppingBag size={16} /> {t("Adquirir")}</button>}
             </>}
         </div>

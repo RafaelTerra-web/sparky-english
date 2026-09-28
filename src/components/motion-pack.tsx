@@ -13,6 +13,13 @@ export function MotionLoader({ label }: { label: string }) {
   </div>;
 }
 
+function StreakFlameImage({ className }: { className?: string }) {
+  return <picture className="streak-flame-picture">
+    <source srcSet="/motion/streak-flame-loop.webp" type="image/webp" media="(prefers-reduced-motion: no-preference)" />
+    <Image className={className} src="/motion/streak-flame-96.png" width={96} height={96} alt="" unoptimized loading="eager" />
+  </picture>;
+}
+
 export function StreakBadge({ count, longest }: { count: number; longest: number }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -30,7 +37,7 @@ export function StreakBadge({ count, longest }: { count: number; longest: number
   return (
     <>
     <button ref={trigger} type="button" className="streak-badge" title={longestLabel} aria-label={streakLabel} aria-haspopup="dialog" onClick={openRoadmap}>
-      <span className="streak-flame" aria-hidden="true"><Image src="/motion/streak-flame-96.png" width={24} height={24} alt="" /></span>
+      <span className="streak-flame" aria-hidden="true"><StreakFlameImage /></span>
       <strong>{count}</strong>
       <ChevronRight size={12} aria-hidden="true" />
     </button>
@@ -67,7 +74,7 @@ export function StreakCelebration({ count, milestone, earned, onClose }: { count
       {special && <div className="streak-sparks" aria-hidden="true">{Array.from({length: 12}, (_, index) => <i key={index} style={{left: `${8 + index * 7}%`, animationDelay: `${index * 65}ms`}}/>)}</div>}
       <button className="streak-close" onClick={onClose} aria-label={localizeAttribute("Fechar celebração da sequência")}><X size={17} /></button>
       <div className="streak-animation" aria-hidden="true">
-        <Image className="streak-animation-flame" src="/motion/streak-flame-192.png" width={192} height={192} alt="" priority />
+        <StreakFlameImage className="streak-animation-flame" />
       </div>
       <div>
         <p className="eyebrow">{t(special || milestone ? "MARCO DA SEQUÊNCIA" : "SEQUÊNCIA DIÁRIA")}</p>

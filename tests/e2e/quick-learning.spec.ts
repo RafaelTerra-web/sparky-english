@@ -67,7 +67,23 @@ test("normal session requires correction, keyboard ordering and exactly six serv
  for(let i=0;i<6;i++){await answer(page,lesson,i,true);await advance(page,i===5);}
  await expect(page.locator(".lesson-completion-moment")).toBeVisible();
  await expect(page.locator(".lesson-completion-moment")).toContainText("Você praticou, corrigiu e avançou.");
+ await expect(page.locator("html")).toHaveAttribute("data-scroll-locked","true");
+ const completion=page.locator(".lesson-completion-moment");
+ expect(await completion.locator(".lesson-completion-scroll").evaluate(e=>getComputedStyle(e).overflowY)).toBe("hidden");
+ await expect(completion.getByRole("button",{name:"Próxima lição",exact:true})).toBeInViewport({ratio:1});
+ await completion.getByRole("button",{name:"Entender melhor",exact:true}).click();
+ await expect(completion.locator(".completion-help-content")).toBeVisible();
+ await completion.getByRole("button",{name:"Voltar ao resultado",exact:true}).click();
+ await expect(page.locator("html")).toHaveAttribute("data-scroll-locked","true");
  await page.screenshot({path:info.outputPath("completion.png"),animations:"disabled"});
+ await page.setViewportSize({width:320,height:360});
+ await completion.locator(".lesson-completion-copy").evaluate(element=>{
+  const title=element.querySelector<HTMLElement>("h2")!,message=element.querySelector<HTMLElement>("p")!;
+  title.style.fontSize="48px"; message.style.fontSize="26px";
+ });
+ await expect(completion).toHaveAttribute("data-overflow","true");
+ expect(await completion.locator(".lesson-completion-scroll").evaluate(element=>getComputedStyle(element).overflowY)).toBe("auto");
+ await expect(completion.getByRole("button",{name:"Próxima lição",exact:true})).toBeInViewport({ratio:1});
  await page.locator(".lesson-completion-moment").getByRole("button",{name:"Próxima lição",exact:true}).click();
  await expect(dialog(page)).toBeVisible();
  const wallet=await page.request.get("/api/rewards").then(r=>r.json());
@@ -231,7 +247,7 @@ test("quick onboarding resumes at the first pending stage with no automatic voic
  expect(state.profile?.mascot).toBe("pinky");expect(state.profile?.level).toBe("B2");expect(voiceCalls).toBe(0);
 });
 
-test("new release waits for the current question, then refreshes safely",async({page})=>{
+test("new release waits for the question, offers a centered choice and respects later",async({page},info)=>{
  await page.clock.install();
  await prepare(page);
  await openLesson(page,lessons.find(l=>l.id==="a1-identidade-01")!);
@@ -239,11 +255,41 @@ test("new release waits for the current question, then refreshes safely",async({
  await page.evaluate(()=>window.dispatchEvent(new Event("online")));
  await page.clock.fastForward(61000);
  await page.evaluate(()=>window.dispatchEvent(new Event("online")));
- await expect(page.locator("[data-release-update]")).toBeVisible();
+ await expect(page.locator("[data-release-update]")).toHaveCount(0);
  await expect(dialog(page)).toBeVisible();
  await dialog(page).getByRole("button",{name:"Fechar lição",exact:true}).click();
- await expect(page.locator(".quick-today")).toBeVisible();
- await expect.poll(()=>page.evaluate(()=>sessionStorage.getItem("sparky-release-reloaded"))).toBe("new-preview-release");
+ const update=page.locator("[data-release-update]");
+ await expect(update).toBeVisible();
+ await expect(update.getByRole("button")).toHaveCount(2);
+ await expect(page.locator("html")).toHaveAttribute("data-scroll-locked","true");
+ const bounds=await update.boundingBox(),viewport=page.viewportSize()!;
+ expect(Math.abs(bounds!.x+bounds!.width/2-viewport.width/2)).toBeLessThan(2);
+ expect(Math.abs(bounds!.y+bounds!.height/2-viewport.height/2)).toBeLessThan(2);
+ if(info.project.name === "iphone") await page.evaluate(()=>window.scrollTo(0,600));
+ else await page.mouse.wheel(0,600);
+ expect(await page.evaluate(()=>window.scrollY)).toBe(0);
+ await page.screenshot({path:info.outputPath("update-modal.png"),animations:"disabled"});
+ await update.getByRole("button",{name:"Mais tarde",exact:true}).click();
+ await expect(update).toHaveCount(0);
+ await expect(page.locator("html")).not.toHaveAttribute("data-scroll-locked","true");
+ await page.clock.fastForward(61000);
+ await expect(update).toHaveCount(0);
+ await page.clock.fastForward(30*60000);
+ await expect(update).toBeVisible();
+ await page.route("**/api/release?**",r=>r.fulfill({status:503}));
+ await update.getByRole("button",{name:"Atualizar",exact:true}).click();
+ await expect(update.getByRole("alert")).toContainText("Sem conexão.");
+ await expect(update.getByRole("button",{name:"Atualizar",exact:true})).toBeEnabled();
+ await page.unroute("**/api/release?**");
+ await page.route("**/api/release?**",r=>r.fulfill({json:{version:"new-preview-release"}}));
+ const navigation=page.waitForEvent("load");
+ await update.getByRole("button",{name:"Atualizar",exact:true}).click();
+ await navigation;
+ await expect.poll(()=>page.evaluate(()=>{
+  const deferred=JSON.parse(sessionStorage.getItem("sparky-release-postponed") ?? "null");
+  return deferred?.version === "new-preview-release" && deferred.until > Date.now();
+ })).toBe(true);
+ await expect(update).toHaveCount(0);
 });
 
 test("expired evidence restarts without granting a reward",async({page})=>{
@@ -282,4 +328,71 @@ test("completed challenge saves a personal best and replay grants no duplicate c
  await expect(page.locator(".lesson-completion-moment")).toBeVisible();
  const replay=await page.request.get("/api/rewards").then(r=>r.json());
  expect(replay.coins).toBe(wallet.coins);
+});
+
+test("compact island uses a gem balance and opens grouped settings instead of toggling theme",async({page},info)=>{
+ await page.setViewportSize({width:320,height:640});
+ await prepare(page);
+ const header=page.locator(".workspace-header");
+ await expect(header.getByRole("button")).toHaveCount(2);
+ await expect(header.locator(".brand-mark,.streak-badge")).toHaveCount(0);
+ const streakToast=page.locator(".streak-celebration");
+ if(await streakToast.isVisible()) {
+  const toastBox=await streakToast.boundingBox(),headerBox=await header.boundingBox();
+  expect(toastBox!.y).toBeGreaterThan(headerBox!.y+headerBox!.height);
+  await streakToast.getByRole("button",{name:"Fechar celebração da sequência"}).click();
+ }
+ await expect(header.locator(".theme-quick-toggle")).toHaveCount(0);
+ await expect(header.locator(".wallet-chip svg")).toHaveCount(1);
+ expect(await header.locator(".wallet-chip svg").evaluate(element=>getComputedStyle(element).display)).not.toBe("none");
+ await expect(header.locator(".wallet-chip")).not.toContainText("moedas");
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ const lessonStreak=page.locator(".next-lesson .streak-badge");
+ await expect(lessonStreak).toBeVisible();
+ const flame=await lessonStreak.locator(".streak-flame img").boundingBox();
+ expect(flame!.width).toBeLessThan(25);
+ await expect(lessonStreak.locator("source")).toHaveAttribute("srcset","/motion/streak-flame-loop.webp");
+ await page.emulateMedia({reducedMotion:"reduce"});
+ await expect.poll(()=>lessonStreak.locator(".streak-flame img").evaluate(img=>(img as HTMLImageElement).currentSrc)).toContain("streak-flame-96.png");
+ await page.emulateMedia({reducedMotion:"no-preference"});
+ await expect.poll(()=>lessonStreak.locator(".streak-flame img").evaluate(img=>(img as HTMLImageElement).currentSrc)).toContain("streak-flame-loop.webp");
+ const controls=await header.getByRole("button").all();
+ const first=await controls[0].boundingBox(),last=await controls[1].boundingBox();
+ expect(last!.x).toBeGreaterThan(first!.x);
+ await page.screenshot({path:info.outputPath("compact-island.png"),animations:"disabled"});
+ await header.locator(".wallet-chip strong").evaluate(element=>{ element.textContent="455"; });
+ const brandBox=await header.locator(".mobile-brand").boundingBox(),walletBox=await header.locator(".wallet-chip").boundingBox(),gearBox=await header.locator(".profile-gear").boundingBox();
+ expect(walletBox!.x).toBeGreaterThanOrEqual(brandBox!.x+brandBox!.width-1);
+ expect(gearBox!.x).toBeGreaterThanOrEqual(walletBox!.x+walletBox!.width-1);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await header.getByRole("button",{name:"Abrir configurações",exact:true}).click();
+ await expect(page.getByRole("heading",{name:"Configurações",exact:true})).toBeVisible();
+ await expect(page.locator(".settings-card")).toHaveCount(5);
+ await page.getByRole("button",{name:"Escuro",exact:true}).click();
+ await expect(page.locator("html")).toHaveAttribute("data-theme","dark");
+ await page.locator(".settings-goal").getByRole("button",{name:/15/}).click();
+ await expect(page.locator(".settings-goal").getByRole("button",{name:/15/})).toHaveAttribute("aria-pressed","true");
+ const sound=page.getByRole("switch",{name:/Sons de interface/});
+ await sound.uncheck();await expect(sound).not.toBeChecked();
+ await page.locator(".theme-preference").scrollIntoViewIfNeeded();
+ await page.screenshot({path:info.outputPath("settings-dark.png"),animations:"disabled"});
+ await page.locator(".mobile-nav").getByRole("button",{name:"Hoje",exact:true}).click();
+ await expect(page.locator("html")).toHaveAttribute("data-theme","dark");
+ await expect(page.locator(".daily-strip")).toContainText("/15");
+});
+
+test("settings and update choices remain translated in English",async({page})=>{
+ await prepare(page,"en");
+ await page.getByRole("button",{name:"Open settings",exact:true}).click();
+ await expect(page.getByRole("heading",{name:"Settings",exact:true})).toBeVisible();
+ await expect(page.getByRole("heading",{name:"Study routine",exact:true})).toBeVisible();
+ await page.route("**/api/release?**",r=>r.fulfill({json:{version:"english-new-release"}}));
+ await page.clock.install();
+ await page.clock.fastForward(61000);
+ await page.evaluate(()=>window.dispatchEvent(new Event("online")));
+ const update=page.locator("[data-release-update]");
+ await expect(update).toBeVisible();
+ await expect(update.getByRole("button",{name:"Later",exact:true})).toBeVisible();
+ await update.getByRole("button",{name:"Later",exact:true}).click();
+ await expect(update).toHaveCount(0);
 });
