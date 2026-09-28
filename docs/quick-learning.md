@@ -27,7 +27,7 @@ A investigação encontrou a produção em main e o domínio sparky-english-iota
 
 A publicação deve apontar os dois endereços principais ao mesmo deploy. O endereço alternativo passa a redirecionar a página inicial para o domínio canônico. Branches e previews históricos são preservados.
 
-A PWA usa sparky-public-v13, limpa caches antigos ao ativar, avisa abas abertas e mantém navegação pela rede. /api/release não pode ser armazenado por navegador/CDN. A interface compara versões ao abrir, recuperar conexão/foco e periodicamente; aplica a atualização quando não há lição, cadastro, diálogo ou atividade de mídia em andamento. Um marcador por versão evita recargas repetidas. Checkpoints são salvos antes de fechar ou sair de primeiro plano.
+As traduções carregam com uma URL vinculada à versão para evitar textos antigos no cache HTTP. A PWA usa sparky-public-v13, limpa caches antigos ao ativar, avisa abas abertas e mantém navegação pela rede. /api/release não pode ser armazenado por navegador/CDN. A interface compara versões ao abrir, recuperar conexão/foco e periodicamente; aplica a atualização quando não há lição, cadastro, diálogo ou atividade de mídia em andamento. Um marcador por versão evita recargas repetidas. Checkpoints são salvos antes de fechar ou sair de primeiro plano.
 
 ## Métricas
 

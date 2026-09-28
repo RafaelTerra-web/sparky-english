@@ -57,6 +57,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
   const telemetrySeq = useRef(initial?.telemetrySeq ?? 0);
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  const body = useRef<HTMLDivElement>(null);
   const latest = useRef<Checkpoint | null>(null);
   const tracking = useRef<(kind: string) => void>(() => {});
   const steps = lessonSteps(lesson, review, ids);
@@ -89,7 +90,10 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
   }, [openerRef]);
-  useEffect(() => { heading.current?.focus({ preventScroll: true }); }, [index, phase]);
+  useLayoutEffect(() => {
+    if (body.current) body.current.scrollTop = 0;
+    heading.current?.focus({ preventScroll: true });
+  }, [index, phase]);
   useLayoutEffect(() => {
     if (!receipt || phase !== "active" || !ids) return;
     history.current[index] = { answer, tokens, checked, correct, translation: false, assisted: helped,
@@ -237,7 +241,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
       </div>
       {phase === "active" && <strong aria-label={localizeAttribute("Questão atual")}>{index + 1}/{steps.length}</strong>}
     </header>
-    <div className={styles.body} data-step-kind={phase === "active" ? step.kind : "launch"}>
+    <div ref={body} className={styles.body} data-step-kind={phase === "active" ? step.kind : "launch"}>
       {error && <p className={styles.error} role="alert">{supportT(error)}</p>}
       {storageError && <p className={styles.error} role="status">{t("O navegador bloqueou o salvamento. Mantenha esta aba aberta.")}</p>}
       {phase === "choose" ? <div className={styles.launch}>
