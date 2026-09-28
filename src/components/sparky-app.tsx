@@ -11,6 +11,7 @@ import { updateWorkspace } from "@/lib/learning-local";
 import { personalizeLesson } from "@/lib/personalized-lesson";
 
 import Image from "next/image";
+import { CoinIcon } from "./coin-icon";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowRight,
@@ -23,11 +24,10 @@ import {
   LogOut,
   RotateCcw,
   Settings,
-  ShoppingBag,
   X,
 } from "lucide-react";
 import type { SparkyUser } from "@/lib/auth-session";
-import { ThemePreferenceControl, ThemeQuickToggle, resetAppearanceSession } from "./theme-preference";
+import { ThemePreferenceControl, AppearanceSync, resetAppearanceSession } from "./theme-preference";
 import { MotionTransition, StreakBadge, StreakCelebration } from "./motion-pack";
 import SparkyLoadingMark from "./sparky-loading-mark";
 import { rememberOpeningMascot, resetOpeningMascot } from "@/lib/opening-mascot";
@@ -66,7 +66,6 @@ const Onboarding = dynamic(() => import('./onboarding'), { loading: () => <Secti
 const EltisSimulator = dynamic(() => import('./eltis-simulator').then(m => m.EltisSimulator), { loading: () => <SectionLoading label="Preparando o simulado…" /> });
 const CallExperience = dynamic(() => import("./call").then(m => m.CallExperience), { loading: () => <SectionLoading label="Preparando a conversa…" /> });
 
-const voiceEnabled = process.env.NEXT_PUBLIC_VOICE_ENABLED !== "false";
 const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
@@ -528,6 +527,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     <div className="app-frame">
       <a href="#conteudo" className="skip-link">{t("Pular para o conteúdo")}</a>
       <MotionTransition active={transitioning} />
+      <AppearanceSync userId={user.id}/>
       <NativeRefresh onRefresh={refreshAppData} />
       <ReleaseRefresh />
       {completionMoment && <LessonCompletionCelebration moment={completionMoment} userId={user.id} textOnly={learnerProfile?.namePronunciationStatus === "text-only"} onClose={() => setCompletionMoment(null)} onNext={() => { setCompletionMoment(null); const following = nextInTrail(progress.level, progress.completed); if (following) open(following); else navigate("course"); }} />}
@@ -571,7 +571,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       }}>
         {view !== "call" && <header className="workspace-header">
           <div className="mobile-brand">
-            <Brand />
+            <Brand showMascot={false} />
           </div>
           <p className="date-label">
             {t(new Intl.DateTimeFormat(getInterfaceLocale(), {
@@ -580,16 +580,10 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               month: "long",
             }).format(new Date()))}
           </p>
-          <button
-            className="account-chip profile-gear"
-            onClick={() => navigate("profile")}
-            aria-label={localizeAttribute(`Abrir perfil de ${user.name}`)}
-          >
-            <Settings size={21} aria-hidden="true" />
+          <button className="account-chip wallet-chip" onClick={() => navigate("shop")} aria-label={localizeAttribute("Abrir loja e saldo de moedas") + ": " + new Intl.NumberFormat(getInterfaceLocale()).format(reward.coins)}>
+            <CoinIcon size={24}/><strong>{new Intl.NumberFormat(getInterfaceLocale(), reward.coins >= 10000 ? { notation:"compact", maximumFractionDigits:1 } : {}).format(reward.coins)}</strong>
           </button>
-          <button className="account-chip" onClick={() => navigate("shop")} aria-label={localizeAttribute("Abrir loja e saldo de moedas")}>{reward.coins}  {t("moedas")}</button>
-          <StreakBadge count={reward.streak?.count ?? 0} longest={reward.streak?.longest ?? 0} />
-          <ThemeQuickToggle userId={user.id} />
+          <button type="button" className="account-chip profile-gear" onClick={() => navigate("profile")} aria-label={localizeAttribute("Abrir configurações")}><Settings size={21} aria-hidden="true"/></button>
         </header>}
         {notice && (
           <div className="notice" role="status">
@@ -608,13 +602,16 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           <div className="daily-strip">
             <span><Clock3 size={17} />{t(recommendedReview ? "1–2 min" : "2–4 min")}</span>
             <span>{t("Meta diária:")} {Math.min(workspace.minutes, Math.floor((workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0) / 60000))}/{workspace.minutes} {t("min")}</span>
-            <span>{reward.streak?.count ?? 0} {t("dias seguidos")}</span>
+            <span>{reward.streak?.count ?? 0} {t(reward.streak?.count === 1 ? "dia seguido" : "dias seguidos")}</span>
             <progress max={workspace.minutes * 60000} value={Math.min(workspace.minutes * 60000, workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0)} aria-label={localizeAttribute("Progresso da meta diária")} />
           </div>
           {workspace.restartNotice && <p className="notice" role="status">{t("As lições ganharam seis questões rápidas. A prática pendente vai recomeçar; seus rascunhos foram preservados.")}</p>}
           <section className="next-lesson">
-            <div className="lesson-copy">
+            <div className="lesson-card-topline">
               <span className="lesson-label">{t(resume ? "RETOMAR PRÁTICA" : recommendedReview ? "REVISÃO PARA HOJE" : "PRÓXIMA LIÇÃO")} <span>{recommended.level}</span></span>
+              <StreakBadge count={reward.streak?.count ?? 0} longest={reward.streak?.longest ?? 0}/>
+            </div>
+            <div className="lesson-copy">
               <h2>{t(recommended.title)}</h2>
               <p>{t(recommendedReview ? "3 questões para lembrar o que aprendeu." : "6 questões. Uma ideia de cada vez.")}</p>
               <button className="cream-button lesson-start-button" onClick={() => open(recommended, recommendedReview)}>{t(resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar lição")}<ArrowRight size={18} /></button>
@@ -733,89 +730,53 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         </>}
         {view === "profile" && (
           <>
-            <div className="page-heading">
-              <div>
-                <p className="eyebrow">{t("Sua conta")}</p>
-                <h1>{t("Perfil e preferências")}</h1>
+            <div className="page-heading"><div><p className="eyebrow">{t("Seu espaço")}</p><h1>{t("Configurações")}</h1></div></div>
+            <section className="settings-account" aria-label={localizeAttribute("Sua conta")}>
+              <div className="profile-person">
+                <span className="avatar large">{user.name.charAt(0).toUpperCase()}</span>
+                <div><h2>{learnerProfile?.name ?? user.name}</h2><p>{user.email}</p><span className="verified-label"><Check size={13}/>{t("Conta Google conectada")}</span></div>
               </div>
-            </div>
-            <div className="profile-layout">
-              <section className="profile-card">
-                <div className="profile-person">
-                  <span className="avatar large">
-                    {t(user.name.charAt(0).toUpperCase())}
-                  </span>
-                  <div>
-                    <h2>{learnerProfile?.name ?? user.name}</h2>
-                    <p>{user.email}</p>
-                    <span className="verified-label">
-                      <Check size={13} />{t("Conta Google conectada")}</span>
-                  </div>
-                </div>
-                <LearningLanguagePreferences userId={user.id} />
-                <div className="profile-setting">
-                  <span>{t("Idioma de estudo")}</span>
-                  <strong>{t("Inglês")}</strong>
-                </div>
-                <div className="profile-setting">
-                  <span>{t("Maior sequência")}</span>
-                  <strong>{reward.streak?.longest ?? 0} {t((reward.streak?.longest ?? 0) === 1 ? "dia" : "dias")}</strong>
-                </div>
-                {onboardingEnabled && <><button className="secondary-button" onClick={() => void editNamePronunciation("placement-start")}>{t("Fazer nivelamento")}</button><button className="secondary-button" onClick={() => void editNamePronunciation("preferences-start")}>{t("Nível das lições recomendadas ·")}{t(learnerProfile?.level)}</button></>}
-                <label className="profile-setting">{t("Recomendação de estudo")}<select value={workspace.recommendation} onChange={e=>updateWorkspace(user.id,current=>({...current,recommendation:e.target.value as "balanced"|"new"}))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
-                <label className="profile-setting">{t('Disciplina preferida')}<select aria-label={localizeAttribute("Disciplina preferida")} value={workspace.discipline} onChange={e=>updateWorkspace(user.id,current=>({...current,discipline:e.target.value as Discipline|'all'}))}><option value="all">{t('Equilibrar disciplinas')}</option>{Object.entries(disciplines).map(([id,label])=><option key={id} value={id}>{t(label)}</option>)}</select></label>
-                <label className="profile-setting">{t("Tempo de estudo por dia")}<select value={workspace.minutes} onChange={e=>updateWorkspace(user.id,current=>({...current,minutes:Number(e.target.value)}))}>{[5,10,15,20].map(n=><option key={n} value={n}>{t(n)}{t(" min")}</option>)}</select></label>
-                <label className="profile-setting interface-sound-setting"><span>{t("Sons de interface")}</span><input type="checkbox" checked={interfaceSounds} onChange={event => setInterfaceSoundEnabled(event.target.checked)} /><small>{t("Toques suaves ao começar e concluir lições")}</small></label>
-                <ThemePreferenceControl userId={user.id} />
-                {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}</button>}
-                {onboardingEnabled && <button className="secondary-button" onClick={async () => {
-                  if(!window.confirm('Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas.')) return;
-                  const response=await fetch('/api/onboarding',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refuse'})});
-                  if(response.ok){setLearnerProfile(null);setNeedsOnboarding(true);}else setNotice('Não foi possível apagar. Tente novamente.');
-                }}>{t("Apagar personalização")}</button>}
-                {!onboardingEnabled && <label className="profile-setting" htmlFor="study-level">
-                  <span>{t("Nível para recomendar lições")}</span>
-                  <select
-                    id="study-level"
-                    value={progress.level}
-                    onChange={(event) =>
-                      save({ ...progress, level: event.target.value as Level })
-                    }
-                  >
-                    {levels.map(level => <option key={level} value={level}>{t(level)} · {t(levelDescriptions[level])}</option>)}
-                  </select>
-                </label>}
-                <button
-                  className="secondary-button"
-                  onClick={logout}
-                  disabled={signingOut}
-                >
-                  <LogOut size={16} />
-                  {t(signingOut ? "Saindo…" : "Sair da conta")}
-                </button>
+              <button className="secondary-button settings-shop" onClick={() => navigate("shop")}><CoinIcon size={28}/><span><strong>{new Intl.NumberFormat(getInterfaceLocale()).format(reward.coins)}</strong><small>{t("Loja e mascotes")}</small></span><ArrowRight size={18}/></button>
+            </section>
+            <div className="settings-grid">
+              <section className="settings-card settings-appearance"><ThemePreferenceControl userId={user.id}/></section>
+              <section className="settings-card" aria-labelledby="settings-learning-title">
+                <header className="settings-card-heading"><Languages size={22}/><div><h2 id="settings-learning-title">{t("Aprendizado")}</h2><p>{t("Seu nível e o apoio que combina com você.")}</p></div></header>
+                <LearningLanguagePreferences userId={user.id}/>
+                {onboardingEnabled ? <div className="settings-button-group">
+                  <button className="secondary-button" onClick={() => void editNamePronunciation("preferences-start")}><GraduationCap size={18}/>{t("Nível recomendado")} · {learnerProfile?.level}</button>
+                  <button className="text-button" onClick={() => void editNamePronunciation("placement-start")}>{t("Fazer nivelamento")}<ArrowRight size={16}/></button>
+                </div> : <label className="settings-field" htmlFor="study-level"><span>{t("Nível para recomendar lições")}</span><select id="study-level" value={progress.level} onChange={event => save({ ...progress, level: event.target.value as Level })}>{levels.map(level => <option key={level} value={level}>{level} · {t(levelDescriptions[level])}</option>)}</select></label>}
               </section>
-              <aside className="profile-note">
-                <MascotMoment mascot={reward.mascot} mood="celebrate" className="profile-mascot" />
-                <Globe2 size={24} />
-                <h2>{supportT("Sobre seu progresso")}</h2>
-                <p lang={getSupportLocale()}><strong>{supportT(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</strong></p>
-                <p lang={getSupportLocale()}>
-                  {supportT(reward.storage === "account"
-                    ? "Suas lições concluídas, sequência, revisões, moedas e compras são salvas na sua conta. Entre com o mesmo Google em outro aparelho para continuar."
-                    : "Suas conclusões, sequência, revisões, moedas e compras estão salvas neste navegador. A sincronização com outros aparelhos está indisponível no momento.")}
-                </p>
-                <p lang={getSupportLocale()}>{supportT("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. A aparência é sincronizada quando há conexão.")}</p>
-                <p lang={getSupportLocale()}>
-                  {supportT(voiceEnabled
-                    ? "A prática de voz é opcional. O microfone só é solicitado ao iniciar a escuta. O navegador pode processar áudio em um serviço externo; o Sparky não armazena gravações."
-                    : "Os recursos de voz estão desativados nesta versão.")}
-                </p>
-                <a href="/privacidade">{supportT("Como seus dados são usados ")}<ArrowRight size={14} />
-                </a>
-              </aside>
+              <section className="settings-card" aria-labelledby="settings-routine-title">
+                <header className="settings-card-heading"><Clock3 size={22}/><div><h2 id="settings-routine-title">{t("Rotina de estudo")}</h2><p>{t("Uma meta leve para voltar todos os dias.")}</p></div></header>
+                <fieldset className="settings-goal"><legend>{t("Meta diária")}</legend><div>{[5,10,15,20].map(minutes => <button key={minutes} type="button" aria-pressed={workspace.minutes === minutes} onClick={() => updateWorkspace(user.id, current => ({ ...current, minutes }))}><strong>{minutes}</strong><span>{t("min")}</span></button>)}</div></fieldset>
+                <label className="settings-field"><span>{t("Recomendação de estudo")}</span><select value={workspace.recommendation} onChange={event => updateWorkspace(user.id, current => ({ ...current, recommendation: event.target.value as "balanced"|"new" }))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
+                <label className="settings-field"><span>{t("Disciplina preferida")}</span><select value={workspace.discipline} onChange={event => updateWorkspace(user.id,current => ({ ...current, discipline:event.target.value as Discipline|"all" }))}><option value="all">{t("Equilibrar disciplinas")}</option>{Object.entries(disciplines).map(([id,label]) => <option key={id} value={id}>{t(label)}</option>)}</select></label>
+              </section>
+              <section className="settings-card" aria-labelledby="settings-sound-title">
+                <header className="settings-card-heading"><Settings size={22}/><div><h2 id="settings-sound-title">{t("Som e personalização")}</h2><p>{t("Pequenos detalhes do seu Sparky.")}</p></div></header>
+                <label className="settings-switch"><span><strong>{t("Sons de interface")}</strong><small>{t("Toques suaves ao começar e concluir lições")}</small></span><input type="checkbox" role="switch" checked={interfaceSounds} onChange={event => setInterfaceSoundEnabled(event.target.checked)}/><span className="settings-switch-track" aria-hidden="true"/></label>
+                {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}<ArrowRight size={16}/></button>}
+                <p className="settings-caption">{t("As animações respeitam a preferência de movimento do aparelho.")}</p>
+              </section>
+              <section className="settings-card" aria-labelledby="settings-progress-title">
+                <header className="settings-card-heading"><Globe2 size={22}/><div><h2 id="settings-progress-title">{t("Progresso e conta")}</h2><p>{t("Suas conquistas continuam com você.")}</p></div></header>
+                <div className="settings-status"><Check size={18}/><p lang={getSupportLocale()}>{supportT(reward.storage === "account" ? "Conclusões e recompensas sincronizadas na conta." : "Progresso salvo neste navegador.")}</p></div>
+                <div className="settings-record"><span>{t("Maior sequência")}</span><strong>{reward.streak?.longest ?? 0} {t((reward.streak?.longest ?? 0) === 1 ? "dia" : "dias")}</strong></div>
+                <details className="settings-privacy"><summary>{t("Dados e privacidade")}</summary>
+                  <p lang={getSupportLocale()}>{supportT("Rascunhos e histórico de tentativas ficam neste dispositivo, separados por conta. A aparência é sincronizada quando há conexão.")}</p>
+                  <a href="/privacidade">{t("Como seus dados são usados")}<ArrowRight size={16}/></a>
+                  {onboardingEnabled && <button className="text-button settings-danger" onClick={async () => {
+                    if(!window.confirm(t("Apagar seu nome, idade, diagnóstico e áudio personalizado? Suas lições e compras serão preservadas."))) return;
+                    const response=await fetch("/api/onboarding",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"refuse"})});
+                    if(response.ok){setLearnerProfile(null);setNeedsOnboarding(true);}else setNotice("Não foi possível apagar. Tente novamente.");
+                  }}>{t("Apagar personalização")}</button>}
+                </details>
+                <button className="text-button" onClick={logout} disabled={signingOut}><LogOut size={17}/>{t(signingOut ? "Saindo…" : "Sair da conta")}</button>
+              </section>
             </div>
-            <button className="secondary-button" onClick={() => navigate("shop")}><ShoppingBag size={18} />{t(" Escolher mascote e abrir a loja")}</button>
-            <InstallAppPrompt dismissible={false} />
+            <InstallAppPrompt dismissible={false}/>
           </>
         )}
       </main>
@@ -853,12 +814,10 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   );
 }
 
-function Brand() {
+function Brand({ showMascot = true }: { showMascot?: boolean }) {
   return (
     <div className="brand">
-      <span className="brand-mark">
-        <Image src="/icons/sparky-192-v2.png" alt={localizeAttribute("")} width={44} height={44} />
-      </span>
+      {showMascot && <span className="brand-mark"><Image src="/icons/sparky-192-v2.png" alt={localizeAttribute("")} width={44} height={44} /></span>}
       <span>{t("Sparky")}<span className="brand-english">{t("English")}</span>
       </span>
     </div>

@@ -266,3 +266,9 @@ export function ThemeQuickToggle({ userId }: { userId: string }) {
     </button>
   );
 }
+
+/** Keep account/system appearance active even when settings are closed. */
+export function AppearanceSync({ userId }: { userId: string }) {
+  useAppearance(userId);
+  return null;
+}
