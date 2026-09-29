@@ -95,6 +95,23 @@ const navigation = [
   { id: "profile" as View, label: "Perfil", icon: ProfileIcon },
 ];
 
+type AppHistoryEntry = { view: View; depth: number; session: string; lessonId?: string; review?: boolean; mode?: "guided" | "practice" };
+const historyKey = "sparkyNavigationV1";
+const historySession = Math.random().toString(36).slice(2);
+const appViews: View[] = ["today", "course", "practice", "profile", "review", "call", "classroom", "story", "music", "exams", "shop"];
+
+function readAppHistory(): AppHistoryEntry | null {
+  const entry = window.history.state?.[historyKey];
+  if (!entry || entry.session !== historySession || !appViews.includes(entry.view) || !Number.isSafeInteger(entry.depth) || entry.depth < 0) return null;
+  return entry as AppHistoryEntry;
+}
+
+function writeAppHistory(entry: Omit<AppHistoryEntry, "session">, replace = false) {
+  const state = window.history.state;
+  const next = { ...(state && typeof state === "object" ? state : {}), [historyKey]: { ...entry, session: historySession } };
+  window.history[replace ? "replaceState" : "pushState"](next, "", window.location.href);
+}
+
 function readProgress(userId: string): Progress {
   try {
     const saved = JSON.parse(
@@ -170,10 +187,46 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const [workspace, setWorkspace] = useState(blankWorkspace);
   const [notificationDestination, setNotificationDestination] = useState<NotificationDestination | null>(null);
   const notifications = useNotificationCenter(user?.id, !loading && !needsOnboarding, interfaceLanguage === 'en' ? 'en' : 'pt', setNotificationDestination);
+  const historyReady = useRef(false);
+  useEffect(() => {
+    if (loading || !user || needsOnboarding) { historyReady.current = false; return; }
+    const restore = (entry: AppHistoryEntry) => {
+      setNotice("");
+      setCompletionMoment(null);
+      setNotificationDestination(null);
+      setView(entry.view);
+      const lesson = entry.lessonId && lessons.find(item => item.id === entry.lessonId);
+      setActive(lesson ? { lesson: personalizeLesson(lesson, learnerProfile?.name), review: Boolean(entry.review) } : null);
+      if (entry.mode) setStudyMode(entry.mode);
+    };
+    if (!historyReady.current) {
+      historyReady.current = true;
+      const depth = readAppHistory()?.depth ?? 0;
+      // A fresh load starts at Hoje; saved lesson checkpoints remain available there.
+      writeAppHistory({ view: "today", depth }, true);
+      if (view !== "today") writeAppHistory({ view, depth: depth + 1 });
+    }
+    const onPopState = () => {
+      const entry = readAppHistory();
+      if (entry) restore(entry);
+      else if (window.history.state?.[historyKey]) {
+        writeAppHistory({ view: "today", depth: 0 }, true);
+        restore({ view: "today", depth: 0, session: historySession });
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [loading, user, needsOnboarding, learnerProfile?.name, view]);
   function navigate(nextView: View) {
     setNotice("");
     setCompletionMoment(null);
+    const current = readAppHistory();
+    if (nextView === "today" && current && current.depth > 0) {
+      window.history.go(-current.depth);
+      return;
+    }
     if (nextView === view) return;
+    if (historyReady.current) writeAppHistory({ view: nextView, depth: (current?.depth ?? 0) + 1 });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setView(nextView);
       return;
@@ -182,6 +235,10 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     setView(nextView);
     if (transitionTimer.current) window.clearTimeout(transitionTimer.current);
     transitionTimer.current = window.setTimeout(() => setTransitioning(false), 180);
+  }
+  function goBack(fallback: View) {
+    if ((readAppHistory()?.depth ?? 0) > 0) window.history.back();
+    else navigate(fallback);
   }
   useEffect(() => () => {
     if (transitionTimer.current) window.clearTimeout(transitionTimer.current);
@@ -459,6 +516,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         });
         setNotice("");
         playInterfaceSound("complete");
+        const current = readAppHistory();
+        if (historyReady.current && current?.lessonId) writeAppHistory({ view: "today", depth: current.depth }, true);
         setView("today");
         setActive(null);
         void notifications.refresh().catch(() => {});
@@ -521,6 +580,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     if (review && (dailyDone >= 3 || !dueLessons.some(item => item.id === lesson.id))) { setNotice("Você já concluiu as três revisões de hoje. Continue com uma lição nova."); return; }
     setCompletionMoment(null);
     playInterfaceSound("start");
+    const current = readAppHistory();
+    if (historyReady.current) writeAppHistory({ view, depth: (current?.depth ?? 0) + 1, lessonId: lesson.id, review, mode });
     setActive({ lesson: personalizeLesson(lesson, learnerProfile?.name), review });
   };
   async function editNamePronunciation(action = "pronunciation-start") {
@@ -672,9 +733,9 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           />
           </>
         )}
-        {["review", "classroom", "music", "exams", "shop"].includes(view) && <button className="text-button" onClick={() => navigate(view === "shop" ? "profile" : "practice")}>{t("Voltar")}</button>}
-        {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => navigate("practice")} />}
-        {view === "story" && <StoryExperience userId={user.id} mascot={reward.mascot} onBack={() => navigate("practice")} />}
+        {["review", "classroom", "music", "exams", "shop"].includes(view) && <button className="text-button" onClick={() => goBack(view === "shop" ? "profile" : "practice")}>{t("Voltar")}</button>}
+        {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => goBack("practice")} />}
+        {view === "story" && <StoryExperience userId={user.id} mascot={reward.mascot} onBack={() => goBack("practice")} />}
         {false && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "review" && (
           <>
@@ -834,7 +895,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           openerRef={lessonOpener}
           studyMode={studyMode}
           nextLesson={nextInTrail(progress.level,{...progress.completed,[active.lesson.id]:'completed'})}
-          onClose={() => setActive(null)}
+          onClose={() => { if (readAppHistory()?.lessonId) goBack(view); else setActive(null); }}
           onFinish={finish}
         />
       )}
