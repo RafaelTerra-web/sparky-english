@@ -116,10 +116,15 @@ export async function reminderContext(account: string) {
   return {context,revision:progress.data?.revision ?? null,preferences:publicPreferences(pref.data)};
 }
 export async function pruneNotifications(now = new Date()) {
-  if(!notificationsEnabled()) return {enabled:false,deleted:0,ok:true};
+  const enabled=notificationsEnabled();
+  if(!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return {enabled,deleted:0,ok:!enabled};
   const db=notificationDatabase(), before=new Date(now.getTime()-30*86400000).toISOString();
+  // Retention continues if the feature is paused after launch. Before the
+  // migration exists, the disabled feature leaves the daily cleanup untouched.
+  const installed=await db.from('sparky_notifications').select('id').limit(1);
+  if(installed.error) return {enabled,deleted:0,ok:!enabled && ['PGRST205','42P01'].includes(installed.error.code ?? '')};
   const expired=await db.from('sparky_notifications').delete({count:'exact'}).lt('created_at',before);
   // Short operational summaries have the same bounded retention, not a profile history.
   const sessions=await db.from('sparky_study_activity').delete().lt('last_activity_at',before);
-  return {enabled:true,deleted:expired.count ?? 0,ok:!expired.error && !sessions.error};
+  return {enabled,deleted:expired.count ?? 0,ok:!expired.error && !sessions.error};
 }

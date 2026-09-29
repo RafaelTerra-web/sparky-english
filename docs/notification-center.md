@@ -32,7 +32,7 @@ São tarefas diárias compatíveis com a precisão do plano [Vercel Hobby](https
 
 O aviso é persistido antes do push. Uma função adquire atomicamente a entrega por aviso/aparelho; `sending`, `sent` e `uncertain` não podem ser adquiridos novamente. Só rejeições explícitas 429/503 são retryable (máximo três tentativas, intervalo mínimo de um minuto, dentro da janela). Timeout sem resposta e interrupção após aquisição são incertos e não reenviam automaticamente. 404/410 removem a assinatura. A troca de conta de um endpoint é atômica.
 
-A limpeza diária já existente exclui avisos e entregas por cascata após 30 dias, além de resumos operacionais vencidos. Ela preserva preferências, progresso, compras e moedas.
+A limpeza diária já existente exclui avisos e entregas por cascata após 30 dias, além de resumos operacionais vencidos, mesmo se a flag de envio for pausada depois da implantação. Antes da migração, a rotina ignora a ausência das tabelas. Ela preserva preferências, progresso, compras e moedas.
 
 ## Validação e ativação
 
