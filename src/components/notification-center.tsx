@@ -16,7 +16,7 @@ async function request(path: string, data?: Record<string,unknown>) {
   return result;
 }
 export function useNotificationCenter(userId: string | undefined, ready: boolean, locale: 'pt' | 'en', onDestination:(destination:NotificationDestination)=>void) {
-  const [enabled,setEnabled]=useState(true);
+  const [enabled,setEnabled]=useState(false);
   const [unread,setUnread]=useState(0);
   const [preferences,setPreferences]=useState<NotificationPreferences|null>(null);
   const [dailyActiveMs,setDailyActiveMs]=useState<number|null>(null);
@@ -58,7 +58,7 @@ export function useNotificationCenter(userId: string | undefined, ready: boolean
     let alive=true;
     if(!userId || !ready) return;
     // Identity changes never reuse another account's badge, list or pending request.
-    queueMicrotask(()=>{if(alive){setUnread(0);setItems([]);setPreferences(null);setDailyActiveMs(null);setOpen(false);}});
+    queueMicrotask(()=>{if(alive){setEnabled(false);setUnread(0);setItems([]);setPreferences(null);setDailyActiveMs(null);setOpen(false);}});
     const refresh=()=>{if(!document.hidden) void sync(true).catch(()=>{});};
     const timer=window.setInterval(refresh,60000);
     window.addEventListener('focus',refresh); window.addEventListener('online',refresh);
