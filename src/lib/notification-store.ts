@@ -108,10 +108,9 @@ export async function reminderContext(account: string) {
   if(pref.error || progress.error || session.error) throw Error('notifications-unavailable');
   // Unrecognized or incomplete persisted progress suspends review reminders.
   const raw=progress.data?.state;
-  const complete=raw && [1,3,4,5,6].includes(raw.version) && typeof raw.completedBits==='string' && Array.isArray(raw.dueDays);
+  const complete=raw && [1,3,4,5,6,7].includes(raw.version) && typeof raw.completedBits==='string' && Array.isArray(raw.dueDays);
   const state=complete ? normalizeRewardState(raw) : null;
   const context: ReminderContext={preferences:pref.data,progress:state ? publicRewardState(state) : null,
-    expeditionDue:Boolean(state && process.env.SPARKY_ECONOMY_ENABLED==='true' && state.expeditionSessions.some(s=>s.completedAt && !s.reviewConfirmedAt && s.reviewDueAt && Date.parse(s.reviewDueAt)<=Date.now())),
     session:session.data[0] ?? null,dailyActiveMs:time};
   return {context,revision:progress.data?.revision ?? null,preferences:publicPreferences(pref.data)};
 }

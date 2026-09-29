@@ -35,20 +35,24 @@ for (const item of accessoryCatalog) {
   for (const mascot of item.mascots) {
     for (const [layer, assetPath] of Object.entries(item.assets[mascot])) {
       if (!assetPath) continue;
-      const bytes = await readFile(`public${assetPath}`);
+      const path = assetPath.split("?")[0];
+      const bytes = await readFile(`public${path}`);
       const metadata = await sharp(bytes).metadata();
+      const fittedSparky = mascot === "sparky" && /\/(urban-cap|explorer-satchel|book-tote|compact-backpack|rocket-pack)-sparky(?:-back)?\.png$/.test(path);
       records.push({
         id: item.id,
         kind: item.kind,
         mascot,
         slot: item.slot,
-        layer: item.slot === "back" ? "back" : layer,
+        layer,
         poseVersion: item.poseVersion,
         incompatibleOutfits: item.incompatibleOutfits ?? [],
-        path: assetPath,
+        path,
         model: "OpenAI GPT Image",
-        prompt: "Generate only the named accessory in the Sparky English cartoon style, then fit it to the canonical mascot canvas without including character pixels or a background.",
-        generatedAt: "2026-09-09",
+        prompt: fittedSparky
+          ? "Dress the canonical Sparky base in the named accessory while preserving pose and proportions; isolate only the fitted accessory and align it to the 640px base canvas."
+          : "Generate only the named accessory in the Sparky English cartoon style, then fit it to the canonical mascot canvas without including character pixels or a background.",
+        generatedAt: fittedSparky ? "2026-09-29" : "2026-09-09",
         width: metadata.width,
         height: metadata.height,
         alpha: metadata.hasAlpha,

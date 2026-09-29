@@ -103,6 +103,7 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
     <p lang={getSupportLocale()} className="shop-intro">{supportT("Transforme seu estudo em trajes, acessórios e novas missões. Cada peça é ajustada separadamente para Sparky e Pinky.")}</p>
     {!!reward.sceneRefund && <details className="shop-refund"><summary>{reward.sceneRefund}{t(" moedas devolvidas pelos cenários retirados")}</summary><p lang={getSupportLocale()}>{supportT("Os cenários foram descontinuados. Todas as compras foram reembolsadas integralmente uma única vez.")}</p></details>}
     {!!reward.wardrobeRefund && <details className="shop-refund"><summary>{reward.wardrobeRefund}{t(" moedas devolvidas pela atualização anterior")}</summary><p lang={getSupportLocale()}>{supportT("Esse reembolso já foi incluído no seu saldo. Você pode combinar os novos acessórios com os trajes disponíveis.")}</p></details>}
+    {!!reward.expeditionRefund && <details className="shop-refund"><summary>{reward.expeditionRefund}{t(" moedas devolvidas pelas Expedições encerradas")}</summary><p lang={getSupportLocale()}>{supportT("As Expedições saíram do Sparky. O preço pago por elas voltou ao seu saldo de moedas uma única vez; seu histórico de compras foi preservado.")}</p></details>}
 
     <div className="studio-main">
       <div className="mascot-preview"><h3 ref={previewHeading} tabIndex={-1}>{preview ? <>{t("Experimentando:")}{t(preview.name)}</> : <>{t("Visual de")}{t(name)}</>}</h3>

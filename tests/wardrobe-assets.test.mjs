@@ -14,9 +14,18 @@ test("the modular wardrobe has twelve outfits and sixteen two-mascot accessories
   }
 });
 
+test("newly fitted Sparky layers have fresh image optimizer URLs", () => {
+  for (const name of ["urban-cap", "explorer-satchel", "book-tote", "compact-backpack", "rocket-pack"]) {
+    const item = accessoryCatalog.find(entry => entry.assets.sparky.front?.includes(`/${name}-sparky.png`));
+    assert.ok(item, name);
+    assert.ok(item.assets.sparky.front.endsWith("?v=20260929"), name);
+    if (item.assets.sparky.back) assert.ok(item.assets.sparky.back.endsWith("?v=20260929"), name);
+  }
+});
+
 test("every wardrobe sprite is a verified transparent 640px PNG", async () => {
   const manifest = JSON.parse(await readFile("docs/wardrobe-assets.json", "utf8"));
-  assert.equal(manifest.length, 46); // 44 purchased sprites and two accessory-free bases
+  assert.equal(manifest.length, 48); // 46 purchased sprite layers and two accessory-free bases
   for (const record of manifest) {
     const bytes = await readFile(`public${record.path}`);
     const metadata = await sharp(bytes).metadata();
@@ -27,6 +36,6 @@ test("every wardrobe sprite is a verified transparent 640px PNG", async () => {
     assert.equal(metadata.hasAlpha, true, record.path);
     assert.equal(stats.isOpaque, false, record.path);
     assert.equal(createHash("sha256").update(bytes).digest("hex"), record.sha256, record.path);
-    if (record.slot === "back") assert.equal(record.layer, "back", record.path);
+    if (record.slot === "back") assert.ok(["front", "back"].includes(record.layer), record.path);
   }
 });

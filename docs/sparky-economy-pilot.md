@@ -1,6 +1,8 @@
 # Sparky Economy — operação e medição do piloto
 
-Este documento complementa [sparky-economy.md](sparky-economy.md). Os preços, prazos e cargas de produção abaixo são **hipóteses de planejamento**, não resultados observados. A flag `SPARKY_ECONOMY_ENABLED` controla a exposição das Expedições; o relatório não deve ser usado para declarar eficácia educacional sem a comparação de aprendizagem descrita no plano.
+**Piloto encerrado em 29 de setembro de 2026 por solicitação do proprietário.** As Expedições e histórias interativas foram retiradas da interface e suas rotas. Compras antigas recebem reembolso único em moedas; IDs, recibos e progresso ficam somente para migração e histórico. A regra abaixo de manter acesso permanente foi substituída por essa decisão explícita. A retenção dos eventos históricos de 90 dias continua em vigor.
+
+Este documento complementa [sparky-economy.md](sparky-economy.md). Os preços, prazos e cargas de produção abaixo eram **hipóteses de planejamento**, não resultados observados. A antiga flag `SPARKY_ECONOMY_ENABLED` não reativa as Expedições após sua retirada; o relatório histórico não deve ser usado para declarar eficácia educacional sem a comparação de aprendizagem descrita no plano.
 
 ## Oferta e orçamento editorial
 
