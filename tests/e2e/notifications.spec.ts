@@ -40,6 +40,10 @@ test('bell, snapshot, paging, scroll lock and concurrent arrivals',async({page},
   await page.screenshot({path:info.outputPath('island.png')});
   await bell.click();const dialog=page.getByRole('dialog',{name:'Notificações'});
   await expect(dialog).toBeVisible();await expect(dialog.locator('article')).toHaveCount(20);
+  const artwork=dialog.locator('article img');
+  await expect(artwork).toHaveCount(20);
+  expect(await artwork.evaluateAll(images=>new Set(images.slice(0,3).map(image=>new URL((image as HTMLImageElement).src).pathname)).size)).toBe(3);
+  expect(await artwork.first().evaluate(image=>(image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await expect(page.getByRole('button',{name:'Notificações: 1 não lidas'})).toBeAttached();
   expect(state.opened).toBe(1);
   expect(await page.evaluate(()=>document.documentElement.dataset.scrollLocked)).toBe('true');

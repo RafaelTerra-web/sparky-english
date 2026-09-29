@@ -1,5 +1,10 @@
 export const notificationKinds = ['review', 'resume', 'daily-goal'] as const;
 export type NotificationKind = typeof notificationKinds[number];
+export const notificationArtwork: Record<NotificationKind, string> = {
+  review: '/notifications/review.webp',
+  resume: '/notifications/resume.webp',
+  'daily-goal': '/notifications/daily-goal.webp',
+};
 export type NotificationDestination = { view: 'review' | 'today' } | { view: 'lesson'; lessonId: string };
 export type NotificationCopy = { title: string; body: string; action: string };
 export type InboxNotification = {

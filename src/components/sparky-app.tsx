@@ -193,7 +193,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     const restore = (entry: AppHistoryEntry) => {
       setNotice("");
       setCompletionMoment(null);
-      setNotificationDestination(null);
       setView(entry.view);
       const lesson = entry.lessonId && lessons.find(item => item.id === entry.lessonId);
       setActive(lesson ? { lesson: personalizeLesson(lesson, learnerProfile?.name), review: Boolean(entry.review) } : null);

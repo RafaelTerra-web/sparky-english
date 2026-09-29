@@ -39,7 +39,7 @@ export async function runNotificationCron(request: Request, kind: NotificationKi
           let status: 'sent' | ReturnType<typeof deliveryOutcome>='sent';
           try {
             const copy=row.content[latest.preferences.locale];
-            await sendStudyPush(device.state,{title:copy.title,body:copy.body,url:notificationUrl(row.id),notificationId:row.id});
+            await sendStudyPush(device.state,{title:copy.title,body:copy.body,url:notificationUrl(row.id),notificationId:row.id,kind});
           } catch(error) {status=deliveryOutcome(error);}
           // A failed write leaves 'sending', which is never reclaimed.
           const saved=await db.from('sparky_notification_deliveries').update({status,updated_at:new Date().toISOString()}).eq('notification_id',row.id).eq('device_id',device.track_id).eq('status','sending');
