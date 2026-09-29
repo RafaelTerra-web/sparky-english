@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Check,
   Clock3,
-  Compass,
   Globe2,
   GraduationCap,
   Languages,
@@ -56,8 +55,6 @@ import NativeRefresh from "./native-refresh";
 import { TodayIcon, CourseIcon, ReviewIcon, MusicIcon, ProfileIcon } from "./original-nav-icons";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
-const ExpeditionShop = dynamic(() => import("./expedition-shop").then(m => m.ExpeditionShop), { loading: () => <SectionLoading label="Preparando descobertas…" /> });
-const StoryExperience = dynamic(() => import("./story-experience"), { loading: () => <SectionLoading /> });
 import {
   MascotFigure,
   MascotStudio,
@@ -72,7 +69,7 @@ const CallExperience = dynamic(() => import("./call").then(m => m.CallExperience
 const callEnabled = process.env.NEXT_PUBLIC_SPARKY_CALL_ENABLED === "true";
 
 const EnglishClassroom = dynamic(() => import("./english-classroom"), { loading: () => <SectionLoading /> });
-type View = "practice" | "call" | "classroom" | "today" | "story" | "course" | "review" | "exams" | "profile" | "music" | "shop";
+type View = "practice" | "call" | "classroom" | "today" | "course" | "review" | "exams" | "profile" | "music" | "shop";
 type Progress = {
   completed: Record<string, string>;
   reviews: Record<string, string>;
@@ -98,7 +95,7 @@ const navigation = [
 type AppHistoryEntry = { view: View; depth: number; session: string; lessonId?: string; review?: boolean; mode?: "guided" | "practice" };
 const historyKey = "sparkyNavigationV1";
 const historySession = Math.random().toString(36).slice(2);
-const appViews: View[] = ["today", "course", "practice", "profile", "review", "call", "classroom", "story", "music", "exams", "shop"];
+const appViews: View[] = ["today", "course", "practice", "profile", "review", "call", "classroom", "music", "exams", "shop"];
 
 function readAppHistory(): AppHistoryEntry | null {
   const entry = window.history.state?.[historyKey];
@@ -154,7 +151,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const [connectionError, setConnectionError] = useState(false);
   const [view, setView] = useState<View>('today');
   useEffect(() => {
-    if (["call", "music", "exams", "classroom", "story"].includes(view)) document.documentElement.dataset.sparkyActivity = view;
+    if (["call", "music", "exams", "classroom"].includes(view)) document.documentElement.dataset.sparkyActivity = view;
     else delete document.documentElement.dataset.sparkyActivity;
     return () => { delete document.documentElement.dataset.sparkyActivity; };
   }, [view]);
@@ -572,7 +569,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const recommendedReview = resume ? resume.review : dueLessons.some(l=>l.id===recommended.id);
   const dailyGoalMs = Math.min(workspace.minutes * 60000, notifications.dailyActiveMs ?? (workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0));
   const dailyGoalMinutes = Math.floor(dailyGoalMs / 60000);
-  const menuView: View = ["review", "call", "classroom", "story", "music", "exams"].includes(view) ? "practice" : view === "shop" ? "profile" : view;
+  const menuView: View = ["review", "call", "classroom", "music", "exams"].includes(view) ? "practice" : view === "shop" ? "profile" : view;
   const open = (lesson: Lesson, review = false, mode: "guided"|"practice" = "guided") => {
     setStudyMode(mode);
     setNotice("");
@@ -709,8 +706,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
             <button className="quick-practice-card" onClick={() => navigate("review")}><RotateCcw size={26} /><strong>{t("Revisão diária")}</strong><span>{t("3 questões · 1–2 min")} · {due} {t("para hoje")}</span></button>
             {callEnabled && <button className="quick-practice-card" onClick={() => navigate("call")}><Languages size={26} /><strong>{t("Conversação")}</strong><span>{t("Uma situação real · 10 min")}</span></button>}
             <button className="quick-practice-card" onClick={() => navigate("classroom")}><GraduationCap size={26} /><strong>{t("Aulas em inglês")}</strong><span>{t("Ouça e pratique uma ideia.")}</span></button>
-            <button className="quick-practice-card" onClick={() => navigate("story")}><Globe2 size={26} /><strong>{t("Histórias")}</strong><span>{t("Inglês em pequenas histórias.")}</span></button>
-            <button className="quick-practice-card" onClick={() => navigate("shop")}><Compass size={26} /><strong>{t("Expedições")}</strong><span>{t("Use moedas para abrir descobertas.")}</span></button>
             <button className="quick-practice-card" onClick={() => navigate("music")}><MusicIcon size={26} /><strong>{t("Músicas")}</strong><span>{t("Escute, descubra e cante.")}</span></button>
             <button className="quick-practice-card" onClick={() => navigate("exams")}><GraduationCap size={26} /><strong>{t("Simulados")}</strong><span>{t("Prepare-se para o ELTiS.")}</span></button>
             <button className="quick-practice-card" onClick={() => { setCourseMode("practice"); navigate("course"); }}><CourseIcon size={26} /><strong>{t("Por assunto")}</strong><span>{t("Busque uma habilidade na trilha.")}</span></button>
@@ -734,7 +729,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         )}
         {["review", "classroom", "music", "exams", "shop"].includes(view) && <button className="text-button" onClick={() => goBack(view === "shop" ? "profile" : "practice")}>{t("Voltar")}</button>}
         {view === "call" && <CallExperience learnerName={learnerProfile?.name ?? user.name} initialLevel={progress.level} mascot={reward.mascot} storageKey={user.id} onBack={() => goBack("practice")} />}
-        {view === "story" && <StoryExperience userId={user.id} mascot={reward.mascot} onBack={() => goBack("practice")} />}
         {false && <section className="review-guidance"><strong>{t("Aulas em inglês com Sparky")}</strong><p>{t("Escute uma aula curta, acompanhe o visual e pratique uma ideia por vez.")}</p><button className="secondary-button" onClick={()=>navigate("classroom")}>{t("Entrar na sala de aula")}<ArrowRight size={16}/></button></section>}
         {view === "review" && (
           <>
@@ -807,7 +801,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         {view === "exams" && <><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
-          {rewardAvailable && <ExpeditionShop level={progress.level} hasNewLessons={completed < lessons.length} onBalanceChange={coins => setReward(current => ({ ...current, coins }))} />}
           {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => navigate(due ? "review" : "today")} /> : <p role="status">{t("Conecte-se novamente para carregar seu saldo e sua loja.")}</p>}
         </>}
         {view === "profile" && (

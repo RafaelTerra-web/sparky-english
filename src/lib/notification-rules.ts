@@ -3,7 +3,6 @@ import { studyDay, dailyReviewLimit } from './review-plan.ts';
 export type ReminderContext = {
   preferences: { review: boolean; resume: boolean; daily_goal: boolean; goal_minutes: number | null; goal_start_day: string | null; last_activity_at: string | null; active_until: string | null };
   progress: { completed: Record<string, string>; reviews: Record<string,string>; dailyReviews?: { day: string; count: number } } | null;
-  expeditionDue: boolean;
   session: { lesson_id: string; last_activity_at: string; completed_at: string | null; review: boolean } | null;
   dailyActiveMs: number | null;
 };
@@ -20,7 +19,7 @@ export function reminderDestination(kind: NotificationKind, context: ReminderCon
     if (!progress.dailyReviews) return null;
     const count = progress.dailyReviews.day === studyDay(now) ? progress.dailyReviews.count : 0;
     const trailDue = count < dailyReviewLimit && Object.entries(progress.reviews).some(([id, due]) => progress.completed[id] && Date.parse(due) <= at);
-    return trailDue || context.expeditionDue ? { view: 'review' } : null;
+    return trailDue ? { view: 'review' } : null;
   }
   if (kind === 'resume') {
     const session = context.session;

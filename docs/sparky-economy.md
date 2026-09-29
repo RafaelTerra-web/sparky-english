@@ -1,6 +1,8 @@
 # Sparky Economy
 
-**Status: piloto inicial implementado.** Este documento preserva o plano e as hipóteses originais; a oferta entregue, a operação e as limitações do piloto estão em [sparky-economy-pilot.md](sparky-economy-pilot.md). Expansão e ajustes de preços continuam sujeitos a dados reais.
+**Atualização de 29 de setembro de 2026:** a pedido do proprietário, Expedições e histórias interativas foram encerradas. Este texto documenta o plano histórico, não o catálogo atual nem uma autorização para reativá-lo. As compras de Expedições são reembolsadas uma vez; IDs, comprovantes e progresso permanecem apenas para compatibilidade da conta.
+
+**Status: piloto histórico encerrado.** Este documento preserva o plano e as hipóteses originais; a antiga oferta e suas limitações estão em [sparky-economy-pilot.md](sparky-economy-pilot.md).
 
 Registrado em 28 de setembro de 2026; piloto inicial implementado em 29 de setembro de 2026.
 

@@ -36,7 +36,7 @@ test("v4 progress migrates to streak storage without changing learning or curren
   delete legacy.streakCount;
   delete legacy.longestStreak;
   const migrated = normalizeRewardState(legacy);
-  assert.equal(migrated.version, 6);
+  assert.equal(migrated.version, 7);
   assert.equal(migrated.coins, 10);
   assert.ok(publicRewardState(migrated).completed[lessons[0].id]);
   assert.deepEqual(publicRewardState(migrated).streak, { count: 0, longest: 0, lastDay: null });

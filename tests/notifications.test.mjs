@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { reminderDestination, deliveryOutcome } from '../src/lib/notification-rules.ts';
 import { unreadLabel, validNotificationId } from '../src/lib/notifications-shared.ts';
 const context=()=>({preferences:{review:true,resume:true,daily_goal:true,goal_minutes:10,goal_start_day:'2026-09-28',last_activity_at:null,active_until:null},
-  progress:{completed:{a:'completed'},reviews:{a:'2026-09-28T03:00:00Z'},dailyReviews:{day:'2026-09-29',count:0}},expeditionDue:false,
+  progress:{completed:{a:'completed'},reviews:{a:'2026-09-28T03:00:00Z'},dailyReviews:{day:'2026-09-29',count:0}},
   session:{lesson_id:'a1-1-1',review:false,completed_at:null,last_activity_at:'2026-09-29T17:00:00Z'},dailyActiveMs:120000});
 test('all reminder windows use Brasília and stay within their respective hour',()=>{
   const windows=[['review',15],['resume',19],['daily-goal',22]];
@@ -13,10 +13,10 @@ test('all reminder windows use Brasília and stay within their respective hour',
     assert.equal(reminderDestination(kind,context(),new Date(`2026-09-29T${hour+1}:00:00Z`)),null);
   }
 });
-test('reviews group both sources and preserve the trail daily limit',()=>{
+test('review reminders only use due trail lessons and respect the daily limit',()=>{
   const c=context(),now=new Date('2026-09-29T15:00:00Z');
   c.progress.dailyReviews.count=3;assert.equal(reminderDestination('review',c,now),null);
-  c.expeditionDue=true;assert.deepEqual(reminderDestination('review',c,now),{view:'review'});
+  c.progress.dailyReviews.count=0;assert.deepEqual(reminderDestination('review',c,now),{view:'review'});
   c.preferences.review=false;assert.equal(reminderDestination('review',c,now),null);
   c.progress=null;c.preferences.review=true;assert.equal(reminderDestination('review',c,now),null);
 });
