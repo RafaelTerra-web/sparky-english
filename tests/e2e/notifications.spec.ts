@@ -3,12 +3,12 @@ import type {InboxNotification} from '../../src/lib/notifications-shared';
 const id=(n:number)=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 function notification(n:number):InboxNotification {return {id:id(n),kind:n%3===0?'resume':n%3===1?'review':'daily-goal',createdAt:new Date(Date.now()-n*3600000).toISOString(),readAt:null,
   content:{pt:{title:`Aviso ${n}`,body:'Um passo rápido para seu inglês.',action:'Abrir prática'},en:{title:`Notice ${n}`,body:'A quick step for your English.',action:'Open practice'}},destination:n===3?{view:'lesson',lessonId:'a1-1-1'}:{view:'today'}};}
-async function account(page:Page, count=23, language='pt-BR') {
+async function account(page:Page, count=23, language='pt-BR', mode:'light'|'dark'='dark') {
   await page.addInitScript(({language})=>{localStorage.setItem('sparky-opening-seen-v4','1');localStorage.setItem('sparky-language:notifications-test',language);localStorage.setItem('sparky-interface-language',language);localStorage.setItem('sparky-support-language:notifications-test',language);localStorage.setItem('sparky-push:snooze:notifications-test',String(Date.now()+86400000));}, {language});
   await page.route('**/api/session',r=>r.fulfill({json:{authenticated:true,user:{id:'notifications-test',name:'Ana',email:'ana@example.test'}}}));
   await page.route('**/api/onboarding',r=>r.fulfill({json:{enabled:false}}));
   await page.route('**/api/push',r=>r.fulfill({json:{available:false}}));
-  await page.route('**/api/appearance',r=>r.fulfill({json:{preference:{palette:'sparky',mode:'dark'},storage:'account'}}));
+  await page.route('**/api/appearance',r=>r.fulfill({json:{preference:{palette:'sparky',mode},storage:'account'}}));
   await page.route('**/api/rewards',r=>r.fulfill({json:{storage:'account',coins:455,completed:{},reviews:{},owned:[],mascot:'sparky',equipped:{sparky:{},pinky:{}},streak:{count:5,longest:5,lastDay:null}}}));
   const state={items:Array.from({length:count},(_,n)=>notification(n+1)),failed:false,opened:0,read:[] as string[],prefs:{revision:0,goalMinutes:10,pushEnabled:false,review:true,resume:true,dailyGoal:true,locale:language==='en'?'en':'pt'},arrival:false};
   await page.route('**/api/notifications*',async r=>{
@@ -54,11 +54,20 @@ test('bell, snapshot, paging, scroll lock and concurrent arrivals',async({page},
 });
 test('failure preserves badge and retry, empty inbox and 99+ badge',async({page})=>{
   const state=await account(page,100);const bell=page.getByRole('button',{name:'Notificações: 100 não lidas'});
-  await expect(bell).toHaveText('99+');state.failed=true;await bell.click();
+  await expect(bell).toHaveText('99+');await expect(bell.locator('span')).toBeVisible();state.failed=true;await bell.click();
   const dialog=page.getByRole('dialog',{name:'Notificações'});await expect(dialog.getByRole('alert')).toContainText('Não foi possível carregar');
   await expect(bell).toHaveText('99+');state.failed=false;state.items=[];
   await dialog.getByRole('button',{name:'Tentar novamente'}).click();await expect(dialog).toContainText('Tudo em dia por aqui.');
   await dialog.getByRole('button',{name:'Fechar notificações'}).click();await expect(page.getByRole('button',{name:'Notificações: nenhuma pendente'})).toHaveText('');
+});
+test('light theme keeps the bell, badge and modal readable',async({page},info)=>{
+  await account(page,1,'pt-BR','light');
+  const bell=page.getByRole('button',{name:'Notificações: 1 não lidas'});
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await expect(bell.locator('svg')).toBeVisible();await expect(bell.locator('span')).toBeVisible();
+  await bell.click();await expect(page.getByRole('dialog',{name:'Notificações'})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:info.outputPath('notification-light.png')});
 });
 test('push opens only its item after authentication and offers restart without checkpoint',async({page})=>{
   const state=await account(page);await page.goto('/?notification='+id(3));
