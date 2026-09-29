@@ -573,7 +573,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       }}>
         {view !== "call" && <header className="workspace-header">
           <div className="mobile-brand">
-            <Brand />
+            <Brand showMascot={false} />
           </div>
           <p className="date-label">
             {t(new Intl.DateTimeFormat(getInterfaceLocale(), {
