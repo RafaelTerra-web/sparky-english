@@ -47,6 +47,8 @@ import { SectionLoading } from "./section-loading";
 import { readWorkspace, blankWorkspace } from "@/lib/learning-local";
 import LessonPlayer from "./lesson-player";
 import PushNotifications, { disablePushForCurrentDevice } from "./push-notifications";
+import { useNotificationCenter, NotificationBell, NotificationPanel, NotificationSettings, NotificationDestinationPrompt } from './notification-center';
+import type { NotificationDestination } from '@/lib/notifications-shared';
 import MascotMoment from "./mascot-moment";
 import { LessonCompletionCelebration, type CompletionMoment } from "./lesson-completion-celebration";
 import NativeRefresh from "./native-refresh";
@@ -166,6 +168,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const interfaceSounds = useSyncExternalStore(subscribeInterfaceSound, interfaceSoundEnabled, () => true);
   const [rewardAvailable, setRewardAvailable] = useState(true);
   const [workspace, setWorkspace] = useState(blankWorkspace);
+  const [notificationDestination, setNotificationDestination] = useState<NotificationDestination | null>(null);
+  const notifications = useNotificationCenter(user?.id, !loading && !needsOnboarding, interfaceLanguage === 'en' ? 'en' : 'pt', setNotificationDestination);
   function navigate(nextView: View) {
     setNotice("");
     setCompletionMoment(null);
@@ -369,7 +373,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
     }
   }
 
-  async function rewardRequest(action: RewardAction | { action: "complete"; lessonId: string; review: boolean; receipt: string }) {
+  async function rewardRequest(action: RewardAction | { action: "complete"; lessonId: string; review: boolean; receipt: string; activeMs?: number }) {
     if (rewardBusy) return null;
     setRewardBusy(true);
     try {
@@ -436,6 +440,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         lessonId: active.lesson.id,
         review: active.review,
         receipt,
+        activeMs: practice?.activeMs ?? 0,
       });
       if (result) {
         updateWorkspace(user!.id, current => ({...current, studyDay: studyDay(now), newLessonsToday: (current.studyDay === studyDay(now) ? current.newLessonsToday : 0) + (!active.review && !progress.completed[active.lesson.id] ? 1 : 0), dailyActiveMs: (current.studyDay === studyDay(now) ? current.dailyActiveMs : 0) + (practice && !current.goalSessions.includes(practice.sessionId) ? practice.activeMs : 0), goalSessions: practice ? [...current.goalSessions.filter(id => id !== practice.sessionId), practice.sessionId].slice(-100) : current.goalSessions }));
@@ -456,6 +461,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         playInterfaceSound("complete");
         setView("today");
         setActive(null);
+        void notifications.refresh().catch(() => {});
         return true;
       }
       return false;
@@ -506,7 +512,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const interleaved = newLessonsToday > dailyDone && workspace.recommendation !== "new";
   const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : (interleaved ? dueLessons[0] : undefined) || next;
   const recommendedReview = resume ? resume.review : dueLessons.some(l=>l.id===recommended.id);
-  const dailyGoalMs = Math.min(workspace.minutes * 60000, workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0);
+  const dailyGoalMs = Math.min(workspace.minutes * 60000, notifications.dailyActiveMs ?? (workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0));
   const dailyGoalMinutes = Math.floor(dailyGoalMs / 60000);
   const menuView: View = ["review", "call", "classroom", "story", "music", "exams"].includes(view) ? "practice" : view === "shop" ? "profile" : view;
   const open = (lesson: Lesson, review = false, mode: "guided"|"practice" = "guided") => {
@@ -532,6 +538,17 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       <MotionTransition active={transitioning} />
       <AppearanceSync userId={user.id}/>
       <NativeRefresh onRefresh={refreshAppData} />
+      <NotificationPanel center={notifications} locale={interfaceLanguage === 'en' ? 'en' : 'pt'}/>
+      {notificationDestination && !active && !completionMoment && <NotificationDestinationPrompt
+        restart={notificationDestination.view === 'lesson' && !Object.values(workspace.checkpoints).some(p => p.lessonId === notificationDestination.lessonId && !p.review && p.receipt && today.getTime() - (p.startedAt ?? 0) < 8 * 3600000 && today.getTime() - Date.parse(p.updatedAt) < 7 * 3600000)}
+        onClose={() => setNotificationDestination(null)} onOpen={() => {
+          const destination = notificationDestination;
+          setNotificationDestination(null);
+          if (destination.view === 'lesson') {
+            const lesson = lessons.find(item => item.id === destination.lessonId);
+            if (lesson) open(lesson); else navigate('today');
+          } else navigate(destination.view);
+        }}/>}
       {completionMoment && <LessonCompletionCelebration moment={completionMoment} userId={user.id} textOnly={learnerProfile?.namePronunciationStatus === "text-only"} onClose={() => setCompletionMoment(null)} onNext={() => { setCompletionMoment(null); const following = nextInTrail(progress.level, progress.completed); if (following) open(following); else navigate("course"); }} />}
       {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} mascot={reward.mascot} />
@@ -585,6 +602,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           <button className="account-chip wallet-chip" onClick={() => navigate("shop")} aria-label={localizeAttribute("Abrir loja e saldo de moedas") + ": " + new Intl.NumberFormat(getInterfaceLocale()).format(reward.coins)}>
             <CoinIcon size={24}/><strong>{new Intl.NumberFormat(getInterfaceLocale(), reward.coins >= 10000 ? { notation:"compact", maximumFractionDigits:1 } : {}).format(reward.coins)}</strong>
           </button>
+          <NotificationBell center={notifications}/>
           <button type="button" className="account-chip profile-gear" onClick={() => navigate("profile")} aria-label={localizeAttribute("Abrir configurações")}><Settings size={21} aria-hidden="true"/></button>
         </header>}
         {notice && (
@@ -598,7 +616,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
             </button>
           </div>
         )}
-        {view === 'today' && !active && <PushNotifications userId={user.id} mascot={reward.mascot} />}
+        {notifications.clickError && <p className="notice" role="status">{t(notifications.clickError)}<button onClick={notifications.dismissClickError} aria-label={localizeAttribute('Dispensar mensagem')}><X size={16}/></button></p>}
+        {view === 'today' && !active && !notificationDestination && <PushNotifications userId={user.id} mascot={reward.mascot} onEnabled={() => void notifications.refresh().catch(() => {})} />}
         {view === "today" && <div className="today-overview quick-today">
           <div className="page-heading"><div><p className="eyebrow">{t("Olá,")} {learnerProfile?.name ?? user.name}</p><h1>{t("Vamos praticar?")}</h1></div></div>
           {workspace.restartNotice && <p className="notice" role="status">{t("As lições ganharam seis questões rápidas. A prática pendente vai recomeçar; seus rascunhos foram preservados.")}</p>}
@@ -753,10 +772,15 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               </section>
               <section className="settings-card" aria-labelledby="settings-routine-title">
                 <header className="settings-card-heading"><Clock3 size={22}/><div><h2 id="settings-routine-title">{t("Rotina de estudo")}</h2><p>{t("Uma meta leve para voltar todos os dias.")}</p></div></header>
-                <fieldset className="settings-goal"><legend>{t("Meta diária")}</legend><div>{[5,10,15,20].map(minutes => <button key={minutes} type="button" aria-pressed={workspace.minutes === minutes} onClick={() => updateWorkspace(user.id, current => ({ ...current, minutes }))}><strong>{minutes}</strong><span>{t("min")}</span></button>)}</div></fieldset>
+                <fieldset className="settings-goal"><legend>{t("Meta diária")}</legend><div>{[5,10,15,20].map(minutes => <button key={minutes} type="button" aria-pressed={workspace.minutes === minutes} disabled={notifications.saving} onClick={() => {
+                  if (notifications.enabled) void notifications.changePreferences({ goalMinutes: minutes });
+                  else updateWorkspace(user.id, current => ({ ...current, minutes }));
+                }}><strong>{minutes}</strong><span>{t("min")}</span></button>)}</div></fieldset>
+                {notifications.settingsError && <p role="alert">{t('Não foi possível salvar. Tente novamente.')}</p>}
                 <label className="settings-field"><span>{t("Recomendação de estudo")}</span><select value={workspace.recommendation} onChange={event => updateWorkspace(user.id, current => ({ ...current, recommendation: event.target.value as "balanced"|"new" }))}><option value="balanced">{t("Intercalar lições e revisões")}</option><option value="new">{t("Priorizar lições novas")}</option></select></label>
                 <label className="settings-field"><span>{t("Disciplina preferida")}</span><select value={workspace.discipline} onChange={event => updateWorkspace(user.id,current => ({ ...current, discipline:event.target.value as Discipline|"all" }))}><option value="all">{t("Equilibrar disciplinas")}</option>{Object.entries(disciplines).map(([id,label]) => <option key={id} value={id}>{t(label)}</option>)}</select></label>
               </section>
+              <NotificationSettings center={notifications}/>
               <section className="settings-card" aria-labelledby="settings-sound-title">
                 <header className="settings-card-heading"><Settings size={22}/><div><h2 id="settings-sound-title">{t("Som e personalização")}</h2><p>{t("Pequenos detalhes do seu Sparky.")}</p></div></header>
                 <label className="settings-switch"><span><strong>{t("Sons de interface")}</strong><small>{t("Toques suaves ao começar e concluir lições")}</small></span><input type="checkbox" role="switch" checked={interfaceSounds} onChange={event => setInterfaceSoundEnabled(event.target.checked)}/><span className="settings-switch-track" aria-hidden="true"/></label>
@@ -806,6 +830,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           equipped={reward.equipped}
           saving={rewardBusy}
           learnerProfile={learnerProfile}
+          notificationPending={Boolean(notificationDestination)}
           openerRef={lessonOpener}
           studyMode={studyMode}
           nextLesson={nextInTrail(progress.level,{...progress.completed,[active.lesson.id]:'completed'})}

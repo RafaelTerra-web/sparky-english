@@ -1,0 +1,16 @@
+.bell{position:relative;display:grid!important;place-items:center;width:44px!important;height:44px!important;min-width:44px!important;padding:0!important;flex:0 0 44px;overflow:visible!important}
+.bell[data-pending=true]{color:var(--primary);background:var(--surface-strong)}
+.badge{position:absolute;right:-4px;top:-5px;display:grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:var(--accent);color:var(--on-accent);font-size:10px;line-height:1;font-weight:700;border:2px solid var(--surface)}
+.dialog{width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:24px;color:var(--foreground);background:var(--surface);box-shadow:0 24px 80px #0005;overflow:hidden}
+.dialog::backdrop{background:#071610a8;backdrop-filter:blur(5px)}
+.dialog[open]{display:flex;flex-direction:column}
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 20px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+.header h2{font-size:22px;margin:0;letter-spacing:-.5px}.header p{font-size:13px;color:var(--muted);margin:4px 0 0}.header button{width:44px;min-width:44px;height:44px}
+.list{overflow-y:auto;overscroll-behavior:contain;padding:0 20px 20px;min-height:120px}
+.date{font-size:12px;font-weight:600;color:var(--muted);margin:22px 0 8px;text-transform:capitalize}
+.item{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}.item>div{min-width:0;flex:1}.item h4{font-size:16px;margin:0}.item p{font-size:14px;line-height:1.5;margin:5px 0 6px;overflow-wrap:anywhere}.item time{font-size:12px;color:var(--muted)}
+.type{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--surface-soft);color:var(--primary);flex-shrink:0}
+.action{display:flex;align-items:center;gap:4px;min-height:44px;text-align:left;color:var(--primary);font-size:14px;font-weight:600;padding:8px 0;margin-top:4px;cursor:pointer}
+.state{text-align:center;color:var(--muted);padding:30px 0}.state h3{font-size:18px;color:var(--foreground)}.state p{font-size:14px}.state button{margin:auto}.older{justify-content:center;width:100%;min-height:44px;margin-top:16px}
+.prompt{padding:28px;display:flex;align-items:center;flex-direction:column;text-align:center;gap:12px}.prompt h2{font-size:23px;margin:4px 0}.prompt p{font-size:15px;color:var(--muted);margin:0 0 8px}.prompt button{min-height:44px;width:100%}
+@media(max-width:380px){.header{padding:18px 16px 14px}.list{padding-inline:16px}.header h2{font-size:20px}}

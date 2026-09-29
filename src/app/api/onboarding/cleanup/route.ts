@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { onboardingDB } from "@/lib/onboarding-store";
 import { pruneEconomyEvents, type EconomyRetentionResult } from "@/lib/economy-retention";
 
+async function cleanupNotifications(now: Date) {
+  // Keep the legacy non-production response and its minimal dependencies intact.
+  // The private operational cleanup only runs with the production daily job.
+  const { pruneNotifications } = await import('@/lib/notification-store');
+  return pruneNotifications(now);
+}
+
 async function cleanupOnboarding(now: string) {
   const db = onboardingDB();
   const rows = await db
@@ -48,11 +55,13 @@ export async function GET(request: NextRequest) {
   let economy: EconomyRetentionResult = { scanned: 0, expired: 0, deleted: 0, failed: 0, complete: false };
   try { economy = await pruneEconomyEvents({ environment: "production", now }); }
   catch { /* Only aggregate failure status leaves this authenticated route. */ }
+  let notifications = { enabled: false, deleted: 0, ok: true };
+  try { notifications = await cleanupNotifications(now); } catch { notifications.ok = false; }
   // Blob retention still runs when the onboarding database is unavailable.
   let onboarding = { deleted: 0, ok: false };
   try { onboarding = await cleanupOnboarding(now.toISOString()) ?? onboarding; }
   catch { /* The cron reports failure without exposing storage or account details. */ }
-  const ok = onboarding.ok && economy.complete && economy.failed === 0;
+  const ok = onboarding.ok && economy.complete && economy.failed === 0 && notifications.ok;
   return NextResponse.json(
     { deleted: onboarding.deleted, economy, ok },
     {

@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { readSession, sameOrigin, SESSION_COOKIE } from '@/lib/auth-session';
 import { readBoundedJson } from '@/lib/bounded-json';
 import { pushAccountKey, pushConfigured, pushDatabase, pushTrackId, validPushSubscription } from '@/lib/push-server';
+import { notificationsEnabled } from '@/lib/notification-store';
 
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'private, no-store' } });
 
@@ -28,14 +29,18 @@ export async function POST(request: Request) {
   if (current.error) return json({ error: 'push-unavailable' }, 503);
   const previousState = current.data?.state as { lastSentAt?: unknown } | undefined;
   const lastSentAt = typeof previousState?.lastSentAt === 'string' ? previousState.lastSentAt : null;
-  const result = await db.from('sparky_media_progress').upsert({
+  const state = { kind: 'push-subscription-v1', endpoint: subscription.endpoint, keys: subscription.keys, lastSentAt };
+  const result = notificationsEnabled() ? await db.rpc('sparky_push_register', { p_account: accountKey, p_device: trackId, p_state: state }) : await db.from('sparky_media_progress').upsert({
     account_key: accountKey,
     track_id: trackId,
     revision: 1,
-    state: { kind: 'push-subscription-v1', endpoint: subscription.endpoint, keys: subscription.keys, lastSentAt },
+    state,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'account_key,track_id' });
-  if (!result.error) await db.from('sparky_media_progress').delete().eq('track_id', trackId).neq('account_key', accountKey);
+  if (!result.error && !notificationsEnabled()) {
+    const removed = await db.from('sparky_media_progress').delete().eq('track_id', trackId).neq('account_key', accountKey);
+    if (removed.error) return json({ error: 'push-unavailable' }, 503);
+  }
   return result.error ? json({ error: 'push-unavailable' }, 503) : json({ subscribed: true });
 }
 

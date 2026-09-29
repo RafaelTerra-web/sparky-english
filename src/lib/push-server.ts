@@ -26,7 +26,7 @@ export function pushDatabase() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
-export async function sendStudyPush(subscription: StoredPushSubscription) {
+export async function sendStudyPush(subscription: StoredPushSubscription, payload?: { title: string; body: string; url: string; notificationId: string }) {
   webPush.setVapidDetails(process.env.SPARKY_VAPID_SUBJECT!, process.env.SPARKY_VAPID_PUBLIC_KEY!, process.env.SPARKY_VAPID_PRIVATE_KEY!);
-  await webPush.sendNotification(subscription, JSON.stringify({ title: 'Um momento para o inglês ✨', body: 'Seu próximo passo no Sparky está esperando por você.', url: '/' }), { TTL: 60 * 60 * 12, urgency: 'normal' });
+  await webPush.sendNotification(subscription, JSON.stringify(payload ?? { title: 'Um momento para o inglês ✨', body: 'Seu próximo passo no Sparky está esperando por você.', url: '/' }), { TTL: 60 * 60, urgency: 'normal', timeout: 10000 });
 }

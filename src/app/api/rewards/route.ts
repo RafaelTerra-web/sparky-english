@@ -92,6 +92,7 @@ export async function POST(request: Request) {
   let streakMilestone = false;
   let independent: boolean | undefined;
   let shouldPersist = true;
+  let completion: { study: StudyReceipt; activeMs: number } | undefined;
   try {
     if (body.action === "check-in") {
       const result = checkIn(state, new Date());
@@ -107,6 +108,8 @@ export async function POST(request: Request) {
       if (typeof body.receipt !== "string") throw new Error("study-incomplete");
       const proof = await unseal(body.receipt, `study:${value.user.id}`);
       const quality = verifyCompletion(proof?.study as StudyReceipt | null, body.lessonId, body.review);
+      if (body.activeMs !== undefined && (!Number.isSafeInteger(body.activeMs) || Number(body.activeMs) < 0 || Number(body.activeMs) > 28800000)) throw new Error("invalid-request");
+      completion = { study: proof!.study as StudyReceipt, activeMs: Number(body.activeMs ?? 0) };
       independent = quality.independent;
       const result = completeStudy(state, body.lessonId, body.review, new Date(), quality.independent);
       state = result.state;
@@ -156,7 +159,7 @@ export async function POST(request: Request) {
   }
   try {
     if (shouldPersist) {
-      await persistRewards(value.user.id, state, value.revision);
+      await persistRewards(value.user.id, state, value.revision, completion);
       if (value.storage === "browser") await persistForUser(value.store, value.name, value.user.id, state);
     }
   } catch (error) {

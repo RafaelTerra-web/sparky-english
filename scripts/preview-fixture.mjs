@@ -26,7 +26,7 @@ const proxy = createServer((incoming, outgoing) => {
   if (authenticated) headers.cookie = `${headers.cookie || ""}; __Host-sparky_session=${token}`;
   // NEXT_PUBLIC_SITE_URL is embedded at build time. Mutating fixture requests
   // use that trusted production origin while remaining entirely on localhost.
-  if (headers.origin) headers.origin = 'https://sparky-english-iota.vercel.app';
+  if (headers.origin && process.env.SPARKY_NOTIFICATION_FIXTURE !== 'true') headers.origin = 'https://sparky-english-iota.vercel.app';
   const upstream = request({ hostname: '127.0.0.1', port: 3200, path: incoming.url, method: incoming.method, headers }, (response) => {
     outgoing.writeHead(response.statusCode || 500, response.headers); response.pipe(outgoing);
   });

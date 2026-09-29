@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { normalizeRewardState, rewardStateNeedsMigration, type RewardState } from "./rewards";
+import type { StudyReceipt } from "./study";
 
 function database() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -49,10 +50,21 @@ export async function loadRewards(userId: string, legacy: RewardState) {
   }
   return { state, revision, storage: "account" as const };
 }
-export async function persistRewards(userId: string, state: RewardState, revision: number | null) {
+export async function persistRewards(userId: string, state: RewardState, revision: number | null, completion?: { study: StudyReceipt; activeMs: number }) {
   if (revision === null) return;
   const db = database();
   if (!db) throw new Error("progress-unavailable");
+  if (completion && process.env.SPARKY_NOTIFICATIONS_ENABLED === "true" && process.env.SPARKY_DURABLE_PROGRESS === "true") {
+    const study = completion.study;
+    const committed = await db.rpc("sparky_complete_study_progress", {
+      p_account: identity(userId), p_revision: revision, p_state: state,
+      p_session: study.sessionId, p_lesson: study.lessonId, p_review: study.review,
+      p_started: new Date(study.startedAt).toISOString(), p_active_ms: completion.activeMs,
+    });
+    if (committed.error) throw new Error("progress-unavailable");
+    if (!committed.data) throw new Error("progress-conflict");
+    return;
+  }
   const result = await db.from("sparky_account_progress").update({ state, revision: revision + 1, updated_at: new Date().toISOString() })
     .eq("account_key", identity(userId)).eq("revision", revision).select("revision").maybeSingle();
   if (result.error) throw new Error("progress-unavailable");
