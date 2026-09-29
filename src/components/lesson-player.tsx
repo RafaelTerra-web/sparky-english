@@ -22,10 +22,11 @@ type Props = {
   equipped: PublicRewardState["equipped"]; saving: boolean;
   openerRef?: RefObject<HTMLElement | null>; learnerProfile?: LearnerProfile | null;
   studyMode?: "guided" | "practice"; nextLesson?: Lesson;
+  notificationPending?: boolean;
   onClose: () => void; onFinish: (receipt: string, result?: PracticeResult) => Promise<boolean>;
 };
 type Evidence = { passed: number; failed: number; assisted: number };
-export default function LessonPlayer({ userId, lesson, review, mascot, saving, openerRef, learnerProfile, onClose, onFinish }: Props) {
+export default function LessonPlayer({ userId, lesson, review, mascot, saving, openerRef, learnerProfile, notificationPending, onClose, onFinish }: Props) {
   const supportLanguage = useSupportLanguage();
   const [initial] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
   const [personalBest] = useState(() => readPersonalRecord(userId, lesson.id));
@@ -60,6 +61,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
   const body = useRef<HTMLDivElement>(null);
   const latest = useRef<Checkpoint | null>(null);
   const tracking = useRef<(kind: string) => void>(() => {});
+  const activity = useRef(() => {});
   const steps = lessonSteps(lesson, review, ids);
   const step = steps[index];
   const selected = step.kind === "order_words" ? tokens.map(token => step.options![token]).join(" ") : answer;
@@ -77,6 +79,20 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
       navigator.sendBeacon("/api/learning-events", new Blob([payload], { type: "application/json" }));
     } else void fetch("/api/learning-events", { method: "POST", headers: { "content-type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
   }; });
+  useEffect(() => {
+    activity.current = () => {
+      if (!sessionId || !receipt) return;
+      void fetch('/api/study', { method: 'POST', headers: { 'content-type': 'application/json' }, keepalive: true,
+        body: JSON.stringify({ action: 'activity', receipt, sequence: ++telemetrySeq.current, activeMs: Math.round(clock.current) }),
+        signal: AbortSignal.timeout(10000) }).catch(() => {});
+    };
+  });
+  useEffect(() => {
+    if (phase !== 'active' || !receipt) return;
+    activity.current();
+    const pulse = window.setInterval(() => { if (!document.hidden) activity.current(); }, 60000);
+    return () => window.clearInterval(pulse);
+  }, [phase, receipt]);
   useLayoutEffect(() => {
     const opener = openerRef?.current ?? document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
@@ -122,12 +138,13 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
     const pause = () => {
       lastTick.current = performance.now(); wasVisible = !document.hidden;
       if (document.hidden) {
+        activity.current();
         tracking.current("abandon");
         if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current, updatedAt: new Date().toISOString() });
       }
     };
     const leaving = () => {
-      tick(); tracking.current("abandon");
+      tick(); activity.current(); tracking.current("abandon");
       if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current, updatedAt: new Date().toISOString() });
     };
     const timer = window.setInterval(tick, 250);
@@ -229,7 +246,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
     if (locked.current || saving) return;
     syncClock(activeClockNow());
     if (latest.current) saveCheckpoint(userId, { ...latest.current, challenge: { ...latest.current.challenge!, activeMs: clock.current }, telemetrySeq: telemetrySeq.current + 1 });
-    tracking.current("abandon"); onClose();
+    activity.current(); tracking.current("abandon"); onClose();
   }
   const remaining = Math.max(0, Math.ceil((challengeLimit(lesson.level) - elapsed) / 1000));
   return <dialog ref={dialog} className={styles.dialog} aria-labelledby="quick-title" onCancel={event => { event.preventDefault(); close(); }}>
@@ -242,6 +259,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
       {phase === "active" && <strong aria-label={localizeAttribute("Questão atual")}>{index + 1}/{steps.length}</strong>}
     </header>
     <div ref={body} className={styles.body} data-step-kind={phase === "active" ? step.kind : "launch"}>
+      {notificationPending && <p className={styles.caption} role="status">{t('Seu lembrete está guardado. Termine ou feche esta prática para abrir.')}</p>}
       {error && <p className={styles.error} role="alert">{supportT(error)}</p>}
       {storageError && <p className={styles.error} role="status">{t("O navegador bloqueou o salvamento. Mantenha esta aba aberta.")}</p>}
       {phase === "choose" ? <div className={styles.launch}>

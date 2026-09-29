@@ -29,7 +29,7 @@ export async function disablePushForCurrentDevice() {
   await subscription.unsubscribe();
 }
 
-export default function PushNotifications({ userId, mascot }: { userId: string; mascot: MascotId }) {
+export default function PushNotifications({ userId, mascot, onEnabled }: { userId: string; mascot: MascotId; onEnabled?: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<PushState>('loading');
   const [publicKey, setPublicKey] = useState('');
@@ -99,6 +99,8 @@ export default function PushNotifications({ userId, mascot }: { userId: string; 
       const subscription = await registration.pushManager.getSubscription() ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: applicationServerKey(publicKey) });
       const response = await fetch('/api/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(subscription.toJSON()) });
       if (!response.ok) throw Error('save');
+      await enableAccountPush();
+      onEnabled?.();
       setState('active');
     } catch { setMessage('Não foi possível ativar agora. Tente novamente.'); }
     finally { setBusy(false); }
@@ -121,4 +123,62 @@ export default function PushNotifications({ userId, mascot }: { userId: string; 
     </div>
     </div>
   </dialog>;
+}
+
+async function enableAccountPush() {
+  const current = await fetch('/api/notifications', { cache: 'no-store' }).then(response => response.json());
+  if (!current.enabled) return;
+  const response = await fetch('/api/notifications', { method: 'PATCH', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ action: 'preferences', revision: current.preferences.revision, patch: { pushEnabled: true } }) });
+  if (!response.ok) throw Error('save');
+}
+
+export function PushDeviceSettings({ pushEnabled, saving, onEnable, onDisable }: {
+  pushEnabled: boolean; saving: boolean; onEnable: () => Promise<boolean>; onDisable: () => Promise<boolean>;
+}) {
+  const [state, setState] = useState<PushState>('loading');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+  const [publicKey, setPublicKey] = useState('');
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) { setState('unavailable'); return; }
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !installed()) { setState('install'); return; }
+      try {
+        const response = await fetch('/api/push', { cache: 'no-store' });
+        const data = await response.json();
+        if (!alive) return;
+        if (!response.ok || !data.available) { setState('unavailable'); return; }
+        setPublicKey(data.publicKey);
+        if (Notification.permission === 'denied') { setState('denied'); return; }
+        const registration = await navigator.serviceWorker.getRegistration('/');
+        const subscription = await registration?.pushManager?.getSubscription();
+        if (alive) setState(subscription && pushEnabled ? 'active' : 'ready');
+      } catch { if (alive) setState('unavailable'); }
+    };
+    void load();return () => { alive = false; };
+  }, [pushEnabled]);
+  async function enable() {
+    setBusy(true);setError(false);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') { setState(permission === 'denied' ? 'denied' : 'ready'); return; }
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription() ?? await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: applicationServerKey(publicKey) });
+      const response = await fetch('/api/push', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(subscription.toJSON()) });
+      if (!response.ok || !await onEnable()) throw Error('save');
+      setState('active');
+    } catch { setError(true); }
+    finally { setBusy(false); }
+  }
+  return <div className="notification-device-settings">
+    {state === 'active' && <><p className="settings-caption">{t('Push ativo neste aparelho.')}</p><button className="secondary-button" disabled={busy || saving} onClick={async () => { setBusy(true);try { if (await onDisable()) { await disablePushForCurrentDevice();setState('ready'); } } catch { setError(true); } finally { setBusy(false); } }}>{t('Desativar push')}</button></>}
+    {state === 'ready' && <button className="secondary-button" disabled={busy || saving} onClick={() => void enable()}><Bell size={18}/>{t(busy ? 'Preparando…' : 'Ativar push neste aparelho')}</button>}
+    {state === 'loading' && <p role="status">{t('Carregando…')}</p>}
+    {state === 'denied' && <p className="settings-caption">{t('Push bloqueado no navegador. Você pode permitir nas configurações do aparelho.')}</p>}
+    {state === 'install' && <p className="settings-caption">{t('No iPhone, adicione o Sparky à Tela de Início e abra pelo ícone para receber notificações.')}</p>}
+    {state === 'unavailable' && <p className="settings-caption">{t('Push indisponível neste aparelho. Os avisos continuam na central.')}</p>}
+    {error && <p role="alert">{t('Não foi possível ativar agora. Tente novamente.')}</p>}
+  </div>;
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparky-public-v13";
+const CACHE_NAME = "sparky-public-v14";
 // Development chunk URLs are reused between edits. Never serve cached app code
 // on localhost; an installed worker must also migrate existing preview caches.
 const LOCAL_PREVIEW = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
@@ -50,12 +50,13 @@ self.addEventListener('push', (event) => {
   const title = typeof payload.title === 'string' ? payload.title.slice(0, 100) : 'Sparky English';
   const body = typeof payload.body === 'string' ? payload.body.slice(0, 180) : 'Hora de praticar inglês.';
   const url = typeof payload.url === 'string' && payload.url.startsWith('/') && !payload.url.startsWith('//') ? payload.url : '/';
+  const notificationId = typeof payload.notificationId === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(payload.notificationId) ? payload.notificationId : null;
   event.waitUntil(self.registration.showNotification(title, {
     body,
     icon: '/icons/sparky-192-v2.png',
     badge: '/icons/sparky-192-v2.png',
-    tag: 'sparky-study-reminder',
-    data: { url },
+    tag: notificationId ? 'sparky-notification-' + notificationId : 'sparky-study-reminder',
+    data: { url, notificationId },
   }));
 });
 
@@ -66,7 +67,22 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil((async () => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     const existing = windows.find(client => new URL(client.url).origin === self.location.origin);
-    if (existing) { await existing.focus(); if (existing.url !== url) await existing.navigate(url); }
+    if (existing) {
+      await existing.focus();
+      const id = event.notification.data?.notificationId;
+      if (id) {
+        // The app acknowledges immediately, even before login. Its lesson modal
+        // and checkpoint remain intact. Older app versions fall back to navigation.
+        const handled = await new Promise(resolve => {
+          const channel = new MessageChannel();
+          const timer = setTimeout(() => { channel.port1.close(); resolve(false); }, 1500);
+          channel.port1.onmessage = message => { clearTimeout(timer); channel.port1.close(); resolve(message.data?.handled === true); };
+          existing.postMessage({ type: 'SPARKY_NOTIFICATION_CLICK', notificationId: id }, [channel.port2]);
+        });
+        if (handled) return;
+      }
+      if (existing.url !== url) await existing.navigate(url);
+    }
     else await self.clients.openWindow(url);
   })());
 });

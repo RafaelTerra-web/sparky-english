@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { readSession, SESSION_COOKIE, sameOrigin, seal, unseal } from "@/lib/auth-session";
-import { gradeAttempt, startStudy, type StudyReceipt } from "@/lib/study";
+import { gradeAttempt, startStudy, validateStudySession, type StudyReceipt } from "@/lib/study";
+import { recordStudyActivity } from "@/lib/notification-store";
 import { accountKey, loadOnboarding } from "@/lib/onboarding-store";
 
 export async function POST(request: Request) {
@@ -16,7 +17,18 @@ export async function POST(request: Request) {
       if (typeof body.lessonId !== "string" || typeof body.review !== "boolean") throw new Error("invalid-attempt");
       const study = startStudy(body.lessonId, body.review);
       const receipt = await seal({ study }, `study:${user.id}`, 8 * 3600);
+      try { await recordStudyActivity(user.id, study, 0, 0); } catch { /* Practice stays available; validated heartbeats retry the summary. */ }
       return NextResponse.json({ receipt, exerciseIds: study.exerciseIds, sessionId: study.sessionId, startedAt: study.startedAt }, { headers: { "cache-control": "private, no-store" } });
+    }
+    if (body?.action === "activity") {
+      if (typeof body.receipt !== "string" || !Number.isSafeInteger(body.sequence) || body.sequence < 1 || body.sequence > 10000000
+        || !Number.isSafeInteger(body.activeMs) || body.activeMs < 0 || body.activeMs > 28800000) throw new Error("invalid-attempt");
+      const proof = await unseal(body.receipt, `study:${user.id}`);
+      if (!proof?.study) throw new Error("study-expired");
+      const study = proof.study as StudyReceipt;
+      validateStudySession(study);
+      await recordStudyActivity(user.id, study, body.sequence, body.activeMs);
+      return NextResponse.json({ ok: true }, { headers: { "cache-control": "private, no-store" } });
     }
     if (!body || typeof body.lessonId !== "string" || typeof body.review !== "boolean" ||
       typeof body.stepId !== "string" || typeof body.answer !== "string" ||
