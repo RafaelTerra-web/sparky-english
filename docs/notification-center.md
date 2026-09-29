@@ -8,7 +8,7 @@ Aplicar `supabase/migrations/20260929000100_notification_center.sql` **antes** d
 
 As quatro tabelas novas têm RLS e acesso exclusivo de `service_role`: preferências, resumos operacionais de sessão, avisos e entregas. Funções usam direitos do invocador e não são executáveis por `public`, `anon` ou `authenticated`. Nenhum nome, e-mail, resposta, áudio, rascunho ou recibo criptografado entra nesses registros.
 
-Preferências dos três tipos começam ativas. O consentimento de envio é importado apenas para contas com assinatura existente. A meta local é importada uma única vez, quando a preferência da conta ainda não existe; alterações posteriores usam revisão para evitar sobrescrita concorrente. Lembretes de meta começam no próximo dia de Brasília. Não se importa tempo local anterior à implantação.
+Preferências dos três tipos começam ativas. O consentimento de envio é importado apenas para contas com assinatura existente; eventuais duplicatas antigas de um mesmo endpoint conservam o proprietário com atualização mais recente. A meta local é importada uma única vez, quando a preferência da conta ainda não existe; alterações posteriores usam revisão para evitar sobrescrita concorrente. Lembretes da meta importada começam no próximo dia de Brasília. Não se importa tempo local anterior à implantação.
 
 O tempo ativo vem do relógio atual da prática, limitado ao tempo decorrido no servidor. Não certifica proficiência nem gera recompensa. A conclusão exige o recibo validado e grava recompensa e resumo na mesma transação. Sessões concluídas são terminais; heartbeats anteriores não as reabrem. Conclusões e revisões da trilha contam na meta como antes; Expedições não acrescentam minutos.
 

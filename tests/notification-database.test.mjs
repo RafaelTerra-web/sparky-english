@@ -6,15 +6,26 @@ const A='a'.repeat(64),B='b'.repeat(64),device='push-sub-'+'c'.repeat(64);
 const copy=JSON.stringify({pt:{title:'Olá',body:'Pratique',action:'Abrir'},en:{title:'Hello',body:'Practice',action:'Open'}});
 const destination=JSON.stringify({view:'today'});
 const migration=readFileSync(new URL('../supabase/migrations/20260929000100_notification_center.sql',import.meta.url),'utf8');
-async function database(){
+async function database(seed=async()=>{}){
   const db=new PGlite();await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;
     create table sparky_account_progress(account_key text primary key,revision bigint default 0,state jsonb,updated_at timestamptz default now());
     create table sparky_media_progress(account_key text,track_id text,revision bigint,state jsonb,updated_at timestamptz,primary key(account_key,track_id));
     grant select,insert,update on sparky_account_progress to service_role;
     grant select,insert,update,delete on sparky_media_progress to service_role;`);
-  await db.exec(migration);return db;
+  await seed(db);await db.exec(migration);return db;
 }
 const create=(db,account,kind='daily-goal',day='2026-09-29')=>db.query(`select * from sparky_notification_create($1,$2,$3::date,$4::jsonb,$5::jsonb,null)`,[account,kind,day,copy,destination]);
+test('SQL migration: an old endpoint belongs to only its latest account',async()=>{
+  const db=await database(async db=>{
+    for(const [account,age] of [[A,'2 days'],[B,'1 day']]) await db.query(`insert into sparky_media_progress(account_key,track_id,revision,state,updated_at)
+      values($1,$2,1,'{"kind":"push-subscription-v1"}'::jsonb,now()-$3::interval)`,[account,device,age]);
+  });try{
+    const owners=(await db.query('select account_key from sparky_media_progress where track_id=$1',[device])).rows;
+    assert.deepEqual(owners.map(row=>row.account_key),[B]);
+    const preferences=(await db.query('select account_key,push_enabled from sparky_notification_preferences')).rows;
+    assert.deepEqual(preferences.map(row=>[row.account_key,row.push_enabled]),[[B,true]]);
+  }finally{await db.close();}
+});
 test('SQL migration: account isolation, full snapshot read and concurrent arrivals',async()=>{
   const db=await database();try{
     await db.query('select sparky_notification_init($1),sparky_notification_init($2)',[A,B]);
@@ -58,6 +69,12 @@ test('SQL migration: goal import, CAS, terminal sessions and atomic reward compl
     await db.query('select sparky_notification_init($1)',[A]);
     let row=(await db.query(`select * from sparky_notification_preferences_update($1,0,'{"goalMinutes":15}'::jsonb,true)`,[A])).rows[0];
     assert.equal(row.goal_minutes,15);assert.ok(row.goal_start_day);
+    const days=(await db.query(`select (now() at time zone 'America/Sao_Paulo')::date::text as today,
+      ((now() at time zone 'America/Sao_Paulo')::date+1)::text as tomorrow`)).rows[0];
+    assert.equal(new Date(row.goal_start_day).toISOString().slice(0,10),days.tomorrow);
+    await db.query('select sparky_notification_init($1)',[B]);
+    const fresh=(await db.query(`select * from sparky_notification_preferences_update($1,0,'{"goalMinutes":10}'::jsonb,false)`,[B])).rows[0];
+    assert.equal(new Date(fresh.goal_start_day).toISOString().slice(0,10),days.today);
     row=(await db.query(`select * from sparky_notification_preferences_update($1,0,'{"goalMinutes":5}'::jsonb,true)`,[A])).rows[0];assert.equal(row.goal_minutes,15);
     await assert.rejects(db.query(`select * from sparky_notification_preferences_update($1,0,'{"review":false}'::jsonb,false)`,[A]),/preferences-conflict/);
     const id='00000000-0000-0000-0000-000000000001',start=new Date(Date.now()-120000).toISOString();

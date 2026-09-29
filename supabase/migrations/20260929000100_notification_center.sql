@@ -50,6 +50,19 @@ create table public.sparky_notification_deliveries (
   primary key (notification_id,device_id)
 );
 
+-- A legacy registration could race across accounts. Keep the most recently
+-- updated owner before importing consent, so one endpoint never receives two
+-- accounts' reminders.
+with ranked as (
+  select account_key,track_id,row_number() over (
+    partition by track_id order by updated_at desc nulls last,account_key desc
+  ) as position
+  from public.sparky_media_progress
+  where track_id like 'push-sub-%' and state->>'kind'='push-subscription-v1'
+)
+delete from public.sparky_media_progress as subscription using ranked
+where subscription.account_key=ranked.account_key and subscription.track_id=ranked.track_id and ranked.position>1;
+
 -- Import only existing consent. Goal/time cannot be inferred from old push rows.
 insert into public.sparky_notification_preferences(account_key,push_enabled)
 select distinct account_key,true from public.sparky_media_progress
@@ -89,7 +102,7 @@ begin
   if not p_import and v_row.revision<>p_revision then raise exception 'preferences-conflict'; end if;
   update sparky_notification_preferences set
     goal_minutes=case when p_patch ? 'goalMinutes' then (p_patch->>'goalMinutes')::integer else goal_minutes end,
-    goal_start_day=case when goal_minutes is null and p_patch ? 'goalMinutes' then (now() at time zone 'America/Sao_Paulo')::date+1 else goal_start_day end,
+    goal_start_day=case when goal_minutes is null and p_patch ? 'goalMinutes' then (now() at time zone 'America/Sao_Paulo')::date+case when p_import then 1 else 0 end else goal_start_day end,
     push_enabled=coalesce((p_patch->>'pushEnabled')::boolean,push_enabled),
     review=coalesce((p_patch->>'review')::boolean,review),
     resume=coalesce((p_patch->>'resume')::boolean,resume),
