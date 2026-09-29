@@ -148,25 +148,13 @@
 html[data-palette] .workspace-header .wallet-chip { background:var(--surface-soft); border:1px solid var(--line); border-radius:999px; }
 .workspace-header .wallet-chip > svg { display:block; }
 
-/* Return Sparky to his original spot beside the wordmark. Only the portrait moves. */
-.workspace-header .brand-mark { flex:none; overflow:hidden; }
-.workspace-header .brand-mark img { display:block; width:100%; height:100%; object-fit:cover; transform-origin:50% 75%; animation:island-sparky-wave 3.4s ease-in-out infinite; }
-@keyframes island-sparky-wave {
-  0%, 12%, 100% { transform:none; }
-  28% { transform:translateY(-2px) rotate(-5deg); }
-  45% { transform:translateY(0) rotate(3deg); }
-  59% { transform:none; }
-}
+/* The island wordmark keeps the reference's left-aligned text stack. */
+.workspace-header .mobile-brand .brand { gap:0; text-align:left; }
 @media(max-width:700px) {
-  .workspace-header .mobile-brand .brand { gap:11px; font-size:20px; }
-  .workspace-header .mobile-brand .brand-english { font-size:12px; letter-spacing:2.3px; }
   .quick-today .next-lesson { padding-bottom:104px; }
   .quick-today .next-lesson > .mascot-figure { top:auto; bottom:10px; right:50%; width:88px; transform:translateX(50%); }
 }
 @media(max-width:380px) {
-  .workspace-header .mobile-brand .brand { gap:6px; font-size:17px; }
-  .workspace-header .mobile-brand .brand-mark { width:32px; height:32px; }
-  .workspace-header .mobile-brand .brand-english { font-size:10px; letter-spacing:1.4px; }
   .quick-today .next-lesson { padding-bottom:96px; }
   .quick-today .next-lesson > .mascot-figure { width:76px; bottom:9px; }
 }
@@ -188,7 +176,6 @@ html[data-palette] .workspace-header .wallet-chip { background:var(--surface-sof
   .quick-today .next-lesson > .mascot-figure { width:54px; bottom:7px; }
   .quick-today .lesson-card-topline .streak-badge { height:36px; min-width:36px; }
 }
-@media(prefers-reduced-motion:reduce) { .workspace-header .brand-mark img { animation:none; } }
 
 /* The next lesson leads; daily progress is a quiet line below its action. */
 .quick-today .lesson-quick-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; font-size:14px; }

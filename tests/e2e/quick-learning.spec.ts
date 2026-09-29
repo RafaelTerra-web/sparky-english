@@ -350,7 +350,7 @@ test("compact island uses a gem balance and opens grouped settings instead of to
  await prepare(page);
  const header=page.locator(".workspace-header");
  await expect(header.getByRole("button")).toHaveCount(2);
- await expect(header.locator(".brand-mark")).toHaveCount(1);
+ await expect(header.locator(".brand-mark")).toHaveCount(0);
  await expect(header.locator(".streak-badge")).toHaveCount(0);
  const streakToast=page.locator(".streak-celebration");
  if(await streakToast.isVisible()) {
