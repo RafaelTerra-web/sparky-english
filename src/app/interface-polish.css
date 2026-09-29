@@ -147,3 +147,61 @@
 /* Restore the gem hidden by legacy compact-header rules. */
 html[data-palette] .workspace-header .wallet-chip { background:var(--surface-soft); border:1px solid var(--line); border-radius:999px; }
 .workspace-header .wallet-chip > svg { display:block; }
+
+/* Return Sparky to his original spot beside the wordmark. Only the portrait moves. */
+.workspace-header .brand-mark { flex:none; overflow:hidden; }
+.workspace-header .brand-mark img { display:block; width:100%; height:100%; object-fit:cover; transform-origin:50% 75%; animation:island-sparky-wave 3.4s ease-in-out infinite; }
+@keyframes island-sparky-wave {
+  0%, 12%, 100% { transform:none; }
+  28% { transform:translateY(-2px) rotate(-5deg); }
+  45% { transform:translateY(0) rotate(3deg); }
+  59% { transform:none; }
+}
+@media(max-width:700px) {
+  .workspace-header .mobile-brand .brand { gap:11px; font-size:20px; }
+  .workspace-header .mobile-brand .brand-english { font-size:12px; letter-spacing:2.3px; }
+  .quick-today .next-lesson { padding-bottom:104px; }
+  .quick-today .next-lesson > .mascot-figure { top:auto; bottom:10px; right:50%; width:88px; transform:translateX(50%); }
+}
+@media(max-width:380px) {
+  .workspace-header .mobile-brand .brand { gap:6px; font-size:17px; }
+  .workspace-header .mobile-brand .brand-mark { width:32px; height:32px; }
+  .workspace-header .mobile-brand .brand-english { font-size:10px; letter-spacing:1.4px; }
+  .quick-today .next-lesson { padding-bottom:96px; }
+  .quick-today .next-lesson > .mascot-figure { width:76px; bottom:9px; }
+}
+@media(max-width:700px) and (max-height:720px) {
+  .workspace { padding-top:12px; }
+  .quick-today { gap:11px; }
+  .quick-today .page-heading { margin-top:16px; margin-bottom:12px; }
+  .quick-today .next-lesson { padding-top:18px; padding-bottom:78px; }
+  .quick-today .next-lesson h2 { margin-top:16px; }
+  .quick-today .lesson-copy > p { margin:8px 0 14px; }
+  .quick-today .next-lesson > .mascot-figure { width:62px; bottom:8px; }
+}
+@media(max-width:700px) and (max-height:660px) {
+  .quick-today { gap:8px; }
+  .quick-today .page-heading { margin-top:12px; }
+  .quick-today .next-lesson { padding-bottom:67px; }
+  .quick-today .next-lesson h2 { font-size:22px; }
+  .quick-today .next-lesson .cream-button { min-height:46px; }
+  .quick-today .next-lesson > .mascot-figure { width:54px; bottom:7px; }
+  .quick-today .lesson-card-topline .streak-badge { height:36px; min-width:36px; }
+}
+@media(prefers-reduced-motion:reduce) { .workspace-header .brand-mark img { animation:none; } }
+
+/* The next lesson leads; daily progress is a quiet line below its action. */
+.quick-today .lesson-quick-meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; font-size:14px; }
+.lesson-quick-meta > span { display:inline-flex; align-items:center; gap:5px; }
+.lesson-quick-meta > span + span { padding-left:14px; border-left:1px solid color-mix(in srgb,var(--hero-muted) 30%,transparent); }
+.lesson-daily-goal { display:grid; grid-template-columns:1fr auto; gap:6px 12px; width:100%; max-width:360px; margin-top:18px; font-size:12px; line-height:1.4; color:var(--hero-muted); font-variant-numeric:tabular-nums; }
+html[data-palette] .lesson-daily-goal progress { grid-column:1/-1; appearance:none; display:block; width:100%; height:4px; border:0; border-radius:999px; overflow:hidden; background:color-mix(in srgb,var(--hero-text) 12%,transparent); color:var(--primary); }
+html[data-palette] .lesson-daily-goal progress::-webkit-progress-bar { background:color-mix(in srgb,var(--hero-text) 12%,transparent); border-radius:999px; }
+html[data-palette] .lesson-daily-goal progress::-webkit-progress-value { background:var(--primary); border-radius:999px; }
+html[data-palette] .lesson-daily-goal progress::-moz-progress-bar { background:var(--primary); border-radius:999px; }
+@media(max-width:700px) { .lesson-daily-goal { max-width:none; margin-top:16px; } }
+@media(forced-colors:active) { html[data-palette] .lesson-daily-goal progress { appearance:auto; } }
+
+.workspace-header .wallet-chip { gap:6px; padding-inline:9px; }
+.workspace-header .wallet-chip strong { display:inline-flex; align-items:center; justify-content:center; min-width:2.3ch; min-height:1.5em; text-align:center; font-family:var(--font-currency),var(--font-geist-sans),sans-serif; font-size:19px; font-weight:600; line-height:1; letter-spacing:.015em; }
+@media(max-width:380px) { .workspace-header .wallet-chip strong { font-size:17px; } }

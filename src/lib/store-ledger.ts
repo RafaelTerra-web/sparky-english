@@ -12,4 +12,5 @@ export const storeLedger = [
   "accessory-amber-readers-v4", "accessory-round-readers-v4", "accessory-sunglasses-v4", "accessory-science-visor-v4",
   "accessory-study-scarf-v4", "accessory-debate-bow-v4", "accessory-constellation-v4", "accessory-language-lanyard-v4",
   "accessory-explorer-satchel-v4", "accessory-compact-backpack-v4", "accessory-book-tote-v4", "accessory-rocket-pack-v4",
+  "expedition-suitcase", "expedition-london", "case-signal",
 ] as const;

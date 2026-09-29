@@ -117,8 +117,8 @@ test("a failed connection and reload keep current selection and exercise sequenc
  await page.unroute("**/api/study");
  const before=await page.evaluate(userId=>JSON.parse(localStorage.getItem("sparky-learning:"+userId)!).checkpoints,userId);
  await page.reload();
- await expect(page.locator(".next-lesson button")).toContainText("Continuar de onde parei");
- await page.locator(".next-lesson button").click();
+ await expect(page.locator(".next-lesson .lesson-start-button")).toContainText("Continuar de onde parei");
+ await page.locator(".next-lesson .lesson-start-button").click();
  await expect(dialog(page).getByRole("button",{name:new RegExp(step.answer!)})).toHaveAttribute("aria-pressed","true");
  const after=await page.evaluate(userId=>JSON.parse(localStorage.getItem("sparky-learning:"+userId)!).checkpoints,userId);
  expect((Object.values(after)[0] as {answer:string}).answer).toEqual((Object.values(before)[0] as {answer:string}).answer);
@@ -127,7 +127,7 @@ test("a failed connection and reload keep current selection and exercise sequenc
  await expect(dialog(page).getByText("2/6",{exact:true})).toBeVisible();
  await dialog(page).getByRole("group",{name:"Banco de palavras"}).getByRole("button").first().click();
  await dialog(page).getByRole("button",{name:"Fechar lição",exact:true}).click();
- await page.locator(".next-lesson button").click();
+ await page.locator(".next-lesson .lesson-start-button").click();
  await expect(dialog(page).getByRole("group",{name:"Frase montada"}).getByRole("button")).toHaveCount(1);
 });
 
@@ -292,6 +292,21 @@ test("new release waits for the question, offers a centered choice and respects 
  await expect(update).toHaveCount(0);
 });
 
+test("an open login screen also receives the release update",async({page})=>{
+ await page.clock.install();
+ await page.addInitScript(()=>localStorage.setItem("sparky-opening-seen-v4","1"));
+ await page.route("**/api/session",route=>route.fulfill({json:{authenticated:false}}));
+ await page.goto("/");
+ await expect(page.getByRole("heading",{name:"Entre para estudar"})).toBeVisible();
+ await page.route("**/api/release?**",route=>route.fulfill({json:{version:"new-login-release"}}));
+ await page.clock.fastForward(61000);
+ await page.evaluate(()=>window.dispatchEvent(new Event("online")));
+ const update=page.locator("[data-release-update]");
+ await expect(update).toBeVisible();
+ await update.getByRole("button",{name:"Mais tarde"}).click();
+ await expect(update).toHaveCount(0);
+});
+
 test("expired evidence restarts without granting a reward",async({page})=>{
  await prepare(page);
  const lesson=lessons.find(l=>l.id==="a1-identidade-01")!;
@@ -303,7 +318,7 @@ test("expired evidence restarts without granting a reward",async({page})=>{
   localStorage.setItem(key,JSON.stringify(workspace));
  },{userId,lessonId:lesson.id});
  await page.reload();
- await page.locator(".next-lesson button").click();
+ await page.locator(".next-lesson .lesson-start-button").click();
  await dialog(page).getByRole("button",{name:new RegExp(lesson.exercises![0].answer!)}).click();
  await dialog(page).getByRole("button",{name:"Verificar",exact:true}).click();
  await expect(dialog(page).getByRole("alert")).toContainText("A sessão expirou.");
@@ -335,7 +350,8 @@ test("compact island uses a gem balance and opens grouped settings instead of to
  await prepare(page);
  const header=page.locator(".workspace-header");
  await expect(header.getByRole("button")).toHaveCount(2);
- await expect(header.locator(".brand-mark,.streak-badge")).toHaveCount(0);
+ await expect(header.locator(".brand-mark")).toHaveCount(1);
+ await expect(header.locator(".streak-badge")).toHaveCount(0);
  const streakToast=page.locator(".streak-celebration");
  if(await streakToast.isVisible()) {
   const toastBox=await streakToast.boundingBox(),headerBox=await header.boundingBox();
@@ -349,6 +365,15 @@ test("compact island uses a gem balance and opens grouped settings instead of to
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  const lessonStreak=page.locator(".next-lesson .streak-badge");
  await expect(lessonStreak).toBeVisible();
+ await expect(page.locator(".daily-strip")).toHaveCount(0);
+ const dailyGoal=page.locator(".next-lesson .lesson-daily-goal");
+ await expect(dailyGoal).toBeVisible();
+ await expect(dailyGoal.getByRole("progressbar",{name:"Progresso da meta diária",exact:true})).toHaveAttribute("aria-valuetext",/\d+ de 10 min/);
+ expect((await dailyGoal.boundingBox())!.height).toBeLessThan(40);
+ await expect(page.locator(".next-lesson .lesson-quick-meta")).toContainText("2–4 min");
+ const cardBox=await page.locator(".next-lesson").boundingBox(),mascotBox=await page.locator(".next-lesson > .mascot-figure").boundingBox(),navBox=await page.locator(".mobile-nav").boundingBox();
+ expect(cardBox!.y+cardBox!.height).toBeLessThanOrEqual(navBox!.y);
+ expect(mascotBox!.y+mascotBox!.height).toBeLessThanOrEqual(navBox!.y);
  const flame=await lessonStreak.locator(".streak-flame img").boundingBox();
  expect(flame!.width).toBeLessThan(25);
  await expect(lessonStreak.locator("source")).toHaveAttribute("srcset","/motion/streak-flame-loop.webp");
@@ -365,6 +390,7 @@ test("compact island uses a gem balance and opens grouped settings instead of to
  expect(walletBox!.x).toBeGreaterThanOrEqual(brandBox!.x+brandBox!.width-1);
  expect(gearBox!.x).toBeGreaterThanOrEqual(walletBox!.x+walletBox!.width-1);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:info.outputPath("compact-wallet-455.png"),animations:"disabled"});
  await header.getByRole("button",{name:"Abrir configurações",exact:true}).click();
  await expect(page.getByRole("heading",{name:"Configurações",exact:true})).toBeVisible();
  await expect(page.locator(".settings-card")).toHaveCount(5);
@@ -378,11 +404,12 @@ test("compact island uses a gem balance and opens grouped settings instead of to
  await page.screenshot({path:info.outputPath("settings-dark.png"),animations:"disabled"});
  await page.locator(".mobile-nav").getByRole("button",{name:"Hoje",exact:true}).click();
  await expect(page.locator("html")).toHaveAttribute("data-theme","dark");
- await expect(page.locator(".daily-strip")).toContainText("/15");
+ await expect(page.locator(".next-lesson .lesson-daily-goal")).toContainText("/15");
 });
 
 test("settings and update choices remain translated in English",async({page})=>{
  await prepare(page,"en");
+ await expect(page.locator(".next-lesson").getByRole("progressbar",{name:"Daily goal progress",exact:true})).toBeVisible();
  await page.getByRole("button",{name:"Open settings",exact:true}).click();
  await expect(page.getByRole("heading",{name:"Settings",exact:true})).toBeVisible();
  await expect(page.getByRole("heading",{name:"Study routine",exact:true})).toBeVisible();
@@ -395,4 +422,20 @@ test("settings and update choices remain translated in English",async({page})=>{
  await expect(update.getByRole("button",{name:"Later",exact:true})).toBeVisible();
  await update.getByRole("button",{name:"Later",exact:true}).click();
  await expect(update).toHaveCount(0);
+});
+
+test("a long advanced recommendation fits Android with a quiet daily goal",async({page},info)=>{
+ await page.route("**/api/onboarding",r=>r.fulfill({json:{enabled:true,profile:{name:"Rafael",age:20,mascot:"sparky",level:"C1",levelMethod:"self-assessment",onboardingCompleted:true,namePronunciationStatus:"text-only"},draft:null,revision:1,placement:null}}));
+ await prepare(page);
+ await expect(page.locator(".next-lesson .lesson-label")).toContainText("C1");
+ for(const viewport of [{width:320,height:640},{width:360,height:800},{width:393,height:873}]) {
+  await page.setViewportSize(viewport);
+  const card=page.locator(".next-lesson");
+  await expect(card.locator(".lesson-start-button")).toBeInViewport({ratio:1});
+  const cardBox=await card.boundingBox(),mascotBox=await card.locator(".mascot-figure").boundingBox(),navBox=await page.locator(".mobile-nav").boundingBox();
+  expect(cardBox!.y+cardBox!.height).toBeLessThanOrEqual(navBox!.y);
+  expect(mascotBox!.y+mascotBox!.height).toBeLessThanOrEqual(navBox!.y);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:info.outputPath(`today-C1-${viewport.width}.png`),animations:"disabled"});
+ }
 });

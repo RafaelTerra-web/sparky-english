@@ -1,7 +1,8 @@
 # Sparky Economy
 
-**Status: plano para implementação futura. Nenhuma funcionalidade é implementada por este documento.**  
-Registrado em 28 de setembro de 2026.
+**Status: piloto inicial implementado.** Este documento preserva o plano e as hipóteses originais; a oferta entregue, a operação e as limitações do piloto estão em [sparky-economy-pilot.md](sparky-economy-pilot.md). Expansão e ajustes de preços continuam sujeitos a dados reais.
+
+Registrado em 28 de setembro de 2026; piloto inicial implementado em 29 de setembro de 2026.
 
 ## 1. Como usar este plano
 
@@ -224,7 +225,7 @@ IA não é requisito do primeiro piloto. Uma etapa futura pode auxiliar autoria 
 
 ## 11. Integração e compatibilidade futura
 
-Esta seção orienta a futura implementação; não autoriza alterações agora.
+Esta seção orienta a compatibilidade da implementação e de futuras expansões.
 
 - Reaproveitar o saldo e a identidade da conta existentes; não criar uma segunda moeda sem necessidade.
 - Preservar saldos, histórico, compras, roupas e conteúdo adquirido. Definir explicitamente a compatibilidade dos três pacotes atuais.

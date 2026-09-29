@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SparkyApp from "./sparky-app";
 import OpeningScene from "./opening-scene";
+import { ReleaseRefresh } from "./release-refresh";
 
 const OPENING_SEEN_KEY = "sparky-opening-seen-v4";
 const MINIMUM_OPENING_MS = 850;
@@ -63,6 +64,7 @@ export default function OpeningGate() {
     <>
       <SparkyApp onReady={onReady} />
       {visible && <OpeningScene leaving={leaving} />}
+      {!visible && <ReleaseRefresh />}
     </>
   );
 }

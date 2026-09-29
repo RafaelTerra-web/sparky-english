@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { normalizeRewardState, type RewardState } from "./rewards";
+import { normalizeRewardState, rewardStateNeedsMigration, type RewardState } from "./rewards";
 
 function database() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -26,7 +26,7 @@ export async function loadRewards(userId: string, legacy: RewardState) {
   if (result.error || !result.data) throw new Error("progress-unavailable");
   let state = normalizeRewardState(result.data.state);
   let revision = result.data.revision as number;
-  if (JSON.stringify(result.data.state) !== JSON.stringify(state)) {
+  if (rewardStateNeedsMigration(result.data.state, state)) {
     const migrated = await db.from("sparky_account_progress")
       .update({ state, revision: revision + 1, updated_at: new Date().toISOString() })
       .eq("account_key", key).eq("revision", revision).select("revision").maybeSingle();
@@ -37,7 +37,7 @@ export async function loadRewards(userId: string, legacy: RewardState) {
       if (result.error || !result.data) throw new Error("progress-unavailable");
       state = normalizeRewardState(result.data.state);
       revision = result.data.revision as number;
-      if (JSON.stringify(result.data.state) !== JSON.stringify(state)) {
+      if (rewardStateNeedsMigration(result.data.state, state)) {
         const retried = await db.from("sparky_account_progress")
           .update({ state, revision: revision + 1, updated_at: new Date().toISOString() })
           .eq("account_key", key).eq("revision", revision).select("revision").maybeSingle();

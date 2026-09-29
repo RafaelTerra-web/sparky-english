@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { OPENING_MASCOT_KEY } from "@/lib/opening-mascot";
-import { Geist, Geist_Mono, Space_Grotesk, Chakra_Petch } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk, Chakra_Petch, Fredoka } from "next/font/google";
 import "./globals.css";
 import "./course.css";
 import "./learning.css";
@@ -16,6 +16,7 @@ import "./opening.css";
 import "./lesson-delight.css";
 import "./quick-journey.css";
 import "./interface-polish.css";
+import "./expeditions.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,7 @@ const geistMono = Geist_Mono({
 
 const musicGrotesk = Space_Grotesk({ variable: '--font-music-grotesk', subsets: ['latin'], preload: false });
 const musicCyberpunk = Chakra_Petch({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
+const currencyFont = Fredoka({ variable: '--font-currency', subsets: ['latin'], weight: '600', display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -64,7 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${musicGrotesk.variable} ${musicCyberpunk.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${musicGrotesk.variable} ${musicCyberpunk.variable} ${currencyFont.variable}`}
     >
       <head>
         <script
