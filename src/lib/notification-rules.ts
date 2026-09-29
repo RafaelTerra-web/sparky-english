@@ -33,16 +33,16 @@ export function reminderDestination(kind: NotificationKind, context: ReminderCon
 }
 export const reminderCopy: Record<NotificationKind,{ pt: NotificationCopy; en: NotificationCopy }> = {
   review: {
-    pt: { title: 'Uma revisão rápida?', body: 'Suas revisões estão prontas. Reforce o que você aprendeu.', action: 'Ver revisões' },
-    en: { title: 'Time for a quick review?', body: 'Your reviews are ready. Strengthen what you learned.', action: 'See reviews' },
+    pt: { title: 'Sparky embaralhou as cartas 👀', body: 'Suas revisões estão prontas. Bora mostrar que você lembra?', action: 'Ver revisões' },
+    en: { title: 'Sparky shuffled the cards 👀', body: 'Your reviews are ready. Show him what you remember!', action: 'See reviews' },
   },
   resume: {
-    pt: { title: 'Vamos continuar?', body: 'Sua lição ficou esperando. Volte ao seu próximo passo.', action: 'Retomar lição' },
-    en: { title: 'Shall we continue?', body: 'Your lesson is waiting. Return to your next step.', action: 'Resume lesson' },
+    pt: { title: 'O livro ficou aberto na sua página 📖', body: 'Sua lição está guardadinha. Vamos continuar de onde parou?', action: 'Retomar lição' },
+    en: { title: 'Your book is still open 📖', body: 'Your lesson is saved. Pick up right where you left off?', action: 'Resume lesson' },
   },
   'daily-goal': {
-    pt: { title: 'Um pouco de inglês hoje', body: 'Ainda dá tempo de avançar na sua meta diária.', action: 'Praticar agora' },
-    en: { title: 'A little English today', body: 'There is still time to move toward your daily goal.', action: 'Practice now' },
+    pt: { title: 'A barrinha quer um empurrãozinho ✨', body: 'Sua meta de hoje ainda pode crescer. Topa uma prática rápida?', action: 'Praticar agora' },
+    en: { title: 'Your progress bar wants a boost ✨', body: 'There is still room to grow today. Up for a quick practice?', action: 'Practice now' },
   },
 };
 // Only explicit provider rejections are retryable. A missing response is uncertain.

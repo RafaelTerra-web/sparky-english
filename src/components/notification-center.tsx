@@ -1,9 +1,10 @@
 'use client';
+import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Bell, BellRing, X, RotateCcw, Play, Target, ChevronRight } from 'lucide-react';
+import { Bell, BellRing, X, ChevronRight } from 'lucide-react';
 import { t, localizeAttribute, getInterfaceLocale } from '@/lib/interface-language';
 import { readWorkspace, updateWorkspace } from '@/lib/learning-local';
-import { unreadLabel, validNotificationId, type InboxPage, type InboxNotification, type NotificationDestination, type NotificationPreferences } from '@/lib/notifications-shared';
+import { notificationArtwork, unreadLabel, validNotificationId, type InboxPage, type InboxNotification, type NotificationDestination, type NotificationPreferences } from '@/lib/notifications-shared';
 import { PushDeviceSettings } from './push-notifications';
 import { useScrollLock } from '@/lib/use-scroll-lock';
 import styles from './notification-center.module.css';
@@ -181,7 +182,6 @@ export function NotificationBell({center}:{center:Center}) {
     {center.unread>0 && <span className={styles.badge} aria-hidden="true">{unreadLabel(center.unread)}</span>}
   </button>;
 }
-const kindIcon={review:RotateCcw,resume:Play,'daily-goal':Target};
 export function NotificationPanel({center,locale}:{center:Center;locale:'pt'|'en'}) {
   const dialog=useRef<HTMLDialogElement>(null);
   useScrollLock(center.open);
@@ -199,9 +199,9 @@ export function NotificationPanel({center,locale}:{center:Center;locale:'pt'|'en
         const date=new Intl.DateTimeFormat(getInterfaceLocale(),{day:'numeric',month:'long',timeZone:'America/Sao_Paulo'}).format(new Date(item.createdAt));
         const previous=center.items[index-1];
         const heading=!previous || date!==new Intl.DateTimeFormat(getInterfaceLocale(),{day:'numeric',month:'long',timeZone:'America/Sao_Paulo'}).format(new Date(previous.createdAt));
-        const Icon=kindIcon[item.kind],copy=item.content[locale];
+        const copy=item.content[locale];
         return <div key={item.id}>{heading&&<h3 className={styles.date}>{date}</h3>}<article className={styles.item}>
-          <span className={styles.type} aria-hidden="true"><Icon size={19}/></span><div><h4>{copy.title}</h4><p>{copy.body}</p><time dateTime={item.createdAt}>{new Intl.DateTimeFormat(getInterfaceLocale(),{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}).format(new Date(item.createdAt))}</time><button className={styles.action} type="button" onClick={()=>void center.launch(item.id)}>{copy.action}<ChevronRight size={16}/></button></div>
+          <span className={styles.type} aria-hidden="true"><Image src={notificationArtwork[item.kind]} alt="" width={64} height={64} unoptimized /></span><div><h4>{copy.title}</h4><p>{copy.body}</p><time dateTime={item.createdAt}>{new Intl.DateTimeFormat(getInterfaceLocale(),{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}).format(new Date(item.createdAt))}</time><button className={styles.action} type="button" onClick={()=>void center.launch(item.id)}>{copy.action}<ChevronRight size={16}/></button></div>
         </article></div>;
       })}
       {center.loading&&<p className={styles.state} role="status">{t('Carregando…')}</p>}

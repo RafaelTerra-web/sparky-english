@@ -51,9 +51,16 @@ self.addEventListener('push', (event) => {
   const body = typeof payload.body === 'string' ? payload.body.slice(0, 180) : 'Hora de praticar inglês.';
   const url = typeof payload.url === 'string' && payload.url.startsWith('/') && !payload.url.startsWith('//') ? payload.url : '/';
   const notificationId = typeof payload.notificationId === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(payload.notificationId) ? payload.notificationId : null;
+  const artwork = {
+    review: '/notifications/review.webp',
+    resume: '/notifications/resume.webp',
+    'daily-goal': '/notifications/daily-goal.webp',
+  };
+  const image = Object.hasOwn(artwork, payload.kind) ? artwork[payload.kind] : '/icons/sparky-192-v2.png';
   event.waitUntil(self.registration.showNotification(title, {
     body,
-    icon: '/icons/sparky-192-v2.png',
+    icon: image,
+    image,
     badge: '/icons/sparky-192-v2.png',
     tag: notificationId ? 'sparky-notification-' + notificationId : 'sparky-study-reminder',
     data: { url, notificationId },

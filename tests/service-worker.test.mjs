@@ -29,10 +29,12 @@ test('worker never serves app bundles from its cache and displays visible push',
   assert.equal(calls[0].options.cache, 'no-store');
 
   let pending;
-  handlers.get('push')({ data: { json: () => ({ title: 'Sparky', body: 'Pratique hoje', url: '/' }) }, waitUntil: value => { pending = value; } });
+  handlers.get('push')({ data: { json: () => ({ title: 'Sparky', body: 'Pratique hoje', url: '/', kind: 'review' }) }, waitUntil: value => { pending = value; } });
   await pending;
   assert.equal(notifications[0].title, 'Sparky');
   assert.equal(notifications[0].options.body, 'Pratique hoje');
+  assert.equal(notifications[0].options.icon, '/notifications/review.webp');
+  assert.equal(notifications[0].options.image, '/notifications/review.webp');
 });
 
 test('worker refreshes shell assets online and falls back to the last copy offline', async () => {
