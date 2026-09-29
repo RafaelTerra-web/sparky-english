@@ -1,6 +1,8 @@
 import { lessonLedger, moduleLedger } from "./content/ledger.ts";
+import { isDeepStrictEqual } from "node:util";
 import { lessons, modules } from "./curriculum.ts";
 import { storeLedger } from "./store-ledger.ts";
+import { getExpeditionOffer, getOfferForEpisode, expeditionFamilies, type ExpeditionFamily } from "./expeditions-catalog.ts";
 import {
   cosmeticCatalog,
   cosmeticSlots,
@@ -15,8 +17,32 @@ import {
   type PublicRewardState,
 } from "./rewards-shared.ts";
 
+export type ExpeditionReceipt = {
+  itemId: string;
+  price: number;
+  offerVersion: string;
+  purchasedAt: string;
+  receiptId: string;
+};
+
+export type ExpeditionSession = {
+  sessionId: string;
+  episodeId: string;
+  family: ExpeditionFamily;
+  decisionId: string | null;
+  applicationCorrect: boolean;
+  transferCorrect: boolean;
+  independent: boolean;
+  completedAt: string | null;
+  reviewDueAt: string | null;
+  reviewConfirmedAt: string | null;
+  reviewAttempted: boolean;
+  reviewStage: 0 | 1 | 2;
+  satisfaction: "yes" | "no" | null;
+};
+
 export type RewardState = {
-  version: 5;
+  version: 6;
   wardrobeVersion: 3;
   wardrobeRefund: number;
   sceneRefund: number;
@@ -35,6 +61,9 @@ export type RewardState = {
   ownedBits: string;
   mascot: MascotId;
   equipped: EquippedItems;
+  expeditionGoalId: string | null;
+  expeditionReceipts: ExpeditionReceipt[];
+  expeditionSessions: ExpeditionSession[];
 };
 
 
@@ -45,7 +74,7 @@ const blankBits = (size: number) => Buffer.alloc(size).toString("base64url");
 
 export function emptyRewardState(): RewardState {
   return {
-    version: 5,
+    version: 6,
     wardrobeVersion: 3,
     wardrobeRefund: 0,
     sceneRefund: 0,
@@ -64,6 +93,9 @@ export function emptyRewardState(): RewardState {
     ownedBits: blankBits(storeBytes),
     mascot: "sparky",
     equipped: { sparky: {}, pinky: {} },
+    expeditionGoalId: null,
+    expeditionReceipts: [],
+    expeditionSessions: [],
   };
 }
 
@@ -110,8 +142,8 @@ export function normalizeRewardState(input: unknown): RewardState {
     owned?: unknown[];
     equipped?: Record<string, Record<string, string>>;
   };
-  if (raw.version !== 1 && raw.version !== 3 && raw.version !== 4 && raw.version !== 5) return blank;
-  const ownedBits = raw.version === 3 || raw.version === 4 || raw.version === 5
+  if (raw.version !== 1 && raw.version !== 3 && raw.version !== 4 && raw.version !== 5 && raw.version !== 6) return blank;
+  const ownedBits = raw.version === 3 || raw.version === 4 || raw.version === 5 || raw.version === 6
     ? decodeBits(raw.ownedBits, storeBytes)
     : Buffer.alloc(storeBytes);
   if (raw.version === 1 && Array.isArray(raw.owned)) {
@@ -135,7 +167,7 @@ export function normalizeRewardState(input: unknown): RewardState {
     }
   }
 
-  const needsModularMigration = (raw.version !== 4 && raw.version !== 5) || raw.wardrobeVersion !== 3;
+  const needsModularMigration = (raw.version !== 4 && raw.version !== 5 && raw.version !== 6) || raw.wardrobeVersion !== 3;
   if (needsModularMigration) {
     for (const [lookId, grants] of Object.entries(legacyLookGrants)) {
       const lookIndex = storeLedger.indexOf(lookId as typeof storeLedger[number]);
@@ -173,8 +205,49 @@ export function normalizeRewardState(input: unknown): RewardState {
   const streakDay = typeof raw.streakDay === "number" && Number.isSafeInteger(raw.streakDay) && raw.streakDay >= 0 && raw.streakDay <= 1000000 ? raw.streakDay : 0;
   const streakCount = typeof raw.streakCount === "number" && Number.isSafeInteger(raw.streakCount) && raw.streakCount >= 0 && raw.streakCount <= 10000 ? raw.streakCount : 0;
   const longestStreak = typeof raw.longestStreak === "number" && Number.isSafeInteger(raw.longestStreak) && raw.longestStreak >= 0 && raw.longestStreak <= 10000 ? raw.longestStreak : 0;
+  const expeditionReceipts: ExpeditionReceipt[] = [];
+  const receiptIds = new Set<string>();
+  if (Array.isArray(raw.expeditionReceipts)) for (const candidate of raw.expeditionReceipts) {
+    if (!candidate || typeof candidate !== "object") continue;
+    const entry = candidate as ExpeditionReceipt;
+    const offer = getExpeditionOffer(entry.itemId);
+    const ownedIndex = storeLedger.indexOf(entry.itemId as typeof storeLedger[number]);
+    if (!offer || ownedIndex < 0 || !hasBit(ownedBits, ownedIndex) || receiptIds.has(entry.itemId)
+      || !Number.isSafeInteger(entry.price) || entry.price < 0 || entry.price > 100000
+      || typeof entry.offerVersion !== "string" || entry.offerVersion.length > 60
+      || typeof entry.purchasedAt !== "string" || !Number.isFinite(Date.parse(entry.purchasedAt))
+      || typeof entry.receiptId !== "string" || !/^[a-f0-9-]{36}$/.test(entry.receiptId)) continue;
+    expeditionReceipts.push({ itemId: entry.itemId, price: entry.price, offerVersion: entry.offerVersion,
+      purchasedAt: entry.purchasedAt, receiptId: entry.receiptId });
+    receiptIds.add(entry.itemId);
+  }
+  const expeditionSessions: ExpeditionSession[] = [];
+  const sessionKeys = new Set<string>();
+  if (Array.isArray(raw.expeditionSessions)) for (const candidate of raw.expeditionSessions) {
+    if (!candidate || typeof candidate !== "object") continue;
+    const entry = candidate as ExpeditionSession;
+    const offer = getOfferForEpisode(entry.episodeId);
+    const ownedIndex = offer ? storeLedger.indexOf(offer.id as typeof storeLedger[number]) : -1;
+    if (!offer || ownedIndex < 0 || !hasBit(ownedBits, ownedIndex)
+      || !expeditionFamilies.includes(entry.family)
+      || typeof entry.sessionId !== "string" || !/^[a-f0-9-]{36}$/.test(entry.sessionId)
+      || sessionKeys.has(`${entry.episodeId}:${entry.family}`)) continue;
+    const safeDate = (value: unknown) => typeof value === "string" && Number.isFinite(Date.parse(value)) ? value : null;
+    expeditionSessions.push({
+      sessionId: entry.sessionId, episodeId: entry.episodeId, family: entry.family,
+      decisionId: typeof entry.decisionId === "string" && entry.decisionId.length < 100 ? entry.decisionId : null,
+      applicationCorrect: entry.applicationCorrect === true,
+      transferCorrect: entry.transferCorrect === true,
+      independent: entry.independent === true,
+      completedAt: safeDate(entry.completedAt), reviewDueAt: safeDate(entry.reviewDueAt),
+      reviewConfirmedAt: safeDate(entry.reviewConfirmedAt), reviewAttempted: entry.reviewAttempted === true,
+      reviewStage: entry.reviewStage === 2 ? 2 : entry.reviewStage === 1 ? 1 : 0,
+      satisfaction: entry.satisfaction === "yes" || entry.satisfaction === "no" ? entry.satisfaction : null,
+    });
+    sessionKeys.add(`${entry.episodeId}:${entry.family}`);
+  }
   return {
-    version: 5,
+    version: 6,
     wardrobeVersion: 3,
     wardrobeRefund: Number.isSafeInteger(raw.wardrobeRefund) && raw.wardrobeRefund! >= 0 && raw.wardrobeRefund! <= 860 ? raw.wardrobeRefund! : wardrobeRefund,
     sceneRefund: Math.min(650, (Number.isSafeInteger(raw.sceneRefund) && raw.sceneRefund! >= 0 ? raw.sceneRefund! : 0) + newSceneRefund),
@@ -210,17 +283,28 @@ export function normalizeRewardState(input: unknown): RewardState {
     ownedBits: ownedBits.toString("base64url"),
     mascot,
     equipped,
+    expeditionGoalId: typeof raw.expeditionGoalId === "string" && getExpeditionOffer(raw.expeditionGoalId)
+      ? raw.expeditionGoalId : null,
+    expeditionReceipts,
+    expeditionSessions,
   };
+}
+
+export function rewardStateNeedsMigration(stored: unknown, normalized: RewardState) {
+  return !isDeepStrictEqual(stored, normalized);
 }
 
 export function publicRewardState(state: RewardState): PublicRewardState {
   const bits = decodeBits(state.completedBits, lessonBytes);
   const completed: Record<string, string> = {};
   const reviews: Record<string, string> = {};
+  const competencies: NonNullable<PublicRewardState["competencies"]> = {};
   lessons.forEach((lesson) => {
     const index = lessonLedger.indexOf(lesson.id as typeof lessonLedger[number]);
     if (hasBit(bits, index)) {
       completed[lesson.id] = "completed";
+      competencies[lesson.id] = state.reviewStages[index] >= 2 ? "confirmed"
+        : state.reviewStages[index] >= 1 ? "demonstrated" : "practicing";
       if (state.dueDays[index]) reviews[lesson.id] = dayIso(state.dueDays[index]);
     }
   });
@@ -230,6 +314,7 @@ export function publicRewardState(state: RewardState): PublicRewardState {
     coins: state.coins,
     completed,
     reviews,
+    competencies,
     owned: storeLedger.filter((id, index) => hasBit(decodeBits(state.ownedBits, storeBytes), index) && storeCatalog.some(item => item.id === id)),
     mascot: state.mascot,
     equipped: state.equipped,
@@ -336,6 +421,41 @@ export function buyCosmetic(current: RewardState, itemId: string) {
   setBit(ownedBits, index);
   state.ownedBits = ownedBits.toString("base64url");
   return { state, spent: item.price, alreadyOwned: false };
+}
+
+export function ownsExpedition(state: RewardState, itemId: string) {
+  const offer = getExpeditionOffer(itemId);
+  if (!offer) return false;
+  const index = storeLedger.indexOf(offer.id as typeof storeLedger[number]);
+  return index >= 0 && hasBit(decodeBits(state.ownedBits, storeBytes), index);
+}
+
+export function setExpeditionGoal(current: RewardState, itemId: string | null) {
+  const state = normalizeRewardState(current);
+  if (itemId !== null && !getExpeditionOffer(itemId)) throw new Error("item-not-found");
+  if (itemId && ownsExpedition(state, itemId)) throw new Error("already-owned-goal");
+  state.expeditionGoalId = itemId;
+  return state;
+}
+
+export function buyExpedition(current: RewardState, itemId: string, offerVersion: string, receiptId: string, now = new Date()) {
+  const state = normalizeRewardState(current);
+  const offer = getExpeditionOffer(itemId);
+  if (!offer) throw new Error("item-not-found");
+  if (offerVersion !== offer.offerVersion) throw new Error("offer-changed");
+  if (ownsExpedition(state, itemId)) return { state, spent: 0, alreadyOwned: true, receipt: state.expeditionReceipts.find(entry => entry.itemId === itemId) ?? null };
+  if (state.coins < offer.price) throw new Error("insufficient-coins");
+  if (!/^[a-f0-9-]{36}$/.test(receiptId)) throw new Error("invalid-receipt");
+  const index = storeLedger.indexOf(offer.id as typeof storeLedger[number]);
+  if (index < 0) throw new Error("item-not-found");
+  const ownedBits = decodeBits(state.ownedBits, storeBytes);
+  setBit(ownedBits, index);
+  state.ownedBits = ownedBits.toString("base64url");
+  state.coins -= offer.price;
+  if (state.expeditionGoalId === itemId) state.expeditionGoalId = null;
+  const receipt: ExpeditionReceipt = { itemId, price: offer.price, offerVersion: offer.offerVersion, purchasedAt: now.toISOString(), receiptId };
+  state.expeditionReceipts = [...state.expeditionReceipts, receipt];
+  return { state, spent: offer.price, alreadyOwned: false, receipt };
 }
 
 export function selectMascot(current: RewardState, mascot: MascotId) {

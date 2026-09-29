@@ -11,7 +11,8 @@ import { courseModules, emptyFilters, filterCourse, lessonById, lessonMetadata, 
 import { lessonIllustrationId } from '@/lib/lesson-illustrations';
 
 type Mode='guided'|'practice';
-export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOpen}:{level:Level;completed:Record<string,string>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
+type Competence = "practicing" | "demonstrated" | "confirmed";
+export function CourseCatalog({level,completed,competencies,workspace,dueIds,mode,onMode,onOpen}:{level:Level;completed:Record<string,string>;competencies:Record<string,Competence>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
  const [filters,setFilters]=useState<CourseFilters>({...emptyFilters,level});
  const next=nextInTrail(level,completed);
  const inProgress=useMemo(()=>new Set(Object.values(workspace.checkpoints).filter(p=>!p.review).map(p=>p.lessonId)),[workspace.checkpoints]);
@@ -42,7 +43,7 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
      {renderBody&&<div id={`trail-module-${m.id}`} className="trail-module-body"><p><strong>{t('Ao terminar este módulo, você conseguirá:')}</strong>{t(moduleObjective(m.id))}.</p>
       <p>{t(done===m.lessons.length?'Módulo concluído. A consolidação continua nas revisões.':isCurrent?'Em desenvolvimento':'Competência que vem depois')}</p>
       {pre&&<p className="prerequisite-note">{t('Base recomendada:')}<button className="text-button" onClick={()=>onOpen(pre.lessons.find(l=>!completed[l.id])??pre.lessons[0],false,'practice')}>{t(pre.title)}</button></p>}
-      <div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,false,'guided')}/>)}</div>
+      <div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} competence={competencies[l.id]} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,false,'guided')}/>)}</div>
      </div>}</li>;
    })}</ol>
    <section className="competency-paths"><h2>{t('Competências que crescem com você')}</h2><p>{t('Retome a base ou avance para uma aplicação mais exigente. As etapas conectam níveis diferentes.')}</p>
@@ -59,11 +60,11 @@ export function CourseCatalog({level,completed,workspace,dueIds,mode,onMode,onOp
     <p role="status">{results.reduce((n,m)=>n+m.lessons.length,0)} {t(results.reduce((n,m)=>n+m.lessons.length,0)===1?'lição encontrada':'lições encontradas')}</p>
    </section>
    {!results.length&&<section className="empty-state"><h2>{t('Nenhuma lição combina com esses filtros')}</h2><p>{t('Remova um filtro para ampliar a busca.')}</p><button className="secondary-button" onClick={()=>setFilters({...emptyFilters})}>{t('Limpar filtros')}</button></section>}
-   {results.map(m=><section className="practice-module" key={m.id}><h2>{t(m.title)} · {m.level}</h2><p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(m.id))}.</p><div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,filters.status==='due'&&due.has(l.id),'practice')}/>)}</div></section>)}
+   {results.map(m=><section className="practice-module" key={m.id}><h2>{t(m.title)} · {m.level}</h2><p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(m.id))}.</p><div className="guided-lesson-list">{m.lessons.map(l=><LessonRow key={l.id} lesson={l} completed={Boolean(completed[l.id])} competence={competencies[l.id]} inProgress={inProgress.has(l.id)} due={due.has(l.id)} onOpen={()=>onOpen(l,filters.status==='due'&&due.has(l.id),'practice')}/>)}</div></section>)}
   </>}
  </div>;
 }
-function LessonRow({lesson,completed,inProgress,due,onOpen}:{lesson:Lesson;completed:boolean;inProgress:boolean;due:boolean;onOpen:()=>void}) {
+function LessonRow({lesson,completed,competence,inProgress,due,onOpen}:{lesson:Lesson;completed:boolean;competence?:Competence;inProgress:boolean;due:boolean;onOpen:()=>void}) {
  const meta=lessonMetadata[lesson.id];
- return <button className="guided-lesson" onClick={onOpen}><span><span className="eyebrow">{t(disciplines[meta.primary])} · {t(stages[meta.stage])}</span><strong>{t(lesson.title)}</strong><small>{meta.focusSkills.map(s=>t(skills[s])).join(" · ")}</small><small>{t(inProgress?'Em andamento':completed?'Concluída':'Não iniciada')}{due?' · '+t('Revisão pendente'):''} · {lesson.minutes} {t('min')}</small></span>{completed?<Check size={18}/>:<ArrowRight size={18}/>}</button>;
+ return <button className="guided-lesson" onClick={onOpen}><span><span className="eyebrow">{t(disciplines[meta.primary])} · {t(stages[meta.stage])}</span><strong>{t(lesson.title)}</strong><small>{meta.focusSkills.map(s=>t(skills[s])).join(" · ")}</small><small>{t(inProgress?'Em andamento':completed?'Concluída':'Não iniciada')}{due?' · '+t('Revisão pendente'):''} · {lesson.minutes} {t('min')}</small>{competence && <small>{t(competence === "confirmed" ? "Habilidade confirmada" : competence === "demonstrated" ? "Habilidade demonstrada" : "Em prática")} · {t("compreensão e estrutura")}</small>}</span>{completed?<Check size={18}/>:<ArrowRight size={18}/>}</button>;
 }

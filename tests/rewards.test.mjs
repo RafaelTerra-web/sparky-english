@@ -36,7 +36,7 @@ test("v4 progress migrates to streak storage without changing learning or curren
   delete legacy.streakCount;
   delete legacy.longestStreak;
   const migrated = normalizeRewardState(legacy);
-  assert.equal(migrated.version, 5);
+  assert.equal(migrated.version, 6);
   assert.equal(migrated.coins, 10);
   assert.ok(publicRewardState(migrated).completed[lessons[0].id]);
   assert.deepEqual(publicRewardState(migrated).streak, { count: 0, longest: 0, lastDay: null });
@@ -73,6 +73,16 @@ test("due reviews reward at most once per lesson and three times per day", () =>
   assert.equal(state.coins, balance + 6);
   const duplicate = completeStudy(state, lessons[0].id, true, new Date("2026-09-05T14:00:00Z"));
   assert.equal(duplicate.earned, 0);
+});
+
+test("free lesson reviews can demonstrate and confirm comprehension skills", () => {
+  const id = lessons[0].id;
+  let state = completeStudy(emptyRewardState(), id, false, new Date("2026-09-01T12:00:00Z")).state;
+  assert.equal(publicRewardState(state).competencies[id], "practicing");
+  state = completeStudy(state, id, true, new Date("2026-09-05T12:00:00Z"), true).state;
+  assert.equal(publicRewardState(state).competencies[id], "demonstrated");
+  state = completeStudy(state, id, true, new Date("2026-09-13T12:00:00Z"), true).state;
+  assert.equal(publicRewardState(state).competencies[id], "confirmed");
 });
 
 test("purchase and equipment validate balance, ownership, slot and mascot", () => {

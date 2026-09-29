@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Check,
   Clock3,
+  Compass,
   Globe2,
   GraduationCap,
   Languages,
@@ -49,11 +50,11 @@ import PushNotifications, { disablePushForCurrentDevice } from "./push-notificat
 import MascotMoment from "./mascot-moment";
 import { LessonCompletionCelebration, type CompletionMoment } from "./lesson-completion-celebration";
 import NativeRefresh from "./native-refresh";
-import { ReleaseRefresh } from "./release-refresh";
 
 import { TodayIcon, CourseIcon, ReviewIcon, MusicIcon, ProfileIcon } from "./original-nav-icons";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
 const MusicLibrary = dynamic(() => import("./music-library"), { loading: () => <SectionLoading /> });
+const ExpeditionShop = dynamic(() => import("./expedition-shop").then(m => m.ExpeditionShop), { loading: () => <SectionLoading label="Preparando descobertas…" /> });
 const StoryExperience = dynamic(() => import("./story-experience"), { loading: () => <SectionLoading /> });
 import {
   MascotFigure,
@@ -505,6 +506,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const interleaved = newLessonsToday > dailyDone && workspace.recommendation !== "new";
   const recommended = resume ? lessons.find(l => l.id === resume.lessonId)! : (interleaved ? dueLessons[0] : undefined) || next;
   const recommendedReview = resume ? resume.review : dueLessons.some(l=>l.id===recommended.id);
+  const dailyGoalMs = Math.min(workspace.minutes * 60000, workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0);
+  const dailyGoalMinutes = Math.floor(dailyGoalMs / 60000);
   const menuView: View = ["review", "call", "classroom", "story", "music", "exams"].includes(view) ? "practice" : view === "shop" ? "profile" : view;
   const open = (lesson: Lesson, review = false, mode: "guided"|"practice" = "guided") => {
     setStudyMode(mode);
@@ -529,7 +532,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       <MotionTransition active={transitioning} />
       <AppearanceSync userId={user.id}/>
       <NativeRefresh onRefresh={refreshAppData} />
-      <ReleaseRefresh />
       {completionMoment && <LessonCompletionCelebration moment={completionMoment} userId={user.id} textOnly={learnerProfile?.namePronunciationStatus === "text-only"} onClose={() => setCompletionMoment(null)} onNext={() => { setCompletionMoment(null); const following = nextInTrail(progress.level, progress.completed); if (following) open(following); else navigate("course"); }} />}
       {streakCelebration && view === 'today' && <StreakCelebration {...streakCelebration} onClose={() => setStreakCelebration(null)} />}
       <LevelUpCelebration userId={user.id} currentLevel={progress.level} completed={progress.completed} learnerName={learnerProfile?.name} mascot={reward.mascot} />
@@ -571,7 +573,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       }}>
         {view !== "call" && <header className="workspace-header">
           <div className="mobile-brand">
-            <Brand showMascot={false} />
+            <Brand />
           </div>
           <p className="date-label">
             {t(new Intl.DateTimeFormat(getInterfaceLocale(), {
@@ -599,12 +601,6 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         {view === 'today' && !active && <PushNotifications userId={user.id} mascot={reward.mascot} />}
         {view === "today" && <div className="today-overview quick-today">
           <div className="page-heading"><div><p className="eyebrow">{t("Olá,")} {learnerProfile?.name ?? user.name}</p><h1>{t("Vamos praticar?")}</h1></div></div>
-          <div className="daily-strip">
-            <span><Clock3 size={17} />{t(recommendedReview ? "1–2 min" : "2–4 min")}</span>
-            <span>{t("Meta diária:")} {Math.min(workspace.minutes, Math.floor((workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0) / 60000))}/{workspace.minutes} {t("min")}</span>
-            <span>{reward.streak?.count ?? 0} {t(reward.streak?.count === 1 ? "dia seguido" : "dias seguidos")}</span>
-            <progress max={workspace.minutes * 60000} value={Math.min(workspace.minutes * 60000, workspace.studyDay === studyDay(today) ? workspace.dailyActiveMs : 0)} aria-label={localizeAttribute("Progresso da meta diária")} />
-          </div>
           {workspace.restartNotice && <p className="notice" role="status">{t("As lições ganharam seis questões rápidas. A prática pendente vai recomeçar; seus rascunhos foram preservados.")}</p>}
           <section className="next-lesson">
             <div className="lesson-card-topline">
@@ -613,8 +609,12 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
             </div>
             <div className="lesson-copy">
               <h2>{t(recommended.title)}</h2>
-              <p>{t(recommendedReview ? "3 questões para lembrar o que aprendeu." : "6 questões. Uma ideia de cada vez.")}</p>
+              <p className="lesson-quick-meta"><span>{recommendedReview ? 3 : 6} {t("questões")}</span><span><Clock3 size={14} aria-hidden="true"/>{t(recommendedReview ? "1–2 min" : "2–4 min")}</span></p>
               <button className="cream-button lesson-start-button" onClick={() => open(recommended, recommendedReview)}>{t(resume ? "Continuar de onde parei" : recommendedReview ? "Revisar agora" : "Começar lição")}<ArrowRight size={18} /></button>
+              <div className="lesson-daily-goal">
+                <span>{t("Meta diária:")}</span><span>{dailyGoalMinutes}/{workspace.minutes} {t("min")}</span>
+                <progress max={workspace.minutes * 60000} value={dailyGoalMs} aria-label={localizeAttribute("Progresso da meta diária")} aria-valuetext={`${dailyGoalMinutes} ${localizeAttribute("de")} ${workspace.minutes} ${localizeAttribute("min")}`} />
+              </div>
             </div>
             <MascotFigure mascot={reward.mascot} equipped={reward.equipped} size="hero" />
           </section>
@@ -631,6 +631,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
             {callEnabled && <button className="quick-practice-card" onClick={() => navigate("call")}><Languages size={26} /><strong>{t("Conversação")}</strong><span>{t("Uma situação real · 10 min")}</span></button>}
             <button className="quick-practice-card" onClick={() => navigate("classroom")}><GraduationCap size={26} /><strong>{t("Aulas em inglês")}</strong><span>{t("Ouça e pratique uma ideia.")}</span></button>
             <button className="quick-practice-card" onClick={() => navigate("story")}><Globe2 size={26} /><strong>{t("Histórias")}</strong><span>{t("Inglês em pequenas histórias.")}</span></button>
+            <button className="quick-practice-card" onClick={() => navigate("shop")}><Compass size={26} /><strong>{t("Expedições")}</strong><span>{t("Use moedas para abrir descobertas.")}</span></button>
             <button className="quick-practice-card" onClick={() => navigate("music")}><MusicIcon size={26} /><strong>{t("Músicas")}</strong><span>{t("Escute, descubra e cante.")}</span></button>
             <button className="quick-practice-card" onClick={() => navigate("exams")}><GraduationCap size={26} /><strong>{t("Simulados")}</strong><span>{t("Prepare-se para o ELTiS.")}</span></button>
             <button className="quick-practice-card" onClick={() => { setCourseMode("practice"); navigate("course"); }}><CourseIcon size={26} /><strong>{t("Por assunto")}</strong><span>{t("Busque uma habilidade na trilha.")}</span></button>
@@ -642,6 +643,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           <CourseCatalog
             level={progress.level}
             completed={progress.completed}
+            competencies={reward.competencies ?? {}}
             workspace={workspace}
             dueIds={dueLessons.map(l=>l.id)}
             mode={courseMode}
@@ -726,6 +728,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         {view === "exams" && <><EltisSimulator userId={user.id} mascot={reward.mascot} level={progress.level} completed={progress.completed} onOpen={lesson=>open(lesson,false,"practice")} /></>}
         {view === "shop" && <>
           <div className="page-heading"><div><p className="eyebrow">{t("Suas conquistas")}</p><h1>{t("Loja")}</h1></div></div>
+          {rewardAvailable && <ExpeditionShop level={progress.level} hasNewLessons={completed < lessons.length} onBalanceChange={coins => setReward(current => ({ ...current, coins }))} />}
           {rewardAvailable ? <MascotStudio reward={reward} busy={rewardBusy} userId={user.id} onAction={handleWardrobe} onStudy={() => navigate(due ? "review" : "today")} /> : <p role="status">{t("Conecte-se novamente para carregar seu saldo e sua loja.")}</p>}
         </>}
         {view === "profile" && (

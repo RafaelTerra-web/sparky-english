@@ -38,6 +38,7 @@ export type PublicRewardState = {
   coins: number;
   completed: Record<string, string>;
   reviews: Record<string, string>;
+  competencies?: Record<string, "practicing" | "demonstrated" | "confirmed">;
   owned: string[];
   mascot: MascotId;
   equipped: EquippedItems;
