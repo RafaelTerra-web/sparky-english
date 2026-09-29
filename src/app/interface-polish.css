@@ -194,6 +194,8 @@ html[data-palette] .lesson-daily-goal progress::-moz-progress-bar { background:v
 @media(max-width:380px) { .workspace-header .wallet-chip strong { font-size:14.5px; } }
 /* The inbox keeps the existing currency typography and a full touch target. */
 .workspace-header .profile-gear { min-width:44px; width:44px; height:44px; }
+.workspace-header .account-chip[data-pending] > svg { display:block; }
+.workspace-header .account-chip[data-pending] > span { display:grid; }
 @media(max-width:380px) {
   html[data-palette] .workspace-header { gap:5px; padding-inline:8px; }
   .workspace-header .mobile-brand .brand { gap:4px; }

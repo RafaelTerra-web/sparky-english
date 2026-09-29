@@ -4,7 +4,7 @@ const id=(n:number)=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 function notification(n:number):InboxNotification {return {id:id(n),kind:n%3===0?'resume':n%3===1?'review':'daily-goal',createdAt:new Date(Date.now()-n*3600000).toISOString(),readAt:null,
   content:{pt:{title:`Aviso ${n}`,body:'Um passo rápido para seu inglês.',action:'Abrir prática'},en:{title:`Notice ${n}`,body:'A quick step for your English.',action:'Open practice'}},destination:n===3?{view:'lesson',lessonId:'a1-1-1'}:{view:'today'}};}
 async function account(page:Page, count=23, language='pt-BR') {
-  await page.addInitScript(({language})=>{localStorage.setItem('sparky-language:notifications-test',language);localStorage.setItem('sparky-interface-language',language);localStorage.setItem('sparky-support-language:notifications-test',language);localStorage.setItem('sparky-push:snooze:notifications-test',String(Date.now()+86400000));}, {language});
+  await page.addInitScript(({language})=>{localStorage.setItem('sparky-opening-seen-v4','1');localStorage.setItem('sparky-language:notifications-test',language);localStorage.setItem('sparky-interface-language',language);localStorage.setItem('sparky-support-language:notifications-test',language);localStorage.setItem('sparky-push:snooze:notifications-test',String(Date.now()+86400000));}, {language});
   await page.route('**/api/session',r=>r.fulfill({json:{authenticated:true,user:{id:'notifications-test',name:'Ana',email:'ana@example.test'}}}));
   await page.route('**/api/onboarding',r=>r.fulfill({json:{enabled:false}}));
   await page.route('**/api/push',r=>r.fulfill({json:{available:false}}));
@@ -34,7 +34,10 @@ test('bell, snapshot, paging, scroll lock and concurrent arrivals',async({page},
   const bell=page.getByRole('button',{name:'Notificações: 23 não lidas'});
   await expect(bell).toBeVisible();
   expect(await bell.evaluate(e=>{const b=e.getBoundingClientRect();return b.width>=44&&b.height>=44;})).toBe(true);
+  await expect(bell.locator('svg')).toBeVisible();
+  await expect(bell.locator('span')).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:info.outputPath('island.png')});
   await bell.click();const dialog=page.getByRole('dialog',{name:'Notificações'});
   await expect(dialog).toBeVisible();await expect(dialog.locator('article')).toHaveCount(20);
   await expect(page.getByRole('button',{name:'Notificações: 1 não lidas'})).toBeAttached();
