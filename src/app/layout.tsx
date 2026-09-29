@@ -30,7 +30,7 @@ const geistMono = Geist_Mono({
 
 const musicGrotesk = Space_Grotesk({ variable: '--font-music-grotesk', subsets: ['latin'], preload: false });
 const musicCyberpunk = Chakra_Petch({ variable: '--font-music-cyberpunk', subsets: ['latin'], weight: ['500', '600', '700'], preload: false });
-const currencyFont = Fredoka({ variable: '--font-currency', subsets: ['latin'], weight: '600', display: 'swap' });
+const currencyFont = Fredoka({ variable: '--font-currency', subsets: ['latin'], weight: '500', display: 'swap' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(

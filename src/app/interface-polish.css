@@ -203,5 +203,5 @@ html[data-palette] .lesson-daily-goal progress::-moz-progress-bar { background:v
 @media(forced-colors:active) { html[data-palette] .lesson-daily-goal progress { appearance:auto; } }
 
 .workspace-header .wallet-chip { gap:6px; padding-inline:9px; }
-.workspace-header .wallet-chip strong { display:inline-flex; align-items:center; justify-content:center; min-width:2.3ch; min-height:1.5em; text-align:center; font-family:var(--font-currency),var(--font-geist-sans),sans-serif; font-size:19px; font-weight:600; line-height:1; letter-spacing:.015em; }
-@media(max-width:380px) { .workspace-header .wallet-chip strong { font-size:17px; } }
+.workspace-header .wallet-chip strong { display:inline-flex; align-items:center; justify-content:center; min-width:2.3ch; min-height:1.5em; text-align:center; font-family:var(--font-currency),var(--font-geist-sans),sans-serif; font-size:16px; font-weight:500; line-height:1; letter-spacing:.015em; }
+@media(max-width:380px) { .workspace-header .wallet-chip strong { font-size:14.5px; } }
