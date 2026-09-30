@@ -168,7 +168,7 @@ test('English immersion and reduced motion keep target English and suppress movi
   await open(page,true);
   await page.locator('[data-track-id="still-into-you"]').click();
   const game=page.locator('.clip-game');
-  await expect(game).toContainText('One word. Your rhythm.');
+  await expect(game).toContainText('Choose your level');
   await expect(game.locator('video')).toHaveCount(0);
   await page.getByRole('button',{name:'Start playing'}).click();
   await expect(game).toHaveAttribute('data-playing','true');

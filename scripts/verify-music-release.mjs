@@ -42,6 +42,12 @@ export const approvedMusicFiles = {
   'king-for-a-day/manifest.json': 'f45b4a614ed4e4daaa73133de71223438eb130307c8a50847ab4314b2c33adb7',
   'king-for-a-day/audio.mp3': 'ef9de1860429770d73fac0c5890d991433113fdbf45bdd1aa69b3c155b55fd0d',
   'king-for-a-day/video.mp4': '5f52b21f0367d21f79fb17fb68f014a0d5294e63121d4bf4e3f10e72397ad0f7',
+  'musify-video-900p-1/still-into-you.mp4': '0b011e5602229d1e658633d133c4c02951189df42c45b9d701aa32899f336882',
+  'musify-video-900p-1/do-i-wanna-know.mp4': '1974fba4f202403e39d2322c43000680c04ac7931b4deaf2405c29b27d3b67a6',
+  'musify-video-900p-1/she-knows.mp4': '9a699b6f62ebbbd11c98af641c5204bfa05bdc1e15fa3f4d23b148b49c251057',
+  'musify-video-900p-1/savage.mp4': '3bdb5fd21aea239ee32f01a129e8ae20a4cd325418d1c9638cfabfe16ef84ebb',
+  'musify-video-900p-1/king-for-a-day.mp4': '5748960f6e49b343940ee3631fabbaf63a6042d2cc13ffb4341b143c49a1bad5',
+  'musify-video-900p-1/stay-at-your-house-local.mp4': '60a51503b6ba6cc5e88d7d197491f09426c1a6673adc5aac0a30e45fef6e7ea3',
 };
 
 export async function verifyMusicRelease(directory = '.music-assets') {

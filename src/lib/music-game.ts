@@ -1,5 +1,6 @@
 import type { MusicLesson, MusicLine } from './music';
 import { validMusicTranslationSpans } from './music-translation.ts';
+import { musicTimingPoints } from './music-score.ts';
 
 export type GameDifficulty = 'level1' | 'level2' | 'level3' | 'level4' | 'quick' | 'guided' | 'challenge' | 'typing';
 export const levelRoundCounts = { level1: 12, level2: 20, level3: 28, level4: 32 } as const;
@@ -150,8 +151,8 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
 }
 
 export type RoundOutcome = 'first' | 'missed';
-export type GameState = { phase: 'ready' | 'round' | 'outro' | 'result' | 'failed'; lives: number; index: number; answered: boolean; solved: boolean; mistakes: number; roundMistakes: number; correct: number; missed: number; firstTry: number; streak: number; bestStreak: number; feedback: string; rejected: string[]; outcomes: RoundOutcome[] };
-export const initialGame: GameState = { phase: 'ready', lives: MUSIC_LIVES, index: 0, answered: false, solved: false, mistakes: 0, roundMistakes: 0, correct: 0, missed: 0, firstTry: 0, streak: 0, bestStreak: 0, feedback: '', rejected: [], outcomes: [] };
+export type GameState = { phase: 'ready' | 'round' | 'outro' | 'result' | 'failed'; lives: number; index: number; answered: boolean; solved: boolean; mistakes: number; roundMistakes: number; correct: number; missed: number; firstTry: number; streak: number; bestStreak: number; score: number; lastPoints: number; feedback: string; rejected: string[]; outcomes: RoundOutcome[] };
+export const initialGame: GameState = { phase: 'ready', lives: MUSIC_LIVES, index: 0, answered: false, solved: false, mistakes: 0, roundMistakes: 0, correct: 0, missed: 0, firstTry: 0, streak: 0, bestStreak: 0, score: 0, lastPoints: 0, feedback: '', rejected: [], outcomes: [] };
 export type GameAction = { type: 'start' } | { type: 'answer'; index: number; value: string; expected: string; time: number; opens: number; closes: number } | { type: 'tick'; time: number; deadlines: number[]; finishAt?: number };
 export function musicGameReducer(state: GameState, action: GameAction): GameState {
   if (action.type === 'start') return { ...initialGame, phase: 'round' };
@@ -162,21 +163,22 @@ export function musicGameReducer(state: GameState, action: GameAction): GameStat
     while (next.phase === 'round' && action.time >= action.deadlines[next.index]) {
       if (!next.answered) {
         const lives = next.lives - 1;
-        next = { ...next, lives, outcomes: [...next.outcomes, 'missed'], missed: next.missed + 1, streak: 0 };
+        next = { ...next, lives, outcomes: [...next.outcomes, 'missed'], missed: next.missed + 1, streak: 0, lastPoints: 0 };
         if (lives === 0) return { ...next, phase: 'failed', answered: true, feedback: 'Suas vidas acabaram. Tente mais uma vez!' };
       }
       if (next.index + 1 >= action.deadlines.length) return { ...next, answered: true, phase: action.time < (action.finishAt ?? 0) ? 'outro' : 'result' };
-      next = { ...next, index: next.index + 1, answered: false, solved: false, roundMistakes: 0, rejected: [], feedback: '' };
+      next = { ...next, index: next.index + 1, answered: false, solved: false, roundMistakes: 0, lastPoints: 0, rejected: [], feedback: '' };
     }
     return next;
   }
   const value = normalizeAnswer(action.value);
-  if (state.phase !== 'round' || state.answered || action.index !== state.index || !Number.isFinite(action.time) || action.time < action.opens || action.time >= action.closes || !value) return state;
+  if (state.phase !== 'round' || state.answered || action.index !== state.index || ![action.time, action.opens, action.closes].every(Number.isFinite) || action.closes <= action.opens || action.time < action.opens || action.time >= action.closes || !value) return state;
   // A single tap commits the attempt. The media clock opens the next phrase.
   if (value !== normalizeAnswer(action.expected)) {
     const lives = state.lives - 1;
-    return { ...state, lives, phase: lives === 0 ? 'failed' : 'round', answered: true, mistakes: state.mistakes + 1, roundMistakes: 1, missed: state.missed + 1, streak: 0, rejected: [value], outcomes: [...state.outcomes, 'missed'], feedback: lives === 0 ? 'Suas vidas acabaram. Tente mais uma vez!' : 'Guardada para revisar. Continue ouvindo.' };
+    return { ...state, lives, phase: lives === 0 ? 'failed' : 'round', answered: true, mistakes: state.mistakes + 1, roundMistakes: 1, missed: state.missed + 1, streak: 0, lastPoints: 0, rejected: [value], outcomes: [...state.outcomes, 'missed'], feedback: lives === 0 ? 'Suas vidas acabaram. Tente mais uma vez!' : 'Guardada para revisar. Continue ouvindo.' };
   }
   const streak = state.streak + 1;
-  return { ...state, answered: true, solved: true, correct: state.correct + 1, streak, bestStreak: Math.max(state.bestStreak, streak), firstTry: state.firstTry + 1, outcomes: [...state.outcomes, 'first'], feedback: 'Boa escuta! Continue no ritmo.' };
+  const lastPoints = musicTimingPoints(action.time, action.opens, action.closes);
+  return { ...state, answered: true, solved: true, correct: state.correct + 1, streak, bestStreak: Math.max(state.bestStreak, streak), score: (state.score ?? 0) + lastPoints, lastPoints, firstTry: state.firstTry + 1, outcomes: [...state.outcomes, 'first'], feedback: 'Boa escuta! Continue no ritmo.' };
 }

@@ -3,7 +3,7 @@
 O projeto da Vercel e `rafaelterra-webs-projects/sparky-english`
 (`prj_K5rsgA0viDFIwDIAjLT7LMnbQX09`). O plano Hobby limita o upload de
 arquivos fonte pela CLI a 100 MB. Por isso, o bundle privado de musica nao e
-enviado junto com o codigo: os 34 arquivos aprovados ficam no Vercel Blob
+enviado junto com o codigo: os 40 arquivos aprovados ficam no Vercel Blob
 **privado** `sparky-reviewed-music`, sob `reviewed-v1/`. O projeto conectado
 recebe `BLOB_READ_WRITE_TOKEN` no servidor. Nunca coloque o bundle ou esse
 token no Git, no navegador ou em um store publico.
@@ -21,6 +21,8 @@ publicados. Atualize os hashes, o prefixo no codigo e os testes no mesmo PR.
 Musify acrescenta 23 objetos em caminhos novos sob `reviewed-v1/` (sete
 manifests, sete audios, cinco videos e quatro copias dos manifests anteriores
 com mascaras editoriais de traducao), preservando os 11 objetos anteriores.
+Musify 1.1 acrescenta seis videos 1600x900 em `musify-video-900p-1/`,
+preservando todos os 34 objetos do release Musify. Buttercup ja esta em 1080p.
 KISS usa somente audio, sem o video com legendas em espanhol. A pasta
 `.music-assets/` guarda a revisao editorial privada; letras e transcricoes nao
 entram no Git. Antes de aprovar os novos hashes, rode

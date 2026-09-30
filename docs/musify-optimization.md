@@ -1,0 +1,17 @@
+# Musify 1.1 — otimização
+
+O Music Lab deixa de apresentar slogans. O cabeçalho reserva seu espaço, o placar não fica atrás dele e as frases ocupam um bloco compacto. A pergunta, a tradução parcial e as quatro alternativas têm prioridade em telas de 320–393px. As partículas ficam atrás dos controles; em telas de toque, sua quantidade e efeitos de filtro/sombra são reduzidos. Movimento reduzido continua respeitado.
+
+O contador de trechos e seus pontos segmentados saem do jogo. Cada resposta correta concede `25 + 75 × fração restante da janela`, arredondada: de 25 a 100 pontos. A janela usa o relógio corrigido do áudio, incluindo a velocidade selecionada antes da partida. Erros e tempo esgotado concedem zero e retiram um coração; acertos tardios preservam vidas. A nota usa os pontos sobre o máximo da partida: D abaixo de 40%, C a partir de 40%, B de 60%, A de 75% e S de 90%. É possível concluir em D com três vidas. O feedback mostra os pontos realmente ganhos, uma única vez por resposta.
+
+Os novos recordes de rapidez usam um campo opcional versionado, separado dos recordes anteriores de acertos. A sincronização preserva ambos e as conquistas já desbloqueadas; novos ranks e conquistas usam a pontuação de rapidez. Uma performance perfeita exige todos os acertos e S na mesma partida.
+
+Antes de começar, “Preparando música…” realiza trabalho real: aquece o áudio pelo gesto do usuário, espera o buffer inicial, prepara o primeiro quadro do vídeo e calcula a sequência da nova partida. Não há porcentagem inventada nem duração artificial. O áudio tem limite de espera e opção de tentar novamente; vídeo decorativo tem orçamento curto e pode usar a capa como fallback. Fechar a música cancela a preparação. O tempo de resposta, as vidas e o progresso não avançam nesse estado.
+
+O plano de desafios é reutilizado por nível/semente; máscaras de tradução são reutilizadas por linha e resposta. Linhas já cantadas deixam de atualizar palavra por palavra. O relógio visual mantém seu intervalo de 90ms, mas a validação do toque consulta o tempo real do áudio corrigido pela calibração. O reducer só recebe ticks quando uma rodada ou a música cruza seu limite. A sincronização do vídeo tem tolerância e intervalo mínimo entre correções, com ajuste imediato em buscas reais. Painéis de letra e vocabulário não são montados enquanto estiverem ocultos.
+
+Seis vídeos passam a usar **1600×900**, a partir das fontes fornecidas em **1920×1080**: Still Into You, Do I Wanna Know?, She Knows, Savage, King for a Day e I Really Want to Stay at Your House. Buttercup permanece no arquivo 1920×1080 já publicado. KISS continua somente com áudio; as outras faixas sem vídeo permanecem assim.
+
+Os novos arquivos usam H.264 Main/yuv420p, até 30 quadros por segundo, qualidade 19, limite de 4Mbps, GOP de dois segundos e MP4 com `faststart`. Mantêm somente vídeo e os timestamps originais. `scripts/prepare-musify-hd.py` prepara os arquivos em `.music-assets/musify-video-900p-1/`; o relatório privado guarda hashes das fontes, resolução, duração e configuração. Os seis objetos novos são imutáveis e privados, com hashes anexados aos 34 arquivos previamente aprovados. Áudios, letras, versões das lições, IDs e recordes permanecem estáveis.
+
+Os testes de otimização emulam 393×780, 360×706 e 320×720. A emulação verifica layout e comportamento do navegador; não mede o FPS de um Samsung A55 físico. A revisão dos vídeos decodifica amostras em três posições por faixa e verifica resolução, codec, ausência de áudio, duração e posição de `moov` antes de `mdat`.

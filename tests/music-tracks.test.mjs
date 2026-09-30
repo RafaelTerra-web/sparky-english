@@ -8,7 +8,7 @@ test('multiple tracks keep the original audio URL and use distinct explicit asse
   assert.equal(musicRelease('perfect-local')?.version, 'full-song-timing-2');
   assert.equal(musicAudioSource('heartless-local'), '/api/music/audio?trackId=heartless-local');
   assert.equal(musicRelease('heartless-local')?.audio, 'heartless/audio.mp3');
-  assert.equal(musicRelease('stay-at-your-house-local')?.video, 'stay-at-your-house/background.mp4');
+  assert.equal(musicRelease('stay-at-your-house-local')?.video, 'musify-video-900p-1/stay-at-your-house-local.mp4');
   assert.equal(musicRelease('stay-at-your-house-local')?.version, 'stay-at-your-house-timing-1');
   assert.equal(musicRelease('buttercup-local')?.audio, 'buttercup-local/audio.mp3');
   assert.equal(musicRelease('buttercup-local')?.video, 'buttercup-local/video.mp4');

@@ -1,13 +1,22 @@
-import type { CSSProperties } from 'react';
+import { memo, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { MusicLine } from '@/lib/music';
-import { musifyEffectAt } from '@/lib/musify-identity';
+import { createMusifyEffectLookup } from '@/lib/music-runtime';
 
 /** Decorative motion is sampled from audio time; pausing freezes every shape. */
-export default function MusifyIdentityFx({ id, lines, clock, active, energy }: {
+export default memo(function MusifyIdentityFx({ id, lines, clock, active, energy }: {
   id: string; lines: MusicLine[]; clock: number; active: boolean; energy: number;
 }) {
-  const effect = musifyEffectAt(id, lines, clock);
-  if (!effect || !active) return null;
+  const lookup = useMemo(() => createMusifyEffectLookup(id, lines), [id, lines]);
+  const [reduced, setReduced] = useState(true);
+  useEffect(() => {
+    const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    const sync = () => setReduced(query.matches || connection?.saveData === true);
+    sync(); query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
+  const effect = lookup(clock);
+  if (!effect || !active || reduced) return null;
   const time = Math.max(0, clock);
   return <div className="musify-identity-fx" data-effect={effect} aria-hidden="true">
     {Array.from({ length: effect === 'wave' ? 22 : 10 }, (_, index) => {
@@ -33,4 +42,4 @@ export default function MusifyIdentityFx({ id, lines, clock, active, energy }: {
       </svg>;
     })}
   </div>;
-}
+});

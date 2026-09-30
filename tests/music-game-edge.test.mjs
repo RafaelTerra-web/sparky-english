@@ -9,6 +9,8 @@ import * as game from '../src/lib/music-game.ts';
 import * as performance from '../src/lib/music-performance.ts';
 import * as ambience from '../src/lib/music-ambience.ts';
 import * as visuals from '../src/lib/music-visuals.ts';
+import * as runtime from '../src/lib/music-runtime.ts';
+import * as musicScore from '../src/lib/music-score.ts';
 import { validateMusic } from '../src/lib/music.ts';
 
 const lesson = {
@@ -26,6 +28,7 @@ const icons = new Proxy({}, { get: () => () => null });
 const imports = {
   '@/lib/interface-language': { t: text => text, supportT: text => text, localizeAttribute: text => text, useCurrentInterfaceLanguage: () => 'pt-BR', useSupportLanguage: () => 'pt-BR' },
   '@/lib/music-game': game, '@/lib/music-performance': performance, '@/lib/music-ambience': ambience, '@/lib/music-visuals': visuals,
+  '@/lib/music-runtime': runtime, '@/lib/music-score': musicScore,
   '@/lib/music-energy': { musicEnergy: {} }, '@/lib/music-art': { musicArtwork: () => undefined }, '@/lib/music-feedback': {},
   'next/image': emptyComponent, 'lucide-react': icons, './music-scene': emptyComponent, './music-video': emptyComponent,
   './music-chorus-fx': emptyComponent, './musify-identity-fx': emptyComponent, './music-ambience': emptyComponent,
@@ -69,14 +72,14 @@ test('a valid listening lesson without reviewed challenge words offers listening
   assert.ok(!markup.includes('NaN') && !markup.includes('Infinity'));
 });
 
-test('level setup reports the scheduled count when a short track cannot supply the nominal maximum', () => {
+test('level setup keeps short-track scheduling without exposing segment counts', () => {
   const markup = render(lesson);
   for (const mode of ['level1', 'level2', 'level3', 'level4']) {
     const count = game.buildMusicRounds(lesson, mode).length;
     assert.equal(count, 8);
-    assert.match(markup, new RegExp('data-mode="' + mode + '"[^>]*>.*?<small>' + count + ' trechos · '));
+    assert.match(markup, new RegExp('data-mode="' + mode + '"'));
   }
-  assert.ok(!/12 trechos|20 trechos|28 trechos|32 trechos/.test(markup));
+  assert.ok(!/\d+ trechos/.test(markup));
 });
 
 test('a fully answered track preserves three lives and waits for the complete audio before its result', () => {
