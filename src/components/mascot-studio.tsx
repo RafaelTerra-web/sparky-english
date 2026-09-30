@@ -19,6 +19,7 @@ import {
 } from "@/lib/rewards-shared";
 import { StorePractice } from "./store-practice";
 import { dailyReviewLimit } from "@/lib/review-plan";
+import { wardrobeAssetUrl } from "@/lib/wardrobe-assets";
 
 export type RewardAction =
   | { action: "buy"; itemId: string }
@@ -50,10 +51,13 @@ export function MascotFigure({ mascot, equipped, size = "large", decorative = fa
   const name = mascot === "pinky" ? "Pinky" : "Sparky";
   const description = [outfit?.name, ...accessories.map((item) => item.name)].filter(Boolean).map((item) => translate(item!)).join(", ");
   const base = outfit?.assetPath ?? wardrobeBaseAssets[mascot];
-  return <div className={`mascot-figure mascot-${mascot} mascot-${size}`}>
-    {accessories.map((item) => item.assets[mascot].back && <Image key={`${item.id}-back`} className="wardrobe-layer wardrobe-back" src={item.assets[mascot].back!} alt="" width={640} height={640} sizes="(max-width: 700px) 260px, 300px" />)}
-    <Image className="mascot-base" src={base} alt={decorative ? "" : `${name}${description ? ` ${translate("usando")} ${description}` : ""}`} width={640} height={640} loading={size === "hero" ? "eager" : "lazy"} sizes={size === "small" ? "86px" : "(max-width: 700px) 260px, 300px"} />
-    {accessories.filter((item) => item.assets[mascot].front).map((item) => <Image key={item.id} className={`wardrobe-layer wardrobe-${item.slot === "back" ? "front" : item.slot}`} src={item.assets[mascot].front} alt="" width={640} height={640} sizes="(max-width: 700px) 260px, 300px" />)}
+  const loading = size === "hero" ? "eager" : "lazy";
+  // Serve calibrated transparent sprites directly. Production's optimizer rejects
+  // versioned accessory URLs; content fingerprints also refresh older cached art.
+  return <div className={`mascot-figure mascot-${mascot} mascot-${size}`} data-mascot={mascot} data-outfit={outfit?.id ?? "base"}>
+    {accessories.map((item) => item.assets[mascot].back && <Image key={`${item.id}-back`} className="wardrobe-layer wardrobe-back" src={wardrobeAssetUrl(item.assets[mascot].back!)} alt="" width={640} height={640} unoptimized loading={loading} data-cosmetic={item.id} data-layer="back" />)}
+    <Image className="mascot-base" src={wardrobeAssetUrl(base)} alt={decorative ? "" : `${name}${description ? ` ${translate("usando")} ${description}` : ""}`} width={640} height={640} unoptimized loading={loading} />
+    {accessories.filter((item) => item.assets[mascot].front).map((item) => <Image key={item.id} className={`wardrobe-layer wardrobe-${item.slot === "back" ? "front" : item.slot}`} src={wardrobeAssetUrl(item.assets[mascot].front)} alt="" width={640} height={640} unoptimized loading={loading} data-cosmetic={item.id} data-layer="front" />)}
   </div>;
 }
 

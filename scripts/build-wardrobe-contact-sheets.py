@@ -1,16 +1,43 @@
 from pathlib import Path
+import json
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTFITS = ROOT / "public" / "visuals" / "wardrobe" / "outfits"
 ACCESSORIES = ROOT / "public" / "visuals" / "wardrobe" / "accessories"
 OUTPUT = ROOT / "docs"
-BACK_ITEMS = {"explorer-satchel", "compact-backpack", "book-tote", "rocket-pack"}
+MANIFEST = json.loads((OUTPUT / "wardrobe-assets.json").read_text(encoding="utf-8"))
+SLOT_ORDER = {"back": 0, "neck": 1, "face": 2, "head": 3}
+
+
+def accessory_variants(mascot: str) -> dict:
+    variants = {}
+    for record in MANIFEST:
+        if record["kind"] != "accessory" or record["mascot"] != mascot:
+            continue
+        name = Path(record["path"]).stem.removesuffix("-back").removesuffix(f"-{mascot}")
+        variant = variants.setdefault(name, {"slot": record["slot"]})
+        variant[record["layer"]] = ROOT / "public" / record["path"].lstrip("/")
+    return variants
+
+
+def compose_look(mascot: str, outfit_path: Path, names: list[str]) -> Image.Image:
+    variants = accessory_variants(mascot)
+    layers = sorted((variants[name] for name in names), key=lambda variant: SLOT_ORDER[variant["slot"]])
+    canvas = Image.new("RGBA", (640, 640), (0, 0, 0, 0))
+    for variant in layers:
+        if variant.get("back"):
+            canvas = Image.alpha_composite(canvas, Image.open(variant["back"]).convert("RGBA"))
+    canvas = Image.alpha_composite(canvas, Image.open(outfit_path).convert("RGBA"))
+    for variant in layers:
+        if variant.get("front"):
+            canvas = Image.alpha_composite(canvas, Image.open(variant["front"]).convert("RGBA"))
+    return canvas
 
 
 def build(mascot: str) -> None:
     outfits = [ROOT / "public" / "visuals" / "wardrobe" / "bases" / f"{mascot}.png", *sorted(OUTFITS.glob(f"{mascot}-*.png"))]
-    accessories = sorted(ACCESSORIES.glob(f"*-{mascot}.png"))
+    accessories = sorted(accessory_variants(mascot))
     cell, caption = 180, 28
     sheet = Image.new("RGB", (cell * len(outfits), (cell + caption) * (len(accessories) + 1)), "#eaf2ef")
     draw = ImageDraw.Draw(sheet)
@@ -22,15 +49,9 @@ def build(mascot: str) -> None:
         sheet.paste(Image.alpha_composite(background, outfit).convert("RGB"), (column * cell, 0))
         draw.text((column * cell + 8, cell + 5), label, fill="#10251f")
 
-    for row, accessory_path in enumerate(accessories, start=1):
-        accessory_name = accessory_path.stem.removesuffix(f"-{mascot}")
-        accessory = Image.open(accessory_path).convert("RGBA")
+    for row, accessory_name in enumerate(accessories, start=1):
         for column, outfit_path in enumerate(outfits):
-            outfit = Image.open(outfit_path).convert("RGBA")
-            if accessory_name in BACK_ITEMS:
-                composite = Image.alpha_composite(accessory, outfit)
-            else:
-                composite = Image.alpha_composite(outfit, accessory)
+            composite = compose_look(mascot, outfit_path, [accessory_name])
             thumbnail = composite.resize((cell, cell), Image.Resampling.LANCZOS)
             background = Image.new("RGBA", (cell, cell), "#eaf2efff")
             y = row * (cell + caption)
@@ -71,16 +92,7 @@ def build_combination_matrix() -> None:
     for row, mascot in enumerate(("sparky", "pinky")):
         for column, combination in enumerate(COMBINATIONS[mascot]):
             outfit_name, *accessory_names = combination
-            layers = [Image.open(ACCESSORIES / f"{name}-{mascot}.png").convert("RGBA") for name in accessory_names]
-            outfit = Image.open(OUTFITS / f"{mascot}-{outfit_name}.png").convert("RGBA")
-            canvas = Image.new("RGBA", (640, 640), (0, 0, 0, 0))
-            for name, layer in zip(accessory_names, layers):
-                if name in BACK_ITEMS:
-                    canvas = Image.alpha_composite(canvas, layer)
-            canvas = Image.alpha_composite(canvas, outfit)
-            for name, layer in zip(accessory_names, layers):
-                if name not in BACK_ITEMS:
-                    canvas = Image.alpha_composite(canvas, layer)
+            canvas = compose_look(mascot, OUTFITS / f"{mascot}-{outfit_name}.png", accessory_names)
             thumbnail = canvas.resize((cell, cell), Image.Resampling.LANCZOS)
             background = Image.new("RGBA", (cell, cell), "#eaf2efff")
             x, y = column * cell, row * (cell + caption)

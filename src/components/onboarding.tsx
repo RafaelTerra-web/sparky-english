@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { t, supportT, localizeAttribute, useSupportLanguage } from "@/lib/interface-language";
+import { t, supportT, localizeAttribute, useSupportLanguage, useCurrentInterfaceLanguage } from "@/lib/interface-language";
 import { quickOnboardingStage } from "@/lib/quick-onboarding";
 import { onboardingLevels, type LearnerProfile } from "@/lib/onboarding-shared";
 import { levelDescriptions } from "@/lib/levels";
@@ -17,7 +17,8 @@ type Snapshot = {
 };
 type Props = { onComplete: (profile: LearnerProfile) => void; onCancel: () => void; editing?: boolean };
 export default function Onboarding(props: Props) {
-  useSupportLanguage();
+  const supportLanguage = useSupportLanguage();
+  useCurrentInterfaceLanguage();
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
@@ -71,14 +72,14 @@ export default function Onboarding(props: Props) {
     <section className="quick-onboarding-card" aria-busy={busy}>
       <div className="quick-onboarding-top"><span>Sparky English</span><span>{stage + 1}/3</span></div>
       <progress max={3} value={stage + 1} aria-label={localizeAttribute("Etapas do cadastro")} />
-      {error && <p role="alert" className="notice">{supportT(error)}</p>}
+      {error && <p role="alert" className="notice" lang={supportLanguage}>{supportT(error)}</p>}
       {!snapshot ? <p role="status">{t("Carregando…")}</p> : <>
         <h1 ref={heading} tabIndex={-1}>{t(stage === 0 ? "Seu perfil" : stage === 1 ? "Seu ponto de partida" : "Vamos praticar?")}</h1>
         {stage === 0 && <form onSubmit={e => { e.preventDefault(); void request("quick-profile", { name, age: Number(age), guardianConsent: consent }); }}>
           <label>{t("Como quer ser chamado?")}<input autoComplete="given-name" value={name} onChange={e => setName(e.target.value)} required maxLength={100} /></label>
           <label>{t("Idade")}<input type="number" inputMode="numeric" min={4} max={120} value={age} onChange={e => setAge(e.target.value)} required /></label>
-          {age && Number(age) < 13 && <label className="quick-consent"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} required />{t("Sou responsável e autorizo esta personalização.")}</label>}
-          <p>{t("Usamos nome e idade para adaptar seu estudo.")} <a href="/privacidade">{t("Como seus dados são usados")}</a></p>
+          {age && Number(age) < 13 && <label className="quick-consent" lang={supportLanguage}><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} required />{supportT("Sou responsável e autorizo esta personalização.")}</label>}
+          <p><span lang={supportLanguage}>{supportT("Usamos nome e idade para adaptar seu estudo.")}</span> <a href="/privacidade">{t("Como seus dados são usados")}</a></p>
           <button className="primary-button" disabled={busy}>{t(busy ? "Salvando…" : "Continuar")}</button>
         </form>}
         {stage === 1 && <>{testing ? <div className="quick-placement">
@@ -89,13 +90,13 @@ export default function Onboarding(props: Props) {
           <button className="primary-button" disabled={busy || selected?.id !== testing.id} onClick={() => void request("answer", selected ?? {})}>{t("Confirmar resposta")}</button>
           <button className="text-button" disabled={busy} onClick={() => void request("quick-back", { stage: 1 })}>{t("Escolher meu nível")}</button>
         </div> : <>
-          <p>{t("Escolha um nível. Você pode mudar depois.")}</p>
+          <p lang={supportLanguage}>{supportT("Escolha um nível. Você pode mudar depois.")}</p>
           <div className="quick-levels">{onboardingLevels.map(item => <button key={item} className="secondary-button" aria-pressed={level === item} onClick={() => setLevel(item)} disabled={busy}><strong>{item}</strong>{t(levelDescriptions[item])}</button>)}</div>
           <button className="primary-button" disabled={busy} onClick={() => void request("level", { level })}>{t("Continuar")}</button>
           <details className="quick-placement-details"><summary>{t("Quer descobrir seu nível?")}</summary><p>{t("Nivelamento opcional · 15–20 min")}</p><button className="secondary-button" disabled={busy} onClick={() => void request("test")}>{t("Fazer nivelamento")}</button></details>
         </>}</>}
         {stage === 2 && <>
-          <p>{t("Escolha sua companhia para seis questões rápidas.")}</p>
+          <p lang={supportLanguage}>{supportT("Escolha sua companhia para seis questões rápidas.")}</p>
           <div className="quick-mascots">{(["sparky", "pinky"] as const).map(item => <button className="secondary-button" key={item} aria-pressed={mascot === item} disabled={busy} onClick={() => setMascot(item)}><MascotMoment mascot={item} mood="invite" /><strong>{item === "sparky" ? "Sparky" : "Pinky"}</strong></button>)}</div>
           <p><strong>{snapshot.draft?.level}</strong> · {t("6 questões · 2–4 min")}</p>
           <button className="primary-button" disabled={busy} onClick={() => void request("quick-finish", { mascot })}>{t(busy ? "Salvando…" : "Começar a praticar")}</button>

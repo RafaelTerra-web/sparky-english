@@ -17,17 +17,15 @@ test('four levels reserve previews and keep answer windows apart', () => {
   }
   const level3 = buildMusicRounds(lesson, 'level3');
   const level4 = buildMusicRounds(lesson, 'level4');
-  assert.ok(level3.some(round => round.targets.length === 2));
-  assert.ok(level3.some(round => round.targets.length === 1));
-  assert.ok(level4.some(round => round.targets.length === 2));
-  assert.ok(level4.some(round => round.targets.length === 1));
+  assert.ok(level3.every(round => round.targets.length === 1));
+  assert.ok(level4.every(round => round.targets.length === 1));
 });
-test('quick mode masks and quizzes every word in each selected phrase', () => {
+test('flow mode keeps exactly one word and one correct option in each phrase', () => {
   const rounds = buildMusicRounds(lesson, 'quick', 9);
   assert.ok(rounds.length > 0);
   for (const round of rounds) {
-    assert.deepEqual(round.targets, round.line.words.map((_, index) => index));
-    assert.equal(round.answers.length, round.line.words.length);
+    assert.deepEqual(round.targets, [round.target]);
+    assert.equal(round.answers.length, 1);
     assert.ok(round.options.includes(round.answer));
     assert.equal(round.options.length, 4);
     assert.equal(new Set(round.options).size, round.options.length);

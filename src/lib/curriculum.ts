@@ -22,6 +22,8 @@ export type Step = {
   acceptedAnswers?: string[];
   id?: string;
   cue?: string;
+  /** Context hints are support copy; they are separate from the English gap sentence. */
+  contextHint?: { portuguese: string; english: string };
   bodyEnglish?: string;
   explanationEnglish?: string;
   kind:

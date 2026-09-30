@@ -51,6 +51,8 @@ import type { NotificationDestination } from '@/lib/notifications-shared';
 import MascotMoment from "./mascot-moment";
 import { LessonCompletionCelebration, type CompletionMoment } from "./lesson-completion-celebration";
 import NativeRefresh from "./native-refresh";
+import { ConnectionFallback, ConnectionNotice } from './connection-fallback';
+import { clearObsoleteAppCaches } from '@/lib/offline-cache';
 
 import { TodayIcon, CourseIcon, ReviewIcon, MusicIcon, ProfileIcon } from "./original-nav-icons";
 const CourseCatalog = dynamic(() => import("./course-catalog").then(m => m.CourseCatalog), { loading: () => <SectionLoading /> });
@@ -321,7 +323,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         }
       });
     if ("serviceWorker" in navigator)
-      void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(() => undefined);
+      void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" })
+        .then(registration => registration.active?.postMessage({ type: 'SPARKY_PREPARE_OFFLINE' })).catch(() => undefined);
     return () => { disposed = true; window.clearTimeout(timeout); controller.abort(); };
   }, [onReady]);
 
@@ -401,12 +404,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       }
       resetOpeningMascot();
       try {
-        if ("caches" in window)
-          await Promise.all(
-            (await caches.keys())
-              .filter((key) => key.startsWith("sparky-"))
-              .map((key) => caches.delete(key)),
-          );
+        await clearObsoleteAppCaches();
       } catch {
         /* Cache availability must not prevent logout. */
       }
@@ -535,17 +533,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
       </main>
     );
   if (connectionError)
-    return (
-      <main className="loading-page">
-        <Brand />
-        <h1>{t("Sem conexão no momento")}</h1>
-        <p>{t("Conecte-se à internet para validar sua sessão.")}</p>
-        <button
-          className="primary-button"
-          onClick={() => window.location.reload()}
-        >{t("Tentar novamente")}</button>
-      </main>
-    );
+    return <ConnectionFallback onRetry={() => window.location.reload()} />;
   if (!user) return <LoginScreen />;
   if (needsOnboarding) return <Onboarding editing={Boolean(learnerProfile?.onboardingCompleted)} onCancel={() => { if (!learnerProfile?.onboardingCompleted) { void logout(); return; } void fetch("/api/onboarding", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"cancel-edit"})}).then(r=>{if(r.ok)setNeedsOnboarding(false);else setNotice("Não foi possível fechar o ajuste.");}); }} onComplete={profile => {
     setLearnerProfile(profile); setProgress(current => ({...current,level:profile.level}));
@@ -665,6 +653,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           <NotificationBell center={notifications}/>
           <button type="button" className="account-chip profile-gear" onClick={() => navigate("profile")} aria-label={localizeAttribute("Abrir configurações")}><Settings size={21} aria-hidden="true"/></button>
         </header>}
+        <ConnectionNotice />
         {notice && (
           <div className="notice" role="status">
             {supportT(notice)}

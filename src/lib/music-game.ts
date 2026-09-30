@@ -1,4 +1,5 @@
 import type { MusicLesson, MusicLine } from './music';
+import { validMusicTranslationSpans } from './music-translation.ts';
 
 export type GameDifficulty = 'level1' | 'level2' | 'level3' | 'level4' | 'quick' | 'guided' | 'challenge' | 'typing';
 export const levelRoundCounts = { level1: 12, level2: 20, level3: 28, level4: 32 } as const;
@@ -14,12 +15,20 @@ const contrasts: Record<string, string[]> = {
   knew: ['know', 'grew', 'flew'], fell: ['felt', 'fill', 'feel'],
   knowing: ['going', 'showing', 'growing'], give: ['live', 'leave', 'keep'],
 };
+const homophones = [['to', 'too', 'two'], ['there', 'their', "they're"], ['your', "you're"],
+  ['its', "it's"], ['know', 'no'], ['right', 'write'], ['for', 'four'], ['by', 'buy', 'bye'], ['i', 'eye'],
+  ['see', 'sea'], ['here', 'hear'], ['be', 'bee'], ['one', 'won'], ['knew', 'new'], ['would', 'wood'],
+  ['whole', 'hole'], ['where', 'wear'], ['week', 'weak'], ['piece', 'peace'], ['way', 'weigh'],
+  ['sun', 'son'], ['meet', 'meat'], ['made', 'maid'], ['road', 'rode']];
+const sameSound = (left: string, right: string) => homophones.some(group => group.includes(left) && group.includes(right));
+const singleWord = (word: string) => /^[a-z][a-z0-9]*(?:['’][a-z]+)?$/i.test(word);
 export function normalizeAnswer(text: string) {
   return text.toLowerCase().replace(/[’‘]/g, "'").replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '').trim();
 }
 export const GAME_ROUND_COUNT = 24;
 export const COUNTDOWN_SECONDS = 3;
 export const RESPONSE_SECONDS = 3;
+export const MUSIC_LIVES = 3;
 function seededRandom(seed: number) {
   return () => {
     seed = (seed + 0x6d2b79f5) | 0;
@@ -53,14 +62,11 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
   const random = seededRandom(seed);
   const modern = difficulty in levelRoundCounts || difficulty === 'quick';
   const candidates: Candidate[] = lesson.lines.flatMap((line, lineIndex) => {
-    const groups = difficulty === 'quick'
-      ? [line.words.map((_, target) => target)]
-      : line.words.map((_, target) => {
-          const pair = line.words.length > 1 && (difficulty === 'level4' || (difficulty === 'level3' && (lineIndex + target + seed) % 3 === 0));
-          if (!pair) return [target];
-          const companion = target < line.words.length - 1 ? target + 1 : target - 1;
-          return [target, companion].sort((a, b) => a - b);
-        });
+    // Every prompt has exactly one audible word and one correct choice. Wider
+    // difficulty comes from timing/quantity, never a compound answer.
+    const groups = line.words.flatMap((word, target) =>
+      word.challengeEligible !== false && singleWord(normalizeAnswer(word.text))
+        && (!lesson.translationAlignmentVersion || validMusicTranslationSpans(line.translation, word.translationSpans)) ? [[target]] : []);
     const seen = new Set<string>();
     return groups.filter(targets => {
       const key = targets.join(':');
@@ -73,11 +79,12 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
         countdownStart: Math.max(0, line.start - (modern ? LYRIC_PREVIEW_SECONDS : COUNTDOWN_SECONDS)),
         revealAt: modern ? Math.max(0, line.start - LYRIC_PREVIEW_SECONDS) : line.start,
         opens: modern ? Math.max(0, first.start - ANSWER_LEAD_SECONDS) : last.end,
-        closes: last.end + (difficulty === 'level4' ? 2 : difficulty === 'quick' ? 1.2 : RESPONSE_SECONDS),
+        closes: Math.min(lesson.duration, last.end + (difficulty === 'level4' ? 2 : difficulty === 'quick' ? 1.2 : RESPONSE_SECONDS)),
         score: random(),
       };
     });
-  }).sort((a, b) => a.closes - b.closes || a.lineIndex - b.lineIndex || a.target - b.target);
+  }).filter(candidate => candidate.closes > candidate.opens)
+    .sort((a, b) => a.closes - b.closes || a.lineIndex - b.lineIndex || a.target - b.target);
 
   // Weighted interval scheduling gives every session a seeded variation while
   // guaranteeing that countdown, lyric and answer windows never overlap.
@@ -114,40 +121,19 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
     count--;
   }
   selected.reverse();
-  // Level 4 increases the frequency of double blanks without turning every
-  // phrase into the same pattern. Its candidates are scheduled with the wider
-  // two-word window first, so reducing alternating rounds to one word cannot
-  // introduce timing collisions.
-  if (difficulty === 'level4') selected.forEach((candidate, index) => {
-    if (index % 2 === 0) candidate.targets = [candidate.target];
-  });
-  if (difficulty === 'level3' && selected.length > 1 && selected.every(candidate => candidate.targets.length > 1)) {
-    selected[0].targets = [selected[0].target];
-  }
-
-  const pool = [...new Set(lesson.lines.flatMap(l => l.words.map(w => normalizeAnswer(w.text))))]
-    .filter(w => w && w.length >= 3);
+  const pool = [...new Set(lesson.lines.flatMap(l => l.words.filter(w => w.challengeEligible !== false).map(w => normalizeAnswer(w.text))))]
+    .filter(w => w.length >= 3 && singleWord(w));
   return selected.map((candidate, index) => {
     const { line, lineIndex, target, targets, countdownStart, revealAt, opens, closes } = candidate;
     const answers = targets.map(wordIndex => normalizeAnswer(line.words[wordIndex].text));
     const answer = answers.join(' · ');
-    const shuffled = pool.filter(w => !answers.includes(w));
+    const shuffled = pool.filter(w => !answers.includes(w) && !sameSound(w, answer));
     for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
     const alternatives: string[] = [];
-    const add = (words: string[]) => { const value = words.join(' · '); if (value !== answer && !alternatives.includes(value)) alternatives.push(value); };
-    if (difficulty === 'quick') {
-      for (const other of lesson.lines) {
-        add(other.words.map(word => normalizeAnswer(word.text)));
-        if (alternatives.length >= 3) break;
-      }
-      if (alternatives.length < 3) add([...answers].reverse());
-      if (alternatives.length < 3) add([...answers.slice(1), answers[0]]);
-      if (alternatives.length < 3 && answers.length > 1) add(answers.map(() => answers[0]));
-      if (alternatives.length < 3 && answers.length > 1) add(answers.map(() => answers.at(-1)!));
-    }
+    const add = (words: string[]) => { const value = words.join(' · '); if (value !== answer && !sameSound(value, answer) && !alternatives.includes(value)) alternatives.push(value); };
     for (let attempt = 0; alternatives.length < (difficulty === 'guided' ? 1 : 3) && attempt < 40; attempt++) {
       if (answers.length === 1) {
-        const replacement = [...(contrasts[answers[0]] || []), ...shuffled][attempt];
+        const replacement = [...(contrasts[answers[0]] || []), ...shuffled, 'never', 'always', 'maybe', 'later', 'around'][attempt];
         if (replacement) add([replacement]);
       } else {
         add(answers.map((word, slot) => {
@@ -158,14 +144,14 @@ export function buildMusicRounds(lesson: MusicLesson, difficulty: GameDifficulty
     }
     const options = [...alternatives];
     options.splice(Math.floor(random() * (alternatives.length + 1)), 0, answer);
-    const extendedClose = modern ? Math.min(closes + 1.7, selected[index + 1]?.countdownStart ?? lesson.duration, lesson.duration) : closes;
+    const extendedClose = Math.min(lesson.duration, modern ? Math.min(closes + 1.7, selected[index + 1]?.countdownStart ?? lesson.duration) : closes);
     return { line, lineIndex, target, targets, countdownStart, revealAt, opens, closes: extendedClose, answer, answers, options, index };
   });
 }
 
 export type RoundOutcome = 'first' | 'missed';
-export type GameState = { phase: 'ready' | 'round' | 'outro' | 'result'; index: number; answered: boolean; solved: boolean; mistakes: number; roundMistakes: number; correct: number; missed: number; firstTry: number; streak: number; bestStreak: number; feedback: string; rejected: string[]; outcomes: RoundOutcome[] };
-export const initialGame: GameState = { phase: 'ready', index: 0, answered: false, solved: false, mistakes: 0, roundMistakes: 0, correct: 0, missed: 0, firstTry: 0, streak: 0, bestStreak: 0, feedback: '', rejected: [], outcomes: [] };
+export type GameState = { phase: 'ready' | 'round' | 'outro' | 'result' | 'failed'; lives: number; index: number; answered: boolean; solved: boolean; mistakes: number; roundMistakes: number; correct: number; missed: number; firstTry: number; streak: number; bestStreak: number; feedback: string; rejected: string[]; outcomes: RoundOutcome[] };
+export const initialGame: GameState = { phase: 'ready', lives: MUSIC_LIVES, index: 0, answered: false, solved: false, mistakes: 0, roundMistakes: 0, correct: 0, missed: 0, firstTry: 0, streak: 0, bestStreak: 0, feedback: '', rejected: [], outcomes: [] };
 export type GameAction = { type: 'start' } | { type: 'answer'; index: number; value: string; expected: string; time: number; opens: number; closes: number } | { type: 'tick'; time: number; deadlines: number[]; finishAt?: number };
 export function musicGameReducer(state: GameState, action: GameAction): GameState {
   if (action.type === 'start') return { ...initialGame, phase: 'round' };
@@ -174,7 +160,11 @@ export function musicGameReducer(state: GameState, action: GameAction): GameStat
     let next = state;
     // Catch up after buffering, a dropped frame or forward seek exactly once.
     while (next.phase === 'round' && action.time >= action.deadlines[next.index]) {
-      if (!next.answered) next = { ...next, outcomes: [...next.outcomes, 'missed'], missed: next.missed + 1, streak: 0 };
+      if (!next.answered) {
+        const lives = next.lives - 1;
+        next = { ...next, lives, outcomes: [...next.outcomes, 'missed'], missed: next.missed + 1, streak: 0 };
+        if (lives === 0) return { ...next, phase: 'failed', answered: true, feedback: 'Suas vidas acabaram. Tente mais uma vez!' };
+      }
       if (next.index + 1 >= action.deadlines.length) return { ...next, answered: true, phase: action.time < (action.finishAt ?? 0) ? 'outro' : 'result' };
       next = { ...next, index: next.index + 1, answered: false, solved: false, roundMistakes: 0, rejected: [], feedback: '' };
     }
@@ -183,7 +173,10 @@ export function musicGameReducer(state: GameState, action: GameAction): GameStat
   const value = normalizeAnswer(action.value);
   if (state.phase !== 'round' || state.answered || action.index !== state.index || !Number.isFinite(action.time) || action.time < action.opens || action.time >= action.closes || !value) return state;
   // A single tap commits the attempt. The media clock opens the next phrase.
-  if (value !== normalizeAnswer(action.expected)) return { ...state, answered: true, mistakes: state.mistakes + 1, roundMistakes: 1, missed: state.missed + 1, streak: 0, rejected: [value], outcomes: [...state.outcomes, 'missed'], feedback: 'Guardada para revisar. Continue ouvindo.' };
+  if (value !== normalizeAnswer(action.expected)) {
+    const lives = state.lives - 1;
+    return { ...state, lives, phase: lives === 0 ? 'failed' : 'round', answered: true, mistakes: state.mistakes + 1, roundMistakes: 1, missed: state.missed + 1, streak: 0, rejected: [value], outcomes: [...state.outcomes, 'missed'], feedback: lives === 0 ? 'Suas vidas acabaram. Tente mais uma vez!' : 'Guardada para revisar. Continue ouvindo.' };
+  }
   const streak = state.streak + 1;
   return { ...state, answered: true, solved: true, correct: state.correct + 1, streak, bestStreak: Math.max(state.bestStreak, streak), firstTry: state.firstTry + 1, outcomes: [...state.outcomes, 'first'], feedback: 'Boa escuta! Continue no ritmo.' };
 }

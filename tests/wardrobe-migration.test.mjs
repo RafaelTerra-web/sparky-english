@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { storeLedger } from '../src/lib/store-ledger.ts';
-import { accessoryCatalog, retiredScenePrices, legacyLookGrants, isCompatibleCosmetic } from '../src/lib/rewards-shared.ts';
+import { accessoryCatalog, outfitCatalog, retiredScenePrices, legacyLookGrants, isCompatibleCosmetic } from '../src/lib/rewards-shared.ts';
 import { emptyRewardState, normalizeRewardState, publicRewardState, buyCosmetic, equipCosmetic, resetLook, completeStudy } from '../src/lib/rewards.ts';
 import { lessons } from '../src/lib/curriculum.ts';
 
@@ -48,4 +48,30 @@ test('missing art, wrong pose and incompatible outfits fail closed', () => {
   assert.equal(isCompatibleCosmetic(item, 'sparky', 'pinky-campus'), false);
   assert.equal(isCompatibleCosmetic(item, 'sparky', 'unknown'), false);
   assert.equal(isCompatibleCosmetic({ ...item, incompatibleOutfits: ['sparky-cozy-reader'] }, 'sparky', 'sparky-cozy-reader'), false);
+});
+
+test('all outfits preserve purchased accessories and independently equipped mascots', () => {
+  let state = { ...emptyRewardState(), coins: 10000 };
+  for (const item of [...outfitCatalog, ...accessoryCatalog]) state = buyCosmetic(state, item.id).state;
+  const owned = publicRewardState(state).owned;
+  const balance = state.coins;
+  for (const mascot of ['sparky', 'pinky']) {
+    const other = mascot === 'sparky' ? 'pinky' : 'sparky';
+    for (let variant = 0; variant < 4; variant++) {
+      for (const slot of ['head', 'face', 'neck', 'back']) {
+        const item = accessoryCatalog.filter(entry => entry.slot === slot)[variant];
+        state = equipCosmetic(state, mascot, slot, item.id);
+      }
+      const accessories = { ...state.equipped[mascot] };
+      delete accessories.outfit;
+      const otherLook = { ...state.equipped[other] };
+      for (const outfit of outfitCatalog.filter(item => item.mascots.includes(mascot))) {
+        state = normalizeRewardState(equipCosmetic(state, mascot, 'outfit', outfit.id));
+        for (const [slot, id] of Object.entries(accessories)) assert.equal(state.equipped[mascot][slot], id);
+        assert.deepEqual(state.equipped[other], otherLook);
+        assert.deepEqual(publicRewardState(state).owned, owned);
+        assert.equal(state.coins, balance);
+      }
+    }
+  }
 });

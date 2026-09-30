@@ -12,6 +12,14 @@ export function languageMode(ui: InterfaceLocale, support: SupportLocale): Learn
 }
 /** Learning stimuli, learner writing and assessment items bypass localization. */
 export function targetText<T>(value: T): T { return value; }
+/** A glossary contains English terms and authored Portuguese meanings, not UI copy. */
+export function vocabularyEntries(text: string) {
+  return text.split("\n").filter(line => line.trim()).map(line => {
+    const separator = line.indexOf(" — ");
+    return separator < 0 ? { term: line, meaning: undefined }
+      : { term: line.slice(0, separator), meaning: line.slice(separator + 3) };
+  });
+}
 /** Spelling exposure, not an error or a claim about the recorded accent. */
 export function englishVariety(text: string): "US English" | "International English" {
   return /\b(colours?|favourites?|favours?|organisations?|centres?|behaviours?|programmes?|scepticism|coloured|emphasised|travelling|travelled)\b/i.test(text)

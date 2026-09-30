@@ -5,6 +5,7 @@ import { t, useCurrentInterfaceLanguage } from "@/lib/interface-language";
 import { safeReleaseRefresh } from "@/lib/release-policy";
 import { useScrollLock } from "@/lib/use-scroll-lock";
 import styles from "./release-refresh.module.css";
+import { clearObsoleteAppCaches } from '@/lib/offline-cache';
 
 const releaseId = process.env.NEXT_PUBLIC_SPARKY_RELEASE_ID;
 const postponeKey = "sparky-release-postponed";
@@ -13,6 +14,7 @@ export function ReleaseRefresh() {
   const [available, setAvailable] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [reloadError, setReloadError] = useState(false);
+  const [releaseName, setReleaseName] = useState('');
   const dialog = useRef<HTMLDialogElement>(null);
   const pending = useRef("");
   const postponed = useRef({ version: "", until: 0 });
@@ -35,7 +37,7 @@ export function ReleaseRefresh() {
       reloading.current = false; setUpdating(false); setReloadError(true); return;
     }
     try {
-      if ("caches" in window) await Promise.all((await caches.keys()).filter(key => key.startsWith("sparky-")).map(key => caches.delete(key)));
+      await clearObsoleteAppCaches();
       sessionStorage.setItem("sparky-release-reloaded", pending.current);
     } catch { /* Network navigation still requests the current release. */ }
     window.location.reload();
@@ -68,8 +70,9 @@ export function ReleaseRefresh() {
         void registration?.update().catch(() => undefined);
         const response = await fetch("/api/release?fresh=" + Date.now(), { cache: "no-store", signal: AbortSignal.timeout(8000) });
         if (!response.ok) return;
-        const data = await response.json() as { version?: string };
+        const data = await response.json() as { version?: string; name?: string };
         if (!disposed && data.version && releaseId && data.version !== releaseId) {
+          setReleaseName(typeof data.name === 'string' ? data.name.slice(0, 60) : '');
           pending.current = data.version; lastVerified = Date.now();
           if (data.version === justReloaded.current) {
             const until = Math.max(postponed.current.version === data.version ? postponed.current.until : 0, Date.now() + 5 * 60000);
@@ -107,7 +110,7 @@ export function ReleaseRefresh() {
     data-release-update onCancel={event => { event.preventDefault(); later(); }}>
     <div className={styles.content}>
       <span className={styles.icon} aria-hidden="true"><RefreshCw size={28}/></span>
-      <h2 id="release-title" tabIndex={-1}>{t("Nova versão disponível")}</h2>
+      <h2 id="release-title" tabIndex={-1}>{releaseName ? `${releaseName} · ${t("Nova versão disponível")}` : t("Nova versão disponível")}</h2>
       <p id="release-description">{t("Atualize para continuar com as novidades do Sparky.")}</p>
       {reloadError && <p role="alert">{t("Sem conexão. Tente atualizar novamente quando estiver online.")}</p>}
       <div className={styles.actions}>

@@ -120,3 +120,37 @@ export const englishClasses = [
     "task": "Summarize two competing interests and propose a measurable next step."
   }
 ] as const;
+
+/** Support copy is separate from the English narration and comprehension items. */
+export const englishClassSupport = {
+  "first-conversation": {
+    focus: ["Hello → apresente-se", "I am → I’m", "Faça uma pergunta de volta"],
+    explanation: "What’s your name? pede que a outra pessoa diga seu nome.",
+    task: "Diga um cumprimento, seu nome e uma pergunta.",
+  },
+  "daily-routine": {
+    focus: ["I usually + verbo", "She / he + verbo com -s", "First → then → after that"],
+    explanation: "No presente simples, walk passa a walks com she.",
+    task: "Descreva três hábitos usando first, then e after that.",
+  },
+  "tell-a-story": {
+    focus: ["Apresente a situação", "Passado contínuo + passado simples", "Explique o resultado"],
+    explanation: "Was waiting apresenta a ação em andamento; started introduz o acontecimento.",
+    task: "Conte uma história de quatro frases com situação, problema, resposta e resultado.",
+  },
+  "disagree-politely": {
+    focus: ["Reconheça o ponto de vista", "Apresente uma preocupação específica", "Ofereça uma alternativa"],
+    explanation: "A resposta identifica um risco específico e convida a discutir outro plano.",
+    task: "Responda a uma proposta reconhecendo um ponto, apresentando uma preocupação e oferecendo uma alternativa.",
+  },
+  "qualify-a-claim": {
+    focus: ["Observação ≠ explicação", "Delimite o alcance", "Identifique a evidência que falta"],
+    explanation: "A afirmação limita alcance, duração e certeza para corresponder à evidência.",
+    task: "Apresente uma descoberta, delimite a afirmação e explique uma limitação.",
+  },
+  "mediate-perspectives": {
+    focus: ["Separe posições e interesses", "Preserve as diferenças relevantes", "Proponha um próximo passo verificável"],
+    explanation: "Um teste reconhece o conflito entre necessidades e gera evidência para uma decisão futura.",
+    task: "Resuma dois interesses concorrentes e proponha um próximo passo mensurável.",
+  },
+} as const;

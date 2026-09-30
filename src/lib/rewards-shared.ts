@@ -84,14 +84,12 @@ const accessory = (
   const derivedKey = item.id.replace(/^accessory-/, "").replace(/-v4$/, "");
   const assetKey = derivedKey === "constellation" ? "constellation-pendant" : derivedKey === "language-lanyard" ? "club-lanyard" : derivedKey;
   const paths = (mascot: MascotId) => {
-    const fittedSparky = mascot === "sparky" && ["urban-cap", "explorer-satchel", "book-tote", "compact-backpack", "rocket-pack"].includes(assetKey);
-    const version = fittedSparky ? "?v=20260929" : "";
-    const path = `/visuals/wardrobe/accessories/${assetKey}-${mascot}.png${version}`;
+    const path = `/visuals/wardrobe/accessories/${assetKey}-${mascot}.png`;
     if (item.slot !== "back") return { front: path };
     if (mascot === "sparky") {
       if (assetKey === "explorer-satchel" || assetKey === "book-tote") return { front: path };
       if (assetKey === "compact-backpack" || assetKey === "rocket-pack")
-        return { back: `/visuals/wardrobe/accessories/${assetKey}-sparky-back.png${version}`, front: path };
+        return { back: `/visuals/wardrobe/accessories/${assetKey}-sparky-back.png`, front: path };
     }
     return { back: path, front: "" };
   };

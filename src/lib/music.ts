@@ -1,12 +1,16 @@
 import { normalizeMusicPerformance, mergeMusicPerformance, type MusicPerformance } from './music-performance.ts';
-export type MusicWord = { text: string; start: number; end: number; vocabularyId?: string };
-export type MusicLine = { id: string; start: number; end: number; text: string; translation: string; tip: string; words: MusicWord[] };
+import { validMusicTranslationSpans } from './music-translation.ts';
+/** Half-open UTF-16 offsets into the exact Portuguese line.translation string. */
+export type MusicTranslationSpan = { start: number; end: number };
+export type MusicWord = { text: string; start: number; end: number; vocabularyId?: string; challengeEligible?: boolean; translationSpans?: MusicTranslationSpan[] };
+export type MusicLine = { id: string; start: number; end: number; text: string; translation: string; tip: string; tipLanguage?: 'pt-BR' | 'en'; words: MusicWord[] };
 export type MusicLesson = {
   id: string; version: string; title: string; artist: string; level: string; topic: string; duration: number;
   source: string; rights: 'original' | 'licensed' | 'local-private' | 'user-provided'; published: boolean;
   visualSource?: string;
+  translationAlignmentVersion?: string;
   lines: MusicLine[];
-  vocabulary: { id: string; word: string; meaning: string; ipa: string; usage: string; example: string }[];
+  vocabulary: { id: string; word: string; meaning: string; ipa: string; usage: string; usageLanguage?: 'pt-BR' | 'en'; example: string }[];
   questions: { id: string; prompt: string; options: string[]; answer: number; explanation: string }[];
 };
 export const musicStages = ['Preparar', 'Ouvir', 'Explorar', 'Repetir', 'Praticar'] as const;
@@ -26,6 +30,7 @@ export function validateMusic(lesson: MusicLesson) {
     for (const word of line.words) {
       if (!word.text || !Number.isFinite(word.start) || !Number.isFinite(word.end) || word.start < wordEnd || word.end <= word.start || word.end > line.end) throw Error('invalid-word-timing');
       if (word.vocabularyId && !lesson.vocabulary.some(v => v.id === word.vocabularyId)) throw Error('invalid-vocabulary');
+      if (lesson.translationAlignmentVersion && word.challengeEligible !== false && !validMusicTranslationSpans(line.translation, word.translationSpans)) throw Error('invalid-translation-alignment');
       wordEnd = word.end;
     }
     if (line.words.map(w => w.text).join(' ') !== line.text) throw Error('word-text-mismatch');

@@ -19,17 +19,18 @@ export async function getMusicCatalog() {
       catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'local-private', published: false }));
     } catch { /* An unavailable fixture must not expose filesystem information. */ }
   }
-  for (const release of musicReleases) {
-    if (localMusicMode() && release.id === 'perfect-local') continue;
+  const releases = await Promise.all(musicReleases.map(async release => {
+    if (localMusicMode() && release.id === 'perfect-local') return null;
     try {
       const text = hasReviewedMusicStore()
         ? await readReviewedMusicManifest(release.manifest)
         : await readFile(join(process.cwd(), '.music-assets', release.manifest), 'utf8');
       const data = JSON.parse(text) as MusicLesson;
       if (data.id !== release.id) throw Error('invalid-release');
-      catalog.push(validateMusic({ ...data, version: release.version, source: musicAudioSource(release.id), rights: 'user-provided', published: true }));
-    } catch { /* An absent release bundle is not a public filesystem error. */ }
-  }
+      return validateMusic({ ...data, version: release.version, source: musicAudioSource(release.id), visualSource: 'video' in release ? `/api/music/video?trackId=${encodeURIComponent(release.id)}` : undefined, rights: 'user-provided', published: true });
+    } catch { return null; /* An absent release bundle is not a public filesystem error. */ }
+  }));
+  catalog.push(...releases.filter((lesson): lesson is MusicLesson => lesson !== null));
   return catalog;
 }
 const account = (id: string) => createHash('sha256').update(`google:${id}`).digest('hex');

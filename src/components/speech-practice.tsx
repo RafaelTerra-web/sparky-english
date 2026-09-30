@@ -164,7 +164,7 @@ export function SpeechPractice({ lessonId, text, initialMascot = "sparky", onPla
               "Ainda há diferenças. Confira as palavras destacadas e tente novamente.")}</p>
           <div className="speech-word-comparison" lang="en">
             {comparison.words.map((word, index) => <span key={index} className={word.recognized ? "heard" : "not-heard"}>
-              {t(word.word)}{t(!word.recognized && " (?)")}
+              {targetText(word.word)}{!word.recognized && " (?)"}
             </span>)}
           </div>
           {comparison.extraWords.length > 0 && <p lang={getSupportLocale()}>{supportT("Palavras adicionais:")}<span lang="en">{targetText(comparison.extraWords.join(" "))}</span></p>}

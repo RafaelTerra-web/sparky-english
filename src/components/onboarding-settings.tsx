@@ -1,5 +1,5 @@
 "use client";
-import { t, targetText, localizeAttribute, useSupportLanguage, supportT, getSupportLocale } from "@/lib/interface-language";
+import { t, targetText, localizeAttribute, useSupportLanguage, useCurrentInterfaceLanguage, supportT, getSupportLocale } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { MascotFigure } from "./mascot-studio";
 import MascotMoment from "./mascot-moment";
@@ -53,6 +53,7 @@ export default function Onboarding({
   editing?: boolean;
 }) {
   const language = useSupportLanguage();
+  useCurrentInterfaceLanguage();
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
