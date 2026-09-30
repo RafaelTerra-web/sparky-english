@@ -1,6 +1,16 @@
+"use client";
+
+import { t, useCurrentInterfaceLanguage } from "@/lib/interface-language";
+
 export default function SparkyLoadingMark() {
+  useCurrentInterfaceLanguage();
   return (
-    <div className="sparky-loading-mark" aria-hidden="true">
+    <div className="sparky-loading-mark" role="status" aria-live="polite">
+      <span className="sr-only">{t("Carregando o Sparky English")}</span>
+      <div className="sparky-loading-art" aria-hidden="true">
+      <div className="sparky-loading-emblem">
+      <span className="sparky-loading-spark sparky-loading-spark--one" />
+      <span className="sparky-loading-spark sparky-loading-spark--two" />
       <svg className="sparky-loading-face sparky-loading-face--sparky" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle className="sparky-mark-ear" cx="27" cy="30" r="17" />
         <circle className="sparky-mark-ear" cx="93" cy="30" r="17" />
@@ -51,10 +61,13 @@ export default function SparkyLoadingMark() {
         <ellipse className="pinky-mark-nose" cx="60" cy="88" rx="5" ry="3.4" />
         <path className="pinky-mark-smile" d="M60 92c-4 4-9 4-12 1m12-1c4 4 9 4 12 1" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      <span className="sparky-loading-name sparky-loading-name--sparky">sparky</span>
-      <span className="sparky-loading-name sparky-loading-name--pinky">pinky</span>
+      </div>
+      <span className="sparky-loading-name sparky-loading-name--sparky">Sparky</span>
+      <span className="sparky-loading-name sparky-loading-name--pinky">Pinky</span>
       <span className="sparky-loading-subname">ENGLISH</span>
       <span className="sparky-loading-track"><span /></span>
+      <span className="sparky-loading-caption">{t("Preparando sua prática…")}</span>
+      </div>
     </div>
   );
 }

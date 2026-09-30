@@ -3,7 +3,7 @@
   display: grid;
   place-items: center;
   min-height: 100dvh;
-  background: var(--background);
+  background: radial-gradient(ellipse at 50% 43%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 45%), var(--background);
   color: var(--foreground);
 }
 
@@ -39,17 +39,54 @@ html[data-opening-seen="true"] .opening-scene { display: none; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: min(100%, 240px);
-  padding: 20px;
+  width: min(100%, 320px);
+  padding: 28px;
   text-align: center;
 }
+
+.sparky-loading-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sparky-loading-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 156px;
+  height: 156px;
+  margin-bottom: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 42%;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 85%, transparent), color-mix(in srgb, var(--accent) 7%, var(--surface)));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 44px var(--shadow-color);
+  animation: sparky-loading-float 3.4s ease-in-out infinite;
+}
+.sparky-loading-emblem::before {
+  content: "";
+  position: absolute;
+  inset: -13px;
+  border: 1px solid color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 45%;
+  pointer-events: none;
+}
+.sparky-loading-spark {
+  position: absolute;
+  z-index: 1;
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+.sparky-loading-spark--one { right: -8px; top: 21px; }
+.sparky-loading-spark--two { left: -11px; bottom: 26px; width: 7px; height: 7px; opacity: .5; }
 
 .sparky-loading-face {
   width: 112px;
   height: 112px;
   overflow: visible;
-  filter: drop-shadow(0 10px 12px var(--shadow-color));
-  animation: sparky-mark-arrive 600ms cubic-bezier(.18, .85, .25, 1) both;
+  filter: drop-shadow(0 5px 6px var(--shadow-color));
+  animation: sparky-mark-arrive 350ms cubic-bezier(.18, .85, .25, 1) both;
 }
 .sparky-loading-face--pinky, .sparky-loading-name--pinky { display: none; }
 html[data-opening-mascot="pinky"] .sparky-loading-face--sparky,
@@ -77,46 +114,47 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 .pinky-mark-nose { fill: var(--pinky-nose); }
 .pinky-mark-brow, .pinky-mark-lash, .pinky-mark-smile { stroke: var(--pinky-ink); }
 .sparky-loading-name {
-  margin-top: 6px;
+  margin-top: 0;
   color: var(--foreground);
   font-family: var(--font-music-grotesk), Arial, sans-serif;
-  font-size: 29px;
+  font-size: 40px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: -1.5px;
   line-height: 1;
 }
 .sparky-loading-subname {
-  margin-top: 9px;
-  color: var(--accent);
+  margin-top: 10px;
+  color: var(--muted);
   font-family: var(--font-geist-sans), Arial, sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0;
+  font-size: 10px;
+  font-weight: 550;
+  letter-spacing: 4px;
   line-height: 1;
-  text-indent: 0;
+  text-indent: 4px;
 }
 .sparky-loading-track {
   display: block;
-  width: 64px;
-  height: 3px;
-  margin-top: 21px;
+  width: 104px;
+  height: 4px;
+  margin-top: 28px;
   overflow: hidden;
   border-radius: 3px;
-  background: var(--surface-strong);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
 }
 .sparky-loading-track > span {
   display: block;
-  width: 38%;
+  width: 40%;
   height: 100%;
   border-radius: inherit;
-  background: var(--accent);
-  animation: sparky-loading-track 1.15s cubic-bezier(.4, 0, .2, 1) infinite alternate;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, transparent), var(--accent));
+  animation: sparky-loading-track 1.4s cubic-bezier(.4, 0, .2, 1) infinite alternate;
 }
+.sparky-loading-caption { margin-top: 15px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 
 .sparky-loading-eyes {
   transform-box: view-box;
   transform-origin: 60px 62px;
-  animation: sparky-loading-blink 1.8s ease-in-out infinite;
+  animation: sparky-loading-blink 3.4s ease-in-out infinite;
 }
 .pinky-loading-eyes { transform-origin: 60px 76px; }
 .sparky-loading-scarf {
@@ -138,6 +176,10 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
 @keyframes sparky-mark-arrive {
   from { opacity: 0; transform: translateY(10px) scale(.93); }
   to { opacity: 1; transform: none; }
+}
+@keyframes sparky-loading-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 @keyframes sparky-loading-track {
   from { transform: translateX(-95%); }
@@ -164,24 +206,8 @@ html[data-opening-mascot="pinky"] .sparky-loading-name--pinky { display: inline;
   45% { transform: rotate(2deg); }
 }
 
-.opening-sound {
-  position: absolute;
-  right: max(18px, env(safe-area-inset-right));
-  bottom: max(22px, env(safe-area-inset-bottom));
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--foreground);
-  cursor: pointer;
-}
-.opening-sound:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-
 @media (prefers-reduced-motion: reduce) {
   .opening-scene { transition: none; }
-  .sparky-loading-face, .sparky-loading-eyes, .sparky-loading-scarf, .pinky-loading-ear-right, .pinky-loading-ear-left, .sparky-loading-track > span { animation: none; }
+  .sparky-loading-emblem, .sparky-loading-face, .sparky-loading-eyes, .sparky-loading-scarf, .pinky-loading-ear-right, .pinky-loading-ear-left, .sparky-loading-track > span { animation: none; }
   .sparky-loading-track > span { width: 55%; }
 }
