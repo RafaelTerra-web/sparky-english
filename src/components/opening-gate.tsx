@@ -4,13 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import SparkyApp from "./sparky-app";
 import OpeningScene from "./opening-scene";
 import { ReleaseRefresh } from "./release-refresh";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 const OPENING_SEEN_KEY = "sparky-opening-seen-v4";
-const MINIMUM_OPENING_MS = 850;
+const MINIMUM_OPENING_MS = 300;
 
 export default function OpeningGate() {
   const [visible, setVisible] = useState(true);
   const [leaving, setLeaving] = useState(false);
+  useScrollLock(visible);
   const ready = useRef(false);
   const minimumElapsed = useRef(false);
   const exitTimer = useRef<number | null>(null);
@@ -62,7 +64,7 @@ export default function OpeningGate() {
 
   return (
     <>
-      <SparkyApp onReady={onReady} />
+      <div aria-hidden={visible} inert={visible}><SparkyApp onReady={onReady} /></div>
       {visible && <OpeningScene leaving={leaving} />}
       {!visible && <ReleaseRefresh />}
     </>

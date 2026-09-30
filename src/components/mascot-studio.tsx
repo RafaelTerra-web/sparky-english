@@ -18,6 +18,7 @@ import {
   type PublicRewardState,
 } from "@/lib/rewards-shared";
 import { StorePractice } from "./store-practice";
+import { dailyReviewLimit } from "@/lib/review-plan";
 
 export type RewardAction =
   | { action: "buy"; itemId: string }
@@ -126,8 +127,8 @@ export function MascotStudio({ reward, busy, userId, onAction, onStudy }: {
         {(["sparky", "pinky"] as const).map((choice) => <button key={choice} className={choice === mascot ? "selected" : ""} aria-pressed={choice === mascot} disabled={busy} onClick={async () => { if (await onAction({ action: "select-mascot", mascot: choice })) clearPreview(); }}>
           <MascotFigure mascot={choice} equipped={reward.equipped} size="small" decorative /><span>{t(choice === "pinky" ? "Pinky" : "Sparky")}</span>{choice === mascot && <Check size={16} />}
         </button>)}
-      </div><div className="shop-earning"><h3>{t("Seu próximo item")}</h3><p lang={getSupportLocale()}>{supportT("Com 40 moedas você já desbloqueia acessórios ou duas missões do cotidiano. Trajes especiais começam em 90 moedas.")}</p>
-        <div className="reward-rules"><span><strong>+10</strong>{t(" primeira conclusão")}</span><span><strong>+20</strong>{t(" módulo completo")}</span><span><strong>+2</strong>{t(" por revisão vencida · até 10 por dia")}</span></div>
+      </div><div className="shop-earning"><h3>{t("Seu próximo item")}</h3><p lang={getSupportLocale()}>{supportT("Escolha um item e pratique para juntar moedas. Os preços aparecem em cada peça.")}</p>
+        <div className="reward-rules"><span><strong>+10</strong>{t(" primeira conclusão")}</span><span><strong>+20</strong>{t(" módulo completo")}</span><span><strong>+2</strong>{t(` por revisão vencida · até ${dailyReviewLimit} por dia`)}</span></div>
         <button className="secondary-button" disabled={busy} onClick={onStudy}>{t("Praticar para ganhar moedas")} <Compass size={16} /></button>
         <p lang={getSupportLocale()}>{supportT("As moedas não compram respostas, notas ou conclusão de lições.")}</p>
       </div></div>

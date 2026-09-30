@@ -250,6 +250,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
 
   useEffect(() => {
     const controller = new AbortController();
+    let disposed = false;
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
     fetch("/api/session", { cache: "no-store", signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("session");
@@ -261,7 +263,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
           try { if (localStorage.getItem(`sparky-music:active:${session.user.id}`)) setView('music'); } catch { /* Restore is optional. */ }
           const local = readProgress(session.user.id);
           try {
-            const response = await fetch("/api/rewards", { cache: "no-store" });
+            const response = await fetch("/api/rewards", { cache: "no-store", signal: controller.signal });
             if (!response.ok) throw new Error("rewards");
             let rewards = (await response.json()) as PublicRewardState;
             const checkInResponse = await fetch("/api/rewards", {
@@ -309,17 +311,18 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         }
       })
       .catch(() => {
-        if (!controller.signal.aborted) setConnectionError(true);
+        if (!disposed) setConnectionError(true);
       })
       .finally(() => {
-        if (!controller.signal.aborted) {
+        window.clearTimeout(timeout);
+        if (!disposed) {
           setLoading(false);
           onReady?.();
         }
       });
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(() => undefined);
-    return () => controller.abort();
+    return () => { disposed = true; window.clearTimeout(timeout); controller.abort(); };
   }, [onReady]);
 
   useEffect(() => {
@@ -527,7 +530,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
 
   if (loading)
     return (
-      <main className="loading-page loading-page--brand" role="status" aria-label="Carregando o Sparky English">
+      <main className="loading-page loading-page--brand">
         <SparkyLoadingMark />
       </main>
     );

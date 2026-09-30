@@ -18,6 +18,7 @@ test('retired Expeditions and Stories are absent from practice and shop', async 
   await page.getByRole('button', { name: 'Perfil', exact: true }).click();
   await page.getByRole('button', { name: '85 Loja e mascotes' }).click();
   await expect(page.getByText('85 moedas devolvidas pelas Expedições encerradas')).toBeVisible();
+  await expect(page.locator('.reward-rules')).toContainText('por revisão vencida · até 3 por dia');
   await expect(page.getByRole('heading', { name: 'Expedições Sparky' })).toHaveCount(0);
   expect((await page.request.get('/api/expeditions')).status()).toBe(404);
   expect((await page.request.get('/api/story-audio?scene=0&mascot=sparky')).status()).toBe(404);

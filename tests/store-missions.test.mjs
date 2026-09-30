@@ -32,7 +32,7 @@ test("all fitted outfits and accessory variants are real alpha sprites", async (
   for (const item of accessoryCatalog) {
     for (const mascot of item.mascots) {
       for (const path of Object.values(item.assets[mascot]).filter(Boolean)) {
-        const picture = sharp(`public${path}`);
+        const picture = sharp(`public${path.split("?")[0]}`);
         assert.ok((await picture.metadata()).hasAlpha, `${item.id}:${mascot}`);
         assert.equal((await picture.stats()).channels.at(-1).min, 0, `${item.id}:${mascot}`);
       }
