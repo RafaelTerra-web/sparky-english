@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { Volume2, ChevronDown, SkipBack, SkipForward, SlidersHorizontal, Headphones, ArrowRight, Play, Pause, RotateCcw, Bookmark, } from 'lucide-react';
 import MusicGame from './music-game';
@@ -18,7 +18,6 @@ const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
 export default function MusicLibrary({ userId, level, mascot }: { userId: string; level: string; mascot: MascotId }) {
   useCurrentInterfaceLanguage();
-  const supportLanguage = useSupportLanguage();
   const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -41,8 +40,8 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
   const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic} ${translate(x.topic)}`.toLowerCase().includes(query.toLowerCase()));
 
   return <><section className={styles.shelf} aria-labelledby="music-heading">
-    <header className={styles.heading}>
-      <div><p className={styles.overline}><Headphones size={17} /> Music Lab · {t('Inglês pela escuta')}</p><h1 id="music-heading">Musify<span aria-hidden="true">.</span></h1><p lang={supportLanguage}>{supportT('Reconheça palavras nas músicas que você gosta. Uma frase de cada vez.')}</p></div>
+    <header className={`${styles.heading} music-library-heading`}>
+      <div><p className={styles.overline}><Headphones size={17} /> {t('Músicas')}</p><h1 id="music-heading">Musify<span aria-hidden="true">.</span></h1></div>
       <div className={styles.headingVisual}><MascotMoment mascot={mascot} mood="listen" className={styles.mascot} /><div className={styles.method}><span>01 <strong>{t('Ouça a frase')}</strong></span><span>02 <strong>{t('Complete a letra')}</strong></span><span>03 <strong>{t('Descubra o sentido')}</strong></span></div></div>
     </header>
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
@@ -96,12 +95,15 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const [gamePhase, setGamePhase] = useState<GameState['phase']>('ready');
   const visibilitySession = useRef({ mode, gamePhase });
   const resumeAfterBackground = useRef(false), playRequest = useRef(false);
+  const preparation = useRef<AbortController | null>(null), preparing = useRef(false);
+  useEffect(() => () => preparation.current?.abort(), []);
   useEffect(() => { visibilitySession.current = { mode, gamePhase }; }, [mode, gamePhase]);
   const playbackControls = mode === 'lyrics' || mode === 'learn';
   const settingsAvailable = playbackControls || (mode === 'game' && gamePhase === 'ready');
   const studyEnd = lesson.duration;
   const cueTime = time + offset / 1000;
-  const activeLine = activeCue(lesson.lines, cueTime), line = lesson.lines[selected];
+  const readClock = useCallback(() => (audio.current?.currentTime ?? 0) + offset / 1000, [offset]);
+  const activeLine = playbackControls ? activeCue(lesson.lines, cueTime) : -1, line = lesson.lines[selected];
   function update(delta: Partial<MusicProgress>) { const next = normalizeMusic(lesson, { ...progressRef.current, ...delta }); progressRef.current = next; setProgress(next); dirty.current = true; setSync('Sincronização pendente'); persist(next); }
   function persist(next: MusicProgress) { try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { setSync('O navegador bloqueou o salvamento. Mantenha esta sessão aberta.'); } }
   function rememberPosition(position: number) {
@@ -141,6 +143,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       const session = visibilitySession.current;
       const runningGame = session.mode === 'game' && (session.gamePhase === 'round' || session.gamePhase === 'outro');
       if (document.hidden) {
+        preparation.current?.abort();
         resumeAfterBackground.current = runningGame && !!element && (!element.paused || playRequest.current) && !element.ended;
         element?.pause();
       } else if (resumeAfterBackground.current) {
@@ -162,6 +165,9 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   useEffect(() => {
     if (!playing) return;
     let frame = 0, lastSave = 0, lastPaint = 0, previousTime = audio.current?.currentTime ?? 0;
+    // Only a study loop needs frame-level end detection. The media element
+    // plays independently; React's lyric clock keeps its existing 90ms budget.
+    const preciseLoop = loop;
     const tick = () => {
       const a = audio.current; if (!a) return;
       let current = a.currentTime;
@@ -170,22 +176,57 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       if (loop && (current >= line.end || current < line.start - 0.2)) { a.currentTime = line.start; current = line.start; }
       if (!loop && current >= studyEnd) { a.pause(); a.currentTime = studyEnd; current = studyEnd; }
       const now = performance.now();
-      if (now - lastPaint >= 90 || current >= studyEnd) { setTime(current); lastPaint = now; }
+      if (!preciseLoop || now - lastPaint >= 90 || current >= studyEnd) { setTime(current); lastPaint = now; }
       previousTime = current;
       if (performance.now() - lastSave > 4000) { rememberPosition(current); lastSave = performance.now(); }
-      frame = requestAnimationFrame(tick);
-    }; frame = requestAnimationFrame(tick); return () => cancelAnimationFrame(frame);
+      if (preciseLoop) frame = requestAnimationFrame(tick);
+    };
+    tick();
+    const timer = preciseLoop ? undefined : window.setInterval(tick, 90);
+    return () => { cancelAnimationFrame(frame); if (timer !== undefined) window.clearInterval(timer); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, loop, selected]);
   useEffect(() => { if (follow && mode === 'lyrics' && activeLine >= 0) { const element = lyrics.current?.querySelector<HTMLElement>(`[data-line="${activeLine}"]`); if (element && lyrics.current) lyrics.current.scrollTo({ top: element.offsetTop - lyrics.current.clientHeight * 0.3, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); } }, [activeLine, follow, mode]);
   function seek(value: number) { value = Math.max(0, Math.min(studyEnd, value)); if (audio.current) { audio.current.currentTime = value; setTime(value); update({ position: value, positionAt: Date.now() }); } }
+  async function preparePlayback() {
+    const element = audio.current;
+    if (!element || preparation.current) return false;
+    const controller = new AbortController();
+    const previousMuted = element.muted;
+    let timedOut = false;
+    preparation.current = controller; preparing.current = true;
+    resumeAfterBackground.current = false;
+    element.muted = true;
+    if (element.currentTime > .001) element.currentTime = 0;
+    const cancelled = new Promise<never>((_, reject) => controller.signal.addEventListener('abort', () => reject(new DOMException('Playback preparation cancelled', 'AbortError')), { once: true }));
+    const ready = waitForMusicAudio(element, controller.signal);
+    // This call stays in the Start button's user gesture, before any await.
+    // It unlocks playback on mobile browsers while the game is still ready.
+    const warmup = element.play();
+    const timer = window.setTimeout(() => { timedOut = true; controller.abort(); }, 8000);
+    try {
+      // Safari may leave play() pending after canplay until a later seek. Data
+      // readiness is sufficient for preparation; still surface an early play rejection.
+      await Promise.race([ready, warmup.then(() => ready), cancelled]);
+      if (controller.signal.aborted || !alive.current) return false;
+      element.pause(); element.currentTime = 0; setTime(0); setAudioError('');
+      return true;
+    } catch {
+      if (alive.current && (!controller.signal.aborted || timedOut)) setAudioError('Não foi possível preparar o áudio. Toque em começar para tentar novamente.');
+      return false;
+    } finally {
+      window.clearTimeout(timer); controller.abort();
+      element.pause(); element.currentTime = 0; element.muted = previousMuted;
+      preparing.current = false; preparation.current = null;
+    }
+  }
   async function play() { setAudioError(''); playRequest.current = true; if (audio.current && audio.current.currentTime >= studyEnd - 0.05) seek(lesson.lines[0].start); try { await audio.current?.play(); } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) setAudioError('Toque novamente para iniciar o áudio.'); } finally { playRequest.current = false; } }
   function changeSpeed(value: number) { setSpeed(value); if (audio.current) { audio.current.playbackRate = value; audio.current.preservesPitch = true; } }
   function chooseLine(index: number) { setSelected(index); setTranslation(false); setWord(null); seek(lesson.lines[index].start); }
-  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'awards') { resumeAfterBackground.current = false; audio.current?.pause(); setLoop(false); setMode(value); const step = value === 'learn' ? 2 : 1; update({ stage: Math.max(progressRef.current.stage, step) }); }
-  function exitRoom() { resumeAfterBackground.current = false; audio.current?.pause(); onClose(); }
-  const vocab = lesson.vocabulary.find(v => v.id === word);
-  const visibleVocabulary = lesson.vocabulary.filter(v => `${v.word} ${v.meaning}`.toLocaleLowerCase('pt-BR').includes(vocabularyQuery.toLocaleLowerCase('pt-BR')));
+  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'awards') { preparation.current?.abort(); resumeAfterBackground.current = false; audio.current?.pause(); setLoop(false); setMode(value); const step = value === 'learn' ? 2 : 1; update({ stage: Math.max(progressRef.current.stage, step) }); }
+  function exitRoom() { preparation.current?.abort(); resumeAfterBackground.current = false; audio.current?.pause(); onClose(); }
+  const vocab = mode === 'learn' ? lesson.vocabulary.find(v => v.id === word) : undefined;
+  const visibleVocabulary = mode === 'learn' ? lesson.vocabulary.filter(v => `${v.word} ${v.meaning}`.toLocaleLowerCase('pt-BR').includes(vocabularyQuery.toLocaleLowerCase('pt-BR'))) : [];
   const identity = musifyIdentity(lesson.id);
   const customIdentity = identity && !lesson.id.endsWith('-local');
   const identityStyle = customIdentity ? {
@@ -211,8 +252,8 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
       </section>}
       {mode !== 'game' && <button className="listen-link clip-back-result" onClick={() => changeMode('game')}>{t('Voltar ao resultado')}</button>}
       <main className="listen-content">
-        <div className="clip-game-mount" hidden={mode !== 'game'}><MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} onLyrics={() => changeMode('lyrics')} lesson={lesson} media={audio} clock={cueTime} playing={mode === 'game' && playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPhaseChange={setGamePhase} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} /></div>
-        <section className="listen-lyric-panel" hidden={mode !== 'lyrics'}>
+        <div className="clip-game-mount" hidden={mode !== 'game'}><MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished, timing) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished, timing), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} onLyrics={() => changeMode('lyrics')} lesson={lesson} media={audio} clock={cueTime} readClock={readClock} onPrepare={preparePlayback} playing={mode === 'game' && playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPhaseChange={setGamePhase} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} /></div>
+        {mode === 'lyrics' && <section className="listen-lyric-panel">
           <div className="listen-caption"><span>{t(playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.')}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>{t('Tradução em português')}</button></div>
           <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label={localizeAttribute('Letra do trecho de estudo em inglês')}>
             {lesson.lines.map((cue, i) => <div data-line={i} key={cue.id} className={'music-line ' + (activeLine === i ? 'current ' : '') + (cueTime >= cue.end ? 'past' : '')}>
@@ -221,13 +262,19 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
             </div>)}
           </div>
           <div className="listen-lyric-hint">{follow ? <span lang={supportLanguage}>{supportT('Toque em uma palavra para explorar')}</span> : <button className="listen-link" onClick={() => setFollow(true)}>{t('Voltar à voz')} <ArrowRight size={14} /></button>}</div>
-        </section>
-        <div className="listen-study" hidden={mode !== 'learn'}>      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={localizeAttribute('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i} lang="en">{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução em português' : 'Ver tradução em português')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><MusicSupportText text={line.tip} sourceLanguage={line.tipLanguage} fallback="Ouça o trecho e repita em blocos curtos. Preste atenção ao ritmo e às palavras que se ligam." /><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
+        </section>}
+        {mode === 'learn' && <div className="listen-study">      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={localizeAttribute('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i} lang="en">{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução em português' : 'Ver tradução em português')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><MusicSupportText text={line.tip} sourceLanguage={line.tipLanguage} fallback="Ouça o trecho e repita em blocos curtos. Preste atenção ao ritmo e às palavras que se ligam." /><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
       <section className="music-panel" hidden={mode !== 'learn'}><h2>{t('Palavras em contexto')}</h2><label className="music-vocabulary-search">{t(`Buscar nas ${lesson.vocabulary.length} palavras`)}<input value={vocabularyQuery} onChange={e => setVocabularyQuery(e.target.value)} placeholder={localizeAttribute('Palavra ou significado')} /></label><div className="music-vocabulary">{visibleVocabulary.map(v => <button key={v.id} lang="en" aria-pressed={word === v.id} onClick={() => { setWord(v.id); update({ explored: [...new Set([...progress.explored, v.id])] }); }}>{v.word}{progress.saved.includes(v.id) ? <Bookmark size={13} /> : null}</button>)}</div>{vocab && <div className="music-definition"><h3 lang="en">{vocab.word} <small>{vocab.ipa}</small></h3>{supportLanguage === 'pt-BR' ? <p lang="pt-BR">{vocab.meaning}</p> : <details><summary>{t('Ver significado em português')}</summary><p lang="pt-BR">{vocab.meaning}</p></details>}<MusicSupportText text={vocab.usage} sourceLanguage={vocab.usageLanguage} fallback="Compare a palavra com o exemplo em inglês. Depois, use-a em uma frase sua." /><p lang="en">{vocab.example}</p><button className="listen-link" disabled={progress.saved.includes(vocab.id)} onClick={() => update({ saved: [...progress.saved, vocab.id] })}><Bookmark size={14} />{t(progress.saved.includes(vocab.id) ? 'Palavra salva nesta música' : 'Salvar nesta música')}</button></div>}</section>
-        </div>
+        </div>}
         {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
-      <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) { setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); } }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { resumeAfterBackground.current = false; setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
+      <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata"
+        onLoadedMetadata={() => { if (audio.current) { const position = preparing.current ? 0 : Math.min(studyEnd, progressRef.current.position); if (Math.abs(audio.current.currentTime - position) > .001) audio.current.currentTime = position; audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }}
+        onPlay={() => { if (!preparing.current && !audio.current?.paused) setPlaying(true); }}
+        onPause={() => { if (preparing.current || !audio.current?.paused) return; setPlaying(false); setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); }}
+        onEnded={() => { if (!preparing.current) { setTime(audio.current?.currentTime ?? studyEnd); setPlaying(false); } }}
+        onSeeked={() => { if (!preparing.current) setTime(audio.current?.currentTime ?? 0); }}
+        onError={() => { resumeAfterBackground.current = false; setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
       {(playbackControls || audioError) && <footer className="listen-dock">
         {playbackControls && <><div className="listen-timeline"><input aria-label={localizeAttribute('Posição da música')} type="range" min="0" max={studyEnd} step="0.01" value={Math.min(time, studyEnd)} onChange={e => seek(Number(e.target.value))} /><div><span>{clock(time)}</span><span>{t('Música completa ·')} {clock(studyEnd)}</span></div></div>
         <div className="listen-transport">
@@ -237,10 +284,29 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon" aria-label={localizeAttribute('Próximo trecho')} onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
           <button className="listen-icon listen-speed" aria-label={localizeAttribute(`Velocidade ${musicSpeedLabel(speed)}`)} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
         </div></>}
-        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>{t('Tentar novamente')}</button></div>}
+        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => { audio.current?.load(); setAudioError(''); if (mode !== 'game' || gamePhase !== 'ready') void play(); }}>{t('Tentar novamente')}</button></div>}
       </footer>}
     </div>
   </dialog>;
+}
+function waitForMusicAudio(element: HTMLAudioElement, signal: AbortSignal) {
+  if (element.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) return Promise.resolve();
+  return new Promise<void>((resolve, reject) => {
+    const finish = (error?: Error) => {
+      element.removeEventListener('canplay', ready);
+      element.removeEventListener('error', failed);
+      signal.removeEventListener('abort', cancelled);
+      if (error) reject(error); else resolve();
+    };
+    const ready = () => finish();
+    const failed = () => finish(new Error('Audio could not be prepared'));
+    const cancelled = () => finish(new DOMException('Playback preparation cancelled', 'AbortError'));
+    element.addEventListener('canplay', ready, { once: true });
+    element.addEventListener('error', failed, { once: true });
+    signal.addEventListener('abort', cancelled, { once: true });
+    if (signal.aborted) cancelled();
+    else if (element.error) failed();
+  });
 }
 function clock(seconds: number) { const n = Math.max(0, Math.floor(seconds)); return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); }
 

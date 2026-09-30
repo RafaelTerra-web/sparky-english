@@ -17,9 +17,8 @@
 .clip-phrase-translation{display:block;max-width:95%;font:400 12px/1.35 var(--font-geist-sans),sans-serif;letter-spacing:0;color:var(--muted);text-align:center}
 .clip-game .clip-unified-lyrics p:not([data-current=true]):not([data-question=true]) .clip-phrase-translation{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.clip-rank-burst{display:none}}
-.clip-game{filter:brightness(1);transition:filter .8s ease}
-.clip-game[data-playing=true][data-section=chorus]:is([data-phase=round],[data-phase=outro]){filter:brightness(1.1)}
-.clip-energy-highlight{position:absolute;inset:-2%;z-index:4;border-radius:22px;pointer-events:none;background:radial-gradient(circle at 50% 38%,#fff9d9aa 0 4%,#f6cf6670 18%,transparent 58%),linear-gradient(115deg,transparent 25%,#fff7d529 48%,transparent 68%);box-shadow:inset 0 0 58px #ffe99355,0 0 34px #f2c94c33;mix-blend-mode:screen;transform-origin:50% 42%;transition:opacity .09s linear,transform .09s linear}
+.clip-game{filter:none}
+.clip-energy-highlight{position:absolute;inset:0;z-index:-1;border-radius:22px;pointer-events:none;background:radial-gradient(ellipse at 50% 38%,var(--lyric-halo),transparent 68%);transform-origin:50% 42%;transition:opacity .18s linear,transform .18s linear;contain:strict}
 .clip-round[data-state=answered] .clip-answer-receipt.success strong{animation:music-success-tap .3s ease-out both}
 @keyframes music-success-tap{0%{transform:scale(.97)}55%{transform:scale(1.035)}100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.clip-energy-highlight{display:none}.clip-game{filter:none!important;transition:none!important}.clip-round[data-state=answered] .clip-answer-receipt.success strong{animation:none!important}}
@@ -228,9 +227,10 @@
 @media(max-width:600px){.clip-room .clip-game[data-phase=ready]>.clip-media{border-radius:24px!important}}
 
 /* Musify: life/status controls fit the same compact score row on 320px phones. */
-.clip-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:54px}
+.clip-status{display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-end;gap:4px;min-width:56px}
 .clip-status>span{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
-.clip-lives{display:flex;align-items:center;gap:4px;color:#f29eb5}
+.clip-lives{display:flex;flex:0 0 auto;align-items:center;gap:4px;min-width:56px;min-height:18px;color:#f29eb5}
+.clip-lives svg{display:block;flex:none;width:16px;height:16px}
 .clip-lives [data-lost=true]{opacity:.32}
 .clip-game[data-phase=failed],.clip-game[data-phase=result]{overflow-y:auto}
 .clip-room[data-musify=true]{color-scheme:dark}
@@ -245,3 +245,76 @@
 .musify-identity-fx[data-effect=ribbon] .musify-particle{width:110px;height:110px}
 .musify-wave-bar{position:absolute;bottom:10%;width:2px;border-radius:2px;background:var(--accent);opacity:.08;transform-origin:bottom}
 @media(prefers-reduced-motion:reduce){.musify-identity-fx{display:none}.clip-lives{transition:none}}
+
+/* A fixed header reserves the full touch target even on short Android screens.
+   Decorative layers remain in the game stage, below its readable controls. */
+.clip-room .listen-header{position:relative;z-index:1;flex:0 0 48px;height:48px;min-height:48px}
+.clip-room .clip-game-mount{display:flex;flex-direction:column}
+.clip-room .clip-game{flex:1;min-width:0}
+.clip-room .clip-game:is([data-phase=round],[data-phase=outro])>.clip-scorebar{display:flex;flex:0 0 44px;min-height:44px;padding:4px 0}
+.clip-room .clip-game>.clip-scorebar{min-width:0;gap:12px;padding-inline:2px}
+.clip-score-points{flex:0 1 auto;min-width:0}
+.clip-score-points>span{min-width:0}
+.clip-score-points strong{white-space:nowrap;line-height:1.25}
+.clip-scorebar,.clip-rank-progress,.clip-round{position:relative;z-index:1}
+.clip-rank-progress{flex-shrink:0}
+.clip-room .clip-rank-progress progress{appearance:none;border:0;border-radius:99px;background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.clip-room .clip-rank-progress progress::-webkit-progress-bar{background:color-mix(in srgb,var(--accent) 16%,transparent);border-radius:99px}
+.clip-room .clip-rank-progress progress::-webkit-progress-value{background:var(--accent);border-radius:99px}
+.clip-room .clip-rank-progress progress::-moz-progress-bar{background:var(--accent);border-radius:99px}
+.clip-room .clip-round-top{min-width:0;gap:8px}
+.clip-round-top>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clip-room .clip-round-top:empty,.clip-room .clip-dots:empty{display:none;flex-basis:0;min-height:0;margin:0}
+
+/* Percentage-sized lyric rows left an empty half-stage between phrases. Fit
+   the context to its text and keep the pending question last and prominent. */
+.clip-room .clip-game .clip-unified-lyrics{display:flex;flex-direction:column;justify-content:center;gap:12px;padding:10px 0;mask-image:none}
+.clip-room .clip-game .clip-unified-lyrics p{position:relative;inset:auto;flex:0 0 auto;height:auto;min-height:0;gap:6px;transform:none!important;transition:opacity .2s}
+.clip-room .clip-game .clip-unified-lyrics p:not([data-current=true]):not([data-question=true]),
+.clip-room .clip-game .clip-unified-lyrics[data-focus=true] p:not([data-question=true]){order:0;max-height:2.7em;overflow:hidden;font-size:15px;line-height:1.35;opacity:.45}
+.clip-room .clip-game .clip-unified-lyrics p[data-current=true],
+.clip-room .clip-game .clip-unified-lyrics p[data-question=true]{order:1}
+.clip-room .clip-game .clip-unified-lyrics p:not([data-current=true]):not([data-question=true]) .clip-phrase-translation,
+.clip-room .clip-game .clip-unified-lyrics[data-focus=true] p:not([data-question=true]) .clip-phrase-translation{display:none}
+.clip-room .clip-game .clip-lyric-row{max-width:100%;overflow-wrap:anywhere}
+
+@media(max-width:600px){
+  header.music-library-heading{min-height:122px;padding-bottom:20px}
+  .music-library-heading>div:first-child{padding-right:92px}
+  .music-library-heading>div:last-child{right:12px;bottom:10px}
+  .clip-room .clip-game .clip-prompt-slot{min-height:120px;flex-basis:150px;max-height:230px}
+  .clip-room .clip-game .clip-round{padding-top:8px}
+  .clip-room .clip-game .clip-time-window{flex:0 0 34px;min-height:34px;padding-top:4px;gap:3px}
+  .clip-room .clip-game .clip-feedback{flex:0 0 24px;min-height:24px;padding:2px 0}
+  .clip-room .clip-game .clip-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clip-room .clip-game .clip-options button{min-width:0;padding-inline:18px;overflow-wrap:anywhere}
+}
+
+/* Keep each track's color, artwork and motion without filtering the complete
+   interface or promoting dozens of glowing particles on a touch device. */
+@media(pointer:coarse){
+  .clip-room .listen-shell{box-shadow:none}
+  .clip-room .clip-game>.clip-media{box-shadow:inset 0 0 0 1px #ffffff14!important}
+  .clip-room .clip-cover-image,.music-video video,.clip-game[data-tone=buttercup]::before{filter:none}
+  .clip-room .clip-lyric-row{filter:none}
+  .musify-particle,.clip-chorus-fx i{will-change:auto;filter:none!important;box-shadow:none!important}
+  .musify-particle:nth-child(n+7),.clip-chorus-fx i:nth-child(n+9){display:none}
+  .clip-chorus-fx::before{filter:none!important}
+}
+
+@container music-room (max-height:600px){
+  .clip-room .clip-game .clip-prompt-slot{min-height:92px;flex-basis:100px;max-height:170px}
+  .clip-room .clip-game .clip-unified-lyrics{gap:8px;padding:4px 0}
+  .clip-room .clip-game .clip-unified-lyrics p:not([data-current=true]):not([data-question=true]),
+  .clip-room .clip-game .clip-unified-lyrics[data-focus=true] p:not([data-question=true]){display:none}
+}
+@container music-room (max-height:480px){
+  .clip-room .clip-game .clip-rank-progress{display:none}
+  .clip-room .clip-game .clip-prompt-slot{min-height:70px;flex-basis:80px}
+}
+
+.clip-prepare-spinner{display:inline-block;flex:0 0 18px;width:18px;height:18px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:music-prepare-spin .9s linear infinite}
+.clip-room .clip-primary[aria-busy=true]{cursor:wait}
+.clip-prepare-status{font-size:11px;line-height:1.5;color:var(--muted);text-align:center;margin-top:8px}
+@keyframes music-prepare-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.clip-prepare-spinner{animation:none}}

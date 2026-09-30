@@ -12,6 +12,8 @@ import * as music from '../src/lib/music.ts';
 import * as ambience from '../src/lib/music-ambience.ts';
 import * as visuals from '../src/lib/music-visuals.ts';
 import * as translation from '../src/lib/music-translation.ts';
+import * as musicRuntime from '../src/lib/music-runtime.ts';
+import * as musicScore from '../src/lib/music-score.ts';
 import { musifyCurriculum } from '../scripts/review-musify-curriculum.mjs';
 
 const dictionary = JSON.parse(readFileSync(new URL('../public/locales/en.json', import.meta.url), 'utf8'));
@@ -100,6 +102,7 @@ test('Musify ready and failure controls translate independently from the pedagog
     for (const phase of ['ready', 'failed']) {
       const Game = compile('../src/components/music-game.tsx', {
         '@/lib/interface-language': api, '@/lib/music-game': game, '@/lib/music-performance': performance,
+        '@/lib/music-runtime': musicRuntime, '@/lib/music-score': musicScore,
         '@/lib/music-ambience': ambience, '@/lib/music-visuals': visuals, '@/lib/music-energy': { musicEnergy: {} },
         '@/lib/music-art': { musicArtwork: () => undefined }, '@/lib/music-feedback': {}, 'next/image': emptyComponent, 'lucide-react': icons,
         './music-scene': emptyComponent, './music-video': emptyComponent, './music-chorus-fx': emptyComponent,
@@ -142,6 +145,7 @@ test('ambient lyrics show translation context while masking pending equivalents 
     const api = await runtime(mode);
     const Ambience = compile('../src/components/music-ambience.tsx', {
       '@/lib/interface-language': api, '@/lib/music-visuals': visuals, '@/lib/music-ambience': ambience, '@/lib/music-translation': translation,
+      '@/lib/music-runtime': musicRuntime,
     }).default;
     const render = completed => renderToStaticMarkup(React.createElement(Ambience, { lines: lesson.lines, index: rounds[0].lineIndex, clock: 7, rounds, completed }));
     assert.ok(!render(0).includes('Mantenha seu ritmo'), mode + ': planned question masks its translation');

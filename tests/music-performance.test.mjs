@@ -12,14 +12,14 @@ test('rank boundaries cover E, D, C, B, A, A+ and S exactly', () => {
   }
   assert.equal(musicRank(NaN).name,'E'); assert.equal(musicRank(-100).name,'E');
 });
-test('one answer awards exactly 100 points once and errors never subtract points', () => {
+test('an answer at its opening awards 100 points once and errors never subtract points', () => {
   let state=musicGameReducer(initialGame,{type:'start'});
   const action={type:'answer',index:0,value:'hello',expected:'hello',time:4,opens:4,closes:7};
-  state=musicGameReducer(state,action); assert.equal(state.correct*100,100);
-  assert.equal(musicGameReducer(state,action).correct*100,100);
+  state=musicGameReducer(state,action); assert.equal(state.score,100);
+  assert.equal(musicGameReducer(state,action).score,100);
   state=musicGameReducer(state,{type:'tick',time:7,deadlines:[7,17],finishAt:20});
   state=musicGameReducer(state,{...action,index:1,value:'wrong',time:14,opens:14,closes:17});
-  assert.equal(state.correct*100,100); assert.equal(state.streak,0);
+  assert.equal(state.score,100); assert.equal(state.streak,0);
 });
 test('records and achievements merge across devices without summing or losing a better result', () => {
   const a=recordMusicPerformance(null,'challenge',24,24,true);
