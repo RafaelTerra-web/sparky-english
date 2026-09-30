@@ -1,14 +1,15 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { Volume2, ChevronDown, SkipBack, SkipForward, SlidersHorizontal, Headphones, ArrowRight, Play, Pause, RotateCcw, Bookmark, } from 'lucide-react';
 import MusicGame from './music-game';
 import MusicAchievements from './music-achievements';
 import { recordMusicPerformance } from '@/lib/music-performance';
 import { musicArtwork } from '@/lib/music-art';
+import { musifyIdentity } from '@/lib/musify-identity';
 import styles from './music-shelf.module.css';
-import { musicSpeeds, musicSpeedLabel } from '@/lib/music-game';
-import { t } from '@/lib/interface-language';
+import { musicSpeeds, musicSpeedLabel, type GameState } from '@/lib/music-game';
+import { t, supportT, supportTemplate, translate, localizeAttribute, useCurrentInterfaceLanguage, useSupportLanguage } from '@/lib/interface-language';
 import type { MascotId } from '@/lib/rewards-shared';
 import MascotMoment from './mascot-moment';
 import { activeCue, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLesson, type MusicProgress } from '@/lib/music';
@@ -16,6 +17,8 @@ import { activeCue, emptyMusicProgress, mergeMusic, normalizeMusic, type MusicLe
 const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
 export default function MusicLibrary({ userId, level, mascot }: { userId: string; level: string; mascot: MascotId }) {
+  useCurrentInterfaceLanguage();
+  const supportLanguage = useSupportLanguage();
   const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -35,21 +38,23 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
   useEffect(() => { const refresh = () => setRetry(value => value + 1); window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
   function openSession(lesson: MusicLesson) { try { localStorage.setItem(`sparky-music:active:${userId}`, lesson.id); } catch {} setActive(lesson); }
   function closeSession() { try { localStorage.removeItem(`sparky-music:active:${userId}`); } catch {} setActive(null); }
-  const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic}`.toLowerCase().includes(query.toLowerCase()));
+  const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic} ${translate(x.topic)}`.toLowerCase().includes(query.toLowerCase()));
 
   return <><section className={styles.shelf} aria-labelledby="music-heading">
     <header className={styles.heading}>
-      <div><p className={styles.overline}><Headphones size={17} /> {t('Inglês pela escuta')}</p><h1 id="music-heading">Music Lab<span aria-hidden="true">.</span></h1><p>{t('Reconheça palavras nas músicas que você gosta. Uma frase de cada vez.')}</p></div>
+      <div><p className={styles.overline}><Headphones size={17} /> Music Lab · {t('Inglês pela escuta')}</p><h1 id="music-heading">Musify<span aria-hidden="true">.</span></h1><p lang={supportLanguage}>{supportT('Reconheça palavras nas músicas que você gosta. Uma frase de cada vez.')}</p></div>
       <div className={styles.headingVisual}><MascotMoment mascot={mascot} mood="listen" className={styles.mascot} /><div className={styles.method}><span>01 <strong>{t('Ouça a frase')}</strong></span><span>02 <strong>{t('Complete a letra')}</strong></span><span>03 <strong>{t('Descubra o sentido')}</strong></span></div></div>
     </header>
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
-    <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={t('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
+    <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={localizeAttribute('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
     <div className={styles.collection}><h2>{t('Escolha uma música')}</h2><p>{t('Seu nível:')} <strong>{level}</strong></p></div>
     {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p role="status">{t('Nenhuma música disponível neste filtro.')}</p> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>}
   </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={closeSession} />}</>;
 }
 
 function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson: MusicLesson; lab: boolean; onClose: () => void }) {
+  useCurrentInterfaceLanguage();
+  const supportLanguage = useSupportLanguage();
   const dialog = useRef<HTMLDialogElement>(null);
   const [mode, setMode] = useState<'game' | 'lyrics' | 'learn' | 'awards'>('game');
   const [volume, setVolume] = useState(60);
@@ -88,6 +93,12 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const [time, setTime] = useState(progress.position), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(1), [loop, setLoop] = useState(false), [selected, setSelected] = useState(0), [translation, setTranslation] = useState(false), [follow, setFollow] = useState(true), [audioError, setAudioError] = useState('');
   const [word, setWord] = useState<string | null>(null);
   const [vocabularyQuery, setVocabularyQuery] = useState('');
+  const [gamePhase, setGamePhase] = useState<GameState['phase']>('ready');
+  const visibilitySession = useRef({ mode, gamePhase });
+  const resumeAfterBackground = useRef(false), playRequest = useRef(false);
+  useEffect(() => { visibilitySession.current = { mode, gamePhase }; }, [mode, gamePhase]);
+  const playbackControls = mode === 'lyrics' || mode === 'learn';
+  const settingsAvailable = playbackControls || (mode === 'game' && gamePhase === 'ready');
   const studyEnd = lesson.duration;
   const cueTime = time + offset / 1000;
   const activeLine = activeCue(lesson.lines, cueTime), line = lesson.lines[selected];
@@ -126,9 +137,21 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   }, []);
   useEffect(() => {
     const element = audio.current;
-    const hide = () => { if (document.hidden) { element?.pause(); } };
+    const hide = () => {
+      const session = visibilitySession.current;
+      const runningGame = session.mode === 'game' && (session.gamePhase === 'round' || session.gamePhase === 'outro');
+      if (document.hidden) {
+        resumeAfterBackground.current = runningGame && !!element && (!element.paused || playRequest.current) && !element.ended;
+        element?.pause();
+      } else if (resumeAfterBackground.current) {
+        resumeAfterBackground.current = false;
+        if (runningGame && element && !element.ended && !element.error) void play();
+      }
+    };
     document.addEventListener('visibilitychange', hide);
-    return () => { element?.pause(); document.removeEventListener('visibilitychange', hide); };
+    return () => { resumeAfterBackground.current = false; element?.pause(); document.removeEventListener('visibilitychange', hide); };
+  // The lesson and media element remain mounted; current mode/phase are read from refs.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const save = () => { if (audio.current) rememberPosition(audio.current.currentTime); };
@@ -156,57 +179,79 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   }, [playing, loop, selected]);
   useEffect(() => { if (follow && mode === 'lyrics' && activeLine >= 0) { const element = lyrics.current?.querySelector<HTMLElement>(`[data-line="${activeLine}"]`); if (element && lyrics.current) lyrics.current.scrollTo({ top: element.offsetTop - lyrics.current.clientHeight * 0.3, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); } }, [activeLine, follow, mode]);
   function seek(value: number) { value = Math.max(0, Math.min(studyEnd, value)); if (audio.current) { audio.current.currentTime = value; setTime(value); update({ position: value, positionAt: Date.now() }); } }
-  async function play() { setAudioError(''); if (audio.current && audio.current.currentTime >= studyEnd - 0.05) seek(lesson.lines[0].start); try { await audio.current?.play(); } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) setAudioError('Toque novamente para iniciar o áudio.'); } }
+  async function play() { setAudioError(''); playRequest.current = true; if (audio.current && audio.current.currentTime >= studyEnd - 0.05) seek(lesson.lines[0].start); try { await audio.current?.play(); } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) setAudioError('Toque novamente para iniciar o áudio.'); } finally { playRequest.current = false; } }
   function changeSpeed(value: number) { setSpeed(value); if (audio.current) { audio.current.playbackRate = value; audio.current.preservesPitch = true; } }
   function chooseLine(index: number) { setSelected(index); setTranslation(false); setWord(null); seek(lesson.lines[index].start); }
-  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'awards') { audio.current?.pause(); setLoop(false); setMode(value); const step = value === 'learn' ? 2 : 1; update({ stage: Math.max(progressRef.current.stage, step) }); }
-  function exitRoom() { audio.current?.pause(); onClose(); }
+  function changeMode(value: 'game' | 'lyrics' | 'learn' | 'awards') { resumeAfterBackground.current = false; audio.current?.pause(); setLoop(false); setMode(value); const step = value === 'learn' ? 2 : 1; update({ stage: Math.max(progressRef.current.stage, step) }); }
+  function exitRoom() { resumeAfterBackground.current = false; audio.current?.pause(); onClose(); }
   const vocab = lesson.vocabulary.find(v => v.id === word);
   const visibleVocabulary = lesson.vocabulary.filter(v => `${v.word} ${v.meaning}`.toLocaleLowerCase('pt-BR').includes(vocabularyQuery.toLocaleLowerCase('pt-BR')));
-  return <dialog ref={dialog} className="listen-room clip-room" data-track={lesson.id} data-mode={mode} aria-labelledby="music-room-title" onCancel={e => { e.preventDefault(); exitRoom(); }}>
+  const identity = musifyIdentity(lesson.id);
+  const customIdentity = identity && !lesson.id.endsWith('-local');
+  const identityStyle = customIdentity ? {
+    '--accent': identity.accent, '--primary': identity.accent, '--on-primary': identity.background,
+    '--on-accent': identity.background, '--background': identity.background, '--surface': identity.surface,
+    '--surface-soft': identity.surface, '--surface-strong': identity.surface, '--input-background': identity.background,
+    '--foreground': '#f8f2fa', '--muted': '#cdc1d4', '--line': '#67546f', '--disabled-surface': identity.surface,
+    '--disabled-text': '#a99eb2', '--focus': identity.accent, '--cover-title': identity.accent,
+    '--lyric-color': '#f8f2fa', '--success': '#a5e8c1', '--success-soft': '#17352b',
+  } as CSSProperties : undefined;
+  return <dialog ref={dialog} className="listen-room clip-room" data-track={lesson.id} data-mode={mode} data-musify={!!customIdentity} style={identityStyle} aria-labelledby="music-room-title" onCancel={e => { e.preventDefault(); exitRoom(); }}>
     <div className="listen-shell">
       <header className="listen-header">
-        <button className="listen-icon" aria-label="Todas as músicas" onClick={exitRoom}><ChevronDown size={24} /></button>
-        <span>MÚSICAS {lab && <span className="listen-beta">LAB</span>}</span>
-        <button className="listen-icon" aria-label="Ajustes de reprodução" aria-expanded={settings} onClick={() => setSettings(!settings)}><SlidersHorizontal size={20} /></button>
+        <button className="listen-icon" aria-label={localizeAttribute('Todas as músicas')} onClick={exitRoom}><ChevronDown size={24} /></button>
+        <span>{t('MÚSICAS')} {lab && <span className="listen-beta">LAB</span>}</span>
+        {settingsAvailable && <button className="listen-icon" aria-label={localizeAttribute('Ajustes de reprodução')} aria-expanded={settings} onClick={() => setSettings(!settings)}><SlidersHorizontal size={20} /></button>}
       </header>
       <div className="listen-track"><div className="listen-art" aria-hidden="true">p<span>01</span></div><div><h1 id="music-room-title">{lesson.title}</h1><p>{lesson.artist}</p></div><span className="listen-level">{lesson.level}</span></div>
-      {settings && <section className="listen-settings" aria-label="Ajustes de reprodução">
-        <label><span><Volume2 size={16} /> Volume <output>{volume}%</output></span><input aria-label="Volume da música" type="range" min="0" max="100" value={volume} onChange={e => { const value = Number(e.target.value); setVolume(value); if (audio.current) audio.current.volume = value / 100; }} /></label>
-        <label><span>Ajuste fino da letra e do jogo <output>{offset > 0 ? '+' : ''}{offset} ms</output></span><input aria-label="Ajuste fino da letra e do jogo" type="range" min="-1000" max="1000" step="50" value={offset} onChange={e => changeOffset(Number(e.target.value))} /></label>
-        <p>Valor positivo adianta a letra; negativo atrasa. Use para compensar o atraso do fone.</p><p role="status">{lab ? 'Teste local · ' : ''}{t(sync)}</p>
+      {settingsAvailable && settings && <section className="listen-settings" aria-label={localizeAttribute('Ajustes de reprodução')}>
+        <label><span><Volume2 size={16} /> {t('Volume')} <output>{volume}%</output></span><input aria-label={localizeAttribute('Volume da música')} type="range" min="0" max="100" value={volume} onChange={e => { const value = Number(e.target.value); setVolume(value); if (audio.current) audio.current.volume = value / 100; }} /></label>
+        <label><span>{t('Ajuste fino da letra e do jogo')} <output>{offset > 0 ? '+' : ''}{offset} ms</output></span><input aria-label={localizeAttribute('Ajuste fino da letra e do jogo')} type="range" min="-1000" max="1000" step="50" value={offset} onChange={e => changeOffset(Number(e.target.value))} /></label>
+        <p lang={supportLanguage}>{supportT('Valor positivo adianta a letra; negativo atrasa. Use para compensar o atraso do fone.')}</p><p role="status">{t(lab ? 'Teste local · ' : '')}{t(sync)}</p>
       </section>}
-      {mode !== 'game' && <button className="listen-link clip-back-result" onClick={() => changeMode('game')}>Voltar ao resultado</button>}
+      {mode !== 'game' && <button className="listen-link clip-back-result" onClick={() => changeMode('game')}>{t('Voltar ao resultado')}</button>}
       <main className="listen-content">
-        <div className="clip-game-mount" hidden={mode !== 'game'}><MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} onLyrics={() => changeMode('lyrics')} lesson={lesson} media={audio} clock={cueTime} playing={mode === 'game' && playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} /></div>
+        <div className="clip-game-mount" hidden={mode !== 'game'}><MusicGame performance={progress.performance} onPerformance={(mode, correct, streak, finished) => { update({ performance: recordMusicPerformance(progressRef.current.performance, mode, correct, streak, finished), completed: progressRef.current.completed || finished }); if (finished) void synchronize(); }} onAchievements={() => changeMode('awards')} onLyrics={() => changeMode('lyrics')} lesson={lesson} media={audio} clock={cueTime} playing={mode === 'game' && playing} speed={speed} onSpeed={changeSpeed} onSeek={seek} onPhaseChange={setGamePhase} onPlay={() => { setLoop(false); void play(); }} onPause={() => audio.current?.pause()} onExplore={(index, vocabularyId) => { setSelected(index); setWord(vocabularyId || null); changeMode('learn'); if (vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, vocabularyId])] }); }} /></div>
         <section className="listen-lyric-panel" hidden={mode !== 'lyrics'}>
-          <div className="listen-caption"><span>{playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.'}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>Tradução</button></div>
-          <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label="Letra do trecho de estudo em inglês">
+          <div className="listen-caption"><span>{t(playing ? 'ACOMPANHE A VOZ' : 'OUÇA. DEPOIS, EXPERIMENTE.')}</span><button className="listen-link" aria-pressed={translation} onClick={() => setTranslation(!translation)}>{t('Tradução em português')}</button></div>
+          <div className="music-lyrics" ref={lyrics} onWheel={() => setFollow(false)} onTouchMove={() => setFollow(false)} onKeyDown={e => { if (['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key)) setFollow(false); }} tabIndex={0} aria-label={localizeAttribute('Letra do trecho de estudo em inglês')}>
             {lesson.lines.map((cue, i) => <div data-line={i} key={cue.id} className={'music-line ' + (activeLine === i ? 'current ' : '') + (cueTime >= cue.end ? 'past' : '')}>
-              <button className="music-line-time" aria-label={'Ouvir trecho ' + (i + 1)} onClick={() => { chooseLine(i); setFollow(true); void play(); }}>{String(i + 1).padStart(2, '0')}</button>
+              <button className="music-line-time" aria-label={localizeAttribute('Ouvir trecho ' + (i + 1))} onClick={() => { chooseLine(i); setFollow(true); void play(); }}>{String(i + 1).padStart(2, '0')}</button>
               <div><p lang="en">{cue.words.map((w, j) => <button key={j} className={activeLine === i && cueTime >= w.start && cueTime < w.end ? 'current-word' : ''} onClick={() => { audio.current?.pause(); setSelected(i); setWord(w.vocabularyId || null); changeMode('learn'); if (w.vocabularyId) update({ explored: [...new Set([...progressRef.current.explored, w.vocabularyId])] }); }}>{w.text}</button>)}</p>{translation && <p className="listen-translation" lang="pt-BR">{cue.translation}</p>}</div>
             </div>)}
           </div>
-          <div className="listen-lyric-hint">{follow ? <span>Toque em uma palavra para explorar</span> : <button className="listen-link" onClick={() => setFollow(true)}>Voltar à voz <ArrowRight size={14} /></button>}</div>
+          <div className="listen-lyric-hint">{follow ? <span lang={supportLanguage}>{supportT('Toque em uma palavra para explorar')}</span> : <button className="listen-link" onClick={() => setFollow(true)}>{t('Voltar à voz')} <ArrowRight size={14} /></button>}</div>
         </section>
-        <div className="listen-study" hidden={mode !== 'learn'}>      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={t('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i}>{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução' : 'Mostrar tradução')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><p>{t(line.tip)}</p><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
-      <section className="music-panel" hidden={mode !== 'learn'}><h2>{t('Palavras em contexto')}</h2><label className="music-vocabulary-search">Buscar nas {lesson.vocabulary.length} palavras<input value={vocabularyQuery} onChange={e => setVocabularyQuery(e.target.value)} placeholder="Palavra ou significado" /></label><div className="music-vocabulary">{visibleVocabulary.map(v => <button key={v.id} aria-pressed={word === v.id} onClick={() => { setWord(v.id); update({ explored: [...new Set([...progress.explored, v.id])] }); }}>{v.word}{progress.saved.includes(v.id) ? <Bookmark size={13} /> : null}</button>)}</div>{vocab && <div className="music-definition"><h3 lang="en">{vocab.word} <small>{vocab.ipa}</small></h3><p>{t(vocab.meaning)}</p><p>{t(vocab.usage)}</p><p lang="en">{vocab.example}</p><button className="listen-link" disabled={progress.saved.includes(vocab.id)} onClick={() => update({ saved: [...progress.saved, vocab.id] })}><Bookmark size={14} />{t(progress.saved.includes(vocab.id) ? 'Palavra salva nesta música' : 'Salvar nesta música')}</button></div>}</section>
+        <div className="listen-study" hidden={mode !== 'learn'}>      <section className="music-panel"><p className="music-kicker">{t('SEU TRECHO')}</p><select aria-label={localizeAttribute('Selecionar trecho')} value={selected} onChange={e => chooseLine(Number(e.target.value))}>{lesson.lines.map((l, i) => <option key={l.id} value={i} lang="en">{i + 1}. {l.text}</option>)}</select><p lang="en" className="music-selected-text">{line.text}</p><button className="listen-link" aria-expanded={translation} onClick={() => setTranslation(!translation)}>{t(translation ? 'Ocultar tradução em português' : 'Ver tradução em português')}</button>{translation && <p lang="pt-BR">{line.translation}</p>}<h3>{t('Perceba o som')}</h3><MusicSupportText text={line.tip} sourceLanguage={line.tipLanguage} fallback="Ouça o trecho e repita em blocos curtos. Preste atenção ao ritmo e às palavras que se ligam." /><button className="listen-action" onClick={() => { seek(line.start); setLoop(true); void play(); }}><Play size={15} />{t('Ouvir este trecho')}</button></section>
+      <section className="music-panel" hidden={mode !== 'learn'}><h2>{t('Palavras em contexto')}</h2><label className="music-vocabulary-search">{t(`Buscar nas ${lesson.vocabulary.length} palavras`)}<input value={vocabularyQuery} onChange={e => setVocabularyQuery(e.target.value)} placeholder={localizeAttribute('Palavra ou significado')} /></label><div className="music-vocabulary">{visibleVocabulary.map(v => <button key={v.id} lang="en" aria-pressed={word === v.id} onClick={() => { setWord(v.id); update({ explored: [...new Set([...progress.explored, v.id])] }); }}>{v.word}{progress.saved.includes(v.id) ? <Bookmark size={13} /> : null}</button>)}</div>{vocab && <div className="music-definition"><h3 lang="en">{vocab.word} <small>{vocab.ipa}</small></h3>{supportLanguage === 'pt-BR' ? <p lang="pt-BR">{vocab.meaning}</p> : <details><summary>{t('Ver significado em português')}</summary><p lang="pt-BR">{vocab.meaning}</p></details>}<MusicSupportText text={vocab.usage} sourceLanguage={vocab.usageLanguage} fallback="Compare a palavra com o exemplo em inglês. Depois, use-a em uma frase sua." /><p lang="en">{vocab.example}</p><button className="listen-link" disabled={progress.saved.includes(vocab.id)} onClick={() => update({ saved: [...progress.saved, vocab.id] })}><Bookmark size={14} />{t(progress.saved.includes(vocab.id) ? 'Palavra salva nesta música' : 'Salvar nesta música')}</button></div>}</section>
         </div>
         {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
-      <footer className="listen-dock">
-        <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) { setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); } }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
-        <div className="listen-timeline"><input aria-label="Posição da música" type="range" min="0" max={studyEnd} step="0.01" value={Math.min(time, studyEnd)} onChange={e => seek(Number(e.target.value))} /><div><span>{clock(time)}</span><span>Música completa · {clock(studyEnd)}</span></div></div>
+      <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata" onLoadedMetadata={() => { if (audio.current) { audio.current.currentTime = Math.min(studyEnd, progressRef.current.position); audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }} onPlay={() => setPlaying(true)} onPause={() => { setPlaying(false); if (audio.current) { setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); } }} onEnded={() => setPlaying(false)} onSeeked={() => setTime(audio.current?.currentTime ?? 0)} onError={() => { resumeAfterBackground.current = false; setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
+      {(playbackControls || audioError) && <footer className="listen-dock">
+        {playbackControls && <><div className="listen-timeline"><input aria-label={localizeAttribute('Posição da música')} type="range" min="0" max={studyEnd} step="0.01" value={Math.min(time, studyEnd)} onChange={e => seek(Number(e.target.value))} /><div><span>{clock(time)}</span><span>{t('Música completa ·')} {clock(studyEnd)}</span></div></div>
         <div className="listen-transport">
-          <button className="listen-icon" aria-label="Repetir trecho" aria-pressed={loop} onClick={() => { const index = activeLine >= 0 ? activeLine : selected; setSelected(index); setLoop(!loop); if (!loop) seek(lesson.lines[index].start); }}><RotateCcw size={20} /></button>
-          <button className="listen-icon" aria-label="Trecho anterior" onClick={() => { chooseLine(Math.max(0, (activeLine >= 0 ? activeLine : selected) - 1)); setFollow(true); }}><SkipBack size={24} /></button>
-          <button className="listen-play" aria-label={playing ? 'Pausar música' : 'Tocar música'} onClick={() => playing ? audio.current?.pause() : void play()}>{playing ? <Pause size={27} fill="currentColor" /> : <Play size={27} fill="currentColor" />}</button>
-          <button className="listen-icon" aria-label="Próximo trecho" onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
-          <button className="listen-icon listen-speed" aria-label={`Velocidade ${musicSpeedLabel(speed)}`} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
-        </div>
-        {audioError && <div className="listen-error" role="alert">{audioError}<button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>Tentar novamente</button></div>}
-      </footer>
+          <button className="listen-icon" aria-label={localizeAttribute('Repetir trecho')} aria-pressed={loop} onClick={() => { const index = activeLine >= 0 ? activeLine : selected; setSelected(index); setLoop(!loop); if (!loop) seek(lesson.lines[index].start); }}><RotateCcw size={20} /></button>
+          <button className="listen-icon" aria-label={localizeAttribute('Trecho anterior')} onClick={() => { chooseLine(Math.max(0, (activeLine >= 0 ? activeLine : selected) - 1)); setFollow(true); }}><SkipBack size={24} /></button>
+          <button className="listen-play" aria-label={localizeAttribute(playing ? 'Pausar música' : 'Tocar música')} onClick={() => playing ? audio.current?.pause() : void play()}>{playing ? <Pause size={27} fill="currentColor" /> : <Play size={27} fill="currentColor" />}</button>
+          <button className="listen-icon" aria-label={localizeAttribute('Próximo trecho')} onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
+          <button className="listen-icon listen-speed" aria-label={localizeAttribute(`Velocidade ${musicSpeedLabel(speed)}`)} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
+        </div></>}
+        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => { audio.current?.load(); void play(); }}>{t('Tentar novamente')}</button></div>}
+      </footer>}
     </div>
   </dialog>;
 }
 function clock(seconds: number) { const n = Math.max(0, Math.floor(seconds)); return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); }
+
+/** Older track manifests have Portuguese guidance; English practice remains usable without a guessed translation. */
+function MusicSupportText({ text, fallback, sourceLanguage = 'pt-BR' }: { text: string; fallback: string; sourceLanguage?: 'pt-BR' | 'en' }) {
+  const language = useSupportLanguage();
+  const englishScaffold = /^Use “([^”]+)” in the phrase from the song\.$/.exec(text);
+  if (englishScaffold) return <p lang={language}>{supportTemplate('Use “{0}” na frase da música.', englishScaffold[1])}</p>;
+  if (sourceLanguage === language) return <p lang={language}>{text}</p>;
+  if (sourceLanguage === 'en') return <><p lang={language}>{supportT(fallback)}</p><details><summary>{t('Ver orientação em inglês')}</summary><p lang="en">{text}</p></details></>;
+  const localized = translate(text, language);
+  if (localized.trim() !== text.replace(/\s+/g, ' ').trim()) return <p lang={language}>{localized}</p>;
+  return <><p lang="en">{supportT(fallback)}</p><details><summary>{t('Ver orientação em português')}</summary><p lang="pt-BR">{text}</p></details></>;
+}

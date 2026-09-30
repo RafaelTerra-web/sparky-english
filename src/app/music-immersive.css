@@ -226,3 +226,22 @@
 .clip-room .clip-game>.clip-media{border:0!important;border-radius:30px!important;box-shadow:inset 0 0 0 1px #ffffff14,0 16px 36px #00000038!important}
 .clip-room .clip-game:is([data-phase=round],[data-phase=outro])>.clip-media{border-radius:22px!important;box-shadow:inset 0 0 0 1px #ffffff10,0 10px 24px #0000002e!important}
 @media(max-width:600px){.clip-room .clip-game[data-phase=ready]>.clip-media{border-radius:24px!important}}
+
+/* Musify: life/status controls fit the same compact score row on 320px phones. */
+.clip-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:54px}
+.clip-status>span{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.clip-lives{display:flex;align-items:center;gap:4px;color:#f29eb5}
+.clip-lives [data-lost=true]{opacity:.32}
+.clip-game[data-phase=failed],.clip-game[data-phase=result]{overflow-y:auto}
+.clip-room[data-musify=true]{color-scheme:dark}
+.clip-room[data-musify=true] .listen-shell{background:radial-gradient(ellipse at 5% 0,color-mix(in srgb,var(--accent) 11%,transparent),transparent 54%),var(--background)}
+.clip-room[data-musify=true] .clip-options button{background:color-mix(in srgb,var(--surface) 94%,transparent);border-color:var(--line)}
+.clip-phrase-translation[data-hidden=true]{opacity:.85!important}
+.clip-translation-mask{display:inline-flex;align-items:center;justify-content:center;min-width:3.2ch;padding:0 .3em;border-radius:4px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-weight:700;letter-spacing:.1em}
+.musify-identity-fx{position:absolute;inset:0;z-index:-1;overflow:hidden;color:var(--accent);pointer-events:none;contain:strict;mask-image:linear-gradient(#000 0%,#000 85%,transparent)}
+.musify-particle{position:absolute;width:34px;height:34px;will-change:transform}
+.musify-identity-fx[data-effect=butterflies] .musify-particle{width:36px;height:36px;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--accent) 25%,transparent))}
+.musify-identity-fx[data-effect=halo] .musify-particle{width:90px;height:90px}
+.musify-identity-fx[data-effect=ribbon] .musify-particle{width:110px;height:110px}
+.musify-wave-bar{position:absolute;bottom:10%;width:2px;border-radius:2px;background:var(--accent);opacity:.08;transform-origin:bottom}
+@media(prefers-reduced-motion:reduce){.musify-identity-fx{display:none}.clip-lives{transition:none}}

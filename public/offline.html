@@ -1,1 +1,39 @@
-<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#173e36"><title>Sem conexão · Sparky English</title><style>body{margin:0;background:#f6f3ed;color:#213934;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100dvh}main{max-width:390px;padding:30px}h1{font:36px Georgia,serif}p{line-height:1.8;color:#5f716a}a{display:inline-block;background:#173e36;color:white;border-radius:12px;padding:14px 22px;text-decoration:none;margin-top:20px}small{letter-spacing:2px}</style><main><small>SPARKY ENGLISH</small><h1>Você está sem conexão.</h1><p>Conecte-se à internet para entrar na sua conta e continuar estudando.</p><a href="/">Tentar novamente</a></main></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f6f3ed">
+  <meta name="robots" content="noindex">
+  <title>Uma pausa na conexão · Sparky English</title>
+  <link rel="icon" href="/icons/sparky-192-v2.png">
+  <link rel="stylesheet" href="/offline/offline.css">
+  <script type="module" src="/offline/practice.mjs"></script>
+</head>
+<body>
+  <main class="offline-shell">
+    <header class="brand"><img src="/icons/sparky-192-v2.png" width="38" height="38" alt=""><span>Sparky <span class="brand-english">English</span></span><span class="saved-chip" data-ui>Prática salva</span></header>
+    <section class="reconnect-card" aria-labelledby="offline-title">
+      <div class="mascot-art"><img src="/visuals/musify-offline.webp" width="640" height="640" alt="Sparky conectando um cabo ao roteador" data-ui-alt></div>
+      <div class="reconnect-copy">
+        <span class="eyebrow" data-ui>A GENTE JÁ SE ENCONTRA</span>
+        <h1 id="offline-title" data-ui>Uma pausa na conexão.</h1>
+        <p data-ui>O Sparky não conseguiu se conectar agora. Enquanto isso, continue praticando com o conteúdo salvo neste aparelho.</p>
+        <div class="actions"><a href="/" id="retry" class="primary"><span data-ui>Tentar novamente</span> <span aria-hidden="true">↻</span></a><button type="button" id="start-practice" class="secondary"><span data-ui>Praticar offline</span> <span aria-hidden="true">→</span></button></div>
+        <p id="connection-status" class="connection-status" role="status" aria-live="polite"></p>
+        <span class="quiet-note" data-ui>Sua trilha e as recompensas continuam após reconectar.</span>
+      </div>
+    </section>
+    <section id="practice" class="practice-card" hidden aria-labelledby="practice-title">
+      <div class="section-heading"><div><span class="eyebrow" data-ui>UM POUQUINHO DE INGLÊS</span><h2 id="practice-title" tabindex="-1" data-ui>Prática offline</h2></div><button type="button" id="close-practice" class="small-button" data-ui>Fechar</button></div>
+      <p class="practice-note" data-ui>Exercícios do curso para praticar livremente. Esta prática não altera sua trilha, meta diária ou moedas.</p>
+      <div id="practice-content"><p role="status" data-ui>Carregando a prática salva…</p></div>
+      <p id="storage-status" class="connection-status" role="status" aria-live="polite"></p>
+    </section>
+    <fieldset class="language-settings"><legend data-ui>Idiomas e apoio</legend><label><span data-ui>Interface</span><select id="offline-interface-language"><option value="pt-BR">Português</option><option value="en">English</option></select></label><label><span data-ui>Explicações</span><select id="offline-support-language"><option value="pt-BR">Português</option><option value="en">English</option></select></label></fieldset>
+    <details class="help"><summary data-ui>O que posso fazer enquanto espero?</summary><div><p data-support>Escolha um nível de A1 a C2, monte frases e consulte os exemplos. A prática fica salva neste navegador para você continuar depois.</p><p data-support>Para entrar na conta, ouvir músicas e áudios, conversar, concluir lições ou receber recompensas, reconecte-se. Uma lição em andamento pode ser retomada na mesma conta após validar a sessão; sessões expiradas precisam começar de novo.</p></div></details>
+    <footer><span data-ui>Um passo de cada vez.</span><span>Sparky English</span></footer>
+    <noscript><p>Ative o JavaScript para abrir os exercícios salvos. Você pode tentar se conectar novamente pelo botão acima.</p></noscript>
+  </main>
+</body>
+</html>

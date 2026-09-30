@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ambientLyricIndex } from '../src/lib/music-ambience.ts';
+import { ambientLyricIndex, lyricRowIndexes } from '../src/lib/music-ambience.ts';
+import { buildMusicRounds, musicAnswerOpens } from '../src/lib/music-game.ts';
 
 const lines = [{start: 3, end: 6}, {start: 10, end: 14}, {start: 19, end: 23}];
 test('background lyrics never preview an unheard line and clear during instrumental gaps', () => {
@@ -9,6 +10,18 @@ test('background lyrics never preview an unheard line and clear during instrumen
   }
   assert.equal(ambientLyricIndex([], 5), -1);
   assert.equal(ambientLyricIndex(lines, NaN), -1);
+});
+test('a pending question remains visible through an instrumental gap until its deadline', () => {
+  const lesson = { duration: 20, lines: [{ id: 'line-1', start: 4, end: 5,
+    words: [{ text: 'hello', start: 4, end: 5 }] }] };
+  const round = buildMusicRounds(lesson, 'level1', 1)[0];
+  const time = 7;
+  assert.ok(time >= musicAnswerOpens(round) && time < round.closes);
+  const ambientIndex = ambientLyricIndex(lesson.lines, time + .7);
+  assert.equal(ambientIndex, -1);
+  assert.deepEqual(lyricRowIndexes(ambientIndex, round.lineIndex), [round.lineIndex]);
+  assert.deepEqual(lyricRowIndexes(ambientIndex), []);
+  assert.deepEqual(lyricRowIndexes(3, 1), [1, 3]);
 });
 test('background lyrics follow corrected media time after seeks, pauses and speed changes', () => {
   // Wall-clock playback speed cannot alter the cue selected at a media time.

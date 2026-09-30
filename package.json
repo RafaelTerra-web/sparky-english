@@ -13,16 +13,18 @@
     "audit:curriculum": "node scripts/audit-curriculum.mjs",
     "audit:experience": "node scripts/audit-learning-experience.mjs",
     "images:manifest": "node scripts/build-lesson-illustration-manifest.mjs",
+    "offline:pack": "node scripts/build-offline-pack.mjs",
     "voice:generate": "node scripts/generate-voices.mjs",
     "voice:generate-tips": "node scripts/generate-tip-audio.mjs",
     "audit:coverage": "node scripts/audit-course-coverage.mjs",
-    "prebuild": "node scripts/verify-music-release.mjs && node scripts/audit-course-coverage.mjs",
+    "prebuild": "node scripts/verify-music-release.mjs && node scripts/audit-course-coverage.mjs && node scripts/build-offline-pack.mjs",
     "audit:engagement": "node --env-file=.env.local scripts/audit-engagement.mjs",
     "audit:economy": "node --env-file=.env.local scripts/audit-economy.mjs",
     "prune:economy": "node --env-file=.env.local scripts/prune-economy-events.mjs",
     "test:e2e:quick": "playwright test --config=playwright.quick.config.ts",
     "test:e2e:economy": "playwright test --config=playwright.economy.config.ts",
-    "test:e2e:notifications": "playwright test --config=playwright.notifications.config.ts"
+    "test:e2e:notifications": "playwright test --config=playwright.notifications.config.ts",
+    "test:e2e:offline": "playwright test --config=playwright.offline.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

@@ -19,7 +19,9 @@ export function ambientLyricIndex(lines: Pick<MusicLine, 'start' | 'end'>[], clo
 
 /** Keep a pending question in the preceding row while the live lyric advances. */
 export function lyricRowIndexes(index: number, focusedIndex?: number) {
-  if (index < 0) return [];
+  // Instrumental gaps clear ambient lyrics, but an unanswered prompt remains
+  // available for its entire response window.
+  if (index < 0) return focusedIndex !== undefined && focusedIndex >= 0 ? [focusedIndex] : [];
   const previous = focusedIndex !== undefined && focusedIndex >= 0 && focusedIndex < index ? focusedIndex : index - 1;
   return previous >= 0 ? [previous, index] : [index];
 }

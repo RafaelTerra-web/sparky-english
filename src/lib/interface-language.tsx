@@ -48,6 +48,10 @@ function renderText<T extends ReactNode>(value: T, language: InterfaceLocale): T
 }
 export function uiT<T extends ReactNode>(value: T): T { return renderText(value, locale); }
 export function supportT<T extends ReactNode>(value: T): T { return renderText(value, supportLocale); }
+/** Translate the scaffold first, then insert immutable target phrases or learner data. */
+export function supportTemplate(template: string, ...values: string[]): string {
+  return translate(template, supportLocale).replace(/\{(\d+)\}/g, (placeholder, index) => values[Number(index)] ?? placeholder);
+}
 /** Compatibility alias for interface labels only. Never use on learning stimuli. */
 export const t = uiT;
 export function localizeAttribute<T extends string | undefined>(value: T): T {

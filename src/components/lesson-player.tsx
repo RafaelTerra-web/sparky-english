@@ -11,7 +11,7 @@ import { contentVersion } from "@/lib/content/build";
 import { exerciseId, evaluationVersion } from "@/lib/study";
 import { lessonSteps, lessonFlowVersion, migrateLessonCheckpoint } from "@/lib/lesson-flow";
 import { challengeLimit, challengeScore, activeClockNow, readPersonalRecord, type PracticeMode, type ChallengeState, type PracticeResult } from "@/lib/quick-practice";
-import { t, supportT, getSupportLocale, useSupportLanguage, localizeAttribute } from "@/lib/interface-language";
+import { t, supportT, getSupportLocale, useSupportLanguage, useCurrentInterfaceLanguage, localizeAttribute } from "@/lib/interface-language";
 import { primeInterfaceSound, playInterfaceSound } from "@/lib/interface-sound";
 import { lessonMetadata } from "@/lib/course-guide";
 import MascotMoment from "./mascot-moment";
@@ -28,6 +28,7 @@ type Props = {
 type Evidence = { passed: number; failed: number; assisted: number };
 export default function LessonPlayer({ userId, lesson, review, mascot, saving, openerRef, learnerProfile, notificationPending, onClose, onFinish }: Props) {
   const supportLanguage = useSupportLanguage();
+  useCurrentInterfaceLanguage();
   const [initial] = useState(() => migrateLessonCheckpoint(readWorkspace(userId).checkpoints[checkpointKey(lesson.id, review)], lesson));
   const [personalBest] = useState(() => readPersonalRecord(userId, lesson.id));
   const [upgrade] = useState(() => readWorkspace(userId).restartNotice === true);
@@ -282,8 +283,9 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
           {challenge.mode === "challenge" && <span className={styles.timer} aria-label={localizeAttribute("Tempo restante")}><Clock3 size={15}/> {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, "0")} · {challengeScore(passed, challenge.failed, challenge.helped, steps.length)} {t("pontos")}</span>}
           {fresh && streak === 3 && <span className={styles.combo} role="status">{t("3 acertos seguidos!")} ✦</span>}
         </div>
-        <h2 id="quick-title" ref={heading} tabIndex={-1} className={styles.prompt} lang={getSupportLocale()}>{supportLanguage === "en" ? step.bodyEnglish : step.body}</h2>
+        <h2 id="quick-title" ref={heading} tabIndex={-1} className={styles.prompt} lang={getSupportLocale()}>{supportLanguage === "en" ? step.bodyEnglish ?? supportT(step.body) : step.body}</h2>
         {step.english && <p className={styles.context} lang="en">{step.english}</p>}
+        {step.contextHint && <p className={styles.cue} lang={supportLanguage} data-language-role="context-hint">{supportLanguage === "en" ? step.contextHint.english : step.contextHint.portuguese}</p>}
         {step.cue && <p className={styles.cue} lang="pt-BR" data-language-role="stimulus">{step.cue}</p>}
         {step.kind === "order_words" ? <div className={styles.order}>
           <div className={styles.wordAnswer} role="group" aria-label={localizeAttribute("Frase montada")}>
@@ -300,7 +302,7 @@ export default function LessonPlayer({ userId, lesson, review, mascot, saving, o
           </button>)}</div>}
         {checked && <div className={correct ? styles.correct : styles.retry} role="status" data-answer-feedback>
           <div className={styles.feedbackTitle}>{correct && <MascotMoment mascot={mascot} mood="celebrate" className={styles.reaction}/>}<strong>{t(correct ? "Boa! Você acertou." : "Vamos corrigir.")}</strong></div>
-          <p lang={getSupportLocale()}>{supportLanguage === "en" ? step.explanationEnglish : step.explanation}</p>
+          <p lang={getSupportLocale()}>{supportLanguage === "en" ? step.explanationEnglish ?? supportT(step.explanation) : step.explanation}</p>
           {!correct && <p><span>{t("Resposta:")}</span> <strong lang="en">{step.answer}</strong></p>}
         </div>}
         {expired && <div className={styles.retry} role="status"><strong>{t("O tempo terminou.")}</strong><p>{t("Continue no seu ritmo. Suas respostas continuam salvas.")}</p></div>}

@@ -10,10 +10,10 @@ export default function MusicVideo({ source, clock, playing, speed, active, medi
   const current = useRef({ clock, playing, speed, active });
   useEffect(() => {
     const query = matchMedia('(prefers-reduced-motion: reduce)');
-    const mobile = matchMedia('(pointer: coarse), (max-width: 700px)');
-    const sync = () => setReduced(query.matches || mobile.matches);
-    sync(); query.addEventListener('change', sync); mobile.addEventListener('change', sync);
-    return () => { query.removeEventListener('change', sync); mobile.removeEventListener('change', sync); };
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    const sync = () => setReduced(query.matches || connection?.saveData === true);
+    sync(); query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
   }, []);
   useEffect(() => {
     const audio = media.current;

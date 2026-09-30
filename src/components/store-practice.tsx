@@ -1,5 +1,5 @@
 "use client";
-import { t, targetText, supportT, localizeAttribute, getSupportLocale } from "@/lib/interface-language";
+import { t, targetText, supportT, localizeAttribute, getSupportLocale, useCurrentInterfaceLanguage, useSupportLanguage } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { practiceCatalog } from "@/lib/rewards-shared";
@@ -10,7 +10,7 @@ import { contentVersion } from "@/lib/content/build";
 function Decision({ data, number }: { data: StoreMission["decisions"][number]; number: number }) {
   const [choice, setChoice] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
-  return <fieldset className="mission-decision"><legend>{t(number)}. {t(data.question)}</legend>
+  return <fieldset className="mission-decision"><legend lang={getSupportLocale()}>{number}. {supportT(data.question)}</legend>
     <div className="mission-options">{data.options.map((option, index) => <button key={option} aria-pressed={choice === index} onClick={() => { setChoice(index); setChecked(false); }} lang="en">{targetText(option)}</button>)}</div>
     <button className="secondary-button" disabled={choice === null || checked} onClick={() => setChecked(true)}>{t("Conferir decisão")}</button>
     {checked && <div className="mission-feedback" role="status"><strong>{t(choice === data.answer ? "Essa escolha atende ao contexto." : "Releia a pista e tente outra escolha.")}</strong><p lang={getSupportLocale()}>{supportT(data.explanation)}</p></div>}
@@ -41,6 +41,8 @@ function Mission({ data, userId, packId }: { data: StoreMission; userId: string;
 }
 
 export function StorePractice({ packId, userId, onClose }: { packId: string; userId: string; onClose: () => void }) {
+  useCurrentInterfaceLanguage();
+  useSupportLanguage();
   const dialog = useRef<HTMLDialogElement>(null);
   const [index, setIndex] = useState(0);
   const pack = practiceCatalog.find(item => item.id === packId)!;

@@ -25,6 +25,13 @@ const artwork: Record<string, MusicArtwork> = {
     position: '50% 50%',
     tone: 'buttercup',
   },
+  'still-into-you': { src: '/music/covers/still-into-you.webp', position: '50% 45%', tone: 'neon' },
+  'do-i-wanna-know': { src: '/music/covers/do-i-wanna-know.webp', position: '50% 50%', tone: 'midnight' },
+  'she-knows': { src: '/music/covers/she-knows.webp', position: '50% 40%', tone: 'midnight' },
+  'made-for-loving-you': { src: '/music/covers/made-for-loving-you.svg', position: '50% 50%', tone: 'ember' },
+  'savage': { src: '/music/covers/savage.webp', position: '50% 45%', tone: 'neon' },
+  'out-of-order': { src: '/music/covers/out-of-order.svg', position: '50% 50%', tone: 'midnight' },
+  'king-for-a-day': { src: '/music/covers/king-for-a-day.webp', position: '50% 45%', tone: 'ember' },
 };
 
 export function musicArtwork(trackId: string) {

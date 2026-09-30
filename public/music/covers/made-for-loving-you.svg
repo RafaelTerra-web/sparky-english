@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+<defs><radialGradient id="bg"><stop stop-color="#744719"/><stop offset="1" stop-color="#160f20"/></radialGradient><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff1b7"/><stop offset=".5" stop-color="#e7ad54"/><stop offset="1" stop-color="#9b5828"/></linearGradient><pattern id="tiles" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="21" height="21" rx="2" fill="url(#gold)"/></pattern><radialGradient id="shade"><stop stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#160f20" stop-opacity=".7"/></radialGradient></defs>
+<rect width="960" height="540" fill="url(#bg)"/>
+<path d="M480 0v112" stroke="#f3d490" stroke-width="3" opacity=".45"/>
+<circle cx="480" cy="269" r="158" fill="url(#tiles)"/><circle cx="480" cy="269" r="158" fill="url(#shade)"/>
+<g fill="none" stroke="#efc979" opacity=".2"><ellipse cx="480" cy="269" rx="105" ry="158"/><ellipse cx="480" cy="269" rx="45" ry="158"/><ellipse cx="480" cy="269" rx="158" ry="95"/><ellipse cx="480" cy="269" rx="158" ry="38"/></g>
+<g fill="#fff0bb"><path d="m302 126 5 17 17 5-17 5-5 17-5-17-17-5 17-5z"/><path d="m677 363 4 13 13 4-13 4-4 13-4-13-13-4 13-4z"/><circle cx="750" cy="123" r="3"/><circle cx="206" cy="403" r="3"/></g>
+</svg>

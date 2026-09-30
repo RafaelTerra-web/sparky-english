@@ -1,10 +1,10 @@
 "use client";
-import { t, supportT, localizeAttribute, useSupportLanguage } from "@/lib/interface-language";
+import { t, supportT, supportTemplate, localizeAttribute, useSupportLanguage, useCurrentInterfaceLanguage } from "@/lib/interface-language";
 import { useEffect, useRef, useState } from "react";
 import { Volume2, Square } from "lucide-react";
 import { playTimeline, createPlaybackContext } from "@/lib/audio-timeline";
 import { pronunciationConfirmed, type LearnerProfile } from "@/lib/onboarding-shared";
-import { personalVoiceText } from "@/lib/personal-voice-shared";
+import { personalVoiceTemplate } from "@/lib/personal-voice-shared";
 import { preparePersonalAudio } from "@/lib/prepare-personal-audio";
 
 export function PersonalSparkyMessage({ profile, occasion, onPronunciation }: {
@@ -13,6 +13,7 @@ export function PersonalSparkyMessage({ profile, occasion, onPronunciation }: {
   onPronunciation?: () => void;
 }) {
   const language = useSupportLanguage();
+  useCurrentInterfaceLanguage();
   const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
@@ -37,7 +38,7 @@ export function PersonalSparkyMessage({ profile, occasion, onPronunciation }: {
   }
   return <aside className="sparky-checkin" aria-label={localizeAttribute("Um recado do Sparky")}>
     <p className="eyebrow">{t("Sparky com você")}</p>
-    <p lang={language}>{supportT(personalVoiceText(profile.name, occasion))}</p>
+    <p lang={language}>{supportTemplate(personalVoiceTemplate(occasion), profile.name)}</p>
     {language === "en" ? null : pronunciationConfirmed(profile) ? <button type="button" className="text-button" onClick={() => void play()}>
       {state === "idle" ? <Volume2 size={17} aria-hidden="true" /> : <Square size={17} aria-hidden="true" />}
       {t(state === "loading" ? "Preparando recado… Cancelar" : state === "playing" ? "Parar recado" : "Ouvir recado do Sparky")}

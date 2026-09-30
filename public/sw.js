@@ -1,23 +1,38 @@
-const CACHE_NAME = "sparky-public-v14";
-// Development chunk URLs are reused between edits. Never serve cached app code
-// on localhost; an installed worker must also migrate existing preview caches.
-const LOCAL_PREVIEW = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
+const CACHE_NAME = "sparky-public-v15-musify-offline";
+// Only this small anonymous shell is cached. App HTML, Next chunks, sessions,
+// signed study receipts, API responses and private media always use the network.
 const SHELL = [
   "/offline.html",
+  "/offline/offline.css",
+  "/offline/practice.mjs",
+  "/offline/practice-state.mjs",
+  "/offline/language.mjs",
+  "/offline/practice.json",
+  "/visuals/musify-offline.webp",
   "/icons/sparky-192-v2.png",
   "/icons/sparky-512-v2.png",
   "/icons/sparky-maskable-512-v2.png",
   "/icons/apple-touch-icon-v2.png",
 ];
 
+async function prepareOfflineShell() {
+  const cache = await caches.open(CACHE_NAME);
+  // Anonymous public files only; reject private/failed responses even at install.
+  const responses = await Promise.all(SHELL.map(async path => {
+    const response = await fetch(path, { cache: "no-store", credentials: "omit" });
+    if (!response.ok || response.redirected || /private|no-store/i.test(response.headers.get("cache-control") || "")) throw new Error("offline-shell-unavailable");
+    return [path, response];
+  }));
+  await Promise.all(responses.map(([path, response]) => cache.put(path, response)));
+}
+
 self.addEventListener("install", (event) => {
-  if (!LOCAL_PREVIEW) event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL)));
-  self.skipWaiting();
+  event.waitUntil(prepareOfflineShell().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("sparky-") && (LOCAL_PREVIEW || key !== CACHE_NAME)).map((key) => caches.delete(key)))).then(() => self.clients.claim()).then(async () => {
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("sparky-") && key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim()).then(async () => {
       const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
       windows.forEach(client => client.postMessage({ type: "SPARKY_RELEASE_READY", cacheVersion: CACHE_NAME }));
     }),
@@ -25,23 +40,37 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (LOCAL_PREVIEW) return;
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) return;
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request, { cache: 'no-store' }).catch(async () => (await caches.match("/offline.html")) || Response.error()));
+    const fallback = async () => (await (await caches.open(CACHE_NAME)).match("/offline.html")) || Response.error();
+    event.respondWith((async () => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = await fetch(request, { cache: "no-store", signal: controller.signal });
+        return response.status >= 500 ? await fallback() : response;
+      } catch { return fallback(); }
+      finally { clearTimeout(timer); }
+    })());
     return;
   }
-  const publicAsset = SHELL.includes(url.pathname);
+  const publicAsset = SHELL.includes(url.pathname) && !url.search;
   if (!publicAsset) return;
-  event.respondWith(fetch(request, { cache: 'no-store' }).then((response) => {
-    if (response.ok && !/private|no-store/i.test(response.headers.get("cache-control") || "")) {
+  event.respondWith(fetch(request, { cache: 'no-store', credentials: 'omit' }).then(async (response) => {
+    if (response.status >= 500) return (await (await caches.open(CACHE_NAME)).match(request)) || response;
+    if (response.ok && !response.redirected && !/private|no-store/i.test(response.headers.get("cache-control") || "")) {
       const copy = response.clone();
       event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)));
     }
     return response;
-  }).catch(async () => (await caches.match(request)) || Response.error()));
+  }).catch(async () => (await (await caches.open(CACHE_NAME)).match(request)) || Response.error()));
+});
+
+// A release refresh can rebuild the shell without reinstalling the same worker.
+self.addEventListener("message", event => {
+  if (event.data?.type === "SPARKY_PREPARE_OFFLINE") event.waitUntil(prepareOfflineShell().catch(() => undefined));
 });
 
 self.addEventListener('push', (event) => {
