@@ -26,7 +26,8 @@
     "test:e2e:economy": "playwright test --config=playwright.economy.config.ts",
     "test:e2e:notifications": "playwright test --config=playwright.notifications.config.ts",
     "test:e2e:offline": "playwright test --config=playwright.offline.config.ts",
-    "test:e2e:musify-visuals": "playwright test --config=playwright.musify-visuals.config.ts"
+    "test:e2e:musify-visuals": "playwright test --config=playwright.musify-visuals.config.ts",
+    "test:e2e:refresh": "playwright test --config=playwright.native-refresh.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

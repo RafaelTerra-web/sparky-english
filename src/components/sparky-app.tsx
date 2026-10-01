@@ -382,7 +382,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   async function refreshAppData() {
     setToday(new Date());
     try {
-      const response = await fetch('/api/rewards', { cache: 'no-store' });
+      const response = await fetch('/api/rewards', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
       if (response.ok) {
         const fresh = await response.json() as PublicRewardState;
         setReward(fresh);

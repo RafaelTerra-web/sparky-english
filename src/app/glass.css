@@ -168,15 +168,16 @@ html[data-palette] body .today-overview .study-summary { padding: 22px; border: 
   background: color-mix(in srgb, var(--primary) 86%, transparent);
   color: var(--on-primary);
   box-shadow: 0 10px 28px var(--shadow-color), inset 0 1px 0 #ffffff75;
-  opacity: 0;
+  opacity: var(--pull-opacity, 0);
   pointer-events: none;
-  transform: translate(-50%, calc(-65px + var(--pull) * 70px)) scale(calc(.86 + var(--pull) * .14));
-  transition: opacity .18s, transform .2s;
+  transform: translate3d(-50%, var(--pull-offset, -56px), 0) scale(var(--pull-scale, .9));
+  transition: opacity .22s ease, transform .26s cubic-bezier(.22, .8, .3, 1);
   font-size: 12px;
   font-weight: 650;
 }
-.native-refresh[data-visible="true"] { opacity: 1; }
-.native-refresh[data-refreshing="true"] { transform: translate(-50%, 0); }
-.native-refresh[data-refreshing="true"] svg { animation: sparky-refresh-spin .8s linear infinite; }
+.native-refresh[data-phase="pulling"], .native-refresh[data-phase="ready"] { transition: none; will-change: transform; }
+.native-refresh-icon { display: grid; place-items: center; flex: 0 0 20px; }
+.native-refresh svg { transform: rotate(var(--pull-rotation, 0deg)); }
+.native-refresh[data-refreshing="true"] .native-refresh-icon { animation: sparky-refresh-spin .8s linear infinite; }
 @keyframes sparky-refresh-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .native-refresh, .native-refresh svg { transition: none; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .native-refresh, .native-refresh-icon { transition: none !important; animation: none !important; } .native-refresh svg { transform: none; } }
