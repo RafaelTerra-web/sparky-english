@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const pack = JSON.parse(readFileSync('public/offline/practice.json', 'utf8'));
-const cacheName = 'sparky-public-v15-musify-offline';
+const cacheName = 'sparky-public-v16-musify-1-2';
 
 async function install(page: Page) {
   await page.goto('/');

@@ -115,7 +115,7 @@ test('worker installs only anonymous shell files, migrates old caches and falls 
   await worker.caches.open('sparky-public-v14'); await worker.caches.open('unrelated');
   await worker.lifecycle('install'); await worker.lifecycle('activate');
   assert.deepEqual(worker.removed, ['sparky-public-v14']);
-  const stored = worker.stores.get('sparky-public-v15-musify-offline');
+  const stored = worker.stores.get('sparky-public-v16-musify-1-2');
   assert.equal(stored.size, 11);
   assert.ok([...stored.keys()].every(url => !/api|auth|_next|audio|music\//.test(url)));
   assert.ok(worker.calls.every(call => call.options.credentials === 'omit'));
@@ -144,9 +144,9 @@ test('worker rejects a private shell response at install and does not overwrite 
   const worker = workerHarness({ network: async () => new Response('data', { headers: { 'cache-control': privateResponse ? 'private, no-store' : 'public' } }) });
   privateResponse = true;
   await assert.rejects(worker.lifecycle('install'), /offline-shell-unavailable/);
-  assert.equal(worker.stores.get('sparky-public-v15-musify-offline').size, 0);
+  assert.equal(worker.stores.get('sparky-public-v16-musify-1-2').size, 0);
   privateResponse = false; await worker.lifecycle('install');
-  const before = worker.stores.get('sparky-public-v15-musify-offline').get('https://sparky.example/offline/practice.json');
+  const before = worker.stores.get('sparky-public-v16-musify-1-2').get('https://sparky.example/offline/practice.json');
   privateResponse = true; await worker.request('/offline/practice.json', 'cors');
-  assert.equal(worker.stores.get('sparky-public-v15-musify-offline').get('https://sparky.example/offline/practice.json'), before);
+  assert.equal(worker.stores.get('sparky-public-v16-musify-1-2').get('https://sparky.example/offline/practice.json'), before);
 });

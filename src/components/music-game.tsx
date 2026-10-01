@@ -1,11 +1,11 @@
 "use client";
 
-import { memo, useEffect, useMemo, useReducer, useRef, useState, type RefObject, type CSSProperties } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore, type RefObject, type CSSProperties } from 'react';
 import Image from 'next/image';
-import MusicScene from './music-scene';
 import MusicVideo from './music-video';
-import MusicChorusFx from './music-chorus-fx';
-import MusifyIdentityFx from './musify-identity-fx';
+import MusifyStage from './musify-stage';
+import { musicEffectsMode, subscribeMusicEffects, type MusicEffectsMode } from '@/lib/music-effects';
+import { musicTimelineBeatAt } from '@/lib/music-visual-timeline';
 import { ArrowRight, Check, Play, RotateCcw, Zap, Trophy, Heart } from 'lucide-react';
 import type { MusicLesson } from '@/lib/music';
 import { initialGame, musicGameReducer, musicAnswerOpens, musicSpeeds, musicSpeedLabel, LYRIC_PREVIEW_SECONDS, MUSIC_LIVES, type GameDifficulty, type GameState } from '@/lib/music-game';
@@ -15,7 +15,7 @@ import { createMusicFeedback, vibrateMusicSuccess } from '@/lib/music-feedback';
 import { ambientLyricIndex } from '@/lib/music-ambience';
 import MusicAmbience from './music-ambience';
 import { musicEnergy } from '@/lib/music-energy';
-import { musicIntroCountdown, musicBeatAt, musicEnergyAt, musicSectionAt, musicVisualMoment } from '@/lib/music-visuals';
+import { musicIntroCountdown, musicEnergyAt, musicSectionAt, musicVisualMoment } from '@/lib/music-visuals';
 import { t, supportT, localizeAttribute, useCurrentInterfaceLanguage, useSupportLanguage } from '@/lib/interface-language';
 import { recordMusicPerformance, unlockedMusicAchievements, type MusicPerformance, type MusicDifficulty } from '@/lib/music-performance';
 import { musicArtwork } from '@/lib/music-art';
@@ -28,11 +28,11 @@ const levels = [
   { id: 'level4', title: 'Nível 4', hint: 'Janela de resposta menor', bars: 4 },
   { id: 'quick', title: 'Modo fluxo', hint: 'Uma palavra · resposta rápida', bars: 4 },
 ] as const;
-const MusicChorusDecoration = memo(MusicChorusFx);
 
 export default function MusicGame({ lesson, performance, onPerformance, onAchievements, onLyrics, media, clock, readClock, playing, speed, onSpeed, onSeek, onPrepare, onPlay, onPause, onPhaseChange, onExplore }: Props) {
   const interfaceLanguage = useCurrentInterfaceLanguage();
   const supportLanguage = useSupportLanguage();
+  const effectsMode = useSyncExternalStore(subscribeMusicEffects, musicEffectsMode, () => 'auto' as MusicEffectsMode);
   const [difficulty, setDifficulty] = useState<GameDifficulty>('level1');
   const [seed, setSeed] = useState(1);
   const [state, dispatch] = useReducer(musicGameReducer, initialGame);
@@ -50,6 +50,9 @@ export default function MusicGame({ lesson, performance, onPerformance, onAchiev
   const sound = useRef<ReturnType<typeof createMusicFeedback> | null>(null);
   const getRounds = useMemo(() => createMusicRoundCache(lesson), [lesson]);
   const rounds = useMemo(() => getRounds(difficulty, seed), [getRounds, difficulty, seed]);
+  // A narrative illustration must not give away any target still awaiting an answer.
+  const hiddenConcepts = useMemo(() => Array.from(new Set(rounds.slice(state.outcomes.length)
+    .flatMap(r => r.targets.map(target => r.line.words[target].text.toLowerCase().replace(/[^a-z]/g, ''))))), [rounds, state.outcomes.length]);
   const round = rounds[state.index];
   const opens = round ? musicAnswerOpens(round, speed) : 0;
   const heard = !!round && state.phase === 'round' && clock >= opens && clock < round.closes;
@@ -154,21 +157,18 @@ export default function MusicGame({ lesson, performance, onPerformance, onAchiev
   const score = state.score;
   const { rank, nextRank, progress: rankProgress, pointsToNext } = musicTimingProgress(score, rounds.length);
   const energy = musicEnergyAt(musicEnergy[lesson.id], clock);
-  const beat = musicBeatAt(musicEnergy[lesson.id], clock);
+  const beat = musicTimelineBeatAt(lesson.id, clock);
   const section = musicSectionAt(lesson.id, clock);
   const moment = musicVisualMoment(lesson.lines, ambientIndex, clock, energy);
   const tone = lesson.id === 'stay-at-your-house-local' ? 'cyberpunk' : lesson.id === 'heartless-local' ? 'violet' : lesson.id === 'buttercup-local' ? 'buttercup' : 'emerald';
   const artwork = musicArtwork(lesson.id);
   const live = playing && (state.phase === 'round' || state.phase === 'outro');
-  const chorus = live && section.kind === 'chorus';
-  const glow = live ? section.kind === 'chorus' ? .2 + energy * .28 + beat * .52 : Math.max(0, beat - .2) * .18 : 0;
+  const glow = live && effectsMode === 'auto' ? (answersVisible ? .5 : 1) * (section.kind === 'chorus' ? .08 + energy * .1 + beat * .12 : Math.max(0, beat - .2) * .08) : 0;
   return <section className="clip-game" aria-label={localizeAttribute('Jogo de escuta')} data-session-seed={seed} data-phase={state.phase} data-preparing={preparing} data-playing={playing} data-difficulty={difficulty} data-tone={tone} data-section={section.kind} data-moment={moment} style={{ '--music-energy': energy } as CSSProperties}>
     <div className="clip-energy-highlight" aria-hidden="true" style={{ opacity: glow, transform: `scale(${1 + beat * .035})` }} />
     {rankBurst && <div key={rankBurst.key} className="clip-rank-burst" aria-hidden="true" onAnimationEnd={() => setRankBurst(null)}>{rankBurst.name}</div>}
-    <MusicChorusDecoration active={chorus} clock={chorus ? clock : 0} energy={chorus ? energy : 0} />
-    <MusifyIdentityFx id={lesson.id} lines={lesson.lines} active={live} clock={clock} energy={energy} />
+    <MusifyStage id={lesson.id} media={media} readClock={readClock} active={live} answering={answersVisible && !state.answered} hiddenConcepts={state.phase === 'ready' ? [] : hiddenConcepts} mode={effectsMode} />
     {lesson.visualSource && <MusicVideo media={media} source={lesson.visualSource} clock={clock} readClock={readClock} prepareRef={prepareVideo} playing={playing} speed={speed} active={live} />}
-    {tone === 'cyberpunk' && <div className="clip-city-scene"><MusicScene playing={playing} clock={clock} tone={tone} energy={energy} chorus={section.kind === 'chorus'} /></div>}
     <div className="clip-scorebar"><div className="clip-score-points"><b className="music-rank" data-rank={rank.name} aria-label={`Rank ${rank.name}`}>{rank.name}</b><strong data-score={score}>{score.toLocaleString(interfaceLanguage)} pts</strong></div><div className="clip-status"><div className="clip-lives" role="status" aria-label={localizeAttribute(`${state.lives} de ${MUSIC_LIVES} vidas`)} data-lives={state.lives}>{Array.from({ length: MUSIC_LIVES }, (_, index) => <Heart key={index} size={16} fill={index < state.lives ? 'currentColor' : 'none'} data-lost={index >= state.lives} aria-hidden="true" />)}</div><span aria-label={localizeAttribute(`${state.streak} seguidas`)}><Zap size={12} /> {state.streak}</span></div></div>
     {state.phase === 'ready' && <div className="clip-speed-control" role="group" aria-label={localizeAttribute('Velocidade do jogo')}><span>{t('Velocidade')}</span>{musicSpeeds.map(value => <button key={value} disabled={preparing} aria-pressed={speed === value} onClick={() => onSpeed(value)}>{musicSpeedLabel(value)}</button>)}</div>}
     {state.phase !== 'ready' && <div className="clip-rank-progress"><span>{t(nextRank ? `${pointsToNext} pts para ${nextRank.name}` : 'Rank S conquistado')}</span><progress aria-label={localizeAttribute('Progresso para o próximo rank')} max={1} value={rankProgress} /></div>}

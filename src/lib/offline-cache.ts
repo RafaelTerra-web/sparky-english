@@ -1,5 +1,5 @@
 /** Keep the anonymous fallback available when account data or app caches are reset. */
-export const offlineCacheName = 'sparky-public-v15-musify-offline';
+export const offlineCacheName = 'sparky-public-v16-musify-1-2';
 
 export async function clearObsoleteAppCaches() {
   if (!('caches' in window)) return;

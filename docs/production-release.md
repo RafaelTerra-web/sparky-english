@@ -23,8 +23,11 @@ manifests, sete audios, cinco videos e quatro copias dos manifests anteriores
 com mascaras editoriais de traducao), preservando os 11 objetos anteriores.
 Musify 1.1 acrescenta seis videos 1600x900 em `musify-video-900p-1/`,
 preservando todos os 34 objetos do release Musify. Buttercup ja esta em 1080p.
-KISS usa somente audio, sem o video com legendas em espanhol. A pasta
-`.music-assets/` guarda a revisao editorial privada; letras e transcricoes nao
+KISS usa somente audio, sem o video com legendas em espanhol.
+Musify 1.2 usa as mesmas midias aprovadas e acrescenta apenas codigo e mapas
+visuais derivados desses audios. Nao requer novos blobs nem migracoes de banco.
+Os mapas registram o SHA-256 da fonte e sao verificados pelo script de auditoria.
+A pasta `.music-assets/` guarda a revisao editorial privada; letras e transcricoes nao
 entram no Git. Antes de aprovar os novos hashes, rode
 `node scripts/audit-musify-release.mjs` e
 `node scripts/review-musify-audit.mjs`.

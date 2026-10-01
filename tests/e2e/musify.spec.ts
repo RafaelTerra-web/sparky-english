@@ -177,7 +177,8 @@ test('English immersion and reduced motion keep target English and suppress movi
   await expect(game.locator('.clip-options button').first()).toBeEnabled();
   await expect(game.locator('.clip-phrase-translation')).toHaveCount(0);
   await expect(game.locator('.clip-unified-lyrics')).toHaveAttribute('lang','en');
-  await expect(game.locator('.musify-identity-fx')).toBeHidden();
+  await expect(game.locator('.musify-stage')).toHaveAttribute('data-mode','reduced');
+  await expect(game.locator('.musify-stage')).toHaveAttribute('data-running','false');
 });
 
 test('prepared H264 video decodes, follows the audio clock and stays decorative',async({page},info)=>{

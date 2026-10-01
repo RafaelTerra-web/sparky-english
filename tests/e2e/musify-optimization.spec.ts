@@ -344,6 +344,7 @@ test('reduced motion keeps the mobile phrase and choices playable without the de
   const round = buildMusicRounds(catalog[0], 'level1', Number(await game.getAttribute('data-session-seed')))[0];
   await seek(page, round.opens + .15);
   await expect(game).toHaveAttribute('data-playing', 'true');
-  await expect(game.locator('.musify-identity-fx')).toBeHidden();
+  await expect(game.locator('.musify-stage')).toHaveAttribute('data-mode', 'reduced');
+  await expect(game.locator('.musify-stage')).toHaveAttribute('data-running', 'false');
   await expectRoundFits(room);
 });

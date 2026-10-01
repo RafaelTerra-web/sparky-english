@@ -11,6 +11,8 @@ import * as ambience from '../src/lib/music-ambience.ts';
 import * as visuals from '../src/lib/music-visuals.ts';
 import * as runtime from '../src/lib/music-runtime.ts';
 import * as musicScore from '../src/lib/music-score.ts';
+import * as musicEffects from '../src/lib/music-effects.ts';
+import * as musicTimeline from '../src/lib/music-visual-timeline.ts';
 import { validateMusic } from '../src/lib/music.ts';
 
 const lesson = {
@@ -29,9 +31,10 @@ const imports = {
   '@/lib/interface-language': { t: text => text, supportT: text => text, localizeAttribute: text => text, useCurrentInterfaceLanguage: () => 'pt-BR', useSupportLanguage: () => 'pt-BR' },
   '@/lib/music-game': game, '@/lib/music-performance': performance, '@/lib/music-ambience': ambience, '@/lib/music-visuals': visuals,
   '@/lib/music-runtime': runtime, '@/lib/music-score': musicScore,
+  '@/lib/music-effects': musicEffects, '@/lib/music-visual-timeline': musicTimeline,
   '@/lib/music-energy': { musicEnergy: {} }, '@/lib/music-art': { musicArtwork: () => undefined }, '@/lib/music-feedback': {},
   'next/image': emptyComponent, 'lucide-react': icons, './music-scene': emptyComponent, './music-video': emptyComponent,
-  './music-chorus-fx': emptyComponent, './musify-identity-fx': emptyComponent, './music-ambience': emptyComponent,
+  './musify-stage': emptyComponent, './music-ambience': emptyComponent,
 };
 const source = ts.transpileModule(readFileSync(new URL('../src/components/music-game.tsx', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
@@ -39,7 +42,7 @@ const source = ts.transpileModule(readFileSync(new URL('../src/components/music-
 function component(phase = 'ready') {
   const compiled = { exports: {} };
   new Function('require', 'module', 'exports', source)(name => {
-    if (name === 'react') return { ...React, useReducer: () => [{ ...game.initialGame, phase }, () => {}] };
+    if (name === 'react') return { ...React, useSyncExternalStore: (_, snapshot, serverSnapshot) => serverSnapshot ? serverSnapshot() : snapshot(), useReducer: () => [{ ...game.initialGame, phase }, () => {}] };
     if (name === 'react/jsx-runtime') return jsx;
     if (!(name in imports)) throw new Error('Unknown test import: ' + name);
     return imports[name];

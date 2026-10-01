@@ -14,6 +14,8 @@ import * as visuals from '../src/lib/music-visuals.ts';
 import * as translation from '../src/lib/music-translation.ts';
 import * as musicRuntime from '../src/lib/music-runtime.ts';
 import * as musicScore from '../src/lib/music-score.ts';
+import * as musicEffects from '../src/lib/music-effects.ts';
+import * as musicTimeline from '../src/lib/music-visual-timeline.ts';
 import { musifyCurriculum } from '../scripts/review-musify-curriculum.mjs';
 
 const dictionary = JSON.parse(readFileSync(new URL('../public/locales/en.json', import.meta.url), 'utf8'));
@@ -103,10 +105,10 @@ test('Musify ready and failure controls translate independently from the pedagog
       const Game = compile('../src/components/music-game.tsx', {
         '@/lib/interface-language': api, '@/lib/music-game': game, '@/lib/music-performance': performance,
         '@/lib/music-runtime': musicRuntime, '@/lib/music-score': musicScore,
+        '@/lib/music-effects': musicEffects, '@/lib/music-visual-timeline': musicTimeline,
         '@/lib/music-ambience': ambience, '@/lib/music-visuals': visuals, '@/lib/music-energy': { musicEnergy: {} },
         '@/lib/music-art': { musicArtwork: () => undefined }, '@/lib/music-feedback': {}, 'next/image': emptyComponent, 'lucide-react': icons,
-        './music-scene': emptyComponent, './music-video': emptyComponent, './music-chorus-fx': emptyComponent,
-        './musify-identity-fx': emptyComponent, './music-ambience': emptyComponent,
+        './music-video': emptyComponent, './musify-stage': emptyComponent, './music-ambience': emptyComponent,
       }, { react: { useReducer: () => [{ ...game.initialGame, phase, lives: phase === 'failed' ? 0 : 3 }, () => {}] } }).default;
       const markup = renderToStaticMarkup(React.createElement(Game, {
         lesson, performance: performance.normalizeMusicPerformance(null), media: { current: null }, clock: 0, playing: false, speed: 1,

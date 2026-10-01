@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparky-public-v15-musify-offline";
+const CACHE_NAME = "sparky-public-v16-musify-1-2";
 // Only this small anonymous shell is cached. App HTML, Next chunks, sessions,
 // signed study receipts, API responses and private media always use the network.
 const SHELL = [

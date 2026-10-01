@@ -1,0 +1,35 @@
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+}
+
+.ambient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 0% 32%, color-mix(in srgb, var(--musify-scene-accent) 10%, transparent), transparent 45%),
+    radial-gradient(ellipse at 100% 75%, color-mix(in srgb, var(--musify-scene-secondary) 9%, transparent), transparent 43%);
+  opacity: .85;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.stage[data-mode='off'] .canvas {
+  visibility: hidden;
+}
+
+.stage[data-mode='reduced'] .ambient,
+.stage[data-answering='true'] .ambient {
+  opacity: .5;
+}

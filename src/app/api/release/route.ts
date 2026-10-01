@@ -1,11 +1,12 @@
 export const dynamic = "force-dynamic";
 export function GET() {
   return Response.json({
-    name: 'Musify 1.1',
+    name: 'Musify 1.2',
     commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.SPARKY_RELEASE_SHA || null,
     deployment: process.env.VERCEL_DEPLOYMENT_ID || null,
     version: process.env.NEXT_PUBLIC_SPARKY_RELEASE_ID || null,
     contentVersion: "2026-09-28.quick-1",
+    musicVisualVersion: 1,
     canonical: "https://sparky-english-iota.vercel.app",
   }, { headers: {
     "Cache-Control": "no-store, max-age=0, must-revalidate",
