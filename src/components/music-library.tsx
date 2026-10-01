@@ -18,10 +18,29 @@ const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
 export default function MusicLibrary({ userId, level, mascot }: { userId: string; level: string; mascot: MascotId }) {
   useCurrentInterfaceLanguage();
-  const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
+  const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true);
+  const [error, setError] = useState<'unavailable' | 'load' | null>(null), [unavailable, setUnavailable] = useState(0);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
-  useEffect(() => { const controller = new AbortController(); fetch('/api/music', { cache: 'no-store', signal: controller.signal }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(d => { setCatalog(d.catalog); setLab(d.storage === 'lab'); setError(false); }).catch(() => { if (!controller.signal.aborted) setError(true); }).finally(() => { if (!controller.signal.aborted) setLoading(false); }); return () => controller.abort(); }, [retry]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const response = await fetch('/api/music', { cache: 'no-store', signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
+        if (!response.ok) throw Error(response.status === 503 ? 'music-unavailable' : 'load');
+        const data = await response.json() as { catalog?: MusicLesson[]; storage?: string; unavailable?: number };
+        if (!Array.isArray(data.catalog)) throw Error('load');
+        const missing = Number.isSafeInteger(data.unavailable) && (data.unavailable ?? 0) > 0 ? data.unavailable! : 0;
+        if (!data.catalog.length && missing) throw Error('music-unavailable');
+        if (!controller.signal.aborted) { setCatalog(data.catalog); setLab(data.storage === 'lab'); setUnavailable(missing); setError(null); }
+      } catch (cause) {
+        if (!controller.signal.aborted) setError(cause instanceof Error && cause.message === 'music-unavailable' ? 'unavailable' : 'load');
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+    return () => controller.abort();
+  }, [retry]);
   useEffect(() => {
     if (active || !catalog.length) return;
     const frame = requestAnimationFrame(() => {
@@ -34,7 +53,8 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
     });
     return () => cancelAnimationFrame(frame);
   }, [active, catalog, userId]);
-  useEffect(() => { const refresh = () => setRetry(value => value + 1); window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
+  useEffect(() => { const refresh = () => { setLoading(true); setRetry(value => value + 1); }; window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
+  function retryCatalog() { setLoading(true); setRetry(value => value + 1); }
   function openSession(lesson: MusicLesson) { try { localStorage.setItem(`sparky-music:active:${userId}`, lesson.id); } catch {} setActive(lesson); }
   function closeSession() { try { localStorage.removeItem(`sparky-music:active:${userId}`); } catch {} setActive(null); }
   const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic} ${translate(x.topic)}`.toLowerCase().includes(query.toLowerCase()));
@@ -47,7 +67,11 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
     <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={localizeAttribute('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
     <div className={styles.collection}><h2>{t('Escolha uma música')}</h2><p>{t('Seu nível:')} <strong>{level}</strong></p></div>
-    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p role="status">{t('Nenhuma música disponível neste filtro.')}</p> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>}
+    {loading ? <p role="status">{t(catalog.length ? 'Atualizando músicas…' : 'Carregando músicas…')}</p>
+      : error ? <div className={styles.notice} role="alert"><p>{t(error === 'unavailable' ? 'As músicas estão temporariamente indisponíveis.' : 'Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div>
+      : unavailable > 0 ? <div className={styles.notice} role="status"><p>{t('Algumas músicas estão indisponíveis agora.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div>
+      : !catalog.length ? <div className={styles.notice} role="status"><p>{t('Não há músicas disponíveis agora.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div> : null}
+    {catalog.length > 0 && (!visible.length ? <div className={styles.notice} role="status"><p>{t('Nenhuma música disponível neste filtro.')}</p><button className="secondary-button" onClick={() => { setFilter('all'); setQuery(''); }}>{t('Limpar filtros')}</button></div> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>)}
   </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={closeSession} />}</>;
 }
 

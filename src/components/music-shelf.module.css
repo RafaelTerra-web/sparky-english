@@ -16,6 +16,9 @@
 .collection { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin-bottom: 20px; }
 .collection h2 { font-size: 19px; letter-spacing: -.025em; }
 .collection p { color: var(--muted); font-size: 12px; }
+.notice { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin-block: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.notice p { flex: 1 1 220px; line-height: 1.5; }
+.notice button { min-height: 44px; }
 .tracks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
 .track { --track-color: #99502e; display: flex; flex-direction: column; min-width: 0; padding: 0; text-align: left; color: var(--foreground); background: transparent; border-bottom: 1px solid var(--line); }
 .track[data-track-id="heartless-local"] { --track-color: #4c6494; }

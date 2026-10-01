@@ -7,9 +7,11 @@ const json = (body: unknown, status = 200) => Response.json(body, { status, head
 export async function GET(request: Request) {
   const user = await readSession((await cookies()).get(SESSION_COOKIE)?.value);
   if (!user) return json({ error: 'unauthorized' }, 401);
-  const lesson = (await getMusicCatalog()).find(x => x.id === new URL(request.url).searchParams.get('trackId'));
-  if (!lesson) return json({ error: 'track-not-found' }, 404);
-  try { return json(await readMusicProgress(user.id, lesson)); } catch { return json({ error: 'progress-unavailable' }, 503); }
+  try {
+    const lesson = (await getMusicCatalog()).find(x => x.id === new URL(request.url).searchParams.get('trackId'));
+    if (!lesson) return json({ error: 'track-not-found' }, 404);
+    return json(await readMusicProgress(user.id, lesson));
+  } catch (error) { return json({ error: error instanceof Error && error.message === 'music-unavailable' ? 'music-unavailable' : 'progress-unavailable' }, 503); }
 }
 export async function PATCH(request: Request) {
   if (!sameOrigin(request)) return json({ error: 'origin' }, 403);
@@ -39,6 +41,6 @@ export async function PATCH(request: Request) {
     return json(await writeMusicProgress(user.id, lesson, mergeMusic(lesson, current, clean), body.baseRevision));
   } catch (e) {
     const code = e instanceof Error ? e.message : 'invalid-request';
-    return json({ error: ['progress-conflict','progress-unavailable'].includes(code) ? code : 'invalid-request' }, code === 'progress-conflict' ? 409 : code === 'progress-unavailable' ? 503 : 400);
+    return json({ error: ['progress-conflict','progress-unavailable','music-unavailable'].includes(code) ? code : 'invalid-request' }, code === 'progress-conflict' ? 409 : ['progress-unavailable','music-unavailable'].includes(code) ? 503 : 400);
   }
 }
