@@ -92,7 +92,7 @@ export function ReleaseRefresh() {
     };
     const observer = new MutationObserver(present);
     observer.observe(document.documentElement, { subtree: true, childList: true, attributes: true,
-      attributeFilter: ["open", "data-sparky-busy", "data-sparky-activity"] });
+      attributeFilter: ["open", "data-sparky-busy", "data-sparky-activity", "data-sparky-refreshing"] });
     void check();
     const interval = window.setInterval(resume, 60000);
     window.addEventListener("focus", resume); window.addEventListener("pageshow", resume); window.addEventListener("online", resume);

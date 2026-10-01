@@ -102,6 +102,7 @@ test("automatic release refresh waits for study, dialogs, media and visible page
  try{
   assert.equal(safeReleaseRefresh(),true);
   doc.documentElement.dataset.sparkyBusy="lesson";assert.equal(safeReleaseRefresh(),false);delete doc.documentElement.dataset.sparkyBusy;
+  doc.documentElement.dataset.sparkyRefreshing="true";assert.equal(safeReleaseRefresh(),false);delete doc.documentElement.dataset.sparkyRefreshing;
   doc.hidden=true;assert.equal(safeReleaseRefresh(),false);doc.hidden=false;
   doc.querySelector=()=>({open:true});assert.equal(safeReleaseRefresh(),false);doc.querySelector=()=>null;
   doc.querySelectorAll=()=>[{paused:false}];assert.equal(safeReleaseRefresh(),false);

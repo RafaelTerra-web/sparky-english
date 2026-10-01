@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { readSession, SESSION_COOKIE } from '@/lib/auth-session';
 import { localMusicMode } from '@/lib/music-server';
 import { musicRelease } from '@/lib/music-release';
-import { hasReviewedMusicStore, reviewedMusicRedirect } from '@/lib/music-blob';
+import { hasReviewedMusicStore, reviewedMusicRedirect } from '@/lib/music-storage';
 export async function GET(request: Request) {
   if (!await readSession((await cookies()).get(SESSION_COOKIE)?.value)) return new Response(null, { status: 401 });
   const release = musicRelease(new URL(request.url).searchParams.get('trackId'));
@@ -34,5 +34,5 @@ export async function GET(request: Request) {
     let cursor = start;
     const stream = new ReadableStream({ async pull(controller) { try { const chunk = Buffer.alloc(Math.min(65536, end - cursor + 1)); const { bytesRead } = await file.read(chunk, 0, chunk.length, cursor); cursor += bytesRead; if (bytesRead) controller.enqueue(new Uint8Array(chunk.subarray(0, bytesRead))); if (!bytesRead || cursor > end) { controller.close(); await file.close(); } } catch (e) { controller.error(e); await file.close(); } }, async cancel() { await file.close(); } });
     return new Response(stream, { status: range ? 206 : 200, headers: { 'Content-Type': path.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg', 'Content-Length': String(end - start + 1), 'Accept-Ranges': 'bytes', 'Cache-Control': 'private, no-store', ...(range ? { 'Content-Range': `bytes ${start}-${end}/${size}` } : {}) } });
-  } catch { return new Response(null, { status: 404 }); }
+  } catch { return new Response(null, { status: 503, headers: { 'Cache-Control': 'private, no-store' } }); }
 }

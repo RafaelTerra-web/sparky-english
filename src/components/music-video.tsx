@@ -54,13 +54,24 @@ export default function MusicVideo({ source, clock, readClock, playing, speed, a
     const audio = media.current;
     const wait = () => { forceSync.current = true; video.current?.pause(); setBuffering(true); };
     const ready = () => { forceSync.current = true; lastPlayAttempt.current = Number.NEGATIVE_INFINITY; setBuffering(false); };
+    const retry = () => {
+      cancelPreparation.current?.();
+      forceSync.current = true; lastPlayAttempt.current = Number.NEGATIVE_INFINITY;
+      setFailed(false); setHasFrame(false);
+      if (video.current) {
+        video.current.src = `${source}${source.includes('?') ? '&' : '?'}retry=${Date.now()}`;
+        video.current.load(); // Revisit the authenticated source instead of reusing a media cache entry.
+      }
+    };
     audio?.addEventListener('waiting', wait); audio?.addEventListener('seeking', wait);
     audio?.addEventListener('playing', ready); audio?.addEventListener('seeked', ready);
+    audio?.addEventListener('sparky:music-retry', retry);
     return () => {
       audio?.removeEventListener('waiting', wait); audio?.removeEventListener('seeking', wait);
       audio?.removeEventListener('playing', ready); audio?.removeEventListener('seeked', ready);
+      audio?.removeEventListener('sparky:music-retry', retry);
     };
-  }, [media]);
+  }, [media, source]);
   useEffect(() => {
     if (current.current.active !== active || current.current.playing !== playing || current.current.speed !== speed) {
       forceSync.current = true; lastPlayAttempt.current = Number.NEGATIVE_INFINITY;

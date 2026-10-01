@@ -4,14 +4,15 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { musicCatalog } from './music-catalog';
-import { musicReleases, musicAudioSource } from './music-release';
-import { hasReviewedMusicStore, readReviewedMusicManifest } from './music-blob';
+import { musicReleases } from './music-release';
+import { loadMusicReleases } from './music-catalog-loader';
+import { hasReviewedMusicStore, readReviewedMusicManifest } from './music-storage';
 import { emptyMusicProgress, normalizeMusic, validateMusic, type MusicLesson, type MusicProgress } from './music';
 
 const RELEASE_TIMING_VERSION = 'full-song-timing-2';
 
 export function localMusicMode() { return process.env.NODE_ENV === 'development' && process.env.SPARKY_MUSIC_LAB === 'true' && !process.env.VERCEL; }
-export async function getMusicCatalog() {
+export async function getMusicCatalogState() {
   const catalog = musicCatalog.filter(x => x.published);
   if (localMusicMode() && process.env.SPARKY_MEDIA_DEV_MANIFEST_PATH) {
     try {
@@ -19,20 +20,15 @@ export async function getMusicCatalog() {
       catalog.push(validateMusic({ ...data, version: RELEASE_TIMING_VERSION, source: '/api/music/audio', rights: 'local-private', published: false }));
     } catch { /* An unavailable fixture must not expose filesystem information. */ }
   }
-  const releases = await Promise.all(musicReleases.map(async release => {
-    if (localMusicMode() && release.id === 'perfect-local') return null;
-    try {
-      const text = hasReviewedMusicStore()
-        ? await readReviewedMusicManifest(release.manifest)
-        : await readFile(join(process.cwd(), '.music-assets', release.manifest), 'utf8');
-      const data = JSON.parse(text) as MusicLesson;
-      if (data.id !== release.id) throw Error('invalid-release');
-      return validateMusic({ ...data, version: release.version, source: musicAudioSource(release.id), visualSource: 'video' in release ? `/api/music/video?trackId=${encodeURIComponent(release.id)}` : undefined, rights: 'user-provided', published: true });
-    } catch { return null; /* An absent release bundle is not a public filesystem error. */ }
-  }));
-  catalog.push(...releases.filter((lesson): lesson is MusicLesson => lesson !== null));
-  return catalog;
+  const releases = await loadMusicReleases(name => hasReviewedMusicStore()
+    ? readReviewedMusicManifest(name)
+    : readFile(join(process.cwd(), '.music-assets', name), 'utf8'),
+  musicReleases.filter(release => !localMusicMode() || release.id !== 'perfect-local'));
+  catalog.push(...releases.catalog);
+  if (!catalog.length && releases.unavailable) throw Error('music-unavailable');
+  return { catalog, unavailable: releases.unavailable };
 }
+export async function getMusicCatalog() { return (await getMusicCatalogState()).catalog; }
 const account = (id: string) => createHash('sha256').update(`google:${id}`).digest('hex');
 // Local test backend has the same revision semantics; it never contacts Supabase.
 const memory = globalThis as typeof globalThis & { musicLabProgress?: Map<string, MusicProgress> };

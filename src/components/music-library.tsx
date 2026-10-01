@@ -18,10 +18,29 @@ const TIMING_OFFSET_STORAGE = 'sparky-music:timing-offset:v1';
 
 export default function MusicLibrary({ userId, level, mascot }: { userId: string; level: string; mascot: MascotId }) {
   useCurrentInterfaceLanguage();
-  const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(false);
+  const [catalog, setCatalog] = useState<MusicLesson[]>([]), [loading, setLoading] = useState(true);
+  const [error, setError] = useState<'unavailable' | 'load' | null>(null), [unavailable, setUnavailable] = useState(0);
   const [active, setActive] = useState<MusicLesson | null>(null), [filter, setFilter] = useState('all'), [query, setQuery] = useState(''), [lab, setLab] = useState(false);
   const [retry, setRetry] = useState(0);
-  useEffect(() => { const controller = new AbortController(); fetch('/api/music', { cache: 'no-store', signal: controller.signal }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(d => { setCatalog(d.catalog); setLab(d.storage === 'lab'); setError(false); }).catch(() => { if (!controller.signal.aborted) setError(true); }).finally(() => { if (!controller.signal.aborted) setLoading(false); }); return () => controller.abort(); }, [retry]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const response = await fetch('/api/music', { cache: 'no-store', signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
+        if (!response.ok) throw Error(response.status === 503 ? 'music-unavailable' : 'load');
+        const data = await response.json() as { catalog?: MusicLesson[]; storage?: string; unavailable?: number };
+        if (!Array.isArray(data.catalog)) throw Error('load');
+        const missing = Number.isSafeInteger(data.unavailable) && (data.unavailable ?? 0) > 0 ? data.unavailable! : 0;
+        if (!data.catalog.length && missing) throw Error('music-unavailable');
+        if (!controller.signal.aborted) { setCatalog(data.catalog); setLab(data.storage === 'lab'); setUnavailable(missing); setError(null); }
+      } catch (cause) {
+        if (!controller.signal.aborted) setError(cause instanceof Error && cause.message === 'music-unavailable' ? 'unavailable' : 'load');
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    })();
+    return () => controller.abort();
+  }, [retry]);
   useEffect(() => {
     if (active || !catalog.length) return;
     const frame = requestAnimationFrame(() => {
@@ -34,7 +53,8 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
     });
     return () => cancelAnimationFrame(frame);
   }, [active, catalog, userId]);
-  useEffect(() => { const refresh = () => setRetry(value => value + 1); window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
+  useEffect(() => { const refresh = () => { setLoading(true); setRetry(value => value + 1); }; window.addEventListener('sparky:refresh', refresh); return () => window.removeEventListener('sparky:refresh', refresh); }, []);
+  function retryCatalog() { setLoading(true); setRetry(value => value + 1); }
   function openSession(lesson: MusicLesson) { try { localStorage.setItem(`sparky-music:active:${userId}`, lesson.id); } catch {} setActive(lesson); }
   function closeSession() { try { localStorage.removeItem(`sparky-music:active:${userId}`); } catch {} setActive(null); }
   const visible = catalog.filter(x => (filter === 'all' || x.level === filter) && `${x.title} ${x.artist} ${x.topic} ${translate(x.topic)}`.toLowerCase().includes(query.toLowerCase()));
@@ -47,7 +67,11 @@ export default function MusicLibrary({ userId, level, mascot }: { userId: string
     {lab && <p className="music-lab-label">{t('Laboratório local · conta de teste · sincronia editorial em revisão')}</p>}
     <div className={styles.toolbar}><label>{t('Buscar música')}<input value={query} onChange={e => setQuery(e.target.value)} placeholder={localizeAttribute('Título, artista ou tema')} /></label><label>{t('Nível de inglês')}<select value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{t('Todos os níveis')}</option>{['A1','A2','B1','B2','C1','C2'].map(x => <option key={x}>{x}</option>)}</select></label></div>
     <div className={styles.collection}><h2>{t('Escolha uma música')}</h2><p>{t('Seu nível:')} <strong>{level}</strong></p></div>
-    {loading ? <p role="status">{t('Carregando músicas…')}</p> : error ? <div role="alert"><p>{t('Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={() => { setLoading(true); setRetry(x => x + 1); }}>{t('Tentar novamente')}</button></div> : !visible.length ? <p role="status">{t('Nenhuma música disponível neste filtro.')}</p> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>}
+    {loading ? <p role="status">{t(catalog.length ? 'Atualizando músicas…' : 'Carregando músicas…')}</p>
+      : error ? <div className={styles.notice} role="alert"><p>{t(error === 'unavailable' ? 'As músicas estão temporariamente indisponíveis.' : 'Não foi possível carregar as músicas.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div>
+      : unavailable > 0 ? <div className={styles.notice} role="status"><p>{t('Algumas músicas estão indisponíveis agora.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div>
+      : !catalog.length ? <div className={styles.notice} role="status"><p>{t('Não há músicas disponíveis agora.')}</p><button className="secondary-button" onClick={retryCatalog}>{t('Tentar novamente')}</button></div> : null}
+    {catalog.length > 0 && (!visible.length ? <div className={styles.notice} role="status"><p>{t('Nenhuma música disponível neste filtro.')}</p><button className="secondary-button" onClick={() => { setFilter('all'); setQuery(''); }}>{t('Limpar filtros')}</button></div> : <div className={styles.tracks}>{visible.map((lesson, index) => { const art = musicArtwork(lesson.id); return <button key={lesson.id} className={styles.track} data-track-id={lesson.id} onClick={() => openSession(lesson)} aria-label={`${t('Praticar com')} ${lesson.title} — ${lesson.artist}`}><div className={styles.cover}>{art ? <Image src={art.src} alt="" fill sizes="(max-width: 600px) calc(100vw - 40px), (max-width: 1100px) 42vw, 30vw" loading={index === 0 ? 'eager' : 'lazy'} style={{ objectFit: 'cover', objectPosition: art.position }} /> : <Headphones size={40} />}<span className={styles.play} aria-hidden="true"><Play size={19} fill="currentColor" /></span></div><div className={styles.trackCopy}><p>{lesson.artist}</p><h3>{lesson.title}</h3><p className={styles.topic}>{t(lesson.topic)}</p><div className={styles.trackMeta}><span>{lesson.level} <span aria-hidden="true">/</span> {Math.floor(lesson.duration / 60)}:{String(Math.floor(lesson.duration % 60)).padStart(2, '0')}</span><strong>{t('Praticar')} <ArrowRight size={16} /></strong></div></div></button>; })}</div>)}
   </section>{active && <MusicSession key={`${userId}:${active.id}`} userId={userId} lesson={active} lab={lab} onClose={closeSession} />}</>;
 }
 
@@ -89,6 +113,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const progressRef = useRef(progress), dirty = useRef(false), inFlight = useRef(false), alive = useRef(true);
   const [sync, setSync] = useState('Carregando progresso…');
   const audio = useRef<HTMLAudioElement>(null), lyrics = useRef<HTMLDivElement>(null);
+  const audioSource = lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2';
   const [time, setTime] = useState(progress.position), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(1), [loop, setLoop] = useState(false), [selected, setSelected] = useState(0), [translation, setTranslation] = useState(false), [follow, setFollow] = useState(true), [audioError, setAudioError] = useState('');
   const [word, setWord] = useState<string | null>(null);
   const [vocabularyQuery, setVocabularyQuery] = useState('');
@@ -96,6 +121,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const visibilitySession = useRef({ mode, gamePhase });
   const resumeAfterBackground = useRef(false), playRequest = useRef(false);
   const preparation = useRef<AbortController | null>(null), preparing = useRef(false);
+  const reloadPosition = useRef<number | null>(null);
   useEffect(() => () => preparation.current?.abort(), []);
   useEffect(() => { visibilitySession.current = { mode, gamePhase }; }, [mode, gamePhase]);
   const playbackControls = mode === 'lyrics' || mode === 'learn';
@@ -197,6 +223,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
     preparation.current = controller; preparing.current = true;
     resumeAfterBackground.current = false;
     element.muted = true;
+    if (element.error) { element.src = `${audioSource}&retry=${Date.now()}`; element.load(); }
     if (element.currentTime > .001) element.currentTime = 0;
     const cancelled = new Promise<never>((_, reject) => controller.signal.addEventListener('abort', () => reject(new DOMException('Playback preparation cancelled', 'AbortError')), { once: true }));
     const ready = waitForMusicAudio(element, controller.signal);
@@ -268,10 +295,11 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
         </div>}
         {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
-      <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata"
-        onLoadedMetadata={() => { if (audio.current) { const position = preparing.current ? 0 : Math.min(studyEnd, progressRef.current.position); if (Math.abs(audio.current.currentTime - position) > .001) audio.current.currentTime = position; audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }}
-        onPlay={() => { if (!preparing.current && !audio.current?.paused) setPlaying(true); }}
-        onPause={() => { if (preparing.current || !audio.current?.paused) return; setPlaying(false); setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); }}
+      <audio ref={audio} src={audioSource} preload="metadata"
+        onLoadedMetadata={() => { if (audio.current) { const position = preparing.current ? 0 : Math.min(studyEnd, reloadPosition.current ?? progressRef.current.position); if (Math.abs(audio.current.currentTime - position) > .001) audio.current.currentTime = position; reloadPosition.current = null; audio.current.volume = volume / 100; audio.current.preservesPitch = true; audio.current.playbackRate = speed; } }}
+        onPlay={() => { if (!preparing.current && reloadPosition.current === null && audio.current && !audio.current.paused && audio.current.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) setPlaying(true); }}
+        onPlaying={() => { if (!preparing.current && reloadPosition.current === null && !audio.current?.paused) setPlaying(true); }}
+        onPause={() => { if (preparing.current || reloadPosition.current !== null || !audio.current?.paused) return; setPlaying(false); setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); }}
         onEnded={() => { if (!preparing.current) { setTime(audio.current?.currentTime ?? studyEnd); setPlaying(false); } }}
         onSeeked={() => { if (!preparing.current) setTime(audio.current?.currentTime ?? 0); }}
         onError={() => { resumeAfterBackground.current = false; setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
@@ -284,7 +312,16 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon" aria-label={localizeAttribute('Próximo trecho')} onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
           <button className="listen-icon listen-speed" aria-label={localizeAttribute(`Velocidade ${musicSpeedLabel(speed)}`)} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
         </div></>}
-        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => { audio.current?.load(); setAudioError(''); if (mode !== 'game' || gamePhase !== 'ready') void play(); }}>{t('Tentar novamente')}</button></div>}
+        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => {
+          const element = audio.current;
+          if (!element) return;
+          reloadPosition.current = Math.max(time, progressRef.current.position, reloadPosition.current ?? 0);
+          rememberPosition(reloadPosition.current);
+          element.src = `${audioSource}&retry=${Date.now()}`;
+          element.load(); element.dispatchEvent(new Event('sparky:music-retry'));
+          setAudioError('');
+          if (mode !== 'game' || gamePhase !== 'ready') void play();
+        }}>{t('Tentar novamente')}</button></div>}
       </footer>}
     </div>
   </dialog>;

@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { cookies } from 'next/headers';
 import { readSession, SESSION_COOKIE } from '@/lib/auth-session';
 import { musicRelease } from '@/lib/music-release';
-import { hasReviewedMusicStore, reviewedMusicRedirect } from '@/lib/music-blob';
+import { hasReviewedMusicStore, reviewedMusicRedirect } from '@/lib/music-storage';
 
 export async function GET(request: Request) {
   if (!await readSession((await cookies()).get(SESSION_COOKIE)?.value)) return new Response(null, { status: 401 });
@@ -42,5 +42,5 @@ export async function GET(request: Request) {
       'Content-Type': 'video/mp4', 'Content-Length': String(end - start + 1), 'Accept-Ranges': 'bytes', 'Cache-Control': 'private, no-store',
       ...(range ? { 'Content-Range': `bytes ${start}-${end}/${size}` } : {}),
     } });
-  } catch { return new Response(null, { status: 404 }); }
+  } catch { return new Response(null, { status: 503, headers: { 'Cache-Control': 'private, no-store' } }); }
 }
