@@ -5,6 +5,7 @@ import { useInterfaceLanguage } from "@/lib/interface-language";
 import { LearningLanguagePreferences } from "./learning-language-preferences";
 import { nextInTrail, lessonMetadata } from "@/lib/course-guide";
 import { interfaceSoundEnabled, playInterfaceSound, setInterfaceSoundEnabled, subscribeInterfaceSound } from "@/lib/interface-sound";
+import { musicEffectsMode, setMusicEffectsMode, subscribeMusicEffects, type MusicEffectsMode } from "@/lib/music-effects";
 import { disciplines, type Discipline } from "@/lib/course-metadata";
 import { planReviews, studyDay } from "@/lib/review-plan";
 import { updateWorkspace } from "@/lib/learning-local";
@@ -182,6 +183,7 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
   const completionInFlight = useRef(false);
   const [completionMoment, setCompletionMoment] = useState<CompletionMoment | null>(null);
   const interfaceSounds = useSyncExternalStore(subscribeInterfaceSound, interfaceSoundEnabled, () => true);
+  const musicEffects = useSyncExternalStore(subscribeMusicEffects, musicEffectsMode, () => 'auto' as MusicEffectsMode);
   const [rewardAvailable, setRewardAvailable] = useState(true);
   const [workspace, setWorkspace] = useState(blankWorkspace);
   const [notificationDestination, setNotificationDestination] = useState<NotificationDestination | null>(null);
@@ -829,6 +831,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
               <section className="settings-card" aria-labelledby="settings-sound-title">
                 <header className="settings-card-heading"><Settings size={22}/><div><h2 id="settings-sound-title">{t("Som e personalização")}</h2><p>{t("Pequenos detalhes do seu Sparky.")}</p></div></header>
                 <label className="settings-switch"><span><strong>{t("Sons de interface")}</strong><small>{t("Toques suaves ao começar e concluir lições")}</small></span><input type="checkbox" role="switch" checked={interfaceSounds} onChange={event => setInterfaceSoundEnabled(event.target.checked)}/><span className="settings-switch-track" aria-hidden="true"/></label>
+                <label className="settings-field"><span>{t("Efeitos das músicas")}</span><select value={musicEffects} onChange={event => setMusicEffectsMode(event.target.value as MusicEffectsMode)}><option value="auto">{t("Automático")}</option><option value="reduced">{t("Reduzido")}</option><option value="off">{t("Desativado")}</option></select></label>
+                <p className="settings-caption">{t("Efeitos no ritmo da música, mais suaves durante as respostas. Escolha salva neste aparelho.")}</p>
                 {onboardingEnabled && learnerProfile?.onboardingCompleted && <button className="secondary-button" onClick={() => void editNamePronunciation()}>{t("Corrigir pronúncia do meu nome")}<ArrowRight size={16}/></button>}
                 <p className="settings-caption">{t("As animações respeitam a preferência de movimento do aparelho.")}</p>
               </section>

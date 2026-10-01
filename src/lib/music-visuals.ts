@@ -1,4 +1,5 @@
 import type { MusicLine } from './music';
+import { musicTimelineSectionAt } from './music-visual-timeline.ts';
 
 type Section = { start: number; kind: 'intro' | 'verse' | 'build' | 'chorus' | 'narrative' | 'instrumental' | 'outro'; label: string; story: string };
 // Editorial section boundaries follow the existing approved lyric timestamps.
@@ -56,6 +57,8 @@ const sections: Record<string, Section[]> = {
 };
 
 export function musicSectionAt(trackId: string, clock: number): Section {
+  const reviewed = musicTimelineSectionAt(trackId, clock);
+  if (reviewed) return { start: reviewed.start, kind: reviewed.kind, label: reviewed.label, story: '' };
   const track = sections[trackId];
   if (!track) return { start: 0, kind: 'verse', label: 'Música', story: '' };
   let current = track[0];

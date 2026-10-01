@@ -251,6 +251,8 @@
 .clip-room .listen-header{position:relative;z-index:1;flex:0 0 48px;height:48px;min-height:48px}
 .clip-room .clip-game-mount{display:flex;flex-direction:column}
 .clip-room .clip-game{flex:1;min-width:0}
+.clip-game{isolation:isolate}
+.clip-game>.clip-scorebar,.clip-game>.clip-rank-progress,.clip-game>.clip-media,.clip-game>.clip-round,.clip-game>.clip-setup,.clip-game>.clip-result,.clip-game>.clip-speed-control{position:relative;z-index:1}
 .clip-room .clip-game:is([data-phase=round],[data-phase=outro])>.clip-scorebar{display:flex;flex:0 0 44px;min-height:44px;padding:4px 0}
 .clip-room .clip-game>.clip-scorebar{min-width:0;gap:12px;padding-inline:2px}
 .clip-score-points{flex:0 1 auto;min-width:0}

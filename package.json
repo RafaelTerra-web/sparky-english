@@ -6,6 +6,7 @@
     "dev": "next dev",
     "lab:music": "node scripts/music-lab.mjs",
     "audit:music": "node scripts/audit-music.mjs",
+    "audit:music-visuals": "node scripts/audit-musify-timeline.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -17,14 +18,15 @@
     "voice:generate": "node scripts/generate-voices.mjs",
     "voice:generate-tips": "node scripts/generate-tip-audio.mjs",
     "audit:coverage": "node scripts/audit-course-coverage.mjs",
-    "prebuild": "node scripts/verify-music-release.mjs && node scripts/audit-course-coverage.mjs && node scripts/build-offline-pack.mjs",
+    "prebuild": "node scripts/verify-music-release.mjs && node scripts/audit-musify-timeline.mjs && node scripts/audit-course-coverage.mjs && node scripts/build-offline-pack.mjs",
     "audit:engagement": "node --env-file=.env.local scripts/audit-engagement.mjs",
     "audit:economy": "node --env-file=.env.local scripts/audit-economy.mjs",
     "prune:economy": "node --env-file=.env.local scripts/prune-economy-events.mjs",
     "test:e2e:quick": "playwright test --config=playwright.quick.config.ts",
     "test:e2e:economy": "playwright test --config=playwright.economy.config.ts",
     "test:e2e:notifications": "playwright test --config=playwright.notifications.config.ts",
-    "test:e2e:offline": "playwright test --config=playwright.offline.config.ts"
+    "test:e2e:offline": "playwright test --config=playwright.offline.config.ts",
+    "test:e2e:musify-visuals": "playwright test --config=playwright.musify-visuals.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

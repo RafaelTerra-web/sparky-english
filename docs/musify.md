@@ -1,6 +1,6 @@
 # Musify — 30 de setembro de 2026
 
-Esta página registra a implantação inicial. A versão atual **Musify 1.1** remove contadores de trechos, usa pontos por rapidez, prepara a mídia antes da partida e eleva seis vídeos a 900p. Consulte [Musify 1.1 — otimização](musify-optimization.md) para as regras e especificações atuais.
+Esta página registra a implantação inicial. **Musify 1.2** acrescenta onze coreografias próprias, batidas analisadas no áudio publicado, refrões revisados e efeitos adaptativos que preservam as respostas escondidas. Consulte [a direção e os mapas da Musify 1.2](musify-1.2-direction.md). As regras de pontos por rapidez, vidas, preparação e vídeos 900p da [Musify 1.1](musify-optimization.md) continuam válidas.
 
 Musify amplia o Music Lab com as sete faixas fornecidas pelo usuário, além das quatro já existentes. Cada faixa tem letra com marcações acústicas, tradução em português, vocabulário com exemplos próprios, identidade visual e uma animação discreta. Still Into You mostra borboletas quando a palavra é cantada; as outras faixas usam ondas, halos, brilho disco, coroas, fitas e tempestade. Movimento reduzido e economia de dados suprimem o vídeo decorativo.
 
