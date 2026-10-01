@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { musicCatalog } from './music-catalog';
 import { musicReleases } from './music-release';
 import { loadMusicReleases } from './music-catalog-loader';
-import { hasReviewedMusicStore, readReviewedMusicManifest } from './music-blob';
+import { hasReviewedMusicStore, readReviewedMusicManifest } from './music-storage';
 import { emptyMusicProgress, normalizeMusic, validateMusic, type MusicLesson, type MusicProgress } from './music';
 
 const RELEASE_TIMING_VERSION = 'full-song-timing-2';

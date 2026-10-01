@@ -1,0 +1,288 @@
+{
+  "schema": 1,
+  "accountId": "91087b3eccb7c4460b558078cf65d3bb",
+  "bucket": "sparky-reviewed-music",
+  "prefix": "reviewed-v1/",
+  "files": {
+    "manifest.json": {
+      "key": "reviewed-v1/manifest.json",
+      "sha256": "8b65482a87c4b599e2e6ec1a906d4b841b5c802a1e0c53b76c41b460cd472081",
+      "size": 57663,
+      "etag": "\"be08d5aa1594fe7361d5321e531e8879\"",
+      "verifiedAt": "2026-10-01T19:34:51.508Z"
+    },
+    "audio.mp3": {
+      "key": "reviewed-v1/audio.mp3",
+      "sha256": "1ca15127f1a0bdb366a352101f8f79b268118df70d88e380df625f53e749a3b9",
+      "size": 4215597,
+      "etag": "\"69e2f47bca313d360610f54651ad6a25\"",
+      "verifiedAt": "2026-10-01T19:34:53.998Z"
+    },
+    "heartless/manifest.json": {
+      "key": "reviewed-v1/heartless/manifest.json",
+      "sha256": "135aba0aaeaf52e7ed7033b36f68d9e16193b5a87b7f0d959db20c3796483fb9",
+      "size": 145877,
+      "etag": "\"474127864afff46b86b042c92d8c3b80\"",
+      "verifiedAt": "2026-10-01T19:34:55.273Z"
+    },
+    "heartless/audio.mp3": {
+      "key": "reviewed-v1/heartless/audio.mp3",
+      "sha256": "2eda9866ca57e321901d39378a4e29cafca7fc902933aaaef37daaa3cd158e9a",
+      "size": 5359148,
+      "etag": "\"b943277e0951f5e1c149fe9ab95ed320\"",
+      "verifiedAt": "2026-10-01T19:34:58.087Z"
+    },
+    "stay-at-your-house/manifest.json": {
+      "key": "reviewed-v1/stay-at-your-house/manifest.json",
+      "sha256": "4daec8efd5c7c8eb21f91bf3cb9ed17a5a794a13f8a0599a835ce565e2159825",
+      "size": 101183,
+      "etag": "\"b1671634399237ee51050a9e8d5b28cd\"",
+      "verifiedAt": "2026-10-01T19:34:59.461Z"
+    },
+    "stay-at-your-house/audio.mp3": {
+      "key": "reviewed-v1/stay-at-your-house/audio.mp3",
+      "sha256": "dd2058d8bb819fc3ec67a641d42430ee926362f4af4c8a1bd9927c3ff7902498",
+      "size": 5953004,
+      "etag": "\"41444f877ee43aaad1a7b803e3cb2c82\"",
+      "verifiedAt": "2026-10-01T19:35:02.220Z"
+    },
+    "stay-at-your-house/video.mp4": {
+      "key": "reviewed-v1/stay-at-your-house/video.mp4",
+      "sha256": "d098996c0b4e495bb6361ed4a024cc47c2cac754f74dfbf6f38a0cccdb188e38",
+      "size": 37517890,
+      "etag": "\"1ccc511dfec5a07d76d27d5c9949ff00\"",
+      "verifiedAt": "2026-10-01T19:35:12.085Z"
+    },
+    "stay-at-your-house/background.mp4": {
+      "key": "reviewed-v1/stay-at-your-house/background.mp4",
+      "sha256": "49525f327f5bcc19d56907e2a930d1fdcd1902cec271ad78beaeaa9eec27d1e5",
+      "size": 31763483,
+      "etag": "\"baf89d67a0c02a2813e507755c31d5ed\"",
+      "verifiedAt": "2026-10-01T19:35:21.684Z"
+    },
+    "buttercup-local/manifest.json": {
+      "key": "reviewed-v1/buttercup-local/manifest.json",
+      "sha256": "0b18d240926a837330b84b4eb6b11e5cdec87d09ebec5f5819743f83c3784993",
+      "size": 20223,
+      "etag": "\"9c64d29279f0fee29a76be921e832aad\"",
+      "verifiedAt": "2026-10-01T19:35:22.950Z"
+    },
+    "buttercup-local/audio.mp3": {
+      "key": "reviewed-v1/buttercup-local/audio.mp3",
+      "sha256": "7161652e352f0e722160bcf296775844d6d8e5574af45fa5663eb7465e43616e",
+      "size": 3331244,
+      "etag": "\"fb3a9d86b42357374f21202db189a11f\"",
+      "verifiedAt": "2026-10-01T19:35:24.993Z"
+    },
+    "buttercup-local/video.mp4": {
+      "key": "reviewed-v1/buttercup-local/video.mp4",
+      "sha256": "7a2a587272d61eece75fe857b6be4a46160385d224abbbfd79f9fabecb791bfc",
+      "size": 46787233,
+      "etag": "\"2a90f64c5ede00679ef5853b0394faf4\"",
+      "verifiedAt": "2026-10-01T19:35:37.968Z"
+    },
+    "musify-support-1/perfect-local.json": {
+      "key": "reviewed-v1/musify-support-1/perfect-local.json",
+      "sha256": "d8b7396885189d646e46ace2073267191ff4b2b8e9e8a61c76f65356e2b956cc",
+      "size": 106113,
+      "etag": "\"8d2eb5bc56d786045e5915cb35f2dea2\"",
+      "verifiedAt": "2026-10-01T19:35:39.365Z"
+    },
+    "musify-support-1/heartless-local.json": {
+      "key": "reviewed-v1/musify-support-1/heartless-local.json",
+      "sha256": "21d856cd69b92dddd7fd6fa1e5ef17525c12e072b80111d10565efdd713a0d0c",
+      "size": 167492,
+      "etag": "\"cc85dd8d74c2a20d21bb0c9d22869dbb\"",
+      "verifiedAt": "2026-10-01T19:35:40.631Z"
+    },
+    "musify-support-1/stay-at-your-house-local.json": {
+      "key": "reviewed-v1/musify-support-1/stay-at-your-house-local.json",
+      "sha256": "663e657b19982d61123558e298c1a8801ea65c0439fe6668311b2e540c4053be",
+      "size": 123887,
+      "etag": "\"99784532cefca81171316bf059790f66\"",
+      "verifiedAt": "2026-10-01T19:35:41.971Z"
+    },
+    "musify-support-1/buttercup-local.json": {
+      "key": "reviewed-v1/musify-support-1/buttercup-local.json",
+      "sha256": "6d351fe1d614fb97dc89f3c11986a8a806523574a3226b80fb49958e79d75101",
+      "size": 30150,
+      "etag": "\"fb3e138efdef4f95a8d09beee1edd095\"",
+      "verifiedAt": "2026-10-01T19:35:43.436Z"
+    },
+    "still-into-you/manifest.json": {
+      "key": "reviewed-v1/still-into-you/manifest.json",
+      "sha256": "b250e607f2fb511859a2b09cc6ab4c1230912986f78b78d0c4eb7078e11efd48",
+      "size": 76622,
+      "etag": "\"5b23bf7c24cbf355686c00c41d638974\"",
+      "verifiedAt": "2026-10-01T19:35:44.738Z"
+    },
+    "still-into-you/audio.mp3": {
+      "key": "reviewed-v1/still-into-you/audio.mp3",
+      "sha256": "9c96fba5f178d0627a597dd58b5f034e55183b044feb0ac4772cff904fa086ac",
+      "size": 3523245,
+      "etag": "\"645c061a7b420cebfde0bd43326c019d\"",
+      "verifiedAt": "2026-10-01T19:35:46.889Z"
+    },
+    "still-into-you/video.mp4": {
+      "key": "reviewed-v1/still-into-you/video.mp4",
+      "sha256": "e8e172ecb2bbaa9b87e2bfd1dc962bb68d7be64e6b7656dfe0ec599df3246a30",
+      "size": 13507571,
+      "etag": "\"6ee17eda202b208e0b1edbdb774e54bd\"",
+      "verifiedAt": "2026-10-01T19:35:51.003Z"
+    },
+    "do-i-wanna-know/manifest.json": {
+      "key": "reviewed-v1/do-i-wanna-know/manifest.json",
+      "sha256": "db26be0c2aee05df76887f1889fffe2b9b7eddc53225d3d98e46bcbeb3b3354a",
+      "size": 77514,
+      "etag": "\"5ad25b5958b684ff1fb79665e2334ab9\"",
+      "verifiedAt": "2026-10-01T19:35:52.679Z"
+    },
+    "do-i-wanna-know/audio.mp3": {
+      "key": "reviewed-v1/do-i-wanna-know/audio.mp3",
+      "sha256": "453d8ec151731ea4737e242884bd92cedcca0367aed1b5b09871f29379d89c9b",
+      "size": 4252077,
+      "etag": "\"6ebeff8618ef41a553ccca52e89212b4\"",
+      "verifiedAt": "2026-10-01T19:35:54.612Z"
+    },
+    "do-i-wanna-know/video.mp4": {
+      "key": "reviewed-v1/do-i-wanna-know/video.mp4",
+      "sha256": "ca17be6b742524891fb515931783a93c48f6fc147b7f97e910f404af4407c0c8",
+      "size": 8249916,
+      "etag": "\"2c976a4492fd3ad5e1b37ee55ea36e42\"",
+      "verifiedAt": "2026-10-01T19:35:57.538Z"
+    },
+    "she-knows/manifest.json": {
+      "key": "reviewed-v1/she-knows/manifest.json",
+      "sha256": "90eb9226ac878046141a9cdd5214bf24d4422b57360319cb96de20c004c65fdf",
+      "size": 130703,
+      "etag": "\"c4cb681f26937fa7bb3ed79a6364ea7e\"",
+      "verifiedAt": "2026-10-01T19:35:58.810Z"
+    },
+    "she-knows/audio.mp3": {
+      "key": "reviewed-v1/she-knows/audio.mp3",
+      "sha256": "7d446b5113967a6f5afc7a16ffeba7f7dc550e67786472ee79781b2c8b649329",
+      "size": 5545773,
+      "etag": "\"870aca17698b5844bd0f66774753dca4\"",
+      "verifiedAt": "2026-10-01T19:36:01.603Z"
+    },
+    "she-knows/video.mp4": {
+      "key": "reviewed-v1/she-knows/video.mp4",
+      "sha256": "596904fb88ca93f80ba28e1cea5c2c61654fde9a6658dd3ed0a247e5245d49e8",
+      "size": 9783168,
+      "etag": "\"fda3d86ab5095a0bfadb68e06c8e5bc4\"",
+      "verifiedAt": "2026-10-01T19:36:05.069Z"
+    },
+    "made-for-loving-you/manifest.json": {
+      "key": "reviewed-v1/made-for-loving-you/manifest.json",
+      "sha256": "a7cb98ca3a61898f2c159c8fb7688beb77f6efff8e55ddf766219a126c6417df",
+      "size": 76015,
+      "etag": "\"10124acd01d6b91f14d17768d60c2914\"",
+      "verifiedAt": "2026-10-01T19:36:06.329Z"
+    },
+    "made-for-loving-you/audio.mp3": {
+      "key": "reviewed-v1/made-for-loving-you/audio.mp3",
+      "sha256": "246580fdf0aee3477b9a9669b9154573df984d0196e9917b6aa11f750bd6f105",
+      "size": 4365357,
+      "etag": "\"01830b2832615116c5f2c5d91035961d\"",
+      "verifiedAt": "2026-10-01T19:36:08.567Z"
+    },
+    "savage/manifest.json": {
+      "key": "reviewed-v1/savage/manifest.json",
+      "sha256": "6ea42aec5c1b778b0c1ecf6bbbae655ab2348a887c158043b6d922944caa0d68",
+      "size": 89464,
+      "etag": "\"72d9f72a13ee01599f30d7d0276a6524\"",
+      "verifiedAt": "2026-10-01T19:36:09.923Z"
+    },
+    "savage/audio.mp3": {
+      "key": "reviewed-v1/savage/audio.mp3",
+      "sha256": "828acc186c1f2083572f73e40ceac0591ec3866f9c778490c85f2d496b9ca6d8",
+      "size": 2489133,
+      "etag": "\"2205a84725cec10fd9441e6a44ae26d9\"",
+      "verifiedAt": "2026-10-01T19:36:12.364Z"
+    },
+    "savage/video.mp4": {
+      "key": "reviewed-v1/savage/video.mp4",
+      "sha256": "f14759dc8b467cf5130bc70dc75851c29cc8bd372da7793763c29912c0920c23",
+      "size": 2359356,
+      "etag": "\"800ca22074ee49b432ad7e4a0cbbeca7\"",
+      "verifiedAt": "2026-10-01T19:36:14.576Z"
+    },
+    "out-of-order/manifest.json": {
+      "key": "reviewed-v1/out-of-order/manifest.json",
+      "sha256": "35004eed07e43cd46d1fa692b1bed47d592dc40dd62f487513a835209738fddf",
+      "size": 74679,
+      "etag": "\"8759ef46adb48af74861a35dc1c16a84\"",
+      "verifiedAt": "2026-10-01T19:36:15.810Z"
+    },
+    "out-of-order/audio.mp3": {
+      "key": "reviewed-v1/out-of-order/audio.mp3",
+      "sha256": "6c1108ab8723441d041c21529ba86deb4c6454a3175c9762e1263b9808eeb384",
+      "size": 2393517,
+      "etag": "\"d402e901940ea443d2bc4088f5fc9c0a\"",
+      "verifiedAt": "2026-10-01T19:36:18.007Z"
+    },
+    "king-for-a-day/manifest.json": {
+      "key": "reviewed-v1/king-for-a-day/manifest.json",
+      "sha256": "f45b4a614ed4e4daaa73133de71223438eb130307c8a50847ab4314b2c33adb7",
+      "size": 110771,
+      "etag": "\"8b576a55f75ee54914b67ee7c8927517\"",
+      "verifiedAt": "2026-10-01T19:36:19.226Z"
+    },
+    "king-for-a-day/audio.mp3": {
+      "key": "reviewed-v1/king-for-a-day/audio.mp3",
+      "sha256": "ef9de1860429770d73fac0c5890d991433113fdbf45bdd1aa69b3c155b55fd0d",
+      "size": 4702509,
+      "etag": "\"b0403a90afc5b174f8ce14d8865136d3\"",
+      "verifiedAt": "2026-10-01T19:36:21.854Z"
+    },
+    "king-for-a-day/video.mp4": {
+      "key": "reviewed-v1/king-for-a-day/video.mp4",
+      "sha256": "5f52b21f0367d21f79fb17fb68f014a0d5294e63121d4bf4e3f10e72397ad0f7",
+      "size": 11208613,
+      "etag": "\"d0f707caa9a70385eae2f4e72af13694\"",
+      "verifiedAt": "2026-10-01T19:36:25.739Z"
+    },
+    "musify-video-900p-1/still-into-you.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/still-into-you.mp4",
+      "sha256": "0b011e5602229d1e658633d133c4c02951189df42c45b9d701aa32899f336882",
+      "size": 109368302,
+      "etag": "\"aebaa2db6d280b60e878bfe1a93774f7\"",
+      "verifiedAt": "2026-10-01T19:36:52.227Z"
+    },
+    "musify-video-900p-1/do-i-wanna-know.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/do-i-wanna-know.mp4",
+      "sha256": "1974fba4f202403e39d2322c43000680c04ac7931b4deaf2405c29b27d3b67a6",
+      "size": 99649752,
+      "etag": "\"e6ecdf234c2bbe83f1ccef6e517359bc\"",
+      "verifiedAt": "2026-10-01T19:37:17.958Z"
+    },
+    "musify-video-900p-1/she-knows.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/she-knows.mp4",
+      "sha256": "9a699b6f62ebbbd11c98af641c5204bfa05bdc1e15fa3f4d23b148b49c251057",
+      "size": 168225212,
+      "etag": "\"1d4ef11da7701deed2fe55d78ded2f0f\"",
+      "verifiedAt": "2026-10-01T19:37:59.083Z"
+    },
+    "musify-video-900p-1/savage.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/savage.mp4",
+      "sha256": "3bdb5fd21aea239ee32f01a129e8ae20a4cd325418d1c9638cfabfe16ef84ebb",
+      "size": 73815472,
+      "etag": "\"3e6a47784a06396b2f30ebe34f1cbd1e\"",
+      "verifiedAt": "2026-10-01T19:38:16.830Z"
+    },
+    "musify-video-900p-1/king-for-a-day.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/king-for-a-day.mp4",
+      "sha256": "5748960f6e49b343940ee3631fabbaf63a6042d2cc13ffb4341b143c49a1bad5",
+      "size": 144841795,
+      "etag": "\"300d9c1ddcf1955fd39fe7ec4798e7fa\"",
+      "verifiedAt": "2026-10-01T19:38:52.444Z"
+    },
+    "musify-video-900p-1/stay-at-your-house-local.mp4": {
+      "key": "reviewed-v1/musify-video-900p-1/stay-at-your-house-local.mp4",
+      "sha256": "60a51503b6ba6cc5e88d7d197491f09426c1a6673adc5aac0a30e45fef6e7ea3",
+      "size": 89808438,
+      "etag": "\"bd014b4ad366ea88fb3d889eda0dbab5\"",
+      "verifiedAt": "2026-10-01T19:39:12.850Z"
+    }
+  }
+}

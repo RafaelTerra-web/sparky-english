@@ -113,6 +113,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const progressRef = useRef(progress), dirty = useRef(false), inFlight = useRef(false), alive = useRef(true);
   const [sync, setSync] = useState('Carregando progresso…');
   const audio = useRef<HTMLAudioElement>(null), lyrics = useRef<HTMLDivElement>(null);
+  const audioSource = lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2';
   const [time, setTime] = useState(progress.position), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(1), [loop, setLoop] = useState(false), [selected, setSelected] = useState(0), [translation, setTranslation] = useState(false), [follow, setFollow] = useState(true), [audioError, setAudioError] = useState('');
   const [word, setWord] = useState<string | null>(null);
   const [vocabularyQuery, setVocabularyQuery] = useState('');
@@ -120,6 +121,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
   const visibilitySession = useRef({ mode, gamePhase });
   const resumeAfterBackground = useRef(false), playRequest = useRef(false);
   const preparation = useRef<AbortController | null>(null), preparing = useRef(false);
+  const reloadPosition = useRef<number | null>(null);
   useEffect(() => () => preparation.current?.abort(), []);
   useEffect(() => { visibilitySession.current = { mode, gamePhase }; }, [mode, gamePhase]);
   const playbackControls = mode === 'lyrics' || mode === 'learn';
@@ -221,6 +223,7 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
     preparation.current = controller; preparing.current = true;
     resumeAfterBackground.current = false;
     element.muted = true;
+    if (element.error) { element.src = `${audioSource}&retry=${Date.now()}`; element.load(); }
     if (element.currentTime > .001) element.currentTime = 0;
     const cancelled = new Promise<never>((_, reject) => controller.signal.addEventListener('abort', () => reject(new DOMException('Playback preparation cancelled', 'AbortError')), { once: true }));
     const ready = waitForMusicAudio(element, controller.signal);
@@ -292,10 +295,11 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
         </div>}
         {mode === 'awards' && <div><MusicAchievements performance={progress.performance} /><p className="music-muted" role="status">{t(sync)}</p></div>}
       </main>
-      <audio ref={audio} src={lesson.source + (lesson.source.includes('?') ? '&' : '?') + 'mix=quiet-v2'} preload="metadata"
-        onLoadedMetadata={() => { if (audio.current) { const position = preparing.current ? 0 : Math.min(studyEnd, progressRef.current.position); if (Math.abs(audio.current.currentTime - position) > .001) audio.current.currentTime = position; audio.current.volume = volume / 100; audio.current.preservesPitch = true; } }}
-        onPlay={() => { if (!preparing.current && !audio.current?.paused) setPlaying(true); }}
-        onPause={() => { if (preparing.current || !audio.current?.paused) return; setPlaying(false); setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); }}
+      <audio ref={audio} src={audioSource} preload="metadata"
+        onLoadedMetadata={() => { if (audio.current) { const position = preparing.current ? 0 : Math.min(studyEnd, reloadPosition.current ?? progressRef.current.position); if (Math.abs(audio.current.currentTime - position) > .001) audio.current.currentTime = position; reloadPosition.current = null; audio.current.volume = volume / 100; audio.current.preservesPitch = true; audio.current.playbackRate = speed; } }}
+        onPlay={() => { if (!preparing.current && reloadPosition.current === null && audio.current && !audio.current.paused && audio.current.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) setPlaying(true); }}
+        onPlaying={() => { if (!preparing.current && reloadPosition.current === null && !audio.current?.paused) setPlaying(true); }}
+        onPause={() => { if (preparing.current || reloadPosition.current !== null || !audio.current?.paused) return; setPlaying(false); setTime(audio.current.currentTime); update({ position: audio.current.currentTime, positionAt: Date.now() }); }}
         onEnded={() => { if (!preparing.current) { setTime(audio.current?.currentTime ?? studyEnd); setPlaying(false); } }}
         onSeeked={() => { if (!preparing.current) setTime(audio.current?.currentTime ?? 0); }}
         onError={() => { resumeAfterBackground.current = false; setPlaying(false); setAudioError('Não foi possível carregar o áudio.'); }} />
@@ -308,7 +312,16 @@ function MusicSession({ userId, lesson, lab, onClose }: { userId: string; lesson
           <button className="listen-icon" aria-label={localizeAttribute('Próximo trecho')} onClick={() => { chooseLine(Math.min(lesson.lines.length - 1, (activeLine >= 0 ? activeLine : selected) + 1)); setFollow(true); }}><SkipForward size={24} /></button>
           <button className="listen-icon listen-speed" aria-label={localizeAttribute(`Velocidade ${musicSpeedLabel(speed)}`)} onClick={() => changeSpeed(musicSpeeds[(musicSpeeds.indexOf(speed as typeof musicSpeeds[number]) + 1) % musicSpeeds.length])}>{musicSpeedLabel(speed)}</button>
         </div></>}
-        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => { audio.current?.load(); setAudioError(''); if (mode !== 'game' || gamePhase !== 'ready') void play(); }}>{t('Tentar novamente')}</button></div>}
+        {audioError && <div className="listen-error" role="alert"><span lang={supportLanguage}>{supportT(audioError)}</span><button className="listen-link" onClick={() => {
+          const element = audio.current;
+          if (!element) return;
+          reloadPosition.current = Math.max(time, progressRef.current.position, reloadPosition.current ?? 0);
+          rememberPosition(reloadPosition.current);
+          element.src = `${audioSource}&retry=${Date.now()}`;
+          element.load(); element.dispatchEvent(new Event('sparky:music-retry'));
+          setAudioError('');
+          if (mode !== 'game' || gamePhase !== 'ready') void play();
+        }}>{t('Tentar novamente')}</button></div>}
       </footer>}
     </div>
   </dialog>;

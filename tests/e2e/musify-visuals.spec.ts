@@ -234,6 +234,33 @@ test('backgrounding, buffering and seeking freeze or reconstruct the scene witho
   await expect(game.locator('.clip-lives')).toHaveAttribute('data-lives', '3');
 });
 
+test('refreshing an expired media link preserves position, speed, validated answer and hearts', async ({ page }) => {
+  await open(page);
+  await music(page);
+  const { game } = await start(page);
+  const round = buildMusicRounds(catalog[0], 'level1', Number(await game.getAttribute('data-session-seed')))[0];
+  await seek(page, round.opens + .15);
+  await game.locator('.clip-options button').filter({ hasText: round.answer }).click();
+  const score = await game.locator('[data-score]').getAttribute('data-score');
+  const seed = await game.getAttribute('data-session-seed');
+  await seek(page, 20);
+  await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThanOrEqual(20);
+  await page.locator('audio').evaluate((audio: HTMLAudioElement) => { audio.pause(); audio.dispatchEvent(new Event('error')); });
+  await expect(game).toHaveAttribute('data-playing', 'false');
+  const previousSource = await page.locator('audio').getAttribute('src');
+  await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click();
+  await expect(game).toHaveAttribute('data-playing', 'true');
+  await expect(page.locator('audio')).toHaveAttribute('src', /\/api\/music\/audio\?.*&retry=\d+$/);
+  expect(await page.locator('audio').getAttribute('src')).not.toBe(previousSource);
+  const restored = await page.locator('audio').evaluate((audio: HTMLAudioElement) => ({ position: audio.currentTime, speed: audio.playbackRate }));
+  expect(restored.position).toBeGreaterThanOrEqual(19.9);
+  expect(restored.position).toBeLessThan(22);
+  expect(restored.speed).toBe(.5);
+  await expect(game).toHaveAttribute('data-session-seed', seed!);
+  await expect(game.locator('[data-score]')).toHaveAttribute('data-score', score!);
+  await expect(game.locator('.clip-lives')).toHaveAttribute('data-lives', '3');
+});
+
 for (const english of [false, true]) {
   test(`music effect preferences persist through the settings UI (${english ? 'English' : 'Português'})`, async ({ page }) => {
     await open(page, english);
