@@ -134,7 +134,9 @@ test('all eleven songs render distinct scenes and enter their audited first chor
     const scene = await stage.getAttribute('data-scene');
     expect(scene).toBeTruthy();
     scenes.add(scene!);
-    await seek(page, firstChorus - .5);
+    // Safari can keep playing while seeked and React's frame update settle.
+    // Stay well inside the preceding section instead of racing its boundary.
+    await seek(page, firstChorus - 5);
     await expect(stage).not.toHaveAttribute('data-section', 'chorus');
     await seek(page, firstChorus + .1);
     await expect(stage).toHaveAttribute('data-section', 'chorus');
