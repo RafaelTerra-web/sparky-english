@@ -24,7 +24,7 @@ No Google Cloud, crie um cliente OAuth do tipo Web com a origem exata do app em 
 
 O convite nesta versão consiste na autorização do e-mail pelo administrador. A sessão Google não é usada como credencial de acesso direto ao Supabase. Se a sincronização de conta for habilitada, o servidor usa uma chave derivada do identificador Google e a chave administrativa fica exclusivamente no ambiente do servidor.
 
-Há 176 lições em 31 módulos: 38 em A1, 44 em A2, 40 em B1, 14 em B2 e 20 em C1 e C2. Cada lição tem seis questões curtas, alternando três escolhas e três ordenações, totalizando 1.056 questões. Teoria, vocabulário, áudio e produção ficam em Entender melhor. A estimativa é 2–4 minutos; Normal não tem limite e Desafio é opcional. Concluir a trilha não constitui certificação de proficiência. Veja [docs/quick-learning.md](docs/quick-learning.md) para o modelo atual e [docs/curriculum.md](docs/curriculum.md) para referências.
+Há 178 lições em 32 módulos: 38 em A1, 44 em A2, 40 em B1, 16 em B2 e 20 em C1 e C2. Cada lição tem seis questões curtas, alternando três escolhas e três ordenações, totalizando 1.068 questões. Teoria, vocabulário, áudio e produção ficam em Entender melhor. A estimativa é 2–4 minutos; Normal não tem limite e Desafio é opcional. Concluir a trilha não constitui certificação de proficiência. Veja [docs/quick-learning.md](docs/quick-learning.md) para o modelo atual e [docs/curriculum.md](docs/curriculum.md) para referências.
 
 Cada rascunho editorial tem um ID publicado explícito e as posições de progresso ficam congeladas em `src/lib/content/ledger.ts`; não reordene nem reutilize esses IDs. Isso preserva conclusões existentes mesmo se o catálogo mudar de posição.
 

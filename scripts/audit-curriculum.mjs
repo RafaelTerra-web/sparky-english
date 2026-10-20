@@ -6,7 +6,7 @@ import { normalizeOrderAnswer } from "../src/lib/content/order-variants.ts";
 const words = text => text?.trim().split(/\s+/).length ?? 0;
 let choice = 0, order = 0;
 const allIds = new Set();
-assert.equal(lessons.length,176);
+assert.equal(lessons.length,178);
 assert.deepEqual(new Set(lessonLedger),new Set(lessons.map(l=>l.id)));
 assert.deepEqual(new Set(moduleLedger),new Set(modules.map(m=>m.id)));
 for (const lesson of lessons) {
@@ -39,5 +39,5 @@ for (const lesson of lessons) {
   assert.deepEqual(verifyCompletion(proof,lesson.id,false),{independent:true});
   assert.equal(new Set(steps.filter(s=>s.kind==="order_words").map(s=>s.answer)).size,3,lesson.id);
 }
-assert.equal(choice,528);assert.equal(order,528);
+assert.equal(choice,534);assert.equal(order,534);
 console.log(JSON.stringify({lessons:lessons.length,modules:modules.length,choice,order,exercises:allIds.size,errors:0}));

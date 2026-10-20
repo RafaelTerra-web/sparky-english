@@ -1,6 +1,6 @@
 {
-  "lessonCount": 176,
-  "moduleCount": 31,
+  "lessonCount": 178,
+  "moduleCount": 32,
   "paths": 6,
   "errors": [],
   "byLevel": {
@@ -32,13 +32,13 @@
       "pronunciation": 40
     },
     "B2": {
-      "listening": 14,
-      "speaking": 14,
-      "reading": 14,
-      "writing": 14,
-      "vocabulary": 14,
-      "grammar": 14,
-      "pronunciation": 14
+      "listening": 16,
+      "speaking": 16,
+      "reading": 16,
+      "writing": 16,
+      "vocabulary": 16,
+      "grammar": 16,
+      "pronunciation": 16
     },
     "C1": {
       "listening": 20,
@@ -89,11 +89,11 @@
     },
     "B2": {
       "listening": 6,
-      "speaking": 5,
-      "reading": 5,
+      "speaking": 6,
+      "reading": 6,
       "writing": 2,
-      "vocabulary": 5,
-      "grammar": 4,
+      "vocabulary": 6,
+      "grammar": 5,
       "pronunciation": 2
     },
     "C1": {
@@ -117,7 +117,7 @@
   },
   "byDiscipline": {
     "everyday": {
-      "lessons": 123,
+      "lessons": 125,
       "skills": [
         "reading",
         "listening",
@@ -136,7 +136,7 @@
       ]
     },
     "work": {
-      "lessons": 70,
+      "lessons": 72,
       "skills": [
         "reading",
         "listening",
@@ -174,7 +174,7 @@
       ]
     },
     "school": {
-      "lessons": 71,
+      "lessons": 73,
       "skills": [
         "reading",
         "listening",
@@ -274,7 +274,9 @@
       "b2-autonomia-05",
       "c1-interacao-06",
       "b2-acordos-cotidianos-01",
-      "b2-acordos-cotidianos-02"
+      "b2-acordos-cotidianos-02",
+      "b2-condicionais-01",
+      "b2-condicionais-02"
     ],
     "reported": [
       "b1-narrativas-05",

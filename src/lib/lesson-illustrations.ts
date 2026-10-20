@@ -1,6 +1,7 @@
 const relatedScenes: Record<string, string> = {
   "b1-vida-em-movimento": "b1-colaboracao",
   "b2-acordos-cotidianos": "b2-autonomia",
+  "b2-condicionais": "b2-autonomia",
   "c1-intencoes-e-impacto": "c1-interacao",
   "c2-significado-em-disputa": "c2-nuance",
 };

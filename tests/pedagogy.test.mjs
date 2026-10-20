@@ -37,7 +37,7 @@ test("warmups use an actual earlier example within the same module", () => {
     assert.equal(recall.prompt, previous.steps.find(step => step.kind === "example").translation);
     count++;
   }
-  assert.equal(count, 139);
+  assert.equal(count, 140);
 });
 
 test("editorial writing scaffolds cover all six levels while the lesson estimate excludes optional drafting", () => {

@@ -176,6 +176,8 @@ export const lessonLedger = [
   "c1-intencoes-e-impacto-02",
   "c2-significado-em-disputa-01",
   "c2-significado-em-disputa-02",
+  "b2-condicionais-01",
+  "b2-condicionais-02",
 ] as const;
 export const moduleLedger = [
   "a1-identidade",
@@ -209,4 +211,5 @@ export const moduleLedger = [
   "b2-acordos-cotidianos",
   "c1-intencoes-e-impacto",
   "c2-significado-em-disputa",
+  "b2-condicionais",
 ] as const;

@@ -45,6 +45,7 @@ export const modulePlans: Record<string,ModulePlan> = {
  'c2-estilo-cultura':plan('comparar vozes e alusões culturais e defender uma leitura crítica','culture',['school','exchange'],['mediate','argue'],['inference','emphasis','register']),
  'b1-vida-em-movimento':plan('explicar um atraso ou defeito e combinar uma solução','travel',['everyday'],['problem','negotiate'],['past','modals'],'b1-colaboracao'),
  'b2-acordos-cotidianos':plan('negociar convivência e recomendar um roteiro acessível','everyday',['travel','exchange'],['negotiate','argue'],['conditionals','register'],'b2-argumentacao'),
+ 'b2-condicionais':plan('relacionar condições imaginárias e consequências entre passado e presente','everyday',['school','work'],['narrate','opinion'],['conditionals','perfect'],'b2-autonomia'),
  'c1-intencoes-e-impacto':plan('interpretar pedidos implícitos e transformar feedback em orientação','work',['everyday'],['mediate','information'],['inference','register'],'c1-interacao'),
  'c2-significado-em-disputa':plan('contestar premissas e reparar ironia entre culturas','culture',['exchange'],['mediate','disagree'],['inference','register'],'c2-nuance'),
 };

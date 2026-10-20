@@ -1,10 +1,10 @@
 # Jornada rápida do Sparky
 
-O curso publicado mantém 176 IDs, 31 módulos e as posições do ledger. Cada lição agora usa seis exercícios obrigatórios, alternando três escolhas e três ordenações. São 1.056 questões: 528 de cada formato. A estimativa é 2–4 minutos; o modo Normal tem duração livre.
+O curso tem 178 lições em 32 módulos, preservando os 176 IDs anteriores e suas posições do ledger. Cada lição usa seis exercícios obrigatórios, alternando três escolhas e três ordenações. São 1.068 questões: 534 de cada formato. A estimativa é 2–4 minutos; o modo Normal tem duração livre.
 
 ## Conteúdo e motor
 
-- As 176 entradas de src/lib/content/quick-lessons.json definem a intenção, três frases distintas, uma situação curta, três respostas contextualizadas e feedback em português e inglês. A questão de completar reutiliza a estrutura gramatical revisada da lição.
+- As 178 entradas de src/lib/content/quick-lessons.json definem a intenção, três frases distintas, uma situação curta, três respostas contextualizadas e feedback em português e inglês. A questão de completar reutiliza a estrutura gramatical revisada da lição.
 - Lesson.exercises é a sequência obrigatória. Lesson.support contém teoria, vocabulário, exemplos com áudio, pronúncia, diálogos, análise de erros e produção opcional. Lesson.steps mantém o material histórico que identifica gravações e referências.
 - IDs mc-1, order-1, mc-2, order-2, mc-3, order-3 são prefixados pelo ID da lição no servidor.
 - /api/study action=start devolve os IDs autorizados e um comprovante criptografado por conta, com validade de oito horas. Cada resposta é validada em ordem. Uma resposta errada deve ser corrigida antes da seguinte.

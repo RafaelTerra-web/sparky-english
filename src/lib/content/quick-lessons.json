@@ -5255,6 +5255,28 @@
       "Challenge the premise explicitly before answering within it."
     ]
   },
+  "b2-condicionais-01": {
+    "intent": ["Que frase liga uma economia passada imaginária a uma preocupação atual?", "Which sentence links imaginary past savings to a present worry?"],
+    "sentences": [
+      ["If I had saved more, I would be less worried now.", "Se eu tivesse economizado mais, estaria menos preocupada agora."],
+      ["If I save more, I will book the course next year.", "Se eu economizar mais, vou reservar o curso no próximo ano."],
+      ["If I had saved more, I would have booked the course.", "Se eu tivesse economizado mais, teria reservado o curso."]
+    ],
+    "scene": "Cora spent her savings last year. She is worried about course fees now. What would be different if she had saved more?",
+    "replies": ["She would be less worried now.", "She definitely saved enough last year.", "She already booked the course last year."],
+    "note": ["Had saved muda a condição passada; would be mostra o efeito imaginário agora.", "Had saved changes the past condition; would be shows the imaginary effect now."]
+  },
+  "b2-condicionais-02": {
+    "intent": ["Que frase liga uma característica atual a um resultado passado?", "Which sentence links a current trait to a past result?"],
+    "sentences": [
+      ["If I were less shy, I would have spoken yesterday.", "Se eu fosse menos tímida, teria falado ontem."],
+      ["If I were less shy, I would speak more often.", "Se eu fosse menos tímida, falaria com mais frequência."],
+      ["If I had felt confident, I would have spoken yesterday.", "Se eu tivesse me sentido confiante, teria falado ontem."]
+    ],
+    "scene": "Nina is still shy in groups. She did not speak at yesterday's meeting. What does her mixed conditional imagine?",
+    "replies": ["A different continuing trait and a different result yesterday.", "A confirmed plan to speak at tomorrow's meeting.", "A temporary fear yesterday that no longer exists."],
+    "note": ["Were descreve a característica ainda atual; would have spoken imagina o resultado de ontem.", "Were describes the continuing trait; would have spoken imagines yesterday's result."]
+  },
   "c2-significado-em-disputa-02": {
     "intent": [
       "Repare ironia que foi entendida como elogio.",

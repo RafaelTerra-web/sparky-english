@@ -3,6 +3,7 @@ import { levels } from './levels.ts';
 import { metadataFor, modulePlans, competencyPaths, type Discipline, type Skill, type CommunicativeFunction, type LanguageTopic } from './course-metadata.ts';
 import type { LearningWorkspace } from './learning-local.ts';
 import type { EltisSkill } from './eltis-shared.ts';
+import { grammarTopics, grammarTopicsForLesson, grammarSearchTermsForLesson } from './grammar-topics.ts';
 export const lessonById = new Map(lessons.map(l=>[l.id,l]));
 export const lessonMetadata = Object.fromEntries(modules.flatMap(m=>m.lessons.map((l,i)=>[l.id,metadataFor(l,i,m.lessons.length)])));
 export const courseModules = [...modules].sort((a,b)=>levels.indexOf(a.level)-levels.indexOf(b.level)||a.order-b.order);
@@ -17,17 +18,34 @@ export function prerequisiteFor(id:string) {
 }
 export type StudyStatus='new'|'progress'|'done'|'due';
 export const statusNames:Record<StudyStatus,string>={new:'Não iniciadas',progress:'Em andamento',done:'Concluídas',due:'Revisão pendente'};
-export type CourseFilters={level:Level|'all';query:string;discipline:Discipline|'';skill:Skill|'';function:CommunicativeFunction|'';language:LanguageTopic|'';status:StudyStatus|''};
-export const emptyFilters:CourseFilters={level:'all',query:'',discipline:'',skill:'',function:'',language:'',status:''};
-const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+export type CourseFilters={level:Level|'all';query:string;topic?:string;discipline:Discipline|'';skill:Skill|'';function:CommunicativeFunction|'';language:LanguageTopic|'';status:StudyStatus|''};
+export const emptyFilters:CourseFilters={level:'all',query:'',topic:'',discipline:'',skill:'',function:'',language:'',status:''};
+const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+// Normalize common bilingual grammar names and the typo reported by a learner.
+export function normalizeCourseQuery(query:string) {
+ return normalize(query).replace(/\b(condicionais|condicional|conditionals)\b/g,'conditional')
+  .replace(/\b(primeira|primeiro|1st|firt)\b/g,'first')
+  .replace(/\b(segunda|segundo|2nd)\b/g,'second')
+  .replace(/\b(terceira|terceiro|3rd)\b/g,'third')
+  .replace(/\b(mista|misto|mistas|mistos)\b/g,'mixed');
+}
 // Search is built once, rather than walking every lesson step on every render.
 let searchIndex:Map<string,string>|undefined;
-function getSearchIndex() { return searchIndex ??= new Map(lessons.map(l=>[l.id,normalize([l.title,l.englishTitle,...l.steps.map(s=>s.body+' '+(s.english??''))].join(' '))])); }
+function getSearchIndex() { return searchIndex ??= new Map(lessons.map(l=>[l.id,normalizeCourseQuery([l.title,l.englishTitle,l.level,grammarSearchTermsForLesson(l.id),...l.steps.concat(l.support??[],l.exercises??[]).map(s=>[s.title,s.body,s.english,s.answer,...(s.options??[])].filter(Boolean).join(' '))].join(' '))])); }
+const queryKey=(query:string)=>normalizeCourseQuery(query).split(/\s+/).filter(Boolean).sort().join(' ');
+// A named grammar topic must not match incidental words scattered across a story.
+const topicSearchIndex=new Map<string,Set<string>>();
+for(const topic of grammarTopics) for(const alias of [topic.title,...topic.aliases]) {
+ const key=queryKey(alias),ids=topicSearchIndex.get(key)??new Set<string>();
+ topic.lessonIds.forEach(id=>ids.add(id));topicSearchIndex.set(key,ids);
+}
+topicSearchIndex.set('clauses if',new Set(grammarTopics.filter(topic=>topic.id.includes('conditional')||topic.id==='unless').flatMap(topic=>topic.lessonIds)));
 export function filterCourse(filters:CourseFilters,completed:Record<string,string>,inProgress:Set<string>,due:Set<string>) {
- const query=normalize(filters.query.trim());
+ const tokens=normalizeCourseQuery(filters.query).split(/\s+/).filter(Boolean);
+ const topicMatches=tokens.length?topicSearchIndex.get(queryKey(filters.query)):undefined;
  return courseModules.map(m=>({...m,lessons:m.lessons.filter(l=>{
   const meta=lessonMetadata[l.id];
-  return (filters.level==='all'||l.level===filters.level)&&(!filters.discipline||meta.primary===filters.discipline||meta.secondary.includes(filters.discipline))&&(!filters.skill||meta.focusSkills.includes(filters.skill))&&(!filters.function||meta.functions.includes(filters.function))&&(!filters.language||meta.language.includes(filters.language))&&(!query||getSearchIndex().get(l.id)!.includes(query))&&(!filters.status||(filters.status==='new'?!completed[l.id]&&!inProgress.has(l.id):filters.status==='progress'?inProgress.has(l.id):filters.status==='done'?Boolean(completed[l.id]):due.has(l.id)));
+  return (filters.level==='all'||l.level===filters.level)&&(!filters.topic||grammarTopicsForLesson(l.id).some(topic=>topic.id===filters.topic))&&(!filters.discipline||meta.primary===filters.discipline||meta.secondary.includes(filters.discipline))&&(!filters.skill||meta.focusSkills.includes(filters.skill))&&(!filters.function||meta.functions.includes(filters.function))&&(!filters.language||meta.language.includes(filters.language))&&(topicMatches?topicMatches.has(l.id):tokens.every(token=>getSearchIndex().get(l.id)!.includes(token)))&&(!filters.status||(filters.status==='new'?!completed[l.id]&&!inProgress.has(l.id):filters.status==='progress'?inProgress.has(l.id):filters.status==='done'?Boolean(completed[l.id]):due.has(l.id)));
  })})).filter(m=>m.lessons.length);
 }
 export type ExamFocus={completedAt:string;skills:Partial<Record<EltisSkill,number>>};
