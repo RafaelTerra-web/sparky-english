@@ -49,9 +49,10 @@ export function startVerbSession(review:VerbReview,now=Date.now(),count=6):VerbS
  return {version:1,cardIds:selected.map(card=>card.id),index:0,tries:0,helped:false,correct:false,results:[]};
 }
 export const helpVerbSession=(session:VerbSession):VerbSession=>({...session,helped:true});
+export function recordVerbHelp(review:VerbReview,cardId:string,now=Date.now()):VerbReview {if(!verbCardById.has(cardId))return review;const old=review.items[cardId];return{version:1,items:{...review.items,[cardId]:{attempts:old?.attempts??0,independentSuccesses:old?.independentSuccesses??0,stage:0,dueAt:now+10*60000,lastAttemptAt:now,lastCorrect:false,lastAssisted:true}}};}
 export function answerVerbSession(session:VerbSession,review:VerbReview,input:string,now=Date.now()):{session:VerbSession;review:VerbReview;feedback:VerbFeedback} {
  const card=verbCardById.get(session.cardIds[session.index]);if(!card||session.correct)throw Error('no-active-card');
- const verb=verbById.get(card.verbId)!;const typed=input.trim().toLowerCase();const correct=typed===card.answer.toLowerCase();const independent=correct&&!session.helped&&session.tries===0;
+ const verb=verbById.get(card.verbId)!;const typed=input.trim().toLowerCase();const correct=typed===card.answer.toLowerCase();const independent=correct&&!session.helped&&session.tries===0&&!(review.items[card.id]?.lastAssisted&&review.items[card.id].dueAt>now);
  let pt=correct?'Forma correta.':'Tente mais uma vez.',en=correct?'Correct form.':'Try once more.';
  if(!correct){
   if(card.form==='participle'&&typed===verb.past&&verb.past!==verb.participle){pt=`Had já está correto. Depois dele, use o particípio: ${verb.base} → ${verb.past} → ${verb.participle}.`;en=`Had is already correct. It needs the past participle: ${verb.base} → ${verb.past} → ${verb.participle}.`;}
@@ -63,8 +64,8 @@ export function answerVerbSession(session:VerbSession,review:VerbReview,input:st
  const old=review.items[card.id];const due=!old||old.dueAt<=now;
  const stage=independent?(due?Math.min(5,(old?.stage??0)+1):old?.stage??0):0;
  const days=[0,1,3,7,14,30];
- const updated:VerbReview={version:1,items:{...review.items,[card.id]:{attempts:(old?.attempts??0)+1,independentSuccesses:(old?.independentSuccesses??0)+(independent?1:0),stage,dueAt:independent?(due?now+days[stage]*86400000:old!.dueAt):now+10*60000,lastAttemptAt:now,lastCorrect:correct,lastAssisted:session.helped||session.tries>0}}};
- const result={cardId:card.id,attempts:session.tries+1,assisted:session.helped||session.tries>0,independent};
+ const updated:VerbReview={version:1,items:{...review.items,[card.id]:{attempts:(old?.attempts??0)+1,independentSuccesses:(old?.independentSuccesses??0)+(independent?1:0),stage,dueAt:independent?(due?now+days[stage]*86400000:old!.dueAt):now+10*60000,lastAttemptAt:now,lastCorrect:correct,lastAssisted:!correct||!independent}}};
+ const result={cardId:card.id,attempts:session.tries+1,assisted:!independent,independent};
  return {session:{...session,tries:session.tries+1,correct,results:correct?[...session.results,result]:session.results},review:updated,feedback:{correct,feedbackPT:pt,feedbackEN:en,answer:card.answer,independent}};
 }
 export function advanceVerbSession(session:VerbSession):VerbSession {return session.correct?{...session,index:session.index+1,tries:0,helped:false,correct:false}:session;}

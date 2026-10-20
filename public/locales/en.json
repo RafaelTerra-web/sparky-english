@@ -5279,5 +5279,9 @@
   "Base → passado → particípio": "Base → past → past participle",
   "Consultar ou ouvir a resposta conta como ajuda nesta questão.": "Looking up or hearing the answer counts as help on this question.",
   "Não foi possível ouvir agora. Você pode continuar escrevendo.": "Audio could not play just now. You can continue writing.",
-  "Ouvir verbo": "Hear verb"
+  "Ouvir verbo": "Hear verb",
+  "Sua resposta já foi registrada. Agora você pode ouvir o modelo.": "Your answer is already recorded. You can now listen to the model.",
+  "Próxima": "Next",
+  "Ouvir exemplo": "Listen to example",
+  "Áudio": "Audio"
 }

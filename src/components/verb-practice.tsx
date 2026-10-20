@@ -2,7 +2,7 @@
 import { useEffect,useRef,useState } from 'react';
 import { ArrowLeft,ArrowRight,BookOpen,Volume2 } from 'lucide-react';
 import { t,localizeAttribute,useSupportLanguage } from '@/lib/interface-language';
-import { verbBank,verbById,verbCardById,startVerbSession,answerVerbSession,advanceVerbSession,helpVerbSession,verbSessionSummary, type VerbFeedback } from '@/lib/verb-practice';
+import { verbBank,verbById,verbCardById,startVerbSession,answerVerbSession,advanceVerbSession,helpVerbSession,recordVerbHelp,verbSessionSummary, type VerbFeedback } from '@/lib/verb-practice';
 import { readVerbReview,saveVerbReview } from '@/lib/verb-practice-local';
 import { verbAudioUrl } from '@/lib/verb-audio-shared';
 import { claimAudioPlayback,releaseAudioPlayback } from '@/lib/audio-playback';
@@ -19,8 +19,8 @@ export function VerbPractice({userId,mascot,onBack}:{userId:string;mascot:Mascot
  const card=verbCardById.get(session.cardIds[session.index]);const verb=card?verbById.get(card.verbId):undefined;
  const stop=()=>{if(audio.current){audio.current.pause();releaseAudioPlayback(audio.current);audio.current=null;}};
  useEffect(()=>()=>{if(audio.current){audio.current.pause();releaseAudioPlayback(audio.current);}},[]);
- const revealHelp=()=>{setSession(current=>helpVerbSession(current));setConsult(true);};
- const listen=async(id:string,slow=false)=>{if(started&&!summary.finished)revealHelp();stop();setAudioError(false);const url=verbAudioUrl(id,mascot);if(!url){setAudioError(true);return;}const sound=new Audio(url);audio.current=sound;sound.playbackRate=slow ? 0.75 : 1;sound.preservesPitch=true;claimAudioPlayback(sound);sound.onended=()=>releaseAudioPlayback(sound);try{await sound.play();}catch{releaseAudioPlayback(sound);setAudioError(true);}};
+ const revealHelp=()=>{setSession(current=>helpVerbSession(current));setConsult(true);if(card&&!session.correct){const updated=recordVerbHelp(review,card.id);setReview(updated);setStorageError(!saveVerbReview(userId,updated));}};
+ const listen=async(id:string,slow=false)=>{if(started&&!summary.finished&&!session.correct)revealHelp();stop();setAudioError(false);const url=verbAudioUrl(id,mascot);if(!url){setAudioError(true);return;}const sound=new Audio(url);audio.current=sound;sound.playbackRate=slow ? 0.75 : 1;sound.preservesPitch=true;claimAudioPlayback(sound);sound.onended=()=>releaseAudioPlayback(sound);try{await sound.play();}catch{releaseAudioPlayback(sound);setAudioError(true);}};
  const check=(event:React.FormEvent)=>{event.preventDefault();if(!input.trim()||session.correct)return;const result=answerVerbSession(session,review,input);setSession(result.session);setReview(result.review);setFeedback(result.feedback);setStorageError(!saveVerbReview(userId,result.review));};
  const next=()=>{stop();setSession(current=>advanceVerbSession(current));setInput('');setFeedback(null);setConsult(false);setAudioError(false);requestAnimationFrame(()=>field.current?.focus());};
  const begin=()=>{stop();setSession(startVerbSession(review));setStarted(true);setInput('');setFeedback(null);setConsult(false);setTable(false);requestAnimationFrame(()=>field.current?.focus());};
@@ -40,7 +40,7 @@ export function VerbPractice({userId,mascot,onBack}:{userId:string;mascot:Mascot
    <form onSubmit={check}><label htmlFor="verb-answer">{t('Sua resposta')}</label><input ref={field} id="verb-answer" value={input} onChange={event=>setInput(event.target.value)} lang="en" autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} maxLength={40} disabled={session.correct}/>{!session.correct&&<button className="primary-button" disabled={!input.trim()}>{t('Verificar')}</button>}</form>
    {feedback&&<div className={styles.feedback} role="status" data-correct={feedback.correct} lang={support}>{support==='pt-BR'?feedback.feedbackPT:feedback.feedbackEN}{feedback.correct&&<p>{t(feedback.independent?'Você lembrou sem ajuda.':'Você acertou com apoio. Vamos retomar essa forma depois.')}</p>}</div>}
    {!session.correct&&<button className="text-button" onClick={revealHelp}><BookOpen size={16}/>{t('Preciso de uma pista')}</button>}
-   {(consult||feedback)&&<div className={styles.help}><p lang="en"><strong>{verb.base} → {verb.past} → {verb.participle}</strong></p><p>{t('Base → passado → particípio')}</p><div className={styles.audio}><button className="listen-link" onClick={()=>void listen(verb.id)}><Volume2 size={16}/>{t('Ouvir exemplo')}</button><button className="listen-link" onClick={()=>void listen(verb.id,true)}>{t('Ouvir devagar')}</button></div><p>{t('Consultar ou ouvir a resposta conta como ajuda nesta questão.')}</p></div>}
+   {(consult||feedback)&&<div className={styles.help}><p lang="en"><strong>{verb.base} → {verb.past} → {verb.participle}</strong></p><p>{t('Base → passado → particípio')}</p><div className={styles.audio}><button className="listen-link" onClick={()=>void listen(verb.id)}><Volume2 size={16}/>{t('Ouvir exemplo')}</button><button className="listen-link" onClick={()=>void listen(verb.id,true)}>{t('Ouvir devagar')}</button></div><p>{t(session.correct?'Sua resposta já foi registrada. Agora você pode ouvir o modelo.':'Consultar ou ouvir a resposta conta como ajuda nesta questão.')}</p></div>}
    {session.correct&&<button className="primary-button" onClick={next}>{t('Próxima')}<ArrowRight size={18}/></button>}
   </div>:null}
   {audioError&&<p role="status">{t('Não foi possível ouvir agora. Você pode continuar escrevendo.')}</p>}

@@ -1,7 +1,16 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {verbBank,verbCards,verbAudioText,verbById,verbCardById,blankVerbReview,startVerbSession,answerVerbSession,helpVerbSession,advanceVerbSession,normalizeVerbReview} from '../src/lib/verb-practice.ts';
 import {readVerbReview,saveVerbReview} from '../src/lib/verb-practice-local.ts';
+import {recordVerbHelp} from '../src/lib/verb-practice.ts';
 const session=(id)=>({version:1,cardIds:[id],index:0,tries:0,helped:false,correct:false,results:[]});
+test('reopening immediately after revealing an answer cannot claim unassisted recall',()=>{
+ const helped=recordVerbHelp(blankVerbReview(),'go:participle',1000);
+ const reopened=answerVerbSession(session('go:participle'),helped,'gone',2000);
+ assert.equal(reopened.feedback.independent,false);
+ assert.equal(reopened.session.results[0].assisted,true);
+ const later=answerVerbSession(session('go:participle'),reopened.review,'gone',700000);
+ assert.equal(later.feedback.independent,true);
+});
 test('curated bank has exact forms, no leaked answer in gaps and coherent fixed audio',()=>{assert.equal(verbBank.length,18);assert.equal(verbCards.length,54);for(const card of verbCards){assert.equal(card.sentence.split('___').length,2);assert.equal(card.answer,verbById.get(card.verbId)[card.form]);assert.ok(verbAudioText(card.verbId).includes(card.answer));}assert.deepEqual(verbCards.filter(c=>c.verbId==='go').map(c=>c.answer),['go','went','gone']);});
 test('had went, did bought and buyed get specific feedback and corrected attempts remain assisted',()=>{for(const[id,answer,pattern]of[['go:participle','went',/particípio/],['buy:base','bought',/Did/],['buy:past','buyed',/irregular/]]){const first=answerVerbSession(session(id),blankVerbReview(),answer,1000);assert.equal(first.feedback.correct,false);assert.match(first.feedback.feedbackPT,pattern);const corrected=answerVerbSession(first.session,first.review,verbCardById.get(id).answer,2000);assert.equal(corrected.feedback.correct,true);assert.equal(corrected.feedback.independent,false);assert.equal(corrected.review.items[id].stage,0);}});
 test('hints and early practice cannot advance spaced review or count as independent',()=>{const id='eat:participle';const assisted=answerVerbSession(helpVerbSession(session(id)),blankVerbReview(),'eaten',1000);assert.equal(assisted.feedback.independent,false);const first=answerVerbSession(session(id),blankVerbReview(),'eaten',1000);assert.equal(first.review.items[id].stage,1);const early=answerVerbSession(session(id),first.review,'eaten',2000);assert.equal(early.review.items[id].stage,1);assert.equal(early.review.items[id].dueAt,first.review.items[id].dueAt);assert.equal(advanceVerbSession(session(id)).index,0);assert.equal(advanceVerbSession(first.session).index,1);});
