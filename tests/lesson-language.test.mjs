@@ -44,9 +44,9 @@ function supportComponent(api) {
 }
 const normalize = text => text.replace(/\s+/g, ' ').trim();
 
-test('all 176 lessons have both prompt/feedback languages and translated reference guidance', async () => {
+test('all 178 lessons have both prompt/feedback languages and translated reference guidance', async () => {
   const api = await runtime('immersion');
-  assert.equal(lessons.length, 176);
+  assert.equal(lessons.length, 178);
   for (const lesson of lessons) {
     assert.notEqual(api.translate(lesson.title, 'en'), lesson.title, lesson.id + ': title');
     const outcome = lessonMetadata[lesson.id]?.outcome ?? lesson.experience.application;
@@ -111,7 +111,7 @@ test('support scaffolds insert target text and learner names without dictionary 
   assert.ok(personalVoice.personalVoiceText('Ana', 'welcome').startsWith('Ana,'));
 });
 
-test('every exercise across all 176 lessons renders immutable English targets in all three modes', async () => {
+test('every exercise across all 178 lessons renders immutable English targets in all three modes', async () => {
   const targets = Object.fromEntries(lessons.flatMap(lesson => lesson.exercises.flatMap(step => [step.english, step.cue, ...step.options].filter(Boolean))).map(value => [value, 'BROKEN TARGET']));
   const before = JSON.stringify(lessons);
   const encoded = text => renderToStaticMarkup(React.createElement('span', null, text)).slice(6, -7);

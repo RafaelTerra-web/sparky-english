@@ -1,6 +1,8 @@
 // One authored extra distractor for each published interpretation and gap task.
 // The existing first option remains the answer; these entries are always wrong in context.
 export const fourthOptions: Record<string, readonly [choice: string, gap: string]> = {
+  "b2-condicionais-01": ["Both are confirmed plans for next year.", "am being"],
+  "b2-condicionais-02": ["A guaranteed future result caused by a past meeting.", "had been"],
   "a1-1-1": ["Nice to meet me too!", "I'm is"],
   "a1-identidade-01": ["Clara", "yours"],
   "a1-identidade-02": ["Japan", "be"],

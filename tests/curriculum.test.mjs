@@ -1,4 +1,5 @@
 import { fluentPracticeModules } from "../src/lib/content/fluent-practice.ts";
+import { conditionalModules } from "../src/lib/content/conditionals.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -20,20 +21,20 @@ import { curriculumSources } from "../src/lib/content/build.ts";
 import { fourthOptions } from "../src/lib/content/fourth-options.ts";
 import { advancedExpansionModules } from "../src/lib/content/advanced-expansion.ts";
 
-const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules, ...fluentPracticeModules];
+const drafts = [...a1Modules, ...a2Modules, ...a2CommunicationModules, ...b1Modules, ...b2Modules, ...c1Modules, ...c1ExtensionModules, ...c2Modules, ...c2ExtensionModules, ...fluentPracticeModules, ...conditionalModules];
 const legacy = ["a1-1-1", "a1-2-1", "a2-3-1", "a2-4-1", "b1-5-1", "b1-6-1"];
-test("176 lessons across all six levels with preserved published identities", () => {
-  assert.equal(lessons.length, 176);
-  assert.equal(modules.length, 31);
-  assert.equal(drafts.flatMap((m) => m.lessons).length, 170);
-  const counts = { A1: 38, A2: 44, B1: 40, B2: 14, C1: 20, C2: 20 };
-  const moduleCounts = { A1: 6, A2: 7, B1: 7, B2: 3, C1: 4, C2: 4 };
+test("178 lessons across all six levels with preserved published identities", () => {
+  assert.equal(lessons.length, 178);
+  assert.equal(modules.length, 32);
+  assert.equal(drafts.flatMap((m) => m.lessons).length, 172);
+  const counts = { A1: 38, A2: 44, B1: 40, B2: 16, C1: 20, C2: 20 };
+  const moduleCounts = { A1: 6, A2: 7, B1: 7, B2: 4, C1: 4, C2: 4 };
   for (const level of Object.keys(counts)) {
     assert.equal(lessons.filter((l) => l.level === level).length, counts[level]);
     assert.equal(modules.filter((m) => m.level === level).length, moduleCounts[level]);
   }
-  assert.equal(new Set(lessons.map((l) => l.id)).size, 176);
-  assert.equal(new Set(lessons.map((l) => l.title)).size, 176);
+  assert.equal(new Set(lessons.map((l) => l.id)).size, 178);
+  assert.equal(new Set(lessons.map((l) => l.title)).size, 178);
   for (const id of legacy)
     assert.ok(
       lessons.find((l) => l.id === id),
@@ -45,13 +46,13 @@ test("every module is ordered, connected and contains distinct authored lessons"
     assert.equal(m.order, index + 1);
     assert.equal(
       m.prerequisiteId,
-      fluentPracticeModules.find(draft => draft.id === m.id)?.prerequisiteId ?? (m.id === "b1-narrativas"
+      [...fluentPracticeModules, ...conditionalModules].find(draft => draft.id === m.id)?.prerequisiteId ?? (m.id === "b1-narrativas"
         ? "a2-textos"
         : index
           ? modules[index - 1].id
           : null),
     );
-    assert.equal(m.lessons.filter((l) => !legacy.includes(l.id)).length, fluentPracticeModules.some(draft => draft.id === m.id) ? 2 : 6);
+    assert.equal(m.lessons.filter((l) => !legacy.includes(l.id)).length, [...fluentPracticeModules, ...conditionalModules].some(draft => draft.id === m.id) ? 2 : 6);
     for (const l of m.lessons) assert.equal(l.moduleId, m.id);
   });
   assert.deepEqual(
@@ -147,11 +148,11 @@ test("every published exercise has one editorial key and rejects all distractors
       }
     }
   }
-  assert.equal(exercises, 1056);
+  assert.equal(exercises, 1068);
   assert.equal(authoredSequences.size, 6);
 });
 test("search supports accents, grammar terms, level isolation and empty results", () => {
-  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 176);
+  assert.equal(searchModules("all", "").flatMap((m) => m.lessons).length, 178);
   assert.equal(searchModules("A2", "").flatMap((m) => m.lessons).length, 44);
   assert.ok(searchModules("all", "condicoes").length);
   assert.ok(

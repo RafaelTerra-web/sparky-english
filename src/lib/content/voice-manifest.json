@@ -878,5 +878,15 @@
     "text": "Calling the delay a triumph of efficiency was hardly an unqualified compliment.",
     "sparky": "/audio/mascots/ef81560f1916d35fefb7037bf66a10ef.wav",
     "pinky": "/audio/mascots/885f744e53cead59ba6b4ce10bfd49ae.wav"
+  },
+  "b2-condicionais-01": {
+    "text": "If I had saved more, I would be less worried now.",
+    "pinky": "/audio/mascots/61967fd4f46a418d3a47b220e8308cb4.wav",
+    "sparky": "/audio/mascots/969d59f1e67a575631994b53ab2cccfc.wav"
+  },
+  "b2-condicionais-02": {
+    "text": "If I were less shy, I would have spoken yesterday.",
+    "sparky": "/audio/mascots/9cdfa5e11afe753e1f42ad4c30ffe08d.wav",
+    "pinky": "/audio/mascots/b8ca4341d3881a019ac77e4849dcc151.wav"
   }
 }

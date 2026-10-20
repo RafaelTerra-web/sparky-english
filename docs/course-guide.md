@@ -1,6 +1,6 @@
 # Curso guiado e treino por disciplina
 
-A atualização organiza as 176 lições existentes em uma trilha por nível e em seis percursos de competência. Os IDs publicados não mudam: conclusões, moedas, compras e revisões continuam válidos.
+A atualização organiza 178 lições em uma trilha por nível e em seis percursos de competência. Os IDs anteriores não mudam: conclusões, moedas, compras e revisões continuam válidos. Duas lições B2 acrescentam condicionais mistas, preservando as posições anteriores no ledger.
 
 ## Navegação
 
@@ -14,6 +14,8 @@ A atualização organiza as 176 lições existentes em uma trilha por nível e e
 ## Dados e critérios
 
 A classificação editorial está em src/lib/course-metadata.ts. A tabela lessonMetadata em src/lib/course-guide.ts associa todos os IDs reais às dimensões pedagógicas. As habilidades disponíveis são separadas das habilidades em foco, para os filtros não retornarem sempre todo o catálogo. O foco considera a atividade pedagógica da lição e os ajustes explícitos por ID.
+
+O índice src/lib/grammar-topics.ts reúne 63 tópicos em A1–C2 com nomes em inglês, descrições e termos de busca em português e inglês. Cada tópico aponta apenas para lições que realmente ensinam o conteúdo. As classificações são pontos de entrada orientativos do curso; a lista não representa cobertura integral de toda a gramática de cada nível. Zero e First Conditional começam em A2; Second em B1; Third e Mixed em B2. As duas condicionais mistas distinguem causa passada com efeito atual de característica atual com resultado passado. A explicação foi conferida com a referência do [British Council](https://learnenglish.britishcouncil.org/free-resources/grammar/b1-b2/conditionals-third-mixed).
 
 Os percursos de opinião/mediação, trabalho, viagens, ciência, tecnologia e intercâmbio ligam fundamentos, prática guiada, transferência e consolidação em níveis crescentes. Eles reutilizam lições reais e acrescentam tarefas explícitas de aplicação; não representam novas aulas narradas. Conclusão indica prática realizada, não certificação de domínio.
 
