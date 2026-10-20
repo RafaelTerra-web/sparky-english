@@ -1,6 +1,6 @@
 import 'server-only';
 import { notificationDatabase, notificationsEnabled, reminderContext, type NotificationRow } from './notification-store';
-import { reminderDestination, reminderCopy, brasiliaHour, reminderHour, deliveryOutcome } from './notification-rules';
+import { reminderDestination, reminderPresentation, brasiliaHour, reminderHour, deliveryOutcome } from './notification-rules';
 import { PUSH_TRACK_PREFIX, pushConfigured, sendStudyPush, validPushSubscription } from './push-server';
 import { notificationUrl, type NotificationKind } from './notifications-shared';
 import { studyDay } from './review-plan';
@@ -19,7 +19,10 @@ export async function runNotificationCron(request: Request, kind: NotificationKi
         const current=await reminderContext(account);
         const destination=reminderDestination(kind,current.context);
         if(!destination) {stats.skipped++;return;}
-        const event=await db.rpc('sparky_notification_create',{p_account:account,p_kind:kind,p_day:studyDay(),p_content:reminderCopy[kind],p_destination:destination,p_progress_revision:current.revision});
+        const recent=await db.from('sparky_notifications').select('kind,content').eq('account_key',account).order('sequence',{ascending:false}).limit(8);
+        if(recent.error) throw Error('notification-history');
+        const content=reminderPresentation(kind,account,new Date(),recent.data);
+        const event=await db.rpc('sparky_notification_create',{p_account:account,p_kind:kind,p_day:studyDay(),p_content:content,p_destination:destination,p_progress_revision:current.revision});
         if(event.error) throw Error('notification-write');
         const row=event.data?.[0] as NotificationRow | undefined;
         if(!row) {stats.skipped++;return;}
@@ -39,7 +42,7 @@ export async function runNotificationCron(request: Request, kind: NotificationKi
           let status: 'sent' | ReturnType<typeof deliveryOutcome>='sent';
           try {
             const copy=row.content[latest.preferences.locale];
-            await sendStudyPush(device.state,{title:copy.title,body:copy.body,url:notificationUrl(row.id),notificationId:row.id,kind});
+            await sendStudyPush(device.state,{title:copy.title,body:copy.body,url:notificationUrl(row.id),notificationId:row.id,artwork:row.content.artwork,kind});
           } catch(error) {status=deliveryOutcome(error);}
           // A failed write leaves 'sending', which is never reclaimed.
           const saved=await db.from('sparky_notification_deliveries').update({status,updated_at:new Date().toISOString()}).eq('notification_id',row.id).eq('device_id',device.track_id).eq('status','sending');

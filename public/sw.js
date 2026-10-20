@@ -85,7 +85,8 @@ self.addEventListener('push', (event) => {
     resume: '/notifications/resume.webp',
     'daily-goal': '/notifications/daily-goal.webp',
   };
-  const image = Object.hasOwn(artwork, payload.kind) ? artwork[payload.kind] : '/icons/sparky-192-v2.png';
+  const artIds=['sparky-invite','sparky-listen','sparky-celebrate','pinky-invite','pinky-listen','pinky-celebrate','sparky-reader','sparky-science','sparky-explorer','pinky-campus','pinky-focus','pinky-creative'];
+  const image = artIds.includes(payload.artwork) ? '/notifications/'+payload.artwork+'.webp' : Object.hasOwn(artwork, payload.kind) ? artwork[payload.kind] : '/icons/sparky-192-v2.png';
   event.waitUntil(self.registration.showNotification(title, {
     body,
     icon: image,

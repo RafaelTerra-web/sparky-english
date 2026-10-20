@@ -709,6 +709,8 @@ export default function SparkyApp({ onReady }: { onReady?: () => void }) {
         {view === "course" && (
           <>
           <CourseCatalog
+            userId={user.id}
+            mascot={reward.mascot}
             level={progress.level}
             completed={progress.completed}
             competencies={reward.competencies ?? {}}

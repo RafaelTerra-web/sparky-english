@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bell, BellRing, X, ChevronRight } from 'lucide-react';
 import { t, localizeAttribute, getInterfaceLocale } from '@/lib/interface-language';
 import { readWorkspace, updateWorkspace } from '@/lib/learning-local';
-import { notificationArtwork, unreadLabel, validNotificationId, type InboxPage, type InboxNotification, type NotificationDestination, type NotificationPreferences } from '@/lib/notifications-shared';
+import { notificationImage, unreadLabel, validNotificationId, type InboxPage, type InboxNotification, type NotificationDestination, type NotificationPreferences } from '@/lib/notifications-shared';
 import { PushDeviceSettings } from './push-notifications';
 import { useScrollLock } from '@/lib/use-scroll-lock';
 import styles from './notification-center.module.css';
@@ -201,7 +201,7 @@ export function NotificationPanel({center,locale}:{center:Center;locale:'pt'|'en
         const heading=!previous || date!==new Intl.DateTimeFormat(getInterfaceLocale(),{day:'numeric',month:'long',timeZone:'America/Sao_Paulo'}).format(new Date(previous.createdAt));
         const copy=item.content[locale];
         return <div key={item.id}>{heading&&<h3 className={styles.date}>{date}</h3>}<article className={styles.item}>
-          <span className={styles.type} aria-hidden="true"><Image src={notificationArtwork[item.kind]} alt="" width={64} height={64} unoptimized /></span><div><h4>{copy.title}</h4><p>{copy.body}</p><time dateTime={item.createdAt}>{new Intl.DateTimeFormat(getInterfaceLocale(),{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}).format(new Date(item.createdAt))}</time><button className={styles.action} type="button" onClick={()=>void center.launch(item.id)}>{copy.action}<ChevronRight size={16}/></button></div>
+          <span className={styles.type} aria-hidden="true"><Image src={notificationImage(item.kind,item.content.artwork)} alt="" width={64} height={64} unoptimized /></span><div><h4>{copy.title}</h4><p>{copy.body}</p><time dateTime={item.createdAt}>{new Intl.DateTimeFormat(getInterfaceLocale(),{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}).format(new Date(item.createdAt))}</time><button className={styles.action} type="button" onClick={()=>void center.launch(item.id)}>{copy.action}<ChevronRight size={16}/></button></div>
         </article></div>;
       })}
       {center.loading&&<p className={styles.state} role="status">{t('Carregando…')}</p>}
@@ -217,7 +217,7 @@ export function NotificationSettings({center}:{center:Center}) {
     {!center.preferences ? <><p role="status">{t('Não foi possível carregar as preferências.')}</p><button className="text-button" onClick={()=>void center.refresh()}>{t('Tentar novamente')}</button></> : <>
       {([{key:'review',label:'Revisões disponíveis',hint:'Lições da trilha · por volta de 12h'}, {key:'resume',label:'Retomar uma lição',hint:'Práticas interrompidas · por volta de 16h'}, {key:'dailyGoal',label:'Meta diária',hint:'Um lembrete leve · por volta de 19h'}] as const).map(item=><label className="settings-switch" key={item.key}><span><strong>{t(item.label)}</strong><small>{t(item.hint)}</small></span><input type="checkbox" role="switch" checked={center.preferences![item.key]} disabled={center.saving} onChange={e=>void center.changePreferences({[item.key]:e.target.checked})}/><span className="settings-switch-track" aria-hidden="true"/></label>)}
       <p className="settings-caption">{t('Horários de Brasília. A central funciona mesmo sem push no aparelho.')}</p>
-      <PushDeviceSettings pushEnabled={center.preferences.pushEnabled} saving={center.saving} onEnable={()=>center.changePreferences({pushEnabled:true})} onDisable={()=>center.changePreferences({pushEnabled:false})}/>
+      <p>{t('Até um lembrete por dia, com pelo menos 20 horas entre avisos.')}</p><p>{t('Se três lembretes seguidos ficarem sem leitura, fazemos uma pausa de 72 horas.')}</p><PushDeviceSettings pushEnabled={center.preferences.pushEnabled} saving={center.saving} onEnable={()=>center.changePreferences({pushEnabled:true})} onDisable={()=>center.changePreferences({pushEnabled:false})}/>
       <button className="text-button" disabled={center.saving} onClick={()=>void center.changePreferences({pushEnabled:false,review:false,resume:false,dailyGoal:false})}>{t('Desativar todos')}</button>
     </>}
     {center.settingsError&&<p role="alert">{t('Não foi possível salvar. Tente novamente.')}</p>}

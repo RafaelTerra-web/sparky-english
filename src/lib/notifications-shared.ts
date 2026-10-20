@@ -5,10 +5,25 @@ export const notificationArtwork: Record<NotificationKind, string> = {
   resume: '/notifications/resume.webp',
   'daily-goal': '/notifications/daily-goal.webp',
 };
+// IDs, rather than arbitrary URLs, keep stored and push artwork on our origin.
+export const notificationArtIds = [
+  'sparky-invite', 'sparky-listen', 'sparky-celebrate',
+  'pinky-invite', 'pinky-listen', 'pinky-celebrate',
+  'sparky-reader', 'sparky-science', 'sparky-explorer',
+  'pinky-campus', 'pinky-focus', 'pinky-creative',
+] as const;
+export type NotificationArtId = typeof notificationArtIds[number];
+export function validNotificationArt(value: unknown): value is NotificationArtId {
+  return typeof value === 'string' && (notificationArtIds as readonly string[]).includes(value);
+}
+export function notificationImage(kind: NotificationKind, artwork?: unknown) {
+  return validNotificationArt(artwork) ? `/notifications/${artwork}.webp` : notificationArtwork[kind];
+}
 export type NotificationDestination = { view: 'review' | 'today' } | { view: 'lesson'; lessonId: string };
 export type NotificationCopy = { title: string; body: string; action: string };
+export type NotificationContent = { pt: NotificationCopy; en: NotificationCopy; variant?: string; artwork?: NotificationArtId };
 export type InboxNotification = {
-  id: string; kind: NotificationKind; content: { pt: NotificationCopy; en: NotificationCopy };
+  id: string; kind: NotificationKind; content: NotificationContent;
   destination: NotificationDestination; createdAt: string; readAt: string | null;
 };
 export type NotificationPreferences = {
