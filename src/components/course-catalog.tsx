@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { ArrowRight, Check, Search } from 'lucide-react';
 import { t, localizeAttribute } from '@/lib/interface-language';
 import type { Lesson, Level } from '@/lib/curriculum';
@@ -10,10 +11,14 @@ import { disciplines, skills, functions, languageTopics, stages, competencyPaths
 import { courseModules, emptyFilters, filterCourse, lessonById, lessonMetadata, moduleObjective, nextInTrail, prerequisiteFor, statusNames, type CourseFilters } from '@/lib/course-guide';
 import { lessonIllustrationId } from '@/lib/lesson-illustrations';
 import { grammarTopics, grammarTopicsForLesson, type GrammarTopic } from '@/lib/grammar-topics';
+import type { MascotId } from '@/lib/rewards-shared';
+
+const VerbPractice=dynamic(()=>import('./verb-practice').then(module=>module.VerbPractice),{loading:()=><p role="status">{t('Carregando…')}</p>,ssr:false});
 
 type Mode='guided'|'practice';
 type Competence = "practicing" | "demonstrated" | "confirmed";
-export function CourseCatalog({level,completed,competencies,workspace,dueIds,mode,onMode,onOpen}:{level:Level;completed:Record<string,string>;competencies:Record<string,Competence>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
+export function CourseCatalog({userId,mascot,level,completed,competencies,workspace,dueIds,mode,onMode,onOpen}:{userId:string;mascot:MascotId;level:Level;completed:Record<string,string>;competencies:Record<string,Competence>;workspace:LearningWorkspace;dueIds:string[];mode:Mode;onMode:(mode:Mode)=>void;onOpen:(lesson:Lesson,review?:boolean,mode?:Mode)=>void;onExams:()=>void}) {
+ const [showVerbs,setShowVerbs]=useState(false);
  const [filters,setFilters]=useState<CourseFilters>({...emptyFilters});
  const [topicLevel,setTopicLevel]=useState<Level>(level);
  const next=nextInTrail(level,completed);
@@ -29,6 +34,7 @@ export function CourseCatalog({level,completed,competencies,workspace,dueIds,mod
  const selectedTopic=grammarTopics.find(topic=>topic.id===filters.topic);
  const otherLevelCount=filters.level==='all'?0:filterCourse({...filters,level:'all'},completed,inProgress,due).reduce((n,m)=>n+m.lessons.length,0);
  const chooseTopic=(topic:GrammarTopic)=>{setFilters({...emptyFilters,topic:topic.id,level:topic.level});onMode('practice');requestAnimationFrame(()=>document.getElementById('lesson-search')?.scrollIntoView({block:'start'}));};
+ if(showVerbs)return <VerbPractice key={userId} userId={userId} mascot={mascot} onBack={()=>setShowVerbs(false)}/>;
  return <div className="guided-course">
   <div className="page-heading"><div><p className="eyebrow">{t('Seu caminho no inglês')}</p><h1>{t('Trilha')}</h1></div></div>
   <div className="course-modes" role="group" aria-label={localizeAttribute('Como você quer estudar?')}>
@@ -40,6 +46,7 @@ export function CourseCatalog({level,completed,competencies,workspace,dueIds,mod
    <div className="grammar-levels" role="group" aria-label={localizeAttribute('Nível dos tópicos')}>{levels.map(item=><button key={item} aria-pressed={topicLevel===item} onClick={()=>setTopicLevel(item)}>{item}</button>)}</div>
    <ul className="grammar-topic-list">{grammarTopics.filter(topic=>topic.level===topicLevel).map(topic=><li key={topic.id}><button onClick={()=>chooseTopic(topic)}><span><strong lang="en">{topic.title}</strong><small>{t(topic.description)}</small></span><ArrowRight size={17} aria-hidden="true"/></button></li>)}</ul>
   </details>
+  <section className="verb-practice-entry"><div><p className="eyebrow">{t('Base, passado e particípio')}</p><h2>{t('Verbos na prática')}</h2><p>{t('Sabe a estrutura, mas trava no verbo? Pratique escrevendo, um verbo de cada vez.')}</p></div><button className="secondary-button" onClick={()=>setShowVerbs(true)}>{t('Treinar verbos')}<ArrowRight size={17}/></button></section>
   {mode==='guided'?<>
    <section className="trail-current" aria-labelledby="trail-heading">{next && <Image className="trail-current-art" src={`/lesson-images/${lessonIllustrationId(next)}.png`} alt="" width={960} height={720} sizes="(max-width: 700px) 120px, 210px" />}<p className="eyebrow">{t('Você está aqui')} · {t(level)}</p><h2 id="trail-heading">{t(currentModule?.title??'Trilha concluída')}</h2>
     {currentModule&&<p>{t('Ao terminar este módulo, você conseguirá:')}{t(moduleObjective(currentModule.id))}.</p>}

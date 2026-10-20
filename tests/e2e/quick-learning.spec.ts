@@ -18,9 +18,9 @@ async function prepare(page:Page, language="pt-BR") {
 }
 async function openLesson(page:Page, lesson:Lesson, mode="normal") {
  await page.locator(".quick-home-links button").first().click();
- await page.getByRole("button",{name:/Treinar por disciplina|Practice by subject|Practice by discipline|Train by subject/}).click();
+ await page.getByRole("button",{name:/Buscar lições|Find lessons/}).click();
  await page.locator(".quick-filter-details summary").click();
- await page.getByLabel(/Nível|Level/,{exact:true}).selectOption("all");
+ await page.getByRole('group',{name:/Nível das lições|Lesson level/}).getByRole('button',{name:/Todos os níveis|All levels/,exact:true}).click();
  await page.getByRole("textbox",{name:/Buscar assunto ou expressão|Search for a topic or expression/}).fill(lesson.title);
  const translatedTitle = (english as Record<string,string>)[lesson.title] ?? lesson.title;
  await page.locator(".guided-lesson").filter({hasText:lesson.title}).or(page.locator(".guided-lesson").filter({hasText:translatedTitle})).first().click();

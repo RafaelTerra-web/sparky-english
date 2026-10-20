@@ -24,13 +24,13 @@ O service worker usa ID e tag por evento. O app confirma o clique antes de abrir
 
 | Tipo | Cron UTC | Janela Brasília | Condição |
 | --- | --- | --- | --- |
-| Revisão | 15h | 12h–12h59 | Revisões elegíveis da trilha (limite de três) ou Expedições |
+| Revisão | 15h | 12h–12h59 | Revisões elegíveis da trilha (limite de três revisões no dia) |
 | Retomada | 19h | 16h–16h59 | Última lição interrompida, atividade entre uma e sete horas atrás |
 | Meta | 22h | 19h–19h59 | Meta configurada e tempo do dia abaixo dela |
 
-São tarefas diárias compatíveis com a precisão do plano [Vercel Hobby](https://vercel.com/docs/cron-jobs/usage-and-pricing). O cron exige `CRON_SECRET`, rejeita horários fora da janela e não envia em deployments preview. Uma restrição única por conta/tipo/dia limita a três eventos lógicos. As condições são recalculadas a partir do progresso persistido antes de cada aparelho. Estudo ativo e atividade nos últimos 15 minutos suprimem criação/envio.
+São tarefas diárias compatíveis com a precisão do plano [Vercel Hobby](https://vercel.com/docs/cron-jobs/usage-and-pricing). O cron exige `CRON_SECRET`, rejeita horários fora da janela e não envia em deployments preview. A função de criação serializa crons por conta e limita a um lembrete lógico por dia, com intervalo mínimo de 20 horas. Repetir uma retomada da mesma lição exige 72 horas. Três avisos recentes sem leitura pausam novos lembretes por 72 horas. A migração `20261019000100_calm_notifications.sql` acrescenta essas regras sem apagar o histórico. As condições são recalculadas a partir do progresso persistido antes de cada aparelho. Estudo ativo e atividade nos últimos 60 minutos suprimem criação/envio.
 
-O aviso é persistido antes do push. Uma função adquire atomicamente a entrega por aviso/aparelho; `sending`, `sent` e `uncertain` não podem ser adquiridos novamente. Só rejeições explícitas 429/503 são retryable (máximo três tentativas, intervalo mínimo de um minuto, dentro da janela). Timeout sem resposta e interrupção após aquisição são incertos e não reenviam automaticamente. 404/410 removem a assinatura. A troca de conta de um endpoint é atômica.
+O aviso, com uma das 18 versões bilíngues de texto e uma das 12 imagens, é persistido antes do push. As três escolhas mais recentes de texto/imagem são evitadas. Uma função adquire atomicamente a entrega por aviso/aparelho; `sending`, `sent` e `uncertain` não podem ser adquiridos novamente. Só rejeições explícitas 429/503 são retryable (máximo três tentativas, intervalo mínimo de um minuto, dentro da janela). Timeout sem resposta e interrupção após aquisição são incertos e não reenviam automaticamente. 404/410 removem a assinatura. A troca de conta de um endpoint é atômica.
 
 A limpeza diária já existente exclui avisos e entregas por cascata após 30 dias, além de resumos operacionais vencidos, mesmo se a flag de envio for pausada depois da implantação. Antes da migração, a rotina ignora a ausência das tabelas. Ela preserva preferências, progresso, compras e moedas.
 

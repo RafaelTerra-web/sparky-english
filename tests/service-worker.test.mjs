@@ -35,6 +35,12 @@ test('worker never serves app bundles from its cache and displays visible push',
   assert.equal(notifications[0].options.body, 'Pratique hoje');
   assert.equal(notifications[0].options.icon, '/notifications/review.webp');
   assert.equal(notifications[0].options.image, '/notifications/review.webp');
+  handlers.get('push')({data:{json:()=>({kind:'review',artwork:'pinky-campus'})},waitUntil:value=>{pending=value;}});
+  await pending;
+  assert.equal(notifications[1].options.image,'/notifications/pinky-campus.webp');
+  handlers.get('push')({data:{json:()=>({kind:'review',artwork:'../secret'})},waitUntil:value=>{pending=value;}});
+  await pending;
+  assert.equal(notifications[2].options.image,'/notifications/review.webp');
 });
 
 test('worker refreshes shell assets online and falls back to the last copy offline', async () => {

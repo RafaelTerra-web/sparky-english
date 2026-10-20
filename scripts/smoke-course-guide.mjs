@@ -25,8 +25,9 @@ try{for(const viewport of [{width:390,height:844},{width:1440,height:1000}]){
  if(await page.locator('.course-trail .is-current').count()!==1)throw Error('Missing current position');
  if(await page.locator('.competency-paths>details').count()!==6)throw Error('Missing competency paths');
  await page.screenshot({path:'.release-work/screenshots/guided-trail-'+viewport.width+'.png',fullPage:true});
- await page.getByRole('button',{name:'Treinar por disciplina',exact:true}).click();
- await page.getByLabel('Nível',{exact:true}).selectOption('B2');
+ await page.getByRole('button',{name:'Buscar lições',exact:true}).click();
+ await page.getByRole('group',{name:'Nível das lições'}).getByRole('button',{name:'B2',exact:true}).click();
+ await page.locator('.quick-filter-details summary').click();
  await page.getByLabel('Disciplina',{exact:true}).selectOption('science');
  await page.getByLabel('Habilidade',{exact:true}).selectOption('listening');
  await page.getByLabel('Quero aprender a',{exact:true}).selectOption('argue');

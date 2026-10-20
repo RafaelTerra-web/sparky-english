@@ -1997,3 +1997,4 @@ html[data-palette] .install-instructions li>span{background:var(--primary);color
   .workspace-header .streak-badge { padding-inline: 6px; gap: 3px; }
   .workspace-header .streak-badge > svg { display: none; }
 }
+.verb-practice-entry{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--surface);margin:20px 0}.verb-practice-entry h2{margin:8px 0}.verb-practice-entry p{line-height:1.6;color:var(--muted)}.verb-practice-entry button{flex-shrink:0}@media(max-width:600px){.verb-practice-entry{align-items:stretch;flex-direction:column;padding:18px}}
